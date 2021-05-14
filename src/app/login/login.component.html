@@ -1,0 +1,11 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div class="text-center">
+  <p>Please login to continue.</p>
+  <button class="btn btn-lg btn-primary" (click)="login()" aria-label="identity provider">
+    <fa-icon [icon]="faOpenid"></fa-icon>
+    <span>Login </span>
+    <span>&mdash; {{authority}}</span>
+  </button>
+</div>

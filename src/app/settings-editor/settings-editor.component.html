@@ -1,0 +1,64 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<alert type="warning" [dismissible]="true" dismissOnTimeout="10000">
+  Inactive workspaces may be deleted by the janitor.<br/>
+  <small>Inactive: "unpublished and idle" or "published and unused"</small>
+</alert>
+
+<form [formGroup]="form">
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="name-input">Title</label>
+    <input id="name-input" type="text" class="form-control" formControlName="name">
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="description-input">Description</label>
+    <textarea id="description-input" type="text" rows=5 class="form-control" formControlName="description"></textarea>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="author-input">Authorship</label>
+    <input id="author-input" type="text" class="form-control" formControlName="author">
+    <small>text to indicate authorship of this resource</small>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="audience-input">Audience</label>
+    <input id="audience-input" type="text" class="form-control" formControlName="audience">
+    <small>space-delimited list of clients that can launch this as a gamespace</small>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0">Collaboration</label>
+
+    <div *ngIf="!summary.workers?.length">&mdash; none</div>
+
+    <div *ngFor="let worker of summary.workers">
+      <app-confirm-button class="mr-2" btnClass="btn btn-outline-danger btn-sm" (confirm)="delist(worker)" aria-label="remove collaborator">
+        <fa-icon [icon]="faTimes"></fa-icon>
+        <span>Remove</span>
+      </app-confirm-button>
+      <span>{{worker.personName}}</span>
+    </div>
+
+    <div class="mt-2">
+      <button class="btn btn-outline-secondary" (click)="enlistCode()">
+        <fa-icon [icon]="faUserCog"></fa-icon>
+        <span>Generate invitation</span>
+      </button>
+      <fa-icon *ngIf="inviteUrl" class="text-success ml-2" [icon]="faClipboardCheck"></fa-icon>
+    </div>
+    <small>Invite collaborators by sharing an invitation url. (Invalidates existing invitation)</small>
+
+  </div>
+
+  <hr/>
+  <div class="text-center mb-4">
+    <app-confirm-button btnClass="btn btn-outline-danger btn-lg" (confirm)="delete()">
+      <fa-icon [icon]="faTrash"></fa-icon>
+      <span>Delete</span>
+    </app-confirm-button>
+  </div>
+</form>

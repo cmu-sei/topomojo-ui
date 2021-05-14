@@ -1,0 +1,10 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<span #span (click)="copy()" (mouseenter)="hover(true)" (mouseleave)="hover(false)">
+  <ng-content></ng-content>
+</span>
+
+<span *ngIf="clipped || hovering" class="ml-2" [class.text-success]="clipped">
+  <fa-icon [icon]="clipped ? iconChecked : icon" size="lg"></fa-icon>
+</span>

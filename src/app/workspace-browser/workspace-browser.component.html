@@ -1,0 +1,24 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<!-- search workspaces -->
+<div class="m-2">
+
+  <div class="input-group mb-2">
+    <div class="input-group-prepend">
+      <!-- <label for="search-input" class="input-group-text">Search</label> -->
+      <span id="search-label" class="input-group-text">Search</span>
+    </div>
+    <input id="search-input" type="search" placeholder="workspace" class="form-control" (input)="term.next($event)" aria-label="search term" aria-describedby="search-label">
+  </div>
+
+  <!-- display workspace cards -->
+  <ng-container *ngFor="let ws of workspaces | async">
+    <app-workspace-card [workspace]="ws"></app-workspace-card>
+  </ng-container>
+
+</div>
+
+<ng-template #loading>
+  <app-spinner></app-spinner>
+</ng-template>

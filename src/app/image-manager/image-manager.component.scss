@@ -1,0 +1,35 @@
+:host {
+  margin: .25rem;
+}
+.dropzone-active {
+  background-color: rgba(215, 154, 254, 0.5);
+  border-radius: .25rem;
+  border: .25rem dashed darkorchid!important ;
+}
+.dropzone {
+  min-height: 200px;
+  border: .25rem dashed lightgray ;
+  border-radius: .25rem;
+  padding: .25rem;
+}
+.scroll-x {
+  overflow-x: scroll;
+}
+img {
+  // position: absolute;
+  cursor: pointer;
+  height: 180px;
+  background-color: white;
+}
+.img {
+  position: relative;
+}
+.overlay {
+  position: absolute;
+  top: .5rem;
+  bottom: .5rem;
+  left: .5rem;
+  right: .5rem;
+  border-radius: .25rem;
+  background-color: rgba(whitesmoke, .7);
+}

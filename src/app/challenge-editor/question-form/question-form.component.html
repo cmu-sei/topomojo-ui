@@ -1,0 +1,83 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div [formGroup]="form">
+
+  <div class="form-row" [hidden]="!more">
+    <div class="form-group col-3 py-0">
+      <label for="prereq-input{{index}}" class="mb-0">Prerequisite Score</label>
+      <input id="prereq-input{{index}}" type="number" class="form-control" formControlName="prerequisite" placeholder="prereq">
+    </div>
+    <div class="col-9"></div>
+    <small class="col">This question set is only accessible if this score was achieved on the previous question set.</small>
+  </div>
+
+  <ng-container formArrayName="questions">
+    <div *ngFor="let q of questions.controls; let i = index" [formGroupName]="i" class="question-div shadow-sm pop-warning" (mouseenter)="hoveritem=i">
+
+      <div class="d-flex align-items-center">
+        <label for="">Q.{{i+1}}</label>
+        <div class="spacer"></div>
+        <app-confirm-button btnClass="btn btn-sm btn-outline-dark" (confirm)="removeQuestion(i)">
+          <fa-icon [icon]="faTrash"></fa-icon>
+          <span>Remove</span>
+        </app-confirm-button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-8 py-0">
+          <label for="text-input{{i+1}}" class="mb-0">Question</label>
+          <textarea id="text-input{{i+1}}" class="form-control" formControlName="text" placeholder="question" rows="2"></textarea>
+        </div>
+        <div class="form-group col-4 py-0">
+          <label for="answer-input{{i+1}}" class="mb-0">Answer</label>
+          <input id="answer-input{{i+1}}" class="form-control" formControlName="answer" placeholder="answer">
+        </div>
+      </div>
+
+      <!-- not using hints at this time -->
+      <!-- <div class="form-row" [hidden]="!more">
+        <div class="form-group col-8 py-0">
+          <label for="hint-input{{i+1}}" class="mb-0">Hint</label>
+          <textarea id="hint-input{{i+1}}" class="form-control" formControlName="hint" placeholder="hint" rows="2"></textarea>
+        </div>
+        <div class="form-group col-4 py-0">
+          <label for="penalty-input{{i+1}}" class="mb-0">Penalty</label>
+          <input id="penalty-input{{i+1}}" type="number" class="form-control" formControlName="penalty" placeholder="">
+        </div>
+      </div> -->
+
+      <div class="form-row" [hidden]="!more">
+        <div class="form-group col-6 py-0">
+          <label for="grader-input{{i+1}}" class="mb-0">Grader</label>
+          <div id="grader-input{{i+1}}" class="btn-group" btnRadioGroup formControlName="grader" (mouseleave)="matchtip=0">
+            <label class="btn btn-sm btn-outline-secondary" btnRadio="match" (mouseenter)="matchtip=1">Match</label>
+            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchany" (mouseenter)="matchtip=2">MatchAny</label>
+            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchall" (mouseenter)="matchtip=3">MatchAll</label>
+            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchalpha" (mouseenter)="matchtip=4">MatchAlpha</label>
+          </div>
+        </div>
+        <div class="form-group col-2 py-0">
+          <label for="weight-input{{i+1}}" class="mb-0">Weight</label>
+          <input id="weight-input{{i+1}}" type="number" class="form-control" formControlName="weight" placeholder="">
+        </div>
+        <div class="form-group col-4 py-0">
+          <label for="example-input{{i+1}}" class="mb-0">Example</label>
+          <input id="example-input{{i+1}}" class="form-control" formControlName="example" placeholder="example">
+        </div>
+        <div class="form-group col py-0" *ngIf="hoveritem===i">
+          <small *ngIf="matchtip===1">Match &mdash; match answer exactly</small>
+          <small *ngIf="matchtip===2">MatchAny &mdash; match one of the pipe-delimited answers</small>
+          <small *ngIf="matchtip===3">MatchAll &mdash; match all of the pipe-delimited answers, regardless of order</small>
+          <small *ngIf="matchtip===4">MatchAlpha &mdash; match answer exactly after stripping any symbols</small>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <button class="btn btn-sm btn-outline-secondary mt-2" (click)="addQuestion()">
+    <fa-icon [icon]="faPlus"></fa-icon>
+    <span>Add Question</span>
+  </button>
+  <hr/>
+</div>

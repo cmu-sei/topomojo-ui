@@ -1,0 +1,60 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div class="row align-items-center mb-2">
+
+  <div class="col-6">
+    <label class="label pop-info">{{template.name | lowercase}}</label>
+  </div>
+
+  <div class="col-1 btn-group btn-group-sm">
+    <button class="btn btn-outline-dark" [(ngModel)]="editing" btnCheckbox aria-label="toggle edit" tooltip="edit">
+      <fa-icon [icon]="faEdit"></fa-icon>
+    </button>
+  </div>
+
+  <div class="col-5">
+    <app-vm-controller #toolbar [template]="template"></app-vm-controller>
+  </div>
+
+</div>
+
+<div *ngIf="editing" class="row my-2">
+  <div class="col-12">
+    <div class="">
+
+      <alert type="warning" *ngIf="toolbar.vm.id">
+        Cannot edit while template is deployed.
+      </alert>
+
+      <div *ngIf="!toolbar.vm.id">
+
+        <app-template-editor-form [template]="template"></app-template-editor-form>
+
+        <div class="form-group bg-light" *ngIf="!!template.parentId">
+          <label for="unlink-input">Linked</label>
+          <div class="form-control auto-h">
+            <app-confirm-button btnClass="btn btn-info btn-sm" (confirm)="unlink()">
+              <fa-icon [icon]="faUnlink"></fa-icon>
+              <span>Unlink</span>
+            </app-confirm-button>
+          </div>
+          <small>
+            This vm is <em>linked</em> to a parent, so it cannot be changed.  If this vm requires changes,
+            <em>unlink</em> it.
+          </small>
+        </div>
+
+        <div class="text-center my-4">
+          <app-confirm-button btnClass="btn btn-sm btn-outline-danger" (confirm)="delete()">
+            <fa-icon [icon]="faTrash"></fa-icon>
+            <span>Delete Template</span>
+          </app-confirm-button>
+        </div>
+
+        <hr>
+
+      </div>
+    </div>
+  </div>
+</div>

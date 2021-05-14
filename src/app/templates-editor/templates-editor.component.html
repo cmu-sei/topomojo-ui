@@ -1,0 +1,26 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<alert type="warning" [dismissible]="true" dismissOnTimeout="10000">
+  Please delete template vm's when they are not in use.<br/>
+  <small>Any workspace vm left idle for a day may be deleted by the janitor.</small>
+</alert>
+
+<div *ngIf="workspace.gamespaceCount" class="text-center">
+  <p>
+    There are gamespaces running from this workspace. <br/>
+    Changes to machines cannot be saved in this situation. <br/>
+    <small>(Use the delete button with consideration.)</small>
+  </p>
+
+  <app-confirm-button btnClass="btn btn-warning" (confirm)="deleteGamespaces()">
+    <fa-icon [icon]="faTrash"></fa-icon>
+    <span>Delete {{workspace.gamespaceCount}} Gamespace{{(workspace.gamespaceCount || 1) > 1 ? 's' : ''}}</span>
+  </app-confirm-button>
+
+  <hr>
+</div>
+
+<app-template-editor *ngFor="let t of workspace.templates" [template]="t" (deleted)="remove($event)"></app-template-editor>
+
+<app-template-selector [workspaceId]="workspace.id" (added)="add($event)"></app-template-selector>

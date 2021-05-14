@@ -1,0 +1,87 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div *ngIf="vm$ | async; else refresh">
+
+  <div *ngIf="!!task">
+    <fa-icon [icon]="faCircleNotch" [spin]="true"></fa-icon>
+    {{task}}
+  </div>
+
+  <div *ngIf="!task && !confirming" class="btn-group btn-group-sm" role="group" aria-label="vm control buttons">
+
+    <button class="btn btn-outline-dark" (click)="do('refresh')"
+    aria-label="refresh" tooltip="refresh">
+      <fa-icon [icon]="faSyncAlt"></fa-icon>
+    </button>
+
+    <button class="btn btn-outline-dark" (click)="do('initialize')"
+    aria-label="initialize" tooltip="initialize"
+    *ngIf="vm.status === 'created'">
+      <fa-icon [icon]="faCog"></fa-icon>
+    </button>
+
+    <button class="btn btn-outline-dark" (click)="do('deploy')"
+    aria-label="deploy" tooltip="deploy"
+    *ngIf="vm.status === 'initialized'">
+      <fa-icon [icon]="faBolt"></fa-icon>
+    </button>
+
+    <ng-container *ngIf="!!vm.id">
+
+      <button class="btn btn-outline-dark" (click)="console()"
+      aria-label="console" tooltip="console">
+        <fa-icon [icon]="faTv"></fa-icon>
+      </button>
+
+      <button class="btn btn-outline-dark" (click)="do('start')"
+      aria-label="start" tooltip="start"
+      *ngIf="vm.id && vm.state !== 'running'">
+        <fa-icon [icon]="faPlay"></fa-icon>
+      </button>
+
+      <button class="btn btn-outline-dark" (click)="do('stop')"
+      aria-label="stop" tooltip="stop"
+      *ngIf="vm.id && vm.state === 'running'">
+        <fa-icon [icon]="faStop"></fa-icon>
+      </button>
+
+      <button class="btn btn-outline-dark" (click)="do('save')"
+      aria-label="save" tooltip="save"
+      *ngIf="!template.parentId">
+        <fa-icon [icon]="faSave"></fa-icon>
+      </button>
+
+      <button class="btn btn-outline-dark" (click)="do('revert')"
+      aria-label="revert" tooltip="revert">
+        <fa-icon [icon]="faStepBackward"></fa-icon>
+      </button>
+
+      <button class="btn btn-outline-dark" (click)="confirming=true"
+      aria-label="delete" tooltip="delete">
+        <fa-icon [icon]="faTrash"></fa-icon>
+      </button>
+
+    </ng-container>
+  </div>
+
+  <div *ngIf="confirming" class="btn-group" role="group" aria-label="confirm buttons">
+    <button class="btn btn-outline-dark" (click)="do('delete');confirming=false"
+    aria-label="confirm delete" tooltip="confirm delete">
+      <fa-icon [icon]="faTrash"></fa-icon>
+    </button>
+    <button class="btn btn-outline-dark" (click)="confirming=false"
+      aria-label="cancel delete" tooltip="cancel">
+        <fa-icon [icon]="faTimes"></fa-icon>
+      </button>
+  </div>
+
+  <app-error-div [errors]="errors" class="text-left"></app-error-div>
+</div>
+
+<ng-template #refresh>
+  <div>
+    <fa-icon [icon]="faCircleNotch" [spin]="true"></fa-icon>
+    <span class="ml-1">load</span>
+  </div>
+</ng-template>

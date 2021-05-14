@@ -1,0 +1,77 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<form *ngIf="form$ | async as f" [formGroup]="f">
+
+  <div formArrayName="transforms" class="form-group bg-light">
+    <label>Transforms</label>
+
+    <div>
+      <small>
+        Add randomization key/values. At deploy-time, the values will replace
+        the keys in template guest settings, challenge text, questions, and answers.
+        Enter the plain key here, but use a <i>double-pounder-key</i> anywhere it should be replaced, like this: <code>##key##</code>
+      </small>
+    </div>
+
+    <div *ngFor="let t of transforms.controls; let i = index" [formGroupName]=i class="mt-2">
+      <input class="form-control w100" formControlName="key" placeholder="key" aria-label="transform key">
+      <input class="form-control w100" formControlName="value" placeholder="value" aria-label="transform value">
+      <app-confirm-button btnClass="btn btn-sm btn-outline-dark" (confirm)="removeTransform(i)">
+        <fa-icon [icon]="faTrash"></fa-icon>
+        <span>Remove</span>
+      </app-confirm-button>
+    </div>
+
+    <button class="btn btn-sm btn-outline-secondary mt-2" (click)="addTransform()">
+      <fa-icon [icon]="faPlus"></fa-icon>
+      <span>Add Transform</span>
+    </button>
+  </div>
+
+  <div formArrayName="variants">
+
+    <div class="form-group bg-light">
+      <label>Variants</label>
+      <div>
+        <small>
+          At deploy-time, one challenge variant is selected randomly.
+          A variant is comprised of an iso-attachment instruction and one or more question sets.
+          Question sets are for progressive challenges in which a question set is only presented
+          if a prerequisite score was earned in the prior question set. (Progressive challenges
+          are not yet supported.)
+        </small>
+      </div>
+    </div>
+
+    <div *ngFor="let v of variants.controls; let i = index" [formGroupName]="i" class="form-group bg-light mt-2">
+      <div class="d-flex align-items-center">
+        <label class="label pop-info">Variant.{{i+1}}</label>
+        <div class="spacer"></div>
+        <button class="btn btn-sm btn-outline-dark mr-1" btnCheckbox [(ngModel)]="detail[i]" [ngModelOptions]="{standalone: true}">
+          <fa-icon [icon]="faMore"></fa-icon>
+          <span>Detail</span>
+        </button>
+        <button class="btn btn-sm btn-outline-dark mr-1" (click)="addVariant(v.value)">
+          <fa-icon [icon]="faCopy"></fa-icon>
+          <span>Clone</span>
+        </button>
+        <app-confirm-button btnClass="btn btn-sm btn-outline-dark" (confirm)="removeVariant(i)">
+          <fa-icon [icon]="faTrash"></fa-icon>
+          <span>Remove</span>
+        </app-confirm-button>
+      </div>
+
+      <app-variant-form [form]="$any(v)" [detail]="detail[i]"></app-variant-form>
+
+    </div>
+  </div>
+
+  <button class="btn btn-sm btn-outline-secondary mb-4" (click)="addVariant()">
+    <fa-icon [icon]="faPlus"></fa-icon>
+    <span>Add Variant</span>
+  </button>
+
+</form>
+
+<!-- <pre class="mt-4">{{form.value | json}}</pre> -->

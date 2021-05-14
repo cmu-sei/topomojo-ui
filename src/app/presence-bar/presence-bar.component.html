@@ -1,0 +1,20 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div *ngIf="state$ | async as state" class="text-right small">
+  <div *ngFor="let actor of state.actors"
+    class="d-inline ml-2 px-2"
+    [class.pop-success]="actor.online"
+    [class.pop-dark]="!actor.online">
+    <fa-icon [icon]="actor.typing ? faKeyboard : faUser"></fa-icon>
+    <span>{{actor.name || 'anonymous'}}</span>
+  </div>
+  <div *ngIf="!!state.joined" class="d-inline ml-2 text-secondary">
+    <fa-icon [icon]="faBolt"></fa-icon>
+    <span>connected</span>
+  </div>
+  <div *ngIf="!state.joined" class="d-inline ml-2 text-danger">
+    <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+    <span>disconnected</span>
+  </div>
+</div>

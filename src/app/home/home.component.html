@@ -1,0 +1,24 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div class="row">
+
+  <div class="jambotron text-center col-12">
+    <h1 class="display-1 text-primary">{{appname}}</h1>
+    <span class="lead">A simple virtual topology builder and player.</span>
+  </div>
+
+  <div *ngIf="!!user" class="reader my-4 text-center">
+    <h3>Getting Started</h3>
+    <p>
+      Browse your workspaces in the side bar, or create a new one.
+    </p>
+    <app-workspace-creator></app-workspace-creator><br/>
+  </div>
+
+  <div *ngIf="!user" class="row reader my-4">
+
+    <app-login class="col-12 mb-4"></app-login>
+
+  </div>
+</div>

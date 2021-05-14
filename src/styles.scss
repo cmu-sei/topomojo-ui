@@ -1,0 +1,120 @@
+/* You can add global styles to this file, and also import other style files */
+
+// @import "../node_modules/bootstrap/scss/bootstrap";
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+
+$theme-colors: (
+  "primary": #b00,
+  "secondary": #247,
+  "info": #067,
+  "success": #085,
+  "warning": #a60,
+  "danger": #fa8304,
+  "light": $gray-100,
+  "dark": $gray-800
+);
+
+@import "../node_modules/bootstrap/scss/root";
+@import "../node_modules/bootstrap/scss/reboot";
+@import "../node_modules/bootstrap/scss/type";
+@import "../node_modules/bootstrap/scss/images";
+@import "../node_modules/bootstrap/scss/code";
+@import "../node_modules/bootstrap/scss/grid";
+// @import "../node_modules/bootstrap/scss/tables";
+@import "../node_modules/bootstrap/scss/forms";
+@import "../node_modules/bootstrap/scss/buttons";
+@import "../node_modules/bootstrap/scss/transitions";
+// @import "../node_modules/bootstrap/scss/dropdown";
+@import "../node_modules/bootstrap/scss/button-group";
+@import "../node_modules/bootstrap/scss/input-group";
+// @import "../node_modules/bootstrap/scss/custom-forms";
+@import "../node_modules/bootstrap/scss/nav";
+@import "../node_modules/bootstrap/scss/navbar";
+@import "../node_modules/bootstrap/scss/card";
+// @import "../node_modules/bootstrap/scss/breadcrumb";
+// @import "../node_modules/bootstrap/scss/pagination";
+// @import "../node_modules/bootstrap/scss/badge";
+// @import "../node_modules/bootstrap/scss/jumbotron";
+@import "../node_modules/bootstrap/scss/alert";
+// @import "../node_modules/bootstrap/scss/progress";
+@import "../node_modules/bootstrap/scss/media";
+// @import "../node_modules/bootstrap/scss/list-group";
+@import "../node_modules/bootstrap/scss/close";
+// @import "../node_modules/bootstrap/scss/toasts";
+// @import "../node_modules/bootstrap/scss/modal";
+@import "../node_modules/bootstrap/scss/tooltip";
+// @import "../node_modules/bootstrap/scss/popover";
+// @import "../node_modules/bootstrap/scss/carousel";
+// @import "../node_modules/bootstrap/scss/spinners";
+@import "../node_modules/bootstrap/scss/utilities";
+@import "../node_modules/bootstrap/scss/print";
+
+@each $color, $value in $theme-colors {
+  .pop-#{$color} {
+    background-color: theme-color-level($color, -11);
+    border: $value solid 1px;
+    border-radius: .25rem;
+  }
+}
+
+.reader-slim {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.reader {
+  max-width: 800px;
+  margin: 0 auto;
+  // margin: auto;
+}
+.fs-15 {
+  font-size: 1.5em;
+}
+.fs-20 {
+  font-size: 2em;
+}
+.auto-h {
+  height: auto;
+}
+fa-icon + span {
+  margin-left: 4px;
+}
+h1,h2,h3,h4,h5 {
+  font-weight: 300;
+}
+.spacer {
+  flex: 1;
+}
+.img-fluid {
+  max-height: 600px;
+  max-width: 600px;
+}
+.label {
+  padding: .375rem .25rem !important;
+  min-width: 240px;
+  margin: 0;
+}
+.form-group {
+  padding: 1.5rem;
+  margin-bottom: .5rem;
+  border-radius: .25rem;
+}
+.form-group > .form-control {
+  font-size: .875rem!important;
+  padding: .25rem .5rem !important;
+}
+.form-group > label {
+  font-size: .875rem !important;
+}
+.untack > svg {
+  transform: rotate(45deg);
+}
+.jambotron {
+  margin: 6rem auto;
+}
+app-spinner svg {
+  rect,path {
+    fill: theme-color("primary");
+  }
+}

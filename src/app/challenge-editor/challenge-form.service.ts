@@ -1,0 +1,80 @@
+// Copyright 2021 Carnegie Mellon University.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
+
+import { Injectable } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Challenge, ChallengeSet, KeyValuePair, Question, QuestionSet } from '../api/gen/models';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ChallengeFormService {
+
+  constructor(
+    private fb: FormBuilder
+  ) { }
+
+  mapToForm(c?: Challenge): FormGroup {
+    if (!c) {
+      c = { variants: [{sets: [{questions: [{}]}]}]};
+    }
+    return this.fb.group({
+      // id: [ch.id, Validators.required],
+      text: [c?.text],
+      customizeScript: [c?.customizeScript],
+      gradeScript: [c?.gradeScript],
+      transforms: this.fb.array(
+        c?.transforms?.map(kv => this.mapTransform(kv)) || []
+      ),
+      variants: this.fb.array(
+        c?.variants?.map(v => this.mapVariant(v)) || []
+      ),
+    });
+  }
+
+  mapTransform(kv?: KeyValuePair): FormGroup {
+    return this.fb.group({
+      key: [kv?.key || '', Validators.required],
+      value: [kv?.value || '', Validators.required]
+    });
+  }
+
+  mapVariant(v?: ChallengeSet): FormGroup {
+    if (!v) {
+      v = {sets: [{questions: [{}]}]};
+    }
+    return this.fb.group({
+      iso: this.fb.group({
+        file: [v?.iso?.file],
+        targets: [v?.iso?.targets]
+      }),
+      sets: this.fb.array(
+        v?.sets?.map(s => this.mapQuestionSet(s)) || []
+      )
+    });
+  }
+
+  mapQuestionSet(s?: QuestionSet): FormGroup {
+    if (!s) {
+      s = {questions: [{}]};
+    }
+    return this.fb.group({
+      prerequisite: [s?.prerequisite],
+      questions: this.fb.array(
+        s?.questions?.map(q => this.mapQuestion(q)) || []
+      )
+    });
+  }
+
+  mapQuestion(q?: Question): FormGroup {
+    return this.fb.group({
+      text: [q?.text, Validators.required],
+      answer: [q?.answer, Validators.required],
+      example: [q?.example],
+      hint: [q?.hint],
+      penalty: [q?.penalty || 0, Validators.pattern(/\d*/)],
+      grader: [q?.grader || 'match'],
+      weight: [q?.weight || 0, Validators.pattern(/\d*/)]
+    });
+  }
+}

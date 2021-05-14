@@ -1,0 +1,35 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div class="dropzone" [class.dropzone-active]="dropzone">
+
+    <label for="fileSelector">
+      <input id="fileSelector" type="file" style="display:none;" multiple (change)="filesSelected($event)">
+      <span class="btn btn-sm btn-outline-secondary">Browse</span>
+    </label>
+
+    <small> or drag images here. 5MB limit. Markdown is inserted at cursor. (Or click image to insert markdown.)</small>
+
+  <div class="d-flex scroll-x">
+    <div class="img" *ngFor="let img of images$ | async" tabindex="0" (focus)="focus(img)" (mouseenter)="focus(img)" (mouseleave)="blur(img)">
+
+      <img class="m-2 rounded shadow-sm" [src]="img.url" [title]="img.filename" />
+
+      <div class="overlay d-flex justify-content-center align-items-center" *ngIf="activeImage===img">
+
+        <button class="btn btn-sm btn-secondary mx-2" (click)="emitMarkdown(img)">
+          <fa-icon [icon]="faArrowDown"></fa-icon>
+          <span>Insert</span>
+        </button>
+
+        <button class="btn btn-sm btn-secondary mx-2" (click)="delete(img)">
+          <fa-icon [icon]="faTrash"></fa-icon>
+          <span>Delete</span>
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
