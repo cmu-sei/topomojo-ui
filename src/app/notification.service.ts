@@ -180,6 +180,11 @@ export class NotificationService {
   private postState(): void {
     this.state$.next(this.hubState);
   }
+
+  cursorChanged(lines: any): void {
+    this.connection.invoke('CursorChanged', this.hubState.id, lines);
+  }
+
 }
 
 export interface HubState {
