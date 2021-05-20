@@ -185,6 +185,10 @@ export class NotificationService {
     this.connection.invoke('CursorChanged', this.hubState.id, lines);
   }
 
+  edited(changes: any): void {
+    this.connection.invoke('Edited', this.hubState.id, changes);
+  }
+
 }
 
 export interface HubState {
