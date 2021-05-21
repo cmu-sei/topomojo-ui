@@ -140,7 +140,6 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
                 (this.doctext.length != event.model.text.length || this.doctext != event.model.text))) {
               this.doctext = event.model.text; 
               this.editor?.setValue(this.doctext);
-              alert("reset");
             }
           }
         }
