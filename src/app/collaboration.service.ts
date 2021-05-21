@@ -92,6 +92,7 @@ export class CollaborationService {
     })
   }
 
+
 }
 
 // Monaco Type and Class Aliases 
@@ -150,4 +151,12 @@ export interface TimedChangeEvent {
   timestamp: number;
   userTimestamps: any;
   beginPositions: Array<Position>;
+}
+
+export interface ForwardChangeEvent {
+  changes: ChangeEvent;
+  timestamp: number;
+  userTimestamps: any;
+  beginPositions: Array<Position>;
+  beginTime: number;
 }
