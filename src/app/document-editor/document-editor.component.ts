@@ -3,14 +3,14 @@
 
 import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Workspace } from '../api/gen/models';
-import { BehaviorSubject, fromEvent, interval, Observable, of, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject, Subscription, timer } from 'rxjs';
 import { DocumentService } from '../api/document.service';
-import { auditTime, buffer, catchError, debounceTime, distinctUntilChanged, filter, map, mergeMap, reduce, switchMap, take, tap } from 'rxjs/operators';
+import { auditTime, buffer, catchError, debounceTime, distinctUntilChanged, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { NgxEditorModel } from 'ngx-monaco-editor';
 import { faCloudUploadAlt, faImages, faFileImage, faSpinner, faLock } from '@fortawesome/free-solid-svg-icons';
 import * as monaco from 'monaco-editor';
 import { NotificationService, HubEvent, Actor, HubState } from '../notification.service';
-import { AppliedEdit, ChangeEvent, CollaborationService, CursorChangeReason, CursorSelection, DocumentEdits, Editor, EditorViewState, ForwardChangeEvent, IRange, Position, TimedChangeEvent, UserTimeMap } from '../collaboration.service';
+import { ChangeEvent, CollaborationService, CursorChangeReason, CursorSelection, Editor, EditorOptions, EditorViewState, ForwardChangeEvent, Position, UserTimeMap } from '../collaboration.service';
 import { RemoteUserData, Range } from '../collaboration.service';
 
 @Component({
@@ -34,40 +34,10 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
   faSpinner = faSpinner;
   faLock = faLock;
 
-  private editorEol: string = '\n';
-
-  private editorViewState?: EditorViewState;
-  private editorFocused: boolean = true;
-
-  private decorations: string[] = [];
-  
-  private selections$ = new BehaviorSubject<CursorSelection[]>([]);
-  private colors = ['green', 'purple ', 'pride-yellow', 'magenta', 'sienna', 'darkolive',  'cyan', 'red', 'brown', 'seagreen ', 'pink', 'pride-red', 'pride-orange', 'teal'];
-  private newColorIndex = 0;
-  private remoteUsers = new Map<string, RemoteUserData>();
-
-  private selectionSub: Subscription;
-  private documentSub: Subscription;
-  private presenceSub: Subscription;
-  private editsSub: Subscription;
-  private stateSub: Subscription;
-
-  private edits$ = new Subject<ForwardChangeEvent>();
-
-  private applyingRemoteEdits: boolean = false;
-
   readOnly: boolean = true; // Initially locked until loaded
-  lockMonitor: any;
 
-  private tooltipMessage?: any;
-
-  lastServerVersion: number = 0;
-
-  uid = null;
-
-  appliedEditsLog: any[] = [];
-
-  editorOptions: monaco.editor.IEditorOptions = {
+  private editor!: Editor;
+  editorOptions: EditorOptions = {
     // theme: 'vs-dark',
     minimap: { enabled: false },
     lineNumbers: 'off',
@@ -78,34 +48,46 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     linkedEditing: true,
     fixedOverflowWidgets: true
   };
-
-  private editor!: monaco.editor.ICodeEditor;
-
-  // from old
-  private userTimestamps: UserTimeMap = {};
+  private editorViewState?: EditorViewState;
+  private editorFocused: boolean = true;
+  private decorations: string[] = [];
+  private tooltipMessage?: any;
+  private colors = ['green', 'purple ', 'pride-yellow', 'magenta', 'sienna', 'darkolive',  'cyan', 'red', 'brown', 'seagreen ', 'pink', 'pride-red', 'pride-orange', 'teal'];
+  private newColorIndex = 0;
+  private remoteUsers = new Map<string, RemoteUserData>();
+  // Collaboration information
   private beginTypingPositions: Array<Position> = [];
   private beginTypingTime?: number;
+  private userTimestamps: UserTimeMap = {};
+  private timeLastSaved: number = 0;
+  private selections$ = new BehaviorSubject<CursorSelection[]>([]);
+  private edits$ = new Subject<ForwardChangeEvent>();
+  private contentChanging = false;
+  private contentMonitor: any;
+  private currentlyEditing = false;
   private editingMonitor: any;
-  private currentlyEditing: boolean = false;
   private cursorMonitor: any;
-
+  private lockMonitor: any;
+  private applyingRemoteEdits: boolean = false;
+  private selectionSub: Subscription;
+  private documentSub: Subscription;
+  private presenceSub: Subscription;
+  private editsSub: Subscription;
+  private stateSub: Subscription;
+  
   constructor(
     private api: DocumentService,
     private hub: NotificationService,
     private collab: CollaborationService
   ) {
-    console.log({t:"constructor", r: this.readOnly});
     this.editorModel$ = this.docid$.pipe(
-      tap(() => console.log({t:"top docid pipe"})),
       tap(() => this.resetEditorInfo()),
-      tap(() => this.readOnly = true),
       debounceTime(500),
       filter(id => !!id),
       switchMap(id => this.api.getDocument(id).pipe(
         catchError(err => of(''))
       )),
       tap(text => this.doctext = text),
-      tap(() => console.log({t:"near end docid pipe"})),
       map(text => ({
         value: text,
         language: 'markdown'
@@ -113,9 +95,10 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     );
 
     this.saved$ = this.dirty$.pipe(
-      debounceTime(3000),
+      debounceTime(4000),
+      filter(() => !this.readOnly),
       switchMap(() => api.updateDocument(this.summary.globalId, this.doctext)),
-      mergeMap(() => interval(4000).pipe(
+      mergeMap(() => timer(0, 6000).pipe(
         map(i => !(i % 2)),
         take(2)
       ))
@@ -124,14 +107,13 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     this.stateSub = this.hub.state$.pipe(
       tap((state: HubState) => {
         state.actors.forEach((actor: Actor) => {
-          if (!actor.online) 
+          if (!actor.online) // remove cursors for offline user
             this.updateRemotePositions(actor, []);
         }); 
       }),
       map((state) => state.id),
-      distinctUntilChanged() // lock document when id changes
-    )
-    .subscribe(() => {
+      distinctUntilChanged() 
+    ).subscribe(() => { // lock editor when doc ID changes
       this.readOnly = true;
       this.editor?.updateOptions({ readOnly: true });
     });
@@ -142,18 +124,30 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
         if (event.action === 'DOCUMENT.CURSOR') { 
           this.updateRemotePositions(event.actor, event.model);
         } else if (event.action === 'DOCUMENT.UPDATED') {
-          // const model: DocumentEdits = this.collab.mapFromDocumentEditsDTO(event.model);
-          const model: ForwardChangeEvent[] = event.model;
-          const shortActorId = this.shortenId(event.actor.id);
+          const model: ForwardChangeEvent[] = this.collab.mapFromForwardChangesDTO(event.model);
+          const shortActorId = this.collab.shortenId(event.actor.id);
           this.applyRemoteEdits(model, shortActorId);
           if (this.readOnly)
             this.startLockMonitor();
+          this.contentChanged();
+        } else if (event.action === 'DOCUMENT.SAVED') { 
+          var timestamp = +event.model.timestamp;
+          // If incoming saved copy is newest version so far
+          if (this.timeLastSaved < timestamp) {
+            this.timeLastSaved = timestamp;
+            // Syncrhonize entire document from server copy when needed & not being edited
+            if (this.readOnly || (!this.contentChanging && 
+                (this.doctext.length != event.model.text.length || this.doctext != event.model.text))) {
+              this.doctext = event.model.text; 
+              this.editor?.setValue(this.doctext);
+              alert("reset");
+            }
+          }
         }
       }
     );
 
     this.selectionSub = this.selections$.pipe(
-      filter(() => true),
       auditTime(1000), // Not that important, don't send updates as frequently
       map((selections) => this.collab.mapToSelectionsDTO(selections))
     ).subscribe(
@@ -164,9 +158,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
 
     this.presenceSub = this.hub.presenceEvents.subscribe(
       (event: HubEvent) => {
-        // console.log(event);
         if (event.action === 'PRESENCE.ARRIVED' || event.action === 'PRESENCE.GREETED') {
-          // console.log("GREETED OR ARRIVED");
           this.forwardCursorSelections(this.selections$.value);
         }
       }
@@ -174,32 +166,29 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
 
     this.editsSub = this.edits$.pipe(
       filter(() => !this.readOnly),
-      buffer(this.edits$.pipe(auditTime(600)))
+      buffer(this.edits$.pipe(auditTime(600))),
+      map((edits: ForwardChangeEvent[]) => this.collab.mapToForwardChangesDTO(edits)),
+      filter(() => !this.readOnly),
     ).subscribe(
-      (edits: ForwardChangeEvent[]) => {
+      (edits: any[]) => {
         console.log(edits);
         this.hub.edited(edits);
       }
     );
 
     this.forwardCursorSelections();
-
   }
 
   ngOnInit(): void {
-    // alert("init");
-    console.log({t:"ngOnInit"});
   }
   
   ngOnDestroy(): void {
-    // this.hub.cursorChanged([]);
-
+    this.hub.cursorChanged([]);
     this.documentSub.unsubscribe();
     this.presenceSub.unsubscribe();
     this.selectionSub.unsubscribe();
-    // this.editsSub.unsubscribe();
+    this.editsSub.unsubscribe();
     this.stateSub.unsubscribe();
-    // alert("destroy");
   }
 
   ngAfterViewInit(): void {
@@ -212,11 +201,12 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   resetEditorInfo() {
+    this.readOnly = true
     this.editorViewState = undefined;
     this.forwardCursorSelections();
     this.remoteUsers.clear();
     this.newColorIndex = 0;
-    this.appliedEditsLog = [];
+    this.collab.appliedEditsLog = [];
   }
 
   insertImage(text: string): void {
@@ -230,25 +220,15 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     const t = Date.now() - ts;
     return t < 2000;
   }
-
-  startLockMonitor() {
-    clearTimeout(this.lockMonitor);
-    this.lockMonitor = setTimeout(() => {
-      this.readOnly = false;
-      this.editor.updateOptions({ readOnly: false });
-    }, 4000);
-  }
   
-
   editorInit(editor: Editor): void {
-    // console.log({t:"editorInit"});
     this.editor = editor;
     if (this.editorViewState)
       this.restoreEditorViewState();
     else
       this.saveEditorViewState();
     editor.getModel()?.setEOL(monaco.editor.EndOfLineSequence.LF); // must be consistent across browsers
-    this.editorEol = this.editor?.getModel()?.getEOL()!;
+    this.collab.editorEol = this.editor?.getModel()?.getEOL()!;
     this.tooltipMessage = this.editor?.getContribution('editor.contrib.messageController');
     this.decorations = [];
     this.applyDecorations();
@@ -265,8 +245,6 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
       if (event.isFlush || this.applyingRemoteEdits) // Only respond to local user changes
         return;
       this.dirty$.next(true);
-      // var newEdit: Edit = {change: event.changes, version:this.lastServerVersion};
-      // this.edits$.next(newEdit);
       this.forwardContentChange(event);
     });
     if (this.readOnly) 
@@ -285,15 +263,13 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
   }
   
   private editorViewChanged(reason?: CursorChangeReason) {
-    console.log("editor view ", reason);
     if (reason && reason == CursorChangeReason.ContentFlush)
       this.restoreEditorViewState();
     else
       this.saveEditorViewState();
   }
 
-  changedCursorSelections(event: monaco.editor.ICursorSelectionChangedEvent) {
-    console.log("cursor ", event.reason);
+  private changedCursorSelections(event: monaco.editor.ICursorSelectionChangedEvent) {
     this.editorViewChanged(event.reason);
     if (event.reason == CursorChangeReason.ContentFlush)
       return;
@@ -305,7 +281,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
       this.storeBeginPositions(selections);
   }
 
-  forwardCursorSelections(selections?: Array<CursorSelection>) {
+  private forwardCursorSelections(selections?: Array<CursorSelection>) {
     if (selections == null || selections.length == 0) {
       this.selections$.next([new CursorSelection(1, 1, 1, 1)]);
       return;
@@ -313,7 +289,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     this.selections$.next(selections);
   }
 
-  updateRemotePositions(actor: Actor, selections: any[]) {
+  private updateRemotePositions(actor: Actor, selections: any[]) {
     if (this.remoteUsers.has(actor.id)) {
       var user = this.remoteUsers.get(actor.id)!;
     } else {
@@ -328,7 +304,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     this.applyDecorations();
   }
 
-  applyDecorations() {
+  private applyDecorations() {
     if (!this.editor)
       return;
     var newDecorations: any[] = [];
@@ -363,7 +339,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     this.decorations = this.editor.deltaDecorations(this.decorations, newDecorations);
   }
 
-  newUserData(name: string): RemoteUserData {
+  private newUserData(name: string): RemoteUserData {
     var user: RemoteUserData = {
       positions: [],
       color: this.colors[(this.newColorIndex++) % this.colors.length],
@@ -378,10 +354,11 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     var sortedPositions = selections.map(s => s.getStartPosition()).sort((a,b) =>  -Position.compare(a, b) );
     this.beginTypingPositions = sortedPositions;
     if (this.currentlyEditing)
-      this.beginTypingTime = this.generateTimestamp();
+      this.beginTypingTime = this.collab.generateTimestamp();
   }
 
-  editing(timestamp: number) {
+  private editing(timestamp: number) {
+    this.contentChanged();
     if (!this.beginTypingTime)
       this.beginTypingTime = timestamp;
     this.currentlyEditing = true;
@@ -394,7 +371,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   private forwardContentChange(event: monaco.editor.IModelContentChangedEvent) {
-    const timestamp = this.generateTimestamp();
+    const timestamp = this.collab.generateTimestamp();
     this.editing(timestamp);
     const changeEvent: ForwardChangeEvent = {
       changes: event.changes,
@@ -403,7 +380,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
       beginPositions: this.beginTypingPositions.length == event.changes.length ? [...this.beginTypingPositions] : [],
       beginTime: this.beginTypingTime!
     };
-    this.storeTransformationLog([changeEvent], this.shortenId(this.hub.me));
+    this.collab.storeTransformationLog([changeEvent], this.collab.shortenId(this.hub.me));
     this.edits$.next(changeEvent);
     // Send final cursor state after all editing is done for accurate position
     clearTimeout(this.cursorMonitor);
@@ -418,11 +395,11 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     var tracker = {start: 0, set: false};
     var latestTimestamp = 0;
     changeModel.forEach(changeEvent => {
-      var transformedChanges = this.applyTransformations(changeEvent, uid, tracker);
-      var position = this.editor.getPosition()!;
+      var transformedChanges = this.collab.applyTransformations(changeEvent, uid, tracker);
+      var position = this.editor?.getPosition() || undefined;
       var shouldPreserveCursor = this.shouldPreserveCursor(transformedChanges, position);
       // TODO: can use returned undo operations to store/modify so undo stack works with remote editors
-      this.editor.getModel()?.applyEdits(transformedChanges); 
+      this.editor?.getModel()?.applyEdits(transformedChanges); 
       allTransformedChanges.push({
         changes: transformedChanges,
         timestamp: changeEvent.timestamp,
@@ -431,155 +408,37 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
         beginTime: changeEvent.beginTime
       });
       latestTimestamp = changeEvent.timestamp;
-      if (shouldPreserveCursor)
-        this.editor.setPosition(position);
+      if (position && shouldPreserveCursor)
+        this.editor?.setPosition(position);
     });
     this.applyingRemoteEdits = false;
-    this.storeTransformationLog(allTransformedChanges, uid);
+    this.collab.storeTransformationLog(allTransformedChanges, uid);
     this.userTimestamps[uid] = latestTimestamp;
   }
 
   /* For simple edits and selections, don't let remote users move cursor when at same position */
-  private shouldPreserveCursor(changes: ChangeEvent, position: Position) {
-    var selections = this.editor.getSelections() ?? [];
-    return (changes.length == 1 && selections.length == 1 &&
+  private shouldPreserveCursor(changes: ChangeEvent, position?: Position) {
+    var selections = this.editor?.getSelections() ?? [];
+    return (changes.length == 1 && selections.length == 1 && position &&
         selections[0].startLineNumber == selections[0].endLineNumber &&
         selections[0].startColumn == selections[0].endColumn &&
         changes[0].range.startLineNumber == position.lineNumber &&
         changes[0].range.startColumn == position.column);
   }
-  
-  /* Store any applied edits as a log to apply transformations on future incoming operations */
-  private storeTransformationLog(edits: Array<ForwardChangeEvent>, uid: string) {
-    var newLog = this.pruneTransformations();
-    edits.forEach(changeEvent => {
-      var newEdits: AppliedEdit[] = [];
-      changeEvent.changes.forEach((change, index) => {
-        var selectionHeight = change.range.endLineNumber - change.range.startLineNumber;
-        var lines = change.text?.split(this.editorEol) ?? [""];
-        var newLinesAdded = lines.length - 1;
-        var newColsAdded = lines[lines.length - 1].length;
-        var lineDelta = newLinesAdded - selectionHeight;
-        var appliedEdit = {
-          uid: uid,
-          timestamp: changeEvent.timestamp,
-          lineDelta: lineDelta,
-          beginPosition: changeEvent.beginPositions[index] ?? null,
-          range: this.createRange(change.range),
-          newLines: newLinesAdded,
-          bottomLineLength: newColsAdded,
-          beginTime: changeEvent.beginTime
-        };
-        newEdits.push(appliedEdit);
-      });
-      newLog = this.insertIntoSorted(newLog, newEdits);
-    });
-    this.appliedEditsLog = newLog;
+
+  private startLockMonitor() {
+    clearTimeout(this.lockMonitor);
+    this.lockMonitor = setTimeout(() => {
+      this.readOnly = false;
+      this.editor.updateOptions({ readOnly: false });
+    }, 6000);
   }
 
-  /* Go through all applied edits, filtering by user and timestamp, and transform 
-    the range/position of incoming changes with calculated offsets */
-  private applyTransformations(incomingChangeEvent: ForwardChangeEvent, uid: string, tracker: any) {
-    var result: ChangeEvent = [];
-    var incomingBeginTime =  incomingChangeEvent.beginTime;
-    incomingChangeEvent.changes.forEach((incomingChange, index) => {
-      var incomingRange = this.createRange(incomingChange.range);
-      tracker.set = false;
-      var incomingBeginPosition = incomingChangeEvent.beginPositions[index] ?? incomingRange.getStartPosition();
-      for (var i = tracker.start; i < this.appliedEditsLog.length; i++) {
-        var appliedEdit = this.appliedEditsLog[i];
-        var appliedBeginPosition = appliedEdit.beginPosition ?? appliedEdit.range.getStartPosition();
-        var lastHeardFromUser = incomingChangeEvent.userTimestamps[appliedEdit.uid] ?? 0;
-        // Transform if previous edit not from same user & happened after last received update from that user 
-        if (appliedEdit.uid != uid && appliedEdit.timestamp > lastHeardFromUser) { 
-          if (!tracker.set) {
-            tracker.set = true;
-            tracker.start = i; // optimization to avoid repeatedly looping through same old/irrelevant logged edits
-          }
-          if (appliedEdit.lineDelta != 0 || Range.spansMultipleLines(appliedEdit.range)) { // Line number change/modified multiple lines
-            // Case 1: added content with newline on the same line before incoming change
-            if (appliedEdit.range.startLineNumber == incomingRange.startLineNumber
-                && appliedEdit.range.getEndPosition().isBeforeOrEqual(incomingRange.getStartPosition())) {
-              incomingRange = this.shiftRange(incomingRange, appliedEdit.lineDelta, appliedEdit.bottomLineLength - (appliedEdit.range.startColumn - 1));
-            // Case 2: selection replaced all text before incoming on current line and modified lines before
-            } else if (appliedEdit.range.endLineNumber == incomingRange.startLineNumber) {
-              var colsReplaced = (appliedEdit.newLines > 0) ? appliedEdit.range.endColumn - 1 : appliedEdit.range.endColumn - appliedEdit.range.startColumn;
-              var colDelta = appliedEdit.bottomLineLength - colsReplaced;
-              incomingRange = this.shiftRange(incomingRange, appliedEdit.lineDelta, colDelta);
-            // Case 3: normal line add/remove *not* affecting same line as incoming change
-            } else if (appliedEdit.range.getStartPosition().isBeforeOrEqual(incomingRange.getStartPosition())) { 
-              incomingRange = this.shiftRange(incomingRange, appliedEdit.lineDelta, 0);
-            }
-          } else if (appliedEdit.range.startLineNumber == incomingRange.startLineNumber) { // Same line, but not multi-line
-            // Case 4: column where began typing is before incoming or equal but timestamp before
-            if (appliedBeginPosition.isBefore(incomingBeginPosition)
-                || (appliedBeginPosition.equals(incomingBeginPosition) && appliedEdit.beginTime < incomingBeginTime)) {
-              var colDelta = (appliedEdit.bottomLineLength - (appliedEdit.range.endColumn - appliedEdit.range.startColumn));
-              incomingRange = this.shiftRange(incomingRange, 0, colDelta);
-            }
-          }
-          // TODO: When ranges intersecting: unpredictable, more complicated conflicts need resolving 
-          // if (Range.areIntersecting(appliedEdit.range, incomingRange)) { }
-          // if (Range.strictContainsRange(appliedEdit.range, incomingRange)) { }
-        }
-      }
-      result.push({
-        range: {...incomingRange},
-        text: incomingChange.text
-      });
-    });
-    return result;
+  private contentChanged() {
+    this.contentChanging = true;
+    clearTimeout(this.contentMonitor);
+    this.contentMonitor = setTimeout(() => {
+      this.contentChanging = false;
+    }, 3000);
   }
-
-  private shiftRange(range: Range, lineDelta: number, colDelta: number) {
-    return new Range(range.startLineNumber + lineDelta, range.startColumn + colDelta,
-                    range.endLineNumber + lineDelta,  range.endColumn + colDelta);
-  }
-
-  private createRange(range: IRange): Range {
-    return new Range(range.startLineNumber, range.startColumn, range.endLineNumber, range.endColumn);
-  }
-
-  /* Remove all logged transformations older than 10 seconds */
-  private pruneTransformations() {
-    var recentTransformations: Array<AppliedEdit> = [];
-    var currentTime = this.generateTimestamp();
-    this.appliedEditsLog.forEach(edit => {
-      if (currentTime - edit.timestamp < 10_000) {
-        recentTransformations.push(edit);
-      }
-    });
-    return recentTransformations;
-  }
-
-  /* Takes edits from a change event and inserts in the sorted log based on timestamp */
-  private insertIntoSorted(editsLog: Array<AppliedEdit>, newEdits: Array<AppliedEdit>) {
-    if (newEdits == null || newEdits.length == 0)
-      return editsLog;
-    var index = editsLog.length - 1;
-    var time = newEdits[0].timestamp;
-    // In most cases, will only need to append to the end to still be sorted
-    while (index >= 0) {
-      if (editsLog[index].timestamp < time)
-        break;
-      index--;
-    }
-    if (index == editsLog.length - 1)
-      editsLog.push(...newEdits); 
-    else if (index == -1)
-      editsLog.unshift(...newEdits);
-    else
-      editsLog = [...editsLog.slice(0, index + 1), ...newEdits, ...editsLog.slice(index + 1)]
-    return editsLog;
-  }
-
-  private shortenId(id: string) {
-    return id.substr(0, 8);
-  }
-
-  private generateTimestamp() {
-    const date = new Date();
-    return date.getTime(); // TODO: shorten for transfer
-  }
-
 }
