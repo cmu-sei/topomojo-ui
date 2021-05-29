@@ -24,6 +24,7 @@ export class NotificationService {
   vmEvents = new Subject<HubEvent>();
   templateEvents = new Subject<HubEvent>();
   documentEvents = new Subject<HubEvent>();
+  me = '';
 
   constructor(
     config: ConfigService,
@@ -39,6 +40,7 @@ export class NotificationService {
       distinctUntilChanged(),
     ).subscribe(token => {
       if (token === AuthTokenState.valid) {
+        this.me = auth.oidcUser?.profile.sub || '';
         this.disconnect().then(
           () => this.connect()
         );
@@ -181,6 +183,15 @@ export class NotificationService {
   private postState(): void {
     this.state$.next(this.hubState);
   }
+
+  cursorChanged(lines: any): void {
+    this.connection.invoke('CursorChanged', this.hubState.id, lines);
+  }
+
+  edited(changes: any): void {
+    this.connection.invoke('Edited', this.hubState.id, changes);
+  }
+
 }
 
 export interface HubState {
