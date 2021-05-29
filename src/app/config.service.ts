@@ -15,10 +15,35 @@ import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 export class ConfigService {
 
   private url = 'assets/settings.json';
+  private restorationComplete = false;
+  storageKey = 'topomojo';
   basehref = '';
   settings: Settings = environment.settings;
+  local: LocalAppSettings = {};
   absoluteUrl = '';
   tabs: TabRef[] = [];
+
+  get lastUrl(): string {
+    const url = !this.restorationComplete
+      ? this.local.last || ''
+      : '';
+    this.restorationComplete = true;
+    return url;
+  }
+
+  embeddedMonacoOptions = {
+    // theme: this.codeTheme,
+    language: 'markdown',
+    lineNumbers: 'off',
+    minimap: { enabled: false },
+    // scrollbar: { vertical: 'visible' },
+    quickSuggestions: false,
+    wordWrap: 'on',
+    scrollBeyondLastLine: false,
+    automaticLayout: true,
+    linkedEditing: true,
+    fixedOverflowWidgets: true
+  };
 
   constructor(
     private http: HttpClient,
@@ -26,6 +51,7 @@ export class ConfigService {
   ) {
     this.basehref = platform.getBaseHrefFromDOM();
     this.absoluteUrl = `${window.location.protocol}//${window.location.host}${this.basehref}`;
+    this.local = this.getLocal();
   }
 
   get apihost(): string {
@@ -64,6 +90,35 @@ export class ConfigService {
     }
   }
 
+  updateLocal(model: LocalAppSettings): void {
+    this.local = {...this.local, ...model};
+    this.storeLocal(this.local);
+    this.restorationComplete = true;
+  }
+
+  storeLocal(model: LocalAppSettings): void {
+    try {
+      window.localStorage[this.storageKey] = JSON.stringify(model);
+    } catch (e) {
+    }
+  }
+  getLocal(): LocalAppSettings {
+    try {
+        return JSON.parse(window.localStorage[this.storageKey] || {});
+    } catch (e) {
+        return {};
+    }
+  }
+  clearStorage(): void {
+    try {
+        window.localStorage.removeItem(this.storageKey);
+    } catch (e) { }
+  }
+}
+
+export interface LocalAppSettings {
+  theme?: string;
+  last?: string;
 }
 
 export interface Settings {

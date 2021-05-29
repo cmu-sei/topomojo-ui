@@ -1,0 +1,13 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div class="dropzone" [class.dropzone-active]="dropzone">
+
+  <label for="fileSelector">
+    <input id="fileSelector" type="file" style="display:none;" multiple (change)="filesSelected($event)">
+    <span class="btn btn-sm btn-outline-secondary">Browse</span>
+  </label>
+
+  <ng-content></ng-content>
+
+</div>

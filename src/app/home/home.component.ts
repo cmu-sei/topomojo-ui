@@ -7,6 +7,7 @@ import { UserProfile } from '../api/gen/models';
 import { ConfigService } from '../config.service';
 import { UserService } from '../user.service';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -22,8 +23,9 @@ export class HomeComponent implements OnInit {
   faPlus = faPlus;
 
   constructor(
-    config: ConfigService,
-    private userSvc: UserService
+    private config: ConfigService,
+    private userSvc: UserService,
+    private router: Router
   ) {
     this.appname = config.settings.appname;
 
@@ -33,7 +35,10 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    const url = this.config.lastUrl;
+    if (!!url) {
+      this.router.navigateByUrl(url);
+    }
   }
 
   add(): void {

@@ -21,7 +21,7 @@ export class FileService extends GeneratedFileService {
         payload.append('meta', `size=${file.size}&group-key=${id}`);
         payload.append('file', file, file.name);
         return this.http.request<boolean>(
-            new HttpRequest('POST', this.conf.api + '/file/upload', payload, { reportProgress: true })
+            new HttpRequest('POST', `${this.conf.api}/file/upload`, payload, { reportProgress: true })
         );
     }
 }

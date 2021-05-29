@@ -57,20 +57,22 @@ export interface Player {
 export interface GameState {
     id?: number;
     name?: string;
-    globalId?: string;
+    globalId: string;
     audience?: string;
     whenCreated?: string;
     workspaceDocument?: string;
+    markdown?: string;
     shareCode?: string;
     players?: Array<Player>;
     vms?: Array<VmState>;
+    challenge?: ChallengeView;
 }
 
 export interface VmState {
-    id?: string;
-    templateId?: number;
-    name?: string;
-    isRunning?: boolean;
+    id: string;
+    templateId: number;
+    name: string;
+    isRunning: boolean;
 }
 
 export interface Search {
@@ -120,9 +122,10 @@ export interface Template {
     networks?: string;
     iso?: string;
     guestinfo?: string;
+    replicas?: number;
     isHidden?: boolean;
     workspaceId?: number;
-    workspaceGlobalId?: string;
+    workspaceGlobalId: string;
 }
 
 export interface ChangedTemplate {
@@ -132,6 +135,7 @@ export interface ChangedTemplate {
     networks?: string;
     iso?: string;
     guestinfo?: string;
+    replicas?: number;
     isHidden?: boolean;
     workspaceId?: number;
 }
@@ -299,31 +303,38 @@ export interface JanitorReport {
   age?: string;
 }
 
-export interface Challenge {
+export interface ChallengeSpec {
   text?: string;
   transforms?: KeyValuePair[];
-  customizeScript?: string;
-  gradeScript?: string;
-  variants?: ChallengeSet[];
+  customizeScript?: CustomSpec;
+  gradeScript?: CustomSpec;
+  variants?: VariantSpec[];
 }
 
-export interface ChallengeSet {
-  iso?: IsoSet;
-  sets?: QuestionSet[];
+export interface CustomSpec {
+  image?: string;
+  script?: string;
 }
 
-export interface IsoSet {
+export interface VariantSpec {
+  text?: string;
+  iso?: IsoSpec;
+  sections?: SectionSpec[];
+}
+
+export interface IsoSpec {
   file?: string;
   manifest?: string[];
   targets?: string;
 }
 
-export interface QuestionSet {
+export interface SectionSpec {
+  text?: string;
   prerequisite?: number;
-  questions?: Question[];
+  questions?: QuestionSpec[];
 }
 
-export interface Question {
+export interface QuestionSpec {
   text?: string;
   hint?: string;
   answer?: string;
@@ -331,4 +342,56 @@ export interface Question {
   grader?: string;
   weight?: number;
   penalty?: number;
+}
+
+export interface ChallengeView {
+  text?: string;
+  maxPoints: number;
+  score?: number;
+  sectionText?: string;
+  sectionCount?: number;
+  sectionIndex?: number;
+  sectionScore?: number;
+  questions?: QuestionView[];
+}
+
+export interface QuestionView {
+  text?: string;
+  hint?: string;
+  answer?: string;
+  example?: string;
+  weight: number;
+  penalty?: number;
+  isCorrect?: boolean;
+  isGraded?: boolean;
+}
+
+export interface SectionSubmission {
+  sectionIndex?: number;
+  questions?: AnswerSubmission[];
+}
+
+export interface AnswerSubmission {
+  answer?: string;
+}
+
+export interface NewGamespace {
+  resourceId?: string;
+  variant?: number;
+  maxAttempts?: number;
+  maxMinutes?: number;
+  points?: number;
+  allowReset?: boolean;
+  allowPreview?: boolean;
+  startGamespace?: boolean;
+}
+
+export interface IsoFile {
+  path: string;
+  display: string;
+}
+export interface IsoDataFilter {
+  term?: string;
+  refresh?: boolean;
+  local?: boolean;
 }

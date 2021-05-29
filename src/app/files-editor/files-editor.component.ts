@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, Input, OnInit } from '@angular/core';
-import { Workspace, WorkspaceSummary } from '../api/gen/models';
+import { Workspace } from '../api/gen/models';
 
 @Component({
   selector: 'app-files-editor',

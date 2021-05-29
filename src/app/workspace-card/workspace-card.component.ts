@@ -1,8 +1,8 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Router, RouterLinkActive } from '@angular/router';
 import { WorkspaceSummary } from '../api/gen/models';
 
 @Component({
@@ -12,14 +12,31 @@ import { WorkspaceSummary } from '../api/gen/models';
 })
 export class WorkspaceCardComponent implements OnInit {
   @Input() workspace!: WorkspaceSummary;
+  @ViewChild('rla') rla!: RouterLinkActive;
   hovering = false;
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
   }
 
+  go(): void {
+    if (this.rla.isActive) { return; }
+    this.router.navigate(['topo', this.workspace.globalId, 'settings']);
+  }
+
+  keydown(ev: KeyboardEvent): boolean {
+
+    if (this.rla.isActive) { return true; }
+
+    if (ev.code === 'Enter') {
+      this.go();
+      return false;
+    }
+
+    return true;
+  }
 }

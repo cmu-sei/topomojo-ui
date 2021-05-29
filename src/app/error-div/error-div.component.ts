@@ -9,7 +9,7 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./error-div.component.scss']
 })
 export class ErrorDivComponent implements OnInit {
-  @Input() errors!: Error[];
+  @Input() errors!: any[];
 
   constructor() { }
 

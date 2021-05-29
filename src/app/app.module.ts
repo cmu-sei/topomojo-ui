@@ -13,7 +13,7 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
-
+import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { ApiModule } from './api/gen/api.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -49,6 +49,14 @@ import { WorkspaceBrowserComponent } from './workspace-browser/workspace-browser
 import { SpinnerComponent } from './spinner/spinner.component';
 import { WorkspaceCreatorComponent } from './workspace-creator/workspace-creator.component';
 import { PresenceBarComponent } from './presence-bar/presence-bar.component';
+import { GamespaceComponent } from './gamespace/gamespace.component';
+import { GamespacePreviewComponent } from './gamespace-preview/gamespace-preview.component';
+import { WorkspacePlayerComponent } from './workspace-player/workspace-player.component';
+import { GamespaceQuizComponent } from './gamespace-quiz/gamespace-quiz.component';
+import { IsoManagerComponent } from './iso-manager/iso-manager.component';
+import { DropzoneComponent } from './dropzone/dropzone.component';
+import { IsoSelectorComponent } from './iso-selector/iso-selector.component';
+import { SpacesPipe } from './spaces.pipe';
 
 @NgModule({
   declarations: [
@@ -79,7 +87,15 @@ import { PresenceBarComponent } from './presence-bar/presence-bar.component';
     WorkspaceBrowserComponent,
     SpinnerComponent,
     WorkspaceCreatorComponent,
-    PresenceBarComponent
+    PresenceBarComponent,
+    GamespaceComponent,
+    GamespacePreviewComponent,
+    WorkspacePlayerComponent,
+    GamespaceQuizComponent,
+    IsoManagerComponent,
+    DropzoneComponent,
+    IsoSelectorComponent,
+    SpacesPipe
   ],
   imports: [
     BrowserModule,
@@ -101,7 +117,8 @@ import { PresenceBarComponent } from './presence-bar/presence-bar.component';
     ButtonsModule.forRoot(),
     TooltipModule.forRoot(),
     AlertModule.forRoot(),
-    PaginationModule.forRoot()
+    PaginationModule.forRoot(),
+    ProgressbarModule.forRoot()
   ],
   providers: [
     {

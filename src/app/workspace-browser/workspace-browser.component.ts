@@ -1,7 +1,7 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./workspace-browser.component.scss']
 })
 export class WorkspaceBrowserComponent implements OnInit {
-
+  @ViewChild('search') search!: ElementRef;
   workspaces: Observable<WorkspaceSummary[]>;
   term = new BehaviorSubject<Event>(new Event('change'));
 
@@ -42,4 +42,13 @@ export class WorkspaceBrowserComponent implements OnInit {
     }
   }
 
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(ev: KeyboardEvent): boolean {
+    if (ev.ctrlKey && ev.code === 'KeyO') {
+      this.search.nativeElement.focus();
+      this.search.nativeElement.select();
+      return false;
+    }
+    return true;
+  }
 }

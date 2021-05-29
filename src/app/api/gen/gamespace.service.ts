@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiSettings } from '../api-settings';
 import { GeneratedService } from './_service';
-import { GameState, Gamespace, Player, VmState } from './models';
+import { GameState, Gamespace, Player, VmState, ChallengeView, NewGamespace, SectionSubmission } from './models';
 
 @Injectable()
 export class GeneratedGamespaceService extends GeneratedService {
@@ -19,17 +19,29 @@ export class GeneratedGamespaceService extends GeneratedService {
     public list(filter: string): Observable<Array<Gamespace>> {
         return this.http.get<Array<Gamespace>>(this.conf.api + '/gamespaces' + this.paramify({filter}));
     }
-    public load(id: number): Observable<GameState> {
-        return this.http.get<GameState>(this.conf.api + '/gamespace/' + id);
+    public preview(id: string): Observable<GameState> {
+        return this.http.get<GameState>(`${this.conf.api}/preview/${id}`);
     }
-    public delete(id: number): Observable<any> {
-        return this.http.delete<any>(this.conf.api + '/gamespace/' + id);
+    public load(id: string): Observable<GameState> {
+        return this.http.get<GameState>(`${this.conf.api}/gamespace/${id}`);
     }
-    public create(id: number): Observable<GameState> {
-        return this.http.post<GameState>(this.conf.api + '/gamespace/' + id, {});
+    public start(id: string): Observable<GameState> {
+        return this.http.post<GameState>(`${this.conf.api}/gamespace/${id}/start`, {});
+    }
+    public stop(id: string): Observable<GameState> {
+        return this.http.post<GameState>(`${this.conf.api}/gamespace/${id}/stop`, {});
+    }
+    public complete(id: string): Observable<GameState> {
+        return this.http.post<GameState>(`${this.conf.api}/gamespace/${id}/complete`, {});
+    }
+    public delete(id: string): Observable<any> {
+        return this.http.delete<any>(`${this.conf.api}/gamespace/${id}`);
+    }
+    public register(model: NewGamespace): Observable<GameState> {
+        return this.http.post<GameState>(`${this.conf.api}/gamespace`, model);
     }
     public loadState(id: number): Observable<GameState> {
-        return this.http.get<GameState>(this.conf.api + '/gamestate/' + id);
+        return this.http.get<GameState>(`${this.conf.api}/gamespace/${id}`);
     }
     public listPlayers(id: number): Observable<Array<Player>> {
       return this.http.get<Array<Player>>(this.conf.api + '/players/' + id);
@@ -40,5 +52,7 @@ export class GeneratedGamespaceService extends GeneratedService {
     public deletePlayer(id: number): Observable<any> {
         return this.http.delete<any>(this.conf.api + '/player/' + id);
     }
-
+    public grade(id: string, model: SectionSubmission): Observable<ChallengeView> {
+      return this.http.post<ChallengeView>(`${this.conf.api}/v2/gamespace/${id}/grade`, model);
+    }
 }

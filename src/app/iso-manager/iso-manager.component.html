@@ -1,0 +1,22 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<app-dropzone (dropped)="onDrop($event)">
+
+  <small> or drag an iso file here.</small>
+
+  <div class="d-flex flex-wrap scroll-x">
+    <div *ngFor="let f of pending" class="file pop-info">
+      <div class="px-1">
+        <fa-icon [icon]="faFile"></fa-icon>
+        <small> {{f.name}}</small>
+      </div>
+      <progressbar [hidden]="!f.progress" class="progress rounded-0" [striped]="true" [animate]="true" [value]="f.progress" type="info">
+          {{f.progress}}%
+      </progressbar>
+    </div>
+  </div>
+
+</app-dropzone>
+
+<app-iso-selector #selector [guid]="guid"></app-iso-selector>

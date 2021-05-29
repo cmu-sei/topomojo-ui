@@ -1,4 +1,4 @@
-
+$banner-height: 24px;
 $nav-height: 64px;
 $sidebar-width-in: 48px;
 $sidebar-width-out: 400px;
@@ -38,6 +38,14 @@ nav {
   bottom: $footer-height;
   height: $sidebar-width-in;
   cursor: pointer;
+}
+.banner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: $nav-height - $banner-height;
+  height: $banner-height;
+  z-index: 100;
 }
 main {
   position: absolute;

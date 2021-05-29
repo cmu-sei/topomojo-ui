@@ -1,8 +1,17 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
+<ng-container *ngIf="websocket | async as ws">
+  <div *ngIf="!!user && ws.initialized && !ws.connected" class="banner bg-danger text-center">
+    <small>
+      <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+      <span>Attempting re-connection...</span>
+    </small>
+  </div>
+</ng-container>
+
 <nav class="navbar navbar-dark bg-primary">
-  <a class="navbar-brand" href="/">{{appname}}</a>
+  <a class="navbar-brand" [routerLink]="['/']">{{appname}}</a>
 
   <div>
     <a class="btn btn-outline-light btn-sm" [routerLink]="['/about']">About</a>
@@ -30,13 +39,7 @@
 </ng-container>
 
 <main [class.sidebar-offset-out]="user && pinned" [class.sidebar-offset-in]="user && !pinned">
-    <div class="container">
-      <ng-container *ngIf="websocket | async as ws">
-        <div *ngIf="!!user && !ws.connected" class="col-12 pop-danger text-right">
-          <fa-icon [icon]="faExclamationTriangle"></fa-icon>
-          <span>Attempting connection...</span>
-        </div>
-      </ng-container>
+    <div class="container-fluid">
       <router-outlet></router-outlet>
     </div>
 </main>

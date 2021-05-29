@@ -1,7 +1,7 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { debounceTime, filter, tap } from 'rxjs/operators';
 import { UserProfile } from './api/gen/models';
 import { ConfigService } from './config.service';
@@ -35,7 +35,7 @@ export class AppComponent {
     config: ConfigService,
     userSvc: UserService,
     hubSvc: NotificationService,
-    router: Router,
+    private router: Router,
     private auth: AuthService
   ) {
     this.appname = config.settings.appname;
@@ -80,5 +80,26 @@ export class AppComponent {
       this.open = false;
     }
     return false;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(ev: KeyboardEvent): boolean {
+    if (ev.ctrlKey) {
+      switch (ev.code) {
+        case 'KeyO':
+          this.open = true;
+          break;
+
+        case 'KeyH':
+          this.router.navigate(['/']);
+          break;
+
+        case 'KeyL':
+          this.open = !this.open;
+          break;
+      }
+    }
+
+    return true;
   }
 }

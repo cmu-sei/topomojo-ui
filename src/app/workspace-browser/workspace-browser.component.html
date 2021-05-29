@@ -9,7 +9,7 @@
       <!-- <label for="search-input" class="input-group-text">Search</label> -->
       <span id="search-label" class="input-group-text">Search</span>
     </div>
-    <input id="search-input" type="search" placeholder="workspace" class="form-control" (input)="term.next($event)" aria-label="search term" aria-describedby="search-label">
+    <input #search id="search-input" type="search" placeholder="workspace" class="form-control" (input)="term.next($event)" aria-label="search term" aria-describedby="search-label">
   </div>
 
   <!-- display workspace cards -->

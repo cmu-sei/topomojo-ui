@@ -1,6 +1,12 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
+<div class="text-right">
+  <button class="btn btn-sm btn-outline-success" (click)="save()">
+    <fa-icon [icon]="faSave"></fa-icon>
+    <span>Save</span>
+  </button>
+</div>
 <form *ngIf="form$ | async as f" [formGroup]="f">
 
   <div formArrayName="transforms" class="form-group bg-light">
@@ -10,7 +16,7 @@
       <small>
         Add randomization key/values. At deploy-time, the values will replace
         the keys in template guest settings, challenge text, questions, and answers.
-        Enter the plain key here, but use a <i>double-pounder-key</i> anywhere it should be replaced, like this: <code>##key##</code>
+        Enter the plain key here, but use a <i>double-pounder-key</i> (<code>##key##</code>) anywhere it should be replaced.
       </small>
     </div>
 
@@ -22,11 +28,35 @@
         <span>Remove</span>
       </app-confirm-button>
     </div>
-
+    <div *ngIf="transforms.controls.length">
+      <small>
+        Value format is <code>type:range</code> where type is <em>hex, b64, int, uid, list</em> and range is optional.
+        <button class="btn btn-sm btn-link-warning" [(ngModel)]="showTransformExamples" [ngModelOptions]="{standalone: true}" btnCheckbox>
+          <fa-icon [icon]="faHelp"></fa-icon>
+          <span></span>
+        </button>
+        <pre *ngIf="showTransformExamples">
+          hex &mdash; yields 8 hex characters
+          b64 &mdash; yields 24 base64 characters
+          int &mdash; yields decimal string
+          uid &mdash; yields a GUID
+          hex:12 &mdash; yields 12 hex characters
+          b64:16 &mdash; yields 16 base64 characters
+          int:99-999 &mdash; yields decimal string between 99 and 999
+          list:one two three four &mdash; yields a single word
+        </pre>
+      </small>
+    </div>
     <button class="btn btn-sm btn-outline-secondary mt-2" (click)="addTransform()">
       <fa-icon [icon]="faPlus"></fa-icon>
       <span>Add Transform</span>
     </button>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="col-form-label-sm">Markdown</label>
+    <ngx-monaco-editor id="challenge-text-editor" formControlName="text" [options]="editorOptions" aria-label="challenge text"></ngx-monaco-editor>
+    <small>This markdown gets appended to the gamespace document.</small>
   </div>
 
   <div formArrayName="variants">
@@ -73,5 +103,12 @@
   </button>
 
 </form>
+
+<div class="text-right">
+  <button class="btn btn-sm btn-outline-success" (click)="save()">
+    <fa-icon [icon]="faSave"></fa-icon>
+    <span>Save</span>
+  </button>
+</div>
 
 <!-- <pre class="mt-4">{{form.value | json}}</pre> -->

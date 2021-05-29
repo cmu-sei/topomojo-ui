@@ -13,6 +13,7 @@ import { faOpenid } from '@fortawesome/free-brands-svg-icons';
 export class LoginComponent implements OnInit {
   authority: string | undefined;
   faOpenid = faOpenid;
+  working = false;
 
   constructor(
     private auth: AuthService
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
+    this.working = true;
     this.auth.externalLogin(this.auth.redirectUrl);
   }
 

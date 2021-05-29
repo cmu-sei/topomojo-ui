@@ -3,6 +3,12 @@
 
 <div [formGroup]="form">
 
+  <div class="indent" [hidden]="!detail">
+    <label class="col-form-label-sm">Markdown</label>
+    <ngx-monaco-editor id="variant-{{index}}-editor" formControlName="text" [options]="editorOptions" aria-label="challenge text"></ngx-monaco-editor>
+    <small>Provide any information specific to this variant. This is appended to the challenge text.</small>
+  </div>
+
   <div formGroupName="iso" class="indent" [hidden]="!detail">
     <label class="label pop-info">Iso Attachment</label>
     <div class="form-row">
@@ -23,8 +29,8 @@
     </div>
   </div>
 
-  <ng-container formArrayName="sets">
-    <div *ngFor="let qs of sets.controls; let i = index" [formGroupName]="i" class="indent">
+  <ng-container formArrayName="sections">
+    <div *ngFor="let qs of sections.controls; let i = index" [formGroupName]="i" class="indent">
 
       <div class="d-flex align-items-center">
         <label class="label pop-info">QuestionSet.{{i+1}}</label>
@@ -41,6 +47,12 @@
           <fa-icon [icon]="faTrash"></fa-icon>
           <span>Remove</span>
         </app-confirm-button>
+      </div>
+
+      <div class="" [hidden]="!detail && !more[i]">
+        <label class="col-form-label-sm">Markdown</label>
+        <ngx-monaco-editor id="section-{{index}}-editor" formControlName="text" [options]="editorOptions" aria-label="section text"></ngx-monaco-editor>
+        <small>Provide any instructions specific to this question set.</small>
       </div>
 
       <app-question-form [form]="$any(qs)" [index]="i" [more]="detail || more[i]"></app-question-form>

@@ -1,0 +1,29 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<ng-container *ngIf="state.challenge as challenge">
+
+  <markdown [data]="challenge.sectionText"></markdown>
+
+  <div *ngFor="let q of challenge.questions; let i=index" class="form-group p-2 mt-2"
+  [class.pop-info]="!q.isGraded"
+  [class.pop-success]="q.isGraded && q.isCorrect"
+  [class.pop-warning]="q.isGraded && !q.isCorrect"
+  >
+    <label>{{i+1}}. ({{q.weight}}) {{q.text}}</label>
+    <input class="form-control" [readonly]="q.isCorrect" [(ngModel)]="q.answer">
+    <small [hidden]="!q.example">Example answer: {{q.example}}</small>
+  </div>
+
+  <app-error-div [errors]="errors"></app-error-div>
+
+  <div class="d-flex">
+    <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()">
+      <fa-icon [icon]="faSubmit"></fa-icon>
+      <span>Submit</span>
+    </app-confirm-button>
+    <div class="spacer"></div>
+    <div>Score: {{challenge.score}} of {{challenge.maxPoints}}</div>
+  </div>
+
+</ng-container>

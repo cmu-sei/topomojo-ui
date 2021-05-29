@@ -3,9 +3,10 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { ChallengeSet, QuestionSet } from 'src/app/api/gen/models';
+import { VariantSpec, SectionSpec } from 'src/app/api/gen/models';
 import { ChallengeFormService } from '../challenge-form.service';
 import { faTrash, faPlus, faCopy, faEllipsisV} from '@fortawesome/free-solid-svg-icons';
+import { ConfigService } from 'src/app/config.service';
 
 @Component({
   selector: 'app-variant-form',
@@ -17,6 +18,7 @@ export class VariantFormComponent implements OnInit {
   @Input() index = 0;
   @Input() detail = false;
   more: boolean[] = [];
+  editorOptions: any;
 
   faTrash = faTrash;
   faPlus = faPlus;
@@ -24,21 +26,23 @@ export class VariantFormComponent implements OnInit {
   faMore = faEllipsisV;
 
   constructor(
-    private svc: ChallengeFormService
+    private svc: ChallengeFormService,
+    config: ConfigService
   ) {
+    this.editorOptions = config.embeddedMonacoOptions;
     this.form = svc.mapVariant({});
   }
 
   ngOnInit(): void {
   }
 
-  get sets(): FormArray {
-    return this.form.get('sets') as FormArray;
+  get sections(): FormArray {
+    return this.form.get('sections') as FormArray;
   }
-  addSet(s?: QuestionSet): void {
-    this.sets.push(this.svc.mapQuestionSet(s));
+  addSet(s?: SectionSpec): void {
+    this.sections.push(this.svc.mapQuestionSet(s));
   }
   removeSet(index: number): void {
-    this.sets.removeAt(index);
+    this.sections.removeAt(index);
   }
 }

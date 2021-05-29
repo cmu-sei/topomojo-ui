@@ -12,6 +12,7 @@
       <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../document']">Document</a>
       <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../challenge']">Challenge</a>
       <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../files']">Files</a>
+      <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../play']">Play</a>
     </div>
   <!-- </div> -->
 
@@ -21,6 +22,7 @@
     <app-document-editor *ngSwitchCase="'document'" [summary]="ws"></app-document-editor>
     <app-challenge-editor *ngSwitchCase="'challenge'" [summary]="ws"></app-challenge-editor>
     <app-files-editor *ngSwitchCase="'files'" [summary]="ws"></app-files-editor>
+    <app-workspace-player *ngSwitchCase="'play'" [summary]="ws"></app-workspace-player>
   </div>
 </div>
 

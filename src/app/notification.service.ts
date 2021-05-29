@@ -15,7 +15,7 @@ import { ProfileService } from './api/profile.service';
 export class NotificationService {
 
   private connection: HubConnection;
-  private hubState: HubState = { id: '', connected: false, joined: false, actors: []};
+  private hubState: HubState = { id: '', initialized: false, connected: false, joined: false, actors: []};
 
   state$ = new BehaviorSubject<HubState>(this.hubState);
   globalEvents = new Subject<HubEvent>();
@@ -145,6 +145,7 @@ export class NotificationService {
 
   private async setConnected(): Promise<void> {
     this.hubState.connected = true;
+    this.hubState.initialized = true;
     this.postState();
     if (this.hubState.id){
       await this.joinWorkspace(this.hubState.id); // rejoin if was previously joined
@@ -184,6 +185,7 @@ export class NotificationService {
 
 export interface HubState {
   id: string;
+  initialized: boolean;
   connected: boolean;
   joined: boolean;
   actors: Actor[];

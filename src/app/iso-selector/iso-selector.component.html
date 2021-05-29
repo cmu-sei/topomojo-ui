@@ -1,0 +1,32 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div class="input-group input-group-sm">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Iso Selector</span>
+  </div>
+  <input type="search" class="form-control" [(ngModel)]="term" (input)="refresh()" placeholder="search">
+  <div class="input-group-append">
+    <button class="btn btn-sm btn-outline-info" btnCheckbox [(ngModel)]="filterLocal" (click)="refresh()">
+      <fa-icon [icon]="faFilter"></fa-icon>
+      <span>Local</span>
+    </button>
+    <button class="btn btn-sm btn-outline-info" (click)="refresh(true)">
+      <fa-icon [icon]="faSync"></fa-icon>
+      <span>Refresh</span>
+    </button>
+  </div>
+</div>
+
+<div *ngIf="files$ | async as fileset">
+
+    <div class="d-flex flex-wrap">
+      <div *ngFor="let f of fileset" class="m-1 px-1">
+        <button class="btn btn-outline-secondary btn-sm" (click)="select(f)">
+          <fa-icon [icon]="faCompactDisc"></fa-icon>
+          <span>{{f.display}}</span>
+        </button>
+      </div>
+    </div>
+
+</div>

@@ -3,7 +3,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { Question } from 'src/app/api/gen/models';
+import { QuestionSpec } from 'src/app/api/gen/models';
 import { ChallengeFormService } from '../challenge-form.service';
 import { faTrash, faPlus, faBaby} from '@fortawesome/free-solid-svg-icons';
 
@@ -32,7 +32,7 @@ export class QuestionFormComponent implements OnInit {
   get questions(): FormArray {
     return this.form.get('questions') as FormArray;
   }
-  addQuestion(q?: Question): void {
+  addQuestion(q?: QuestionSpec): void {
     this.questions.push(this.svc.mapQuestion(q));
   }
   removeQuestion(index: number): void {

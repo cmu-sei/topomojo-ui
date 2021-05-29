@@ -31,6 +31,26 @@
   </div>
 
   <div class="form-group bg-light">
+    <label class="mb-0" for="replicas-input">Replicas</label>
+    <input id="replicas-input" type="number" class="form-control" [(ngModel)]="template.replicas" name="replicas" >
+    <small>how many copies to deploy. (<code>-1</code> means one per player)</small>
+  </div>
+
+  <div class="form-group bg-light">
+    <label for="mb-0 iso-input">Iso</label>
+    <div class="input-group input-group-sm mb-1">
+      <label id="iso-input" class="form-control" name="iso">{{template.iso?.split('/')?.pop()}}</label>
+      <div class="input-group-append">
+        <button class="btn btn-sm btn-outline-info" (click)="isoClear()">
+          <fa-icon [icon]="faTimes"></fa-icon>
+          <span>Remove</span>
+        </button>
+      </div>
+    </div>
+    <app-iso-selector [guid]="template.workspaceGlobalId" (added)="isoSelect($event)"></app-iso-selector>
+  </div>
+
+  <div class="form-group bg-light">
     <label class="mb-0" for="hidden-toggle">Console Access</label>
     <div class="form-control auto-h d-flex align-items-center">
       <label>Hidden</label>

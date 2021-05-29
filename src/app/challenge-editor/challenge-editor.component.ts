@@ -5,9 +5,11 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, of, Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, delay, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
-import { Challenge, ChallengeSet, KeyValuePair, Question, QuestionSet, Workspace, WorkspaceSummary } from '../api/gen/models';
-import { faTrash, faPlus, faCopy, faEllipsisV} from '@fortawesome/free-solid-svg-icons';
 import { ChallengeFormService } from './challenge-form.service';
+import { WorkspaceService } from '../api/workspace.service';
+import { ChallengeSpec, VariantSpec, KeyValuePair, QuestionSpec, SectionSpec, Workspace, WorkspaceSummary } from '../api/gen/models';
+import { faTrash, faPlus, faCopy, faEllipsisV, faSave, faCloudUploadAlt, faInfoCircle} from '@fortawesome/free-solid-svg-icons';
+import { ConfigService } from '../config.service';
 
 @Component({
   selector: 'app-challenge-editor',
@@ -20,21 +22,28 @@ export class ChallengeEditorComponent implements OnInit, OnChanges {
   form$: Observable<FormGroup>;
   id$ = new Subject<string>();
   detail: boolean[] = [];
+  showTransformExamples = false;
+  editorOptions: any;
 
   faTrash = faTrash;
   faPlus = faPlus;
   faCopy = faCopy;
   faMore = faEllipsisV;
+  faSave = faCloudUploadAlt;
+  faHelp = faInfoCircle;
 
   constructor(
-    private svc: ChallengeFormService
+    private api: WorkspaceService,
+    private svc: ChallengeFormService,
+    config: ConfigService
   ) {
+    this.editorOptions = config.embeddedMonacoOptions;
 
     this.form$ = this.id$.pipe(
       // tap(id => console.log(id)),
       debounceTime(200),
       distinctUntilChanged(),
-      switchMap(id => of(undefined)),
+      switchMap(id => api.getWorkspaceChallenge(id)),
       map(c => svc.mapToForm(c)),
       tap(f => this.form = f)
     );
@@ -90,10 +99,14 @@ export class ChallengeEditorComponent implements OnInit, OnChanges {
   get variants(): FormArray {
     return this.form.get('variants') as FormArray;
   }
-  addVariant(v?: ChallengeSet): void {
+  addVariant(v?: VariantSpec): void {
     this.variants.push(this.svc.mapVariant(v));
   }
   removeVariant(index: number): void {
     this.variants.removeAt(index);
+  }
+
+  save(): void {
+    this.api.putWorkspaceChallenge(this.summary.globalId, this.form.value).subscribe();
   }
 }

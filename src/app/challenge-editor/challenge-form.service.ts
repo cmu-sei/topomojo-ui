@@ -3,7 +3,7 @@
 
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Challenge, ChallengeSet, KeyValuePair, Question, QuestionSet } from '../api/gen/models';
+import { ChallengeSpec, VariantSpec, KeyValuePair, QuestionSpec, SectionSpec } from '../api/gen/models';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +14,9 @@ export class ChallengeFormService {
     private fb: FormBuilder
   ) { }
 
-  mapToForm(c?: Challenge): FormGroup {
-    if (!c) {
-      c = { variants: [{sets: [{questions: [{}]}]}]};
+  mapToForm(c?: ChallengeSpec): FormGroup {
+    if (!c || c.variants?.length === 0) {
+      c = { variants: [{sections: [{questions: [{}]}]}]};
     }
     return this.fb.group({
       // id: [ch.id, Validators.required],
@@ -39,34 +39,36 @@ export class ChallengeFormService {
     });
   }
 
-  mapVariant(v?: ChallengeSet): FormGroup {
+  mapVariant(v?: VariantSpec): FormGroup {
     if (!v) {
-      v = {sets: [{questions: [{}]}]};
+      v = {sections: [{questions: [{}]}]};
     }
     return this.fb.group({
+      text: [v?.text],
       iso: this.fb.group({
         file: [v?.iso?.file],
         targets: [v?.iso?.targets]
       }),
-      sets: this.fb.array(
-        v?.sets?.map(s => this.mapQuestionSet(s)) || []
+      sections: this.fb.array(
+        v?.sections?.map(s => this.mapQuestionSet(s)) || []
       )
     });
   }
 
-  mapQuestionSet(s?: QuestionSet): FormGroup {
+  mapQuestionSet(s?: SectionSpec): FormGroup {
     if (!s) {
       s = {questions: [{}]};
     }
     return this.fb.group({
-      prerequisite: [s?.prerequisite],
+      text: [s?.text],
+      prerequisite: [s?.prerequisite || 0, Validators.pattern(/\d*/)],
       questions: this.fb.array(
         s?.questions?.map(q => this.mapQuestion(q)) || []
       )
     });
   }
 
-  mapQuestion(q?: Question): FormGroup {
+  mapQuestion(q?: QuestionSpec): FormGroup {
     return this.fb.group({
       text: [q?.text, Validators.required],
       answer: [q?.answer, Validators.required],
