@@ -3,8 +3,7 @@
 
 <div *ngIf="state$ | async as state" class="text-right small">
   <div *ngFor="let actor of state.actors"
-    class="d-inline ml-2 px-2"
-    [class.pop-success]="actor.online"
+    class="d-inline ml-2 px-2 pop-{{actor.color}}"
     [class.pop-dark]="!actor.online">
     <fa-icon [icon]="actor.typing ? faKeyboard : faUser"></fa-icon>
     <span>{{actor.name || 'anonymous'}}</span>

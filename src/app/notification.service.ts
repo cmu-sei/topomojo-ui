@@ -25,6 +25,7 @@ export class NotificationService {
   templateEvents = new Subject<HubEvent>();
   documentEvents = new Subject<HubEvent>();
   me = '';
+  colormap = ['success', 'secondary', 'info', 'warning', 'primary'];
 
   constructor(
     config: ConfigService,
@@ -110,6 +111,7 @@ export class NotificationService {
     connection.on('DocumentEvent', (e: HubEvent) => {
       if (e.action === 'DOCUMENT.UPDATED') { this.setActorEditing(e, true); }
       if (e.action === 'DOCUMENT.IDLE') { this.setActorEditing(e, false); }
+      if (e.action === 'DOCUMENT.CURSOR') { e.actor = this.hubState.actors.find(a => a.id === e.actor.id) || e.actor; }
       this.documentEvents.next(e);
     });
 
@@ -165,9 +167,10 @@ export class NotificationService {
     event.actor.online = (event.action === 'PRESENCE.ARRIVED' || event.action === 'PRESENCE.GREETED');
     const actor = this.hubState.actors.find(a => a.id === event.actor.id);
     if (actor) {
-        actor.online = event.actor.online;
+      actor.online = event.actor.online;
     } else {
-        this.hubState.actors.push(event.actor);
+      event.actor.color = this.colormap[this.hubState.actors.length % this.colormap.length];
+      this.hubState.actors.push(event.actor);
     }
     this.postState();
   }
@@ -214,4 +217,5 @@ export interface Actor {
   online?: boolean;
   typing?: boolean;
   editing?: boolean;
+  color: string;
 }
