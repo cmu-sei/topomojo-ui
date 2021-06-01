@@ -3,10 +3,10 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { VariantSpec, SectionSpec } from 'src/app/api/gen/models';
+import { VariantSpec, SectionSpec } from 'projects/topomojo-work/src/app/api/gen/models';
 import { ChallengeFormService } from '../challenge-form.service';
 import { faTrash, faPlus, faCopy, faEllipsisV} from '@fortawesome/free-solid-svg-icons';
-import { ConfigService } from 'src/app/config.service';
+import { ConfigService } from 'projects/topomojo-work/src/app/config.service';
 
 @Component({
   selector: 'app-variant-form',

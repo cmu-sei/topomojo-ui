@@ -1,0 +1,89 @@
+// Copyright 2020 Carnegie Mellon University. All Rights Reserved.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information.
+:host {
+    z-index: 1;
+}
+mat-drawer {
+    width: 400px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+}
+
+.canvas {
+    position: fixed;
+    text-align: center;
+    border-radius: 4px;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    height: 100%;
+    z-index: 190;
+}
+.overlay {
+    position: absolute;
+    z-index: 200;
+    text-shadow: 1px 1px 2px white, 0 0 2em white, 0 0 .2em white;
+}
+.overlay-tr {
+    top: 24px;
+    right: 24px;
+}
+.overlay-tl {
+    top: 24px;
+    left: 24px;
+}
+.overlay-tc {
+    top: 0px;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 0);
+}
+
+.overlay-mm {
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    z-index: 200;
+}
+
+.state-btn {
+    font-size: 100px;
+    width: 140px;
+    height: 140px;
+
+}
+
+.tools {
+    height: 100%;
+    width: 100%;
+
+    .mat-raised-button {
+        font-size: 16px;
+        font-weight: normal;
+        padding: 8px;
+    }
+}
+
+.tool-btn {
+    font-size: 2em;
+    border-radius: 8px;
+    border-width: 0px;
+}
+
+span.overlay {
+    padding: 8px 16px;
+    font-size: 28px;
+}
+
+.mock-console-connected {
+    background-color: black;
+}
+
+.cog {
+    min-width: 32px;
+    padding: 0 4px;
+}

@@ -1,0 +1,150 @@
+<!-- Copyright 2020 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information. -->
+
+<div class="console-wrapper">
+
+  <mat-drawer-container>
+
+    <mat-drawer-content>
+
+      <div #consoleCanvas id="console-canvas-" class="canvas" [class.mock-console-connected]="showMockConnected()">
+
+        <button *ngIf="isConnected() && showCog" class="tool-btn overlay overlay-tl cog" (click)="toggleDrawer()" mat-button>
+          <mat-icon>settings</mat-icon>
+        </button>
+
+        <span class="overlay overlay-tl">{{shadowstate}}</span>
+
+        <button #stateBtn *ngIf="stateIcon" class="state-btn overlay overlay-mm" [class.hidden]="isConnected()" (click)="stateButtonClicked()"
+          mat-raised-button matTooltip="Retry">
+          <mat-icon inline="true">{{stateIcon}}</mat-icon>
+        </button>
+
+      </div>
+
+    </mat-drawer-content>
+
+    <mat-drawer #drawer position="start" disableClose="false">
+
+      <div class="tools">
+
+        <button *ngIf="isConnected()" (click)="toggleDrawer()" mat-button>
+          <mat-icon>settings</mat-icon>
+        </button>
+
+        <mat-accordion>
+          <mat-expansion-panel expanded="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Control</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <topomojo-confirm-button (confirmed)="console.sendCAD()" icon="keyboard" text="Ctrl-Alt-Del" color="accent"></topomojo-confirm-button>
+
+            <p><small>
+              If the "Settings" button is in the way, hide it here.  If hidden, you can
+              open the settings panel by moving the mouse to the left edge of the console.
+            </small></p>
+
+            <mat-slide-toggle name="showCog" [(ngModel)]="showCog"
+              labelPosition="before">Show settings button on console</mat-slide-toggle>
+
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Layout</mat-panel-title>
+            </mat-expansion-panel-header>
+            <button (click)="console.toggleScale()" matTooltip="scale" mat-mini-fab>
+              <mat-icon>photo_size_select_small</mat-icon>
+            </button>
+
+            <button (click)="console.fullscreen()" matTooltip="fullscreen" mat-mini-fab>
+              <mat-icon>fullscreen</mat-icon>
+            </button>
+
+            <button (click)="console.showKeyboard()" matTooltip="keyboard" mat-mini-fab>
+              <mat-icon>keyboard</mat-icon>
+            </button>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Change Network</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngIf="feedback" [class]="feedbackState">{{ feedback | spaces | uppercase }}</div>
+            <topomojo-select-table *ngIf="netSource" [dataSource]="netSource" (selected)="netSelected($event)"></topomojo-select-table>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Change ISO</mat-panel-title>
+            </mat-expansion-panel-header>
+            <small>If changing ISO on a linux machine, be sure to eject any currently mounted cdrom device.
+              If you don't you may need to answer a vm-question to recover an unreponsive machine.
+            </small>
+            <div *ngIf="feedback" [class]="feedbackState">{{ feedback | spaces | uppercase }}</div>
+            <topomojo-select-table *ngIf="isoSource" [dataSource]="isoSource" (selected)="isoSelected($event)"></topomojo-select-table>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Upload ISO</mat-panel-title>
+            </mat-expansion-panel-header>
+            <topomojo-file-uploader [bucketId]="info.isolationId"></topomojo-file-uploader>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Vm Question</mat-panel-title>
+            </mat-expansion-panel-header>
+            <topomojo-vm-question [id]="info.id"></topomojo-vm-question>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Clipboard</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p><small>
+              COPY transfers the vm clip to <em>your</em> clipboard.
+              Select/Copy text in the vm using ctrl-c or context menu
+              before clicking COPY here. (Clicking COPY shows text
+              below *AND* adds to your clipboard.)
+            </small></p>
+
+            <p>
+              <small>
+                PASTE sends the text below to the vm.
+                Ensure the vm cursor is focused in a window that
+                accepts keyboard input before clicking PASTE here.
+              </small>
+            </p>
+
+            <button (click)="clip()" matTooltip="Copy" mat-raised-button>
+              <mat-icon *ngIf="justClipped">check</mat-icon> Copy
+            </button>
+
+            <button (click)="paste()" matTooltip="Paste" mat-raised-button>
+              <mat-icon *ngIf="justPasted">check</mat-icon> Paste
+            </button>
+
+            <button (click)="cliptext=''" matTooltip="Paste" mat-raised-button>
+              Clear
+            </button>
+
+            <hr/>
+
+            <div>
+              <textarea matInput placeholder="Clipboard" rows="20" [(ngModel)]="cliptext"></textarea>
+            </div>
+
+          </mat-expansion-panel>
+
+        </mat-accordion>
+
+      </div>
+
+    </mat-drawer>
+
+  </mat-drawer-container>
+
+</div>

@@ -3,7 +3,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { QuestionSpec } from 'src/app/api/gen/models';
+import { QuestionSpec } from 'projects/topomojo-work/src/app/api/gen/models';
 import { ChallengeFormService } from '../challenge-form.service';
 import { faTrash, faPlus, faBaby} from '@fortawesome/free-solid-svg-icons';
 
