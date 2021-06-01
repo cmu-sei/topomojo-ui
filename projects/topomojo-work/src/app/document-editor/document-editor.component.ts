@@ -3,16 +3,15 @@
 
 import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Workspace } from '../api/gen/models';
-import { BehaviorSubject, interval, merge, Observable, of, Subject, Subscription, timer } from 'rxjs';
+import { BehaviorSubject, interval, Observable, of, Subject, Subscription, timer } from 'rxjs';
 import { DocumentService } from '../api/document.service';
-import { auditTime, buffer, catchError, debounceTime, distinctUntilChanged, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
+import { auditTime, buffer, catchError, debounceTime, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { NgxEditorModel } from 'ngx-monaco-editor';
 import { faCloudUploadAlt, faImages, faFileImage, faSpinner, faLock } from '@fortawesome/free-solid-svg-icons';
-import * as monaco from 'monaco-editor';
-import { NotificationService, HubEvent, Actor, HubState } from '../notification.service';
-import { CollaborationService, CursorChangeReason, CursorSelection,
-  Editor, EditorOptions, EditorViewState, DocumentChange, Position, UserTimeMap, EditorChange, DocumentChangeDTO } from '../collaboration.service';
-import { RemoteUserData, Range } from '../collaboration.service';
+import { NotificationService, HubEvent, Actor } from '../notification.service';
+import { CollaborationService, MonacoEditor, Position, Range, Selection,
+  Editor, EditorOptions, EditorViewState, EditorChange,
+  DocumentChange,  UserTimeMap, RemoteUserData } from '../collaboration.service';
 
 @Component({
   selector: 'app-document-editor',
@@ -60,7 +59,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
   private beginTypingTime?: number;
   private userTimestamps: UserTimeMap = {};
   private timeLastSaved = 0;
-  private selections$ = new BehaviorSubject<CursorSelection[]>([new CursorSelection(1, 1, 1, 1)]);
+  private selections$ = new BehaviorSubject<Selection[]>([new Selection(1, 1, 1, 1)]);
   private edits$ = new Subject<DocumentChange>();
   private editorWriteable$ = new Subject<boolean>();
   private editing = false;
@@ -193,7 +192,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
 
   insertImage(text: string): void {
     text = `\n${text}\n\n`;
-    const range = this.editor.getSelection() || new monaco.Selection(1, 1, 1, 1);
+    const range = this.editor.getSelection() || new Selection(1, 1, 1, 1);
     this.editor.executeEdits('image-manager', [{range, text, forceMoveMarkers: true}], );
     this.editor.focus();
   }
@@ -206,7 +205,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     else {
       this.saveEditorViewState();
     }
-    editor.getModel()?.setEOL(monaco.editor.EndOfLineSequence.LF); // must be consistent across browsers
+    editor.getModel()?.setEOL(MonacoEditor.EndOfLineSequence.LF); // must be consistent across browsers
     this.collab.editorEol = this.editor.getModel()?.getEOL() || '\n';
     this.tooltipMessage = this.editor?.getContribution('editor.contrib.messageController');
 
@@ -221,7 +220,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
         this.editor.getPosition()
       )
     );
-    editor.onDidChangeModelContent((event: monaco.editor.IModelContentChangedEvent) => {
+    editor.onDidChangeModelContent((event: MonacoEditor.IModelContentChangedEvent) => {
 
       // set local doc text
       this.doctext = this.editor.getValue();
@@ -264,8 +263,8 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     this.tooltipMessage = this.editor.getContribution('editor.contrib.messageController');
   }
 
-  private editorViewChanged(reason?: CursorChangeReason): void {
-    if (reason && reason === CursorChangeReason.ContentFlush) {
+  private editorViewChanged(reason?: MonacoEditor.CursorChangeReason): void {
+    if (reason && reason === MonacoEditor.CursorChangeReason.ContentFlush) {
       this.restoreEditorViewState();
     }
     else {
@@ -299,11 +298,11 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     this.editor?.setValue(this.doctext);
   }
 
-  private cursorSelectionChanged(event: monaco.editor.ICursorSelectionChangedEvent): void {
+  private cursorSelectionChanged(event: MonacoEditor.ICursorSelectionChangedEvent): void {
 
     this.editorViewChanged(event.reason);
 
-    if (event.reason === CursorChangeReason.ContentFlush) {
+    if (event.reason === MonacoEditor.CursorChangeReason.ContentFlush) {
       return;
     }
 
@@ -311,7 +310,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
 
     this.emitCursorSelections(selections);
 
-    if (event.reason === CursorChangeReason.NotSet &&
+    if (event.reason === MonacoEditor.CursorChangeReason.NotSet &&
         event.source === 'keyboard'
      ) {
       return;
@@ -322,9 +321,9 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     this.storeBeginPositions(selections);
   }
 
-  private emitCursorSelections(selections?: monaco.Selection[]): void {
+  private emitCursorSelections(selections?: Selection[]): void {
     this.selections$.next(
-      selections || [ new CursorSelection(1, 1, 1, 1) ]
+      selections || [ new Selection(1, 1, 1, 1) ]
     );
   }
 
@@ -384,7 +383,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     this.decorations = this.editor?.deltaDecorations(this.decorations, newDecorations) || [];
   }
 
-  private storeBeginPositions(selections?: monaco.Selection[]): void {
+  private storeBeginPositions(selections?: Selection[]): void {
 
     this.beginTypingPositions = selections?.map(s => s.getStartPosition())
       .sort((a, b) =>  -Position.compare(a, b) ) ?? [];

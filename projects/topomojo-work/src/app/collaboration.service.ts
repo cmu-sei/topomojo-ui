@@ -3,7 +3,7 @@
 
 import { Injectable } from '@angular/core';
 import { NotificationService } from './notification.service';
-import * as monaco from 'monaco-editor';
+import { SelectionDirection, Position, IRange, Range, Selection, editor as MonacoEditor } from 'monaco-editor';
 
 @Injectable({
   providedIn: 'root'
@@ -175,10 +175,10 @@ export class CollaborationService {
     });
   }
 
-  toSelectionsDTO(selections: CursorSelection[]): any {
+  toSelectionsDTO(selections: Selection[]): any {
     return selections.map(selection => {
       const selectionDTO: SelectionDTO = this.toRangeDTO(selection) as SelectionDTO;
-      selectionDTO.r = selection.getDirection() === monaco.SelectionDirection.RTL;
+      selectionDTO.r = selection.getDirection() === SelectionDirection.RTL;
       return selectionDTO;
     });
   }
@@ -211,17 +211,11 @@ export class CollaborationService {
 
 }
 
-// Monaco Type and Class Aliases
-import CursorChangeReason = monaco.editor.CursorChangeReason;
-import Position = monaco.Position;
-import Range = monaco.Range;
-import CursorSelection = monaco.Selection;
-export { CursorChangeReason, Position, Range, CursorSelection };
-export type IRange = monaco.IRange;
-export type Editor = monaco.editor.ICodeEditor;
-export type EditorChange =  monaco.editor.ISingleEditOperation;
-export type EditorOptions = monaco.editor.IStandaloneEditorConstructionOptions;
-export type EditorViewState = monaco.editor.ICodeEditorViewState;
+export { Position, Range, Selection, MonacoEditor };
+export type Editor = MonacoEditor.ICodeEditor;
+export type EditorChange =  MonacoEditor.ISingleEditOperation;
+export type EditorOptions = MonacoEditor.IStandaloneEditorConstructionOptions;
+export type EditorViewState = MonacoEditor.ICodeEditorViewState;
 
 export interface RemoteUserData {
   name: string;

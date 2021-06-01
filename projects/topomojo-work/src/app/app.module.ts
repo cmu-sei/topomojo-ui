@@ -8,12 +8,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
+import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AlertModule } from 'ngx-bootstrap/alert';
-import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
+
 import { ApiModule } from './api/gen/api.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -40,8 +42,6 @@ import { TemplateSelectorComponent } from './template-selector/template-selector
 import { ErrorDivComponent } from './error-div/error-div.component';
 import { TemplateEditorFormComponent } from './template-editor-form/template-editor-form.component';
 import { ConfirmButtonComponent } from './confirm-button/confirm-button.component';
-import { MonacoEditorModule } from 'ngx-monaco-editor';
-import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { ImageManagerComponent } from './image-manager/image-manager.component';
 import { VariantFormComponent } from './challenge-editor/variant-form/variant-form.component';
 import { QuestionFormComponent } from './challenge-editor/question-form/question-form.component';
@@ -117,7 +117,6 @@ import { SpacesPipe } from './spaces.pipe';
     ButtonsModule.forRoot(),
     TooltipModule.forRoot(),
     AlertModule.forRoot(),
-    PaginationModule.forRoot(),
     ProgressbarModule.forRoot()
   ],
   providers: [
