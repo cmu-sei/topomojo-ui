@@ -1,7 +1,7 @@
 #!/bin/bash
 
 apply_markings () {
-  for f in $(find src/app/* -type f -name "*.$1"); do
+  for f in $(find projects/*/src/app/* -type f -name "*.$1"); do
 
     done=$(head -n1 "$f" | grep Copyright)
     if [ -n "$done" ]; then
