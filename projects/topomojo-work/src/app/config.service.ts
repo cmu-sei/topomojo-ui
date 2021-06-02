@@ -2,10 +2,10 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { UserManagerSettings } from 'oidc-client';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'projects/topomojo-work/src/environments/environment';
 import { PlatformLocation } from '@angular/common';
 import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
@@ -22,6 +22,7 @@ export class ConfigService {
   local: LocalAppSettings = {};
   absoluteUrl = '';
   tabs: TabRef[] = [];
+  settings$ = new BehaviorSubject<Settings>(this.settings);
 
   get lastUrl(): string {
     const url = !this.restorationComplete
@@ -70,17 +71,19 @@ export class ConfigService {
     return path;
   }
 
-  public load(): void {
-    this.http.get<Settings>(this.basehref + this.url)
+  load(): Observable<any> {
+    return this.http.get<Settings>(this.basehref + this.url)
       .pipe(
         catchError((err: Error) => {
           return of({} as Settings);
+        }),
+        tap(s => {
+          this.settings = {...this.settings, ...s};
+          this.settings.oidc = {...this.settings.oidc, ...s.oidc};
+          this.settings$.next(this.settings);
+          // console.log(this.settings);
         })
-      )
-      .subscribe((s: Settings) => {
-        this.settings = {...this.settings, ...s};
-        this.settings.oidc = {...this.settings.oidc, ...s.oidc};
-      });
+      );
   }
 
   openConsole(qs: string): void {

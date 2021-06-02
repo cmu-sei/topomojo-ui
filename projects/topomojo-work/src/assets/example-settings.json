@@ -1,0 +1,15 @@
+{
+  "appname": "TopoMojo",
+  "apphost": "http://localhost:5004",
+  "mkshost": "http://localhost:4201",
+  "oidc": {
+    "client_id": "jam-code",
+    "authority": "https://devid.cmusei.dev",
+    "redirect_uri": "http://localhost:4200/oidc",
+    "response_type": "code",
+    "scope": "openid profile jam-api",
+    "monitorSession": false,
+    "loadUserInfo": true,
+    "useLocalStorage": true
+  }
+}

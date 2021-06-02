@@ -4,44 +4,53 @@
 import { Injectable } from '@angular/core';
 import { UserManager, UserManagerSettings, User, WebStorageStateStore, Log } from 'oidc-client';
 import { BehaviorSubject } from 'rxjs';
-import { ConfigService } from './config.service';
+import { filter } from 'rxjs/operators';
+import { ConfigService, Settings } from './config.service';
 
 export enum AuthTokenState {
-    valid = 'valid' as any,
-    invalid = 'invalid' as any,
-    expiring = 'expiring' as any,
-    expired = 'expired' as any
+  unknown = 'unknown' as any,
+  valid = 'valid' as any,
+  invalid = 'invalid' as any,
+  expiring = 'expiring' as any,
+  expired = 'expired' as any
 }
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
 
-    mgr: UserManager;
+    mgr!: UserManager;
     authority = '';
     redirectUrl = '';
     lastCall = 0;
     oidcUser!: (User | null);
-    public tokenState$: BehaviorSubject<AuthTokenState> = new BehaviorSubject<AuthTokenState>(AuthTokenState.invalid);
+    public tokenState$: BehaviorSubject<AuthTokenState> = new BehaviorSubject<AuthTokenState>(AuthTokenState.unknown);
 
     constructor(
         private config: ConfigService
     ) {
         // Log.level = Log.DEBUG;
         // Log.logger = console;
-        this.authority = this.config.settings.oidc?.authority?.
-          replace(/https?:\/\//, '').split('/').reverse().pop() || 'Identity Provider';
 
-        if (this.config.settings.oidc.useLocalStorage) {
-            (this.config.settings.oidc.userStore as any) = new WebStorageStateStore({});
-        }
-        this.mgr = new UserManager(this.config.settings.oidc || {} as UserManagerSettings);
-        this.mgr.events.addUserLoaded(user => this.onTokenLoaded(user));
-        this.mgr.events.addUserUnloaded(() => this.onTokenUnloaded());
-        this.mgr.events.addAccessTokenExpiring(e => this.onTokenExpiring());
-        this.mgr.events.addAccessTokenExpired(e => this.onTokenExpired());
-        this.mgr.events.addUserSessionChanged(() => this.onSessionChanged());
-        this.mgr.events.addSilentRenewError(e => this.onRenewError(e));
-        this.mgr.getUser().then(user => this.onTokenLoaded(user));
+        config.settings$.pipe(
+          filter(s => !!s.oidc.authority)
+        ).subscribe((s: Settings) => {
+
+          this.authority = s.oidc?.authority?.
+            replace(/https?:\/\//, '').split('/').reverse().pop() || 'Identity Provider';
+
+          if (s.oidc.useLocalStorage) {
+              (s.oidc.userStore as any) = new WebStorageStateStore({});
+          }
+          this.mgr = new UserManager(s.oidc || {} as UserManagerSettings);
+          this.mgr.events.addUserLoaded(user => this.onTokenLoaded(user));
+          this.mgr.events.addUserUnloaded(() => this.onTokenUnloaded());
+          this.mgr.events.addAccessTokenExpiring(e => this.onTokenExpiring());
+          this.mgr.events.addAccessTokenExpired(e => this.onTokenExpired());
+          this.mgr.events.addUserSessionChanged(() => this.onSessionChanged());
+          this.mgr.events.addSilentRenewError(e => this.onRenewError(e));
+          this.mgr.getUser().then(user => this.onTokenLoaded(user));
+        });
+
     }
 
     isAuthenticated(): Promise<boolean> {
@@ -68,9 +77,7 @@ export class AuthService {
 
     private onTokenLoaded(user: (User | null)): void {
         this.oidcUser = user;
-        if (!!user) {
-            this.tokenState$.next(AuthTokenState.valid);
-        }
+        this.tokenState$.next(!!user ? AuthTokenState.valid : AuthTokenState.invalid);
     }
 
     private onTokenUnloaded(): void {

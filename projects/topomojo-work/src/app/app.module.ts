@@ -57,6 +57,8 @@ import { IsoManagerComponent } from './iso-manager/iso-manager.component';
 import { DropzoneComponent } from './dropzone/dropzone.component';
 import { IsoSelectorComponent } from './iso-selector/iso-selector.component';
 import { SpacesPipe } from './spaces.pipe';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @NgModule({
   declarations: [
@@ -143,12 +145,17 @@ import { SpacesPipe } from './spaces.pipe';
 export class AppModule { }
 
 export function loadSettings(
-  config: ConfigService
-): (() => void) {
-  return () => config.load();
+  config: ConfigService,
+): (() => Observable<any>) {
+  return (): Observable<any> => config.load()
+  // .pipe(tap(s => console.log('done settings init')))
+  ;
 }
+
 export function register(
   user: UserService
-): (() => void) {
-  return () => user.register();
+): (() => Promise<void>) {
+  return (): Promise<void> => user.register()
+  // .then(() => console.log('done user init'))
+  ;
 }

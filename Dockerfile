@@ -1,7 +1,7 @@
 #
 #multi-stage target: dev
 #
-FROM node as dev
+FROM node:14 as dev
 ARG commit
 WORKDIR /app
 COPY package.json package-lock.json tools/ ./
