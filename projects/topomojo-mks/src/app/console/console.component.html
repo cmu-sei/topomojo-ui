@@ -11,8 +11,8 @@
 
       <div #audienceDiv class="audience overlay overlay-tr">
         <div class="audience-item" *ngFor="let c of audience | async">{{c.username}}</div>
-        <div class="audience-item">t1-player2</div>
-        <div class="audience-item">t1-player3</div>
+        <!-- <div class="audience-item">t1-player2</div> -->
+        <!-- <div class="audience-item">t1-player3</div> -->
       </div>
 
     <div *ngIf="state==='stopped'||state==='disconnected'" class="align-mm"

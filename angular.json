@@ -163,9 +163,14 @@
               "projects/topomojo-mks/src/assets"
             ],
             "styles": [
+              "node_modules/vmware-wmks/wmks-all.css",
               "projects/topomojo-mks/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.js",
+              "node_modules/jquery-ui-dist/jquery-ui.js",
+              "node_modules/vmware-wmks/wmks.min.js"
+            ]
           },
           "configurations": {
             "production": {
