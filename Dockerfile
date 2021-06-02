@@ -9,8 +9,11 @@ RUN npm install && \
     sh fixup-wmks.sh
 COPY . .
 RUN if [ -e "wmks.tar" ]; then tar xf wmks.tar -C node_modules/vmware-wmks; fi
-RUN $(npm bin)/ng build --prod --output-path /app/dist && \
-    sed -i s/##COMMIT##/"$commit"/ /app/dist/index.html
+RUN $(npm bin)/ng build topomojo-work --output-path /app/dist && \
+    sed -i s/##COMMIT##/"$commit"/ /app/dist/index.html &&  \
+    $(npm bin)/ng build topomojo-mks --base-href=/mks/ --output-path /app/dist/mks && \
+    sed -i s/##COMMIT##/"$commit"/ /app/dist/mks/index.html &&  \
+    echo $commit > /app/dist/commit.txt
 CMD ["npm", "start"]
 
 #
