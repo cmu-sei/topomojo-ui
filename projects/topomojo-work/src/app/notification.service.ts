@@ -33,7 +33,7 @@ export class NotificationService {
     private profileSvc: ProfileService
   ) {
 
-    this.connection = this.getConnection(`${config.apihost}hub`);
+    this.connection = this.getConnection(`${config.apphost}hub`);
 
     // refresh connection on token refresh
     auth.tokenState$.pipe(

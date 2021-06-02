@@ -7,6 +7,7 @@ export const environment = {
   settings: {
     appname: 'TopoMojo',
     apphost: 'http://localhost:5004',
+    mkshost: 'http://localhost:4201',
     oidc: {
       client_id: 'jam-code',
       // authority: 'http://localhost:5000',

@@ -7,6 +7,7 @@ import { finalize, switchMap, tap } from 'rxjs/operators';
 import { GamespaceService } from '../api/gamespace.service';
 import { GameState, NewGamespace, Vm } from '../api/gen/models';
 import { faBolt, faToggleOff, faToggleOn, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
+import { ConfigService } from '../config.service';
 
 @Component({
   selector: 'app-gamespace',
@@ -41,7 +42,8 @@ export class GamespaceComponent implements OnInit, OnChanges, AfterViewInit {
   faToggleOff = faToggleOff;
 
   constructor(
-    private api: GamespaceService
+    private api: GamespaceService,
+    private conf: ConfigService
   ) {
     this.gamespace$ = merge(
       this.id$.pipe(
@@ -107,7 +109,7 @@ export class GamespaceComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   console(vm: Vm): void {
-    console.log('show console for ' + vm.name);
+    this.conf.openConsole(`?s=${this.gid}&v=${vm.name?.split('#')[0]}`);
   }
 
 }

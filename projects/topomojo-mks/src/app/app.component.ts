@@ -11,7 +11,7 @@ import { ApiService } from './api.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'statesman-mks';
+  title = 'topomojo-mks';
   context: Observable<ConsoleRequest>;
   errorMsg = '';
 

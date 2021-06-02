@@ -14,8 +14,8 @@ export class ApiSettings {
   constructor(
       config: ConfigService
   ) {
-      this.api = `${config.apihost}api`;
-      this.docs = `${config.apihost}docs`;
+      this.api = `${config.apphost}api`;
+      this.docs = `${config.apphost}docs`;
   }
 
 }

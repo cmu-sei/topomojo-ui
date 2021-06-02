@@ -36,54 +36,54 @@
             "scripts": [
               "node_modules/marked/lib/marked.js",
               "node_modules/emoji-toolkit/lib/js/joypixels.min.js"
-            ],
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "buildOptimizer": false,
-            "sourceMap": true,
-            "optimization": false,
-            "namedChunks": true
+            ]
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "projects/topomojo-work/src/environments/environment.ts",
-                  "with": "projects/topomojo-work/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
+
               "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "4mb"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kb",
                   "maximumError": "4kb"
                 }
-              ]
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/topomojo-work/src/environments/environment.ts",
+                  "with": "projects/topomojo-work/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "topomojo-work:build"
-          },
           "configurations": {
             "production": {
               "browserTarget": "topomojo-work:build:production"
+            },
+            "development": {
+              "browserTarget": "topomojo-work:build:development",
+              "port": 4200
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -207,7 +207,8 @@
               "browserTarget": "topomojo-mks:build:production"
             },
             "development": {
-              "browserTarget": "topomojo-mks:build:development"
+              "browserTarget": "topomojo-mks:build:development",
+              "port": 4201
             }
           },
           "defaultConfiguration": "development"

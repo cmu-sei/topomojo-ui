@@ -93,8 +93,8 @@ export class HubService {
     const found = this.peers.findIndex(c => c.username === console.username);
 
     if (
-      console.sessionId == this.console.sessionId &&
-      console.name == this.console.name
+      console.sessionId === this.console.sessionId &&
+      console.name === this.console.name
     ) {
         // add if not present
         if (found < 0) {

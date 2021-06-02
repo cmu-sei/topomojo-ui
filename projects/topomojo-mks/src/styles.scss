@@ -1,1 +1,134 @@
 /* You can add global styles to this file, and also import other style files */
+$primary: #434;
+$danger: #b00;
+$success: #0b0;
+$light: whitesmoke;
+$bright: rgb(135, 28, 135);
+$dim: #747;
+$gray-200: #333;
+$gray-800: white;
+$dark: #000;
+$bg: #121;
+$bg-tools: #545;
+
+body {
+  background-color: $dark;
+  color: $light;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 18px;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  width: 100vw;
+  height: 100vh;
+}
+h1 {
+  font-size: 3em;
+  font-weight: 300;
+  text-align: center;
+}
+div.nav-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.flex-h {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+}
+.flex-hs {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  align-items: stretch;
+}
+.flex-vs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+}
+.flex-end {
+  justify-content: flex-end;
+}
+.text-danger {
+  color: $danger;
+}
+.text-success {
+  color: $success;
+}
+button {
+  margin: 4px;
+  padding: 8px 16px;
+  background-color: $primary;
+  color: $light;
+  border-radius: 4px;
+  font-size: 1em;
+  border: none;
+  cursor: default;
+}
+button:hover {
+  background-color: $light;
+  color: $bright;
+}
+.btn-lg {
+  margin: 8px;
+  padding: 32px;
+  font-size: 2em;
+}
+.btn-group {
+  background-color: $primary;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: baseline;
+  button {
+    margin: 0;
+    border-radius: 0;
+    min-width: 112px;
+  }
+}
+app-spinner {
+  svg path, svg rect {
+    fill: $dim;
+  }
+}
+.tools {
+  color: $primary;
+  background-color: $dark;
+}
+.tools-text {
+  background-color: $bg-tools;
+  color: $light;
+}
+textarea {
+    background-color: $gray-200;
+    color: $gray-800;
+}
+textarea:focus {
+    background-color: $gray-200;
+    color: $gray-800;
+}
+input.form-check-input {
+  background-color: $gray-200;
+  color: $gray-800;
+}
+.audience {
+  background-color: $primary;
+  color: $light;
+  border: $bright solid 2px;
+}
+.text-light {
+  color: $light;
+}

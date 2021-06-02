@@ -3,7 +3,7 @@ import {
   ElementRef, Input, Injector, HostListener, OnDestroy, Renderer2
 } from '@angular/core';
 import { catchError, debounceTime, map, distinctUntilChanged, tap, finalize } from 'rxjs/operators';
-import { throwError as ObservableThrower, fromEvent, Subscription, timer, Observable, of, VirtualTimeScheduler } from 'rxjs';
+import { throwError as ObservableThrower, fromEvent, Subscription, timer, Observable, of } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { MockConsoleService } from './services/mock-console.service';
 import { WmksConsoleService } from './services/wmks-console.service';
@@ -32,8 +32,6 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   canvasId = '';
   console!: ConsoleService;
 
-  // info!: ConsoleSummary;
-  // problemId: string;
   state = 'loading';
   shadowstate = 'loading';
   shadowTimer: any;
@@ -51,7 +49,6 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   audience: Observable<ConsolePresence[]>;
   private audiencePos!: MouseEvent | null;
   private audienceEl: any;
-
   private hotspot = { x: 0, y: 0, w: 8, h: 8 };
 
   constructor(
@@ -78,27 +75,23 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     el.id += this.index;
 
     if (!!this.request?.name) {
-      this.titleSvc.setTitle(`console: ${this.request.name.split('-').pop()}`);
+      this.titleSvc.setTitle(`console: ${this.request.name}`);
     }
 
     setTimeout(() => this.reload(), 1);
-    setTimeout(() => this.hubSvc.init(this.request), 100);
+    // TODO: restore audience hub
+    // setTimeout(() => this.hubSvc.init(this.request), 100);
 
     this.audienceDiv.nativeElement.onmousedown = (e: MouseEvent) => {
       e.preventDefault();
       this.audiencePos = e;
-    }
+    };
   }
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
     if (this.console) { this.console.dispose(); }
   }
-
-  // private startDrag(e: MouseEvent): void {
-  //   console.log(e);
-  //   this.audiencePos = e;
-  // }
 
   changeState(state: string): void {
 
@@ -194,7 +187,11 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   start(): void {
     this.changeState('starting');
-    this.api.power(this.request).pipe(
+    const t = {
+      id: `${this.request.name}#${this.request.sessionId}`,
+      op: 'reset'
+    };
+    this.api.power(t).pipe(
       finalize(() => this.reload())
     ).subscribe();
   }

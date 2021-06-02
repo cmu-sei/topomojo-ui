@@ -54,8 +54,16 @@ export class ConfigService {
     this.local = this.getLocal();
   }
 
-  get apihost(): string {
+  get apphost(): string {
     let path = this.settings.apphost || this.basehref;
+    if (!path.endsWith('/')) {
+      path += '/';
+    }
+    return path;
+  }
+
+  get mkshost(): string {
+    let path = this.settings.mkshost || `${this.basehref}mks`;
     if (!path.endsWith('/')) {
       path += '/';
     }
@@ -73,6 +81,10 @@ export class ConfigService {
         this.settings = {...this.settings, ...s};
         this.settings.oidc = {...this.settings.oidc, ...s.oidc};
       });
+  }
+
+  openConsole(qs: string): void {
+    this.showTab(this.mkshost + qs);
   }
 
   showTab(url: string): void {
@@ -124,6 +136,7 @@ export interface LocalAppSettings {
 export interface Settings {
   appname?: string;
   apphost?: string;
+  mkshost?: string;
   oidc: AppUserManagerSettings;
 }
 

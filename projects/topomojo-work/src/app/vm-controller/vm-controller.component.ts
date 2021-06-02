@@ -8,6 +8,7 @@ import { iif, interval, Observable, of, Subject, Subscription, throwError, timer
 import { VmService } from '../api/vm.service';
 import { catchError, debounceTime, delay, finalize, switchMap, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { NotificationService } from '../notification.service';
+import { ConfigService } from '../config.service';
 
 @Component({
   selector: 'app-vm-controller',
@@ -39,6 +40,7 @@ export class VmControllerComponent implements OnInit, OnDestroy {
 
   constructor(
     private api: VmService,
+    private conf: ConfigService,
     private hub: NotificationService
   ) {
     this.vm$ = this.task$.pipe(
@@ -135,7 +137,9 @@ export class VmControllerComponent implements OnInit, OnDestroy {
 
   console(): void {
     // this.errors.push(new Error('Unfortch. Hit a snag.'));
-    this.api.openConsole(this.vm.id || '', this.vm.name || '');
+    // this.api.openConsole(this.vm.id || '', this.vm.name || '');
+    const p = this.vm.name?.split('#') || ['', ''];
+    this.conf.openConsole(`?s=${p[1]}&v=${p[0]}`);
   }
 
 }

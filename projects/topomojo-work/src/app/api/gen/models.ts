@@ -63,6 +63,7 @@ export interface GameState {
     workspaceDocument?: string;
     markdown?: string;
     shareCode?: string;
+    launchpointUrl?: string;
     players?: Array<Player>;
     vms?: Array<VmState>;
     challenge?: ChallengeView;

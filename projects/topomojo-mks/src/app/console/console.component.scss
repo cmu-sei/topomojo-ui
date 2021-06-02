@@ -1,21 +1,8 @@
-$gray-200: #333;
-$gray-800: white;
-$dark: #000;
-$fg: #41ad57;
-$bg: #121;
-
-$primary: #272;
-$danger: #b00;
-$light: #ddd;
-$bright: lime;
-$dim: #394;
 :host {
-    z-index: 1;
+  z-index: 1;
 }
 
 .tools {
-  color: $fg;
-  background-color: $dark;
   opacity: .9;
   width: 400px;
   position: absolute;
@@ -36,8 +23,6 @@ $dim: #394;
 .tools-text {
   padding:  1em;
   margin: 1em 0 2em;
-  background-color: $bg;
-  color: $fg;
   border-radius: 4px;
 }
 .embedded {
@@ -85,7 +70,6 @@ $dim: #394;
 .overlay-box {
   padding: 8px 16px;
   background-color: rgb(black, .55);
-  // color: lightgray;
   border-radius: 4px;
 }
 
@@ -103,15 +87,6 @@ $dim: #394;
   padding-right: 2em;
   padding-left: 2em;
 }
-
-textarea {
-    background-color: $gray-200;
-    color: $gray-800;
-}
-textarea:focus {
-    background-color: $gray-200;
-    color: $gray-800;
-}
 textarea.form-control {
   padding: 4px;
   width: 392px;
@@ -120,14 +95,10 @@ textarea.form-control {
 input.form-check-input {
   width: 20px;
   height: 20px;
-  background-color: $gray-200;
-  color: $gray-800;
 }
 .audience {
   width: 224px;
   opacity: .8;
-  background-color: $primary;
-  color: $bright;
   border-radius: 4px;
   cursor: move;
 }

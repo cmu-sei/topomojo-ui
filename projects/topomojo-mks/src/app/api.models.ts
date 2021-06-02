@@ -17,3 +17,8 @@ export interface ConsoleSummary {
   isRunning?: boolean;
   error?: string;
 }
+
+export interface VmOperation {
+  id: string;
+  op: string;
+}

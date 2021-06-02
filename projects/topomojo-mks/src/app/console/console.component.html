@@ -8,8 +8,8 @@
 
       <div #audienceDiv class="audience overlay overlay-tr">
         <div class="audience-item" *ngFor="let c of audience | async">{{c.username}}</div>
-        <!-- <div class="audience-item">t1-player2</div> -->
-        <!-- <div class="audience-item">t1-player3</div> -->
+        <div class="audience-item">t1-player2</div>
+        <div class="audience-item">t1-player3</div>
       </div>
 
     <div *ngIf="state==='stopped'||state==='disconnected'" class="align-mm"
@@ -49,7 +49,7 @@
     </div>
 
     <div class="flex-vs mb-2">
-      <span>System </span>
+      <span class="text-light">System </span>
       <button class="btn" (click)="console.sendCAD()">
         <i class="fa fa-keyboard-o fa-2x"></i> Ctrl-Alt-Del
       </button>
@@ -59,7 +59,7 @@
     </div>
 
     <div class="flex-vs mb-2">
-      <span>Screen </span>
+      <span class="text-light">Screen </span>
       <button class="btn" (click)="scale()">
         <i class="fa fa-arrows-alt fa-2x"></i> Toggle Scale
       </button>
