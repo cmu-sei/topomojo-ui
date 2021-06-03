@@ -24,7 +24,7 @@ export class GeneratedWorkspaceService extends GeneratedService {
       return this.http.get<WorkspaceSummary[]>(this.conf.api + '/workspaces' + this.paramify(search));
   }
   public load(id: number): Observable<Workspace> {
-      return this.http.get<Workspace>(this.conf.api + '/v2/workspace/' + id);
+      return this.http.get<Workspace>(this.conf.api + '/workspace/' + id);
   }
   public update(model: ChangedWorkspace): Observable<any> {
       return this.http.put<any>(this.conf.api + '/workspace', model);
@@ -57,10 +57,10 @@ export class GeneratedWorkspaceService extends GeneratedService {
       return this.http.get<VmOptions>(this.conf.api + '/workspace/' + id + '/nets');
   }
   public getWorkspaceChallenge(id: string): Observable<ChallengeSpec> {
-    return this.http.get(this.conf.api + '/v2/workspace/' + id + '/challenge');
+    return this.http.get(this.conf.api + '/workspace/' + id + '/challenge');
   }
   public putWorkspaceChallenge(id: string, model: ChallengeSpec): Observable<any> {
-      return this.http.put(this.conf.api + '/v2/workspace/' + id + '/challenge', model);
+      return this.http.put(this.conf.api + '/workspace/' + id + '/challenge', model);
   }
   public getIsos(id: string, filter: IsoDataFilter): Observable<IsoFile[]> {
     return iif(() => filter.refresh || !this.isoCache || this.isoCacheId !== id,

@@ -53,6 +53,6 @@ export class GeneratedGamespaceService extends GeneratedService {
         return this.http.delete<any>(this.conf.api + '/player/' + id);
     }
     public grade(id: string, model: SectionSubmission): Observable<ChallengeView> {
-      return this.http.post<ChallengeView>(`${this.conf.api}/v2/gamespace/${id}/grade`, model);
+      return this.http.post<ChallengeView>(`${this.conf.api}/gamespace/${id}/grade`, model);
     }
 }

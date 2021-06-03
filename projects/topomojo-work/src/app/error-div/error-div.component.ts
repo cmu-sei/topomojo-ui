@@ -16,4 +16,10 @@ export class ErrorDivComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  closed(e: any): void {
+    const i = this.errors.indexOf(e);
+    if (i >= 0) {
+      this.errors.splice(i, 1);
+    }
+  }
 }
