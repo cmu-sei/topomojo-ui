@@ -139,3 +139,9 @@ app-spinner svg {
   color: black;
   opacity: 0.6;
 }
+table {
+  text-align: center;
+  th, td {
+    padding: .25rem 2rem;
+  }
+}
