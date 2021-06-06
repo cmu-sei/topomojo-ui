@@ -5,8 +5,8 @@
 
   <div class="form-row" [hidden]="!more">
     <div class="form-group col-3 py-0">
-      <label for="prereq-input{{index}}" class="mb-0">Prerequisite Score</label>
-      <input id="prereq-input{{index}}" type="number" class="form-control" formControlName="prerequisite" placeholder="prereq">
+      <label for="prereq-input-{{vindex}}.{{this.index}}" class="mb-0">Prerequisite Score</label>
+      <input id="prereq-input-{{vindex}}.{{this.index}}" type="number" class="form-control" formControlName="prerequisite" placeholder="prereq">
     </div>
     <div class="col-9"></div>
     <small class="col">This question set is only accessible if this score was achieved on the previous question set.</small>
@@ -26,31 +26,31 @@
 
       <div class="form-row">
         <div class="form-group col-8 py-0">
-          <label for="text-input{{i+1}}" class="mb-0">Question</label>
-          <textarea id="text-input{{i+1}}" class="form-control" formControlName="text" placeholder="question" rows="2"></textarea>
+          <label for="text-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Question</label>
+          <textarea id="text-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="text" placeholder="question" rows="2"></textarea>
         </div>
         <div class="form-group col-4 py-0">
-          <label for="answer-input{{i+1}}" class="mb-0">Answer</label>
-          <input id="answer-input{{i+1}}" class="form-control" formControlName="answer" placeholder="answer">
+          <label for="answer-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Answer</label>
+          <input id="answer-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="answer" placeholder="answer">
         </div>
       </div>
 
       <!-- not using hints at this time -->
       <!-- <div class="form-row" [hidden]="!more">
         <div class="form-group col-8 py-0">
-          <label for="hint-input{{i+1}}" class="mb-0">Hint</label>
-          <textarea id="hint-input{{i+1}}" class="form-control" formControlName="hint" placeholder="hint" rows="2"></textarea>
+          <label for="hint-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Hint</label>
+          <textarea id="hint-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="hint" placeholder="hint" rows="2"></textarea>
         </div>
         <div class="form-group col-4 py-0">
-          <label for="penalty-input{{i+1}}" class="mb-0">Penalty</label>
-          <input id="penalty-input{{i+1}}" type="number" class="form-control" formControlName="penalty" placeholder="">
+          <label for="penalty-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Penalty</label>
+          <input id="penalty-input{{vindex}}.{{this.index}}.{{i}}" type="number" class="form-control" formControlName="penalty" placeholder="">
         </div>
       </div> -->
 
       <div class="form-row" [hidden]="!more">
         <div class="form-group col-6 py-0">
-          <label for="grader-input{{i+1}}" class="mb-0">Grader</label>
-          <div id="grader-input{{i+1}}" class="btn-group" btnRadioGroup formControlName="grader" (mouseleave)="matchtip=0">
+          <label for="grader-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Grader</label>
+          <div id="grader-input{{vindex}}.{{this.index}}.{{i}}" class="btn-group" btnRadioGroup formControlName="grader" (mouseleave)="matchtip=0">
             <label class="btn btn-sm btn-outline-secondary" btnRadio="match" (mouseenter)="matchtip=1">Match</label>
             <label class="btn btn-sm btn-outline-secondary" btnRadio="matchany" (mouseenter)="matchtip=2">MatchAny</label>
             <label class="btn btn-sm btn-outline-secondary" btnRadio="matchall" (mouseenter)="matchtip=3">MatchAll</label>
@@ -58,12 +58,12 @@
           </div>
         </div>
         <div class="form-group col-2 py-0">
-          <label for="weight-input{{i+1}}" class="mb-0">Weight</label>
-          <input id="weight-input{{i+1}}" type="number" class="form-control" formControlName="weight" placeholder="">
+          <label for="weight-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Weight</label>
+          <input id="weight-input{{vindex}}.{{this.index}}.{{i}}" type="number" class="form-control" formControlName="weight" placeholder="">
         </div>
         <div class="form-group col-4 py-0">
-          <label for="example-input{{i+1}}" class="mb-0">Example</label>
-          <input id="example-input{{i+1}}" class="form-control" formControlName="example" placeholder="example">
+          <label for="example-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Example</label>
+          <input id="example-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="example" placeholder="example">
         </div>
         <div class="form-group col py-0" *ngIf="hoveritem===i">
           <small *ngIf="matchtip===1">Match &mdash; match answer exactly</small>

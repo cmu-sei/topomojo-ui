@@ -2,7 +2,7 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <div class="btn-group">
-  <button [disabled]="confirming" [class]="btnClass" (click)="confirming=true">
+  <button [disabled]="confirming" [class]="btnClass" (click)="confirming=true" [disabled]="disabled">
     <ng-content></ng-content>
   </button>
 

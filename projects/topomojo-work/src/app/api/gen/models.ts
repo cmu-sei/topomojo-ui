@@ -64,6 +64,10 @@ export interface GameState {
     markdown?: string;
     shareCode?: string;
     launchpointUrl?: string;
+    startTime: string;
+    stopTime: string;
+    expirationTime: string;
+    isActive?: boolean;
     players?: Array<Player>;
     vms?: Array<VmState>;
     challenge?: ChallengeView;
@@ -346,8 +350,11 @@ export interface QuestionSpec {
 }
 
 export interface ChallengeView {
+  isActive: boolean;
   text?: string;
   maxPoints: number;
+  maxAttempts: number;
+  attempts: number;
   score?: number;
   sectionText?: string;
   sectionCount?: number;

@@ -15,6 +15,7 @@ import { faTrash, faPlus, faBaby} from '@fortawesome/free-solid-svg-icons';
 export class QuestionFormComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() index = 0;
+  @Input() vindex = 0;
   @Input() more = false;
   hoveritem = 0;
   matchtip = 0;

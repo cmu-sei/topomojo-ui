@@ -51,11 +51,11 @@
 
       <div class="" [hidden]="!detail && !more[i]">
         <label class="col-form-label-sm">Markdown</label>
-        <ngx-monaco-editor id="section-{{index}}-editor" formControlName="text" [options]="editorOptions" aria-label="section text"></ngx-monaco-editor>
+        <ngx-monaco-editor id="section-{{this.index}}.{{i}}-editor" formControlName="text" [options]="editorOptions" aria-label="section text"></ngx-monaco-editor>
         <small>Provide any instructions specific to this question set.</small>
       </div>
 
-      <app-question-form [form]="$any(qs)" [index]="i" [more]="detail || more[i]"></app-question-form>
+      <app-question-form [form]="$any(qs)" [vindex]="this.index" [index]="i" [more]="detail || more[i]"></app-question-form>
 
     </div>
   </ng-container>

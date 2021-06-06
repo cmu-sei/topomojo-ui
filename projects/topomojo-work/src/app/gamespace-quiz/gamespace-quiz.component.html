@@ -17,11 +17,14 @@
 
   <app-error-div [errors]="errors"></app-error-div>
 
-  <div class="d-flex">
-    <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()">
+  <div class="d-flex align-items-center">
+    <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()" [disabled]="!challenge.isActive">
       <fa-icon [icon]="faSubmit"></fa-icon>
       <span>Submit</span>
     </app-confirm-button>
+    <label *ngIf="challenge.isActive" class="pop-warning px-1 ml-2">
+      {{challenge.attempts + 1}} of {{challenge.maxAttempts}}
+    </label>
     <div class="spacer"></div>
     <div>Score: {{challenge.score}} of {{challenge.maxPoints}}</div>
   </div>

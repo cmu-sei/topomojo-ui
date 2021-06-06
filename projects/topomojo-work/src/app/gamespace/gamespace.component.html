@@ -42,7 +42,7 @@
 
   <markdown [data]="game.challenge?.text || ''"></markdown>
 
-  <ng-container *ngIf="!!game.id">
+  <ng-container *ngIf="!!game.id && game.isActive">
     <h3>Gamespace Resources</h3>
     <div *ngIf="!deploying" class="d-flex my-4">
       <button *ngFor="let vm of game.vms" class="btn btn-sm btn-dark mr-2" (click)="console(vm)">

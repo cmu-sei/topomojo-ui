@@ -12,6 +12,7 @@ import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 export class ConfirmButtonComponent implements OnInit {
   @Input() btnClass = 'btn btn-info btn-sm';
   @Input() cancelButtonClass = 'btn btn-outline-secondary';
+  @Input() disabled = false;
   @Output() confirm = new EventEmitter<boolean>();
   confirming = false;
 
