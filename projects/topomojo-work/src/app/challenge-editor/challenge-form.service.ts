@@ -47,7 +47,8 @@ export class ChallengeFormService {
       text: [v?.text],
       iso: this.fb.group({
         file: [v?.iso?.file],
-        targets: [v?.iso?.targets]
+        targets: [v?.iso?.targets],
+        downloadable: [v?.iso?.downloadable]
       }),
       sections: this.fb.array(
         v?.sections?.map(s => this.mapQuestionSet(s)) || []

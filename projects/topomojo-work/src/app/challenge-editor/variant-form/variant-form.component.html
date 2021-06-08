@@ -9,28 +9,48 @@
     <small>Provide any information specific to this variant. This is appended to the challenge text.</small>
   </div>
 
-  <div formGroupName="iso" class="indent" [hidden]="!detail">
-    <label class="label pop-info">Iso Attachment</label>
-    <div class="form-row">
-      <div class="form-group col-6 py-0">
-        <label class="col-form-label-sm">File</label>
-        <input class="form-control" formControlName="file" placeholder="iso filename" aria-label="iso filename">
+  <div formGroupName="iso" class="indent mb-2 pb-2" [hidden]="!detail">
+    <label class="label pop-info">Iso</label>
+    <div class="">
+      <small>
+        Dynamic iso attachment provides the ability to attach a variant-specific ISO file to templates.
+        Specify targets as a space-delimited list of template names.
+      </small>
+    </div>
+    <div class="form-group py-0">
+      <label class="col-form-label-sm">File</label>
+      <div class="input-group input-group-sm mb-1">
+        <input type="hidden" class="form-control" formControlName="file">
+        <label id="iso-input-{{index}}" class="form-control" readonly>{{form.get('iso.file')?.value?.split('/').pop()}}</label>
+        <!-- <label id="iso-input" class="form-control">{{form.get('iso.file')?.value?.split('/').pop()}}</label> -->
+        <div class="input-group-append">
+          <button class="btn btn-sm btn-outline-info" (click)="isoClear()">
+            <fa-icon [icon]="faTimes"></fa-icon>
+            <span>Remove</span>
+          </button>
+        </div>
       </div>
-      <div class="form-group col-6 py-0">
-        <label class="col-form-label-sm">Targets</label>
-        <input class="form-control" formControlName="targets" placeholder="vm targets" aria-label="vm target list">
-      </div>
-      <div class="col">
-        <small>
-          Dynamic iso attachment provides the ability to attach a variant-specific ISO file to templates.
-          Specify targets as a space-delimited list of template names.
-        </small>
+      <app-iso-selector [guid]="guid" (added)="isoSelect($event)"></app-iso-selector>
+    </div>
+    <div class="form-group py-0">
+      <label class="col-form-label-sm">Targets</label>
+      <input class="form-control" formControlName="targets" placeholder="vm targets" aria-label="vm target list">
+      <small>space delimited list of template names that should attach this iso</small>
+    </div>
+    <div class="form-group py-0">
+      <label class="mb-0" for="downloadable-toggle-{{index}}">Downloadable</label>
+      <div class="form-control auto-h d-flex align-items-center">
+        <label>Restricted</label>
+        <label id="downloadable-toggle-{{index}}" class="btn text-info" btnCheckbox formControlName="downloadable">
+          <fa-icon [icon]="form.get('iso.downloadable')?.value ? faToggleOn : faToggleOff" size="lg"></fa-icon>
+        </label>
+        <label>Downloadable</label>
       </div>
     </div>
   </div>
 
   <ng-container formArrayName="sections">
-    <div *ngFor="let qs of sections.controls; let i = index" [formGroupName]="i" class="indent">
+    <div *ngFor="let qs of sections.controls; let i = index" [formGroupName]="i" class="indent mb-2 pb-2">
 
       <div class="d-flex align-items-center">
         <label class="label pop-info">QuestionSet.{{i+1}}</label>

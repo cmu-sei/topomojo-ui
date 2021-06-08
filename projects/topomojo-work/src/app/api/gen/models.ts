@@ -331,6 +331,7 @@ export interface IsoSpec {
   file?: string;
   manifest?: string[];
   targets?: string;
+  downloadable?: boolean;
 }
 
 export interface SectionSpec {

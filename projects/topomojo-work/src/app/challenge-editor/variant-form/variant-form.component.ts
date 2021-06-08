@@ -3,9 +3,9 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { VariantSpec, SectionSpec } from 'projects/topomojo-work/src/app/api/gen/models';
+import { VariantSpec, SectionSpec, IsoFile } from 'projects/topomojo-work/src/app/api/gen/models';
 import { ChallengeFormService } from '../challenge-form.service';
-import { faTrash, faPlus, faCopy, faEllipsisV} from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faPlus, faCopy, faEllipsisV, faTimes, faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons';
 import { ConfigService } from 'projects/topomojo-work/src/app/config.service';
 
 @Component({
@@ -17,6 +17,7 @@ export class VariantFormComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() index = 0;
   @Input() detail = false;
+  @Input() guid = '';
   more: boolean[] = [];
   editorOptions: any;
 
@@ -24,6 +25,9 @@ export class VariantFormComponent implements OnInit {
   faPlus = faPlus;
   faCopy = faCopy;
   faMore = faEllipsisV;
+  faTimes = faTimes;
+  faToggleOn = faToggleOn;
+  faToggleOff = faToggleOff;
 
   constructor(
     private svc: ChallengeFormService,
@@ -44,5 +48,13 @@ export class VariantFormComponent implements OnInit {
   }
   removeSet(index: number): void {
     this.sections.removeAt(index);
+  }
+  isoClear(): void {
+    const c = this.form.get('iso.file');
+    c?.setValue('');
+  }
+  isoSelect(iso: IsoFile): void {
+    const c = this.form.get('iso.file');
+    c?.setValue(iso.path);
   }
 }
