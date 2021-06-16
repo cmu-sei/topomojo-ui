@@ -4,6 +4,7 @@
 export interface ConsoleRequest {
   name?: string;
   sessionId?: string;
+  fullbleed?: boolean;
 }
 
 export interface ConsolePresence {
@@ -13,7 +14,7 @@ export interface ConsolePresence {
 }
 
 export interface ConsoleSummary {
-  id?: string;
+  id: string;
   isolationId: string;
   name: string;
   url: string;
@@ -24,4 +25,52 @@ export interface ConsoleSummary {
 export interface VmOperation {
   id: string;
   op: string;
+}
+
+export interface VmOptions {
+  iso: Array<string>;
+  net: Array<string>;
+}
+
+export interface VmQuestion {
+  id?: string;
+  prompt?: string;
+  defaultChoice?: string;
+  choices?: Array<VmQuestionChoice>;
+}
+
+export interface VmTask {
+  id?: string;
+  name?: string;
+  progress?: number;
+  whenCreated?: string;
+}
+
+export interface VmQuestionChoice {
+  key?: string;
+  label?: string;
+}
+
+export interface KeyValuePair {
+  key?: string;
+  value?: string;
+}
+
+export interface VmAnswer {
+  questionId?: string;
+  choiceKey?: string;
+}
+
+export enum VmStateEnum {
+  off = 'off',
+  running = 'running',
+  suspended = 'suspended'
+}
+
+export enum VmOperationTypeEnum {
+  start = 'start',
+  stop = 'stop',
+  save = 'save',
+  revert = 'revert',
+  delete = 'delete'
 }

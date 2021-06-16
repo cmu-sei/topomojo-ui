@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { environment } from '../environments/environment';
-import { ConsoleRequest, ConsoleSummary, VmOperation } from './api.models';
+import { ConsoleRequest, ConsoleSummary, KeyValuePair, VmAnswer, VmOperation, VmOptions } from './api.models';
 
 @Injectable({
   providedIn: 'root'
@@ -30,4 +30,21 @@ export class ApiService {
   power(model: VmOperation): Observable<any> {
     return this.http.put(this.url + '/vm', model);
   }
+
+  update(id: string, change: KeyValuePair): Observable<any> {
+    return this.http.put<any>(this.url + '/vm/' + id + '/change', change);
+  }
+
+  answer(id: string, answer: VmAnswer): Observable<any> {
+    return this.http.put<any>(this.url + '/vm/' + id + '/answer', answer);
+  }
+
+  isos(id: string): Observable<VmOptions> {
+    return this.http.get<VmOptions>(this.url + '/vm/' + id + '/isos');
+  }
+
+  nets(id: string): Observable<VmOptions> {
+    return this.http.get<VmOptions>(this.url + '/vm/' + id + '/nets');
+  }
+
 }

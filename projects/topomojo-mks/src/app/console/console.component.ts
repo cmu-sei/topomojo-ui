@@ -5,8 +5,8 @@ import {
   Component, OnInit, ViewChild, AfterViewInit,
   ElementRef, Input, Injector, HostListener, OnDestroy, Renderer2
 } from '@angular/core';
-import { catchError, debounceTime, map, distinctUntilChanged, tap, finalize } from 'rxjs/operators';
-import { throwError as ObservableThrower, fromEvent, Subscription, timer, Observable, of } from 'rxjs';
+import { catchError, debounceTime, map, distinctUntilChanged, tap, finalize, switchMap } from 'rxjs/operators';
+import { throwError as ObservableThrower, fromEvent, Subscription, timer, Observable, of, Subject } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { MockConsoleService } from './services/mock-console.service';
 import { WmksConsoleService } from './services/wmks-console.service';
@@ -33,6 +33,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('consoleCanvas') consoleCanvas!: ElementRef;
   @ViewChild('audienceDiv') audienceDiv!: ElementRef;
   canvasId = '';
+  vmId = '';
   console!: ConsoleService;
 
   state = 'loading';
@@ -48,6 +49,8 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   showCog = true;
   justClipped = false;
   justPasted = false;
+  nets$: Observable<string[]>;
+  refreshNets$ = new Subject<boolean>();
   subs: Array<Subscription> = [];
   audience: Observable<ConsolePresence[]>;
   private audiencePos!: MouseEvent | null;
@@ -63,6 +66,12 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     private renderer: Renderer2
   ) {
     this.audience = hubSvc.audience;
+
+    this.nets$ = this.refreshNets$.pipe(
+      debounceTime(500),
+      switchMap(() => api.nets(this.vmId)),
+      map(r => r.net)
+    );
   }
 
   ngOnInit(): void {
@@ -147,14 +156,14 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     this.changeState('loading');
     this.api.ticket(this.request).pipe(
       catchError((err: Error) => {
-        // testing
-        return of({
-          id: '1234',
-          name: 'vm',
-          isolationId: '5555',
-          url: 'ws://local.mock/ticket/1234',
-          isRunning: true
-        });
+        // // testing
+        // return of({
+        //   id: '1234',
+        //   name: 'vm',
+        //   isolationId: '5555',
+        //   url: 'ws://local.mock/ticket/1234',
+        //   isRunning: true
+        // });
         return ObservableThrower(err);
       })
     ).subscribe(
@@ -165,7 +174,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   create(info: ConsoleSummary): void {
-    // this.info = info;
+    this.vmId = info.id;
 
     this.isMock = !!(info.url.match(/mock/i));
 
@@ -178,7 +187,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
         this.console.connect(
           info.url,
           (state: string) => this.changeState(state),
-          { canvasId: this.canvasId, viewOnly: this.viewOnly }
+          { canvasId: this.canvasId, viewOnly: this.viewOnly, changeResolution: !!this.request.fullbleed }
         );
       } else {
         this.changeState('stopped');
@@ -221,11 +230,22 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resolve(): void {
-    this.console.resolve();
+    // this.console.resolve();
+    this.request.fullbleed = !this.request.fullbleed;
+    this.reload();
   }
 
   scale(): void {
     this.console.toggleScale();
+  }
+
+  getNet(): void {
+    this.refreshNets$.next(true);
+  }
+
+  setNet(net: string): void {
+    this.api.update(this.vmId, { key: 'net', value: net}).subscribe();
+    // todo: show feedback
   }
 
   clip(): void {

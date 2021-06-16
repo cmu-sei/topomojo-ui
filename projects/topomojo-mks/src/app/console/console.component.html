@@ -9,11 +9,11 @@
     <button *ngIf="isConnected && showCog && !viewOnly" class="btn overlay overlay-tl cog"
       (click)="showUtilities()">&#x2699;</button>
 
-      <div #audienceDiv class="audience overlay overlay-tr">
-        <div class="audience-item" *ngFor="let c of audience | async">{{c.username}}</div>
-        <!-- <div class="audience-item">t1-player2</div> -->
-        <!-- <div class="audience-item">t1-player3</div> -->
-      </div>
+    <div #audienceDiv class="audience overlay overlay-tr">
+      <div class="audience-item" *ngFor="let c of audience | async">{{c.username}}</div>
+      <!-- <div class="audience-item">t1-player2</div> -->
+      <!-- <div class="audience-item">t1-player3</div> -->
+    </div>
 
     <div *ngIf="state==='stopped'||state==='disconnected'" class="align-mm"
       [class.hidden]="isConnected">
@@ -41,10 +41,12 @@
     </div>
 
     <div class="tools-text">
-      <p><small>
+      <p>
+        <small>
           If the "Tools" button is in the way, hide it here. If hidden, you can
           open the tools panel by moving the mouse to the left edge of the console.
-        </small></p>
+        </small>
+      </p>
       <div class="form-group form-check">
         <label class="form-check-label" for="showCog">Show tools button: </label>
         <input type="checkbox" class="form-check-input" id="showCog" [(ngModel)]="showCog">
@@ -77,7 +79,17 @@
       </button>
     </div>
 
-    <!-- <div class="flex-h">
+    <div class="flex-vs mb-2">
+      <span class="text-light">Network</span>
+      <button class="btn" (click)="getNet()">
+        <i class="fa fa-arrows-alt fa-2x"></i> Refresh
+      </button>
+      <button *ngFor="let net of nets$ | async" class="btn" (click)="setNet(net)">
+        <i class="fa fa-arrows-alt fa-2x"></i> {{net}}
+      </button>
+    </div>
+
+      <!-- <div class="flex-h">
       <span>[Clipboard] </span>
       <button class="btn" (click)="showClipboard=!showClipboard">
         <i class="fa fa-clipboard fa-2x"></i> Show

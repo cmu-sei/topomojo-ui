@@ -27,7 +27,8 @@ export class AppComponent {
       map(p => ({
         name: p.v,
         sessionId: p.s,
-        token: p.t
+        token: p.t,
+        fullbleed: p.f
       })),
       switchMap(p => api.redeem(p.token).pipe(
         catchError(err => of(p)),

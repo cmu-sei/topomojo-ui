@@ -118,6 +118,9 @@ export class WmksConsoleService implements ConsoleService {
     }
   }
 
+  // NOTE: can't seem to set `changeResolution` dynamically
+  // Tried to set up a button to go fullbleed, but doesn't
+  // work if changeResolution is false initially
   resolve(): void {
     if (this.wmks) {
 
