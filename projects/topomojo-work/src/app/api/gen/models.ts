@@ -3,7 +3,7 @@
 
 
 export interface CachedConnection {
-    id?: string;
+    id: string;
     room?: string;
     profileId?: string;
     profileName?: string;
@@ -34,15 +34,17 @@ export interface ImageFile {
 }
 
 export interface Gamespace {
-    id?: number;
-    globalId?: string;
+    id: number;
+    globalId: string;
     name?: string;
     slug?: string;
+    clientId?: string;
     audience?: string;
     whenCreated?: string;
     workspaceDocument?: string;
     workspaceId?: number;
     players?: Array<Player>;
+    checked: boolean;
 }
 
 export interface Player {
@@ -89,8 +91,8 @@ export interface Search {
 }
 
 export interface UserProfile {
-    id?: number;
-    globalId?: string;
+    id: number;
+    globalId: string;
     name?: string;
     role?: string;
     isAdmin?: boolean;
@@ -108,10 +110,11 @@ export interface ChangedUser {
 }
 
 export interface TemplateSummary {
-    id?: number;
+    id: number;
     name?: string;
     description?: string;
     workspaceId?: number;
+    workspaceGlobalId: string;
     workspaceName?: string;
     parentId?: string;
     parentName?: string;

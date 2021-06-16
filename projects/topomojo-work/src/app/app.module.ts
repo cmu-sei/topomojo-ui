@@ -6,6 +6,10 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { AppRoutingModule } from './app-routing.module';
+import { ApiModule } from './api/gen/api.module';
+import { UtilityModule } from './utility/utility.module';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
@@ -16,8 +20,6 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 
-import { ApiModule } from './api/gen/api.module';
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthInterceptor } from './auth.interceptor';
 import { ConfigService, markedOptionsFactory } from './config.service';
@@ -35,18 +37,13 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { WorkspaceCardComponent } from './workspace-card/workspace-card.component';
 import { FilesEditorComponent } from './files-editor/files-editor.component';
 import { EnlistComponent } from './enlist/enlist.component';
-import { ClipspanComponent } from './clipspan/clipspan.component';
 import { TemplateEditorComponent } from './template-editor/template-editor.component';
-import { VmControllerComponent } from './vm-controller/vm-controller.component';
 import { TemplateSelectorComponent } from './template-selector/template-selector.component';
-import { ErrorDivComponent } from './error-div/error-div.component';
 import { TemplateEditorFormComponent } from './template-editor-form/template-editor-form.component';
-import { ConfirmButtonComponent } from './confirm-button/confirm-button.component';
 import { ImageManagerComponent } from './image-manager/image-manager.component';
 import { VariantFormComponent } from './challenge-editor/variant-form/variant-form.component';
 import { QuestionFormComponent } from './challenge-editor/question-form/question-form.component';
 import { WorkspaceBrowserComponent } from './workspace-browser/workspace-browser.component';
-import { SpinnerComponent } from './spinner/spinner.component';
 import { WorkspaceCreatorComponent } from './workspace-creator/workspace-creator.component';
 import { PresenceBarComponent } from './presence-bar/presence-bar.component';
 import { GamespaceComponent } from './gamespace/gamespace.component';
@@ -56,9 +53,6 @@ import { GamespaceQuizComponent } from './gamespace-quiz/gamespace-quiz.componen
 import { IsoManagerComponent } from './iso-manager/iso-manager.component';
 import { DropzoneComponent } from './dropzone/dropzone.component';
 import { IsoSelectorComponent } from './iso-selector/iso-selector.component';
-import { SpacesPipe } from './spaces.pipe';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 
 @NgModule({
   declarations: [
@@ -76,18 +70,13 @@ import { tap } from 'rxjs/operators';
     WorkspaceCardComponent,
     FilesEditorComponent,
     EnlistComponent,
-    ClipspanComponent,
     TemplateEditorComponent,
-    VmControllerComponent,
     TemplateSelectorComponent,
-    ErrorDivComponent,
     TemplateEditorFormComponent,
-    ConfirmButtonComponent,
     ImageManagerComponent,
     VariantFormComponent,
     QuestionFormComponent,
     WorkspaceBrowserComponent,
-    SpinnerComponent,
     WorkspaceCreatorComponent,
     PresenceBarComponent,
     GamespaceComponent,
@@ -96,8 +85,7 @@ import { tap } from 'rxjs/operators';
     GamespaceQuizComponent,
     IsoManagerComponent,
     DropzoneComponent,
-    IsoSelectorComponent,
-    SpacesPipe
+    IsoSelectorComponent
   ],
   imports: [
     BrowserModule,
@@ -106,6 +94,7 @@ import { tap } from 'rxjs/operators';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    UtilityModule,
     ApiModule,
     MonacoEditorModule.forRoot(),
     MarkdownModule.forRoot({
@@ -120,6 +109,12 @@ import { tap } from 'rxjs/operators';
     TooltipModule.forRoot(),
     AlertModule.forRoot(),
     ProgressbarModule.forRoot()
+  ],
+  exports: [
+    ApiModule,
+    BrowserModule,
+    UtilityModule,
+    FontAwesomeModule
   ],
   providers: [
     {

@@ -1,0 +1,58 @@
+<h4>Users</h4>
+
+<div>
+  <div class="input-group input-group-sm">
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <fa-icon [icon]="faSearch"></fa-icon>
+        <span>Search</span>
+      </span>
+    </div>
+    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
+  </div>
+  <small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
+</div>
+
+<hr/>
+
+<div *ngFor="let user of source$ | async; trackBy:trackById" class="row mb-1">
+  <div class="col-8">
+    <span class="text-secondary">{{user.name}}</span>
+    <br/>
+    <small class="text-muted ml-4">
+      <app-clipspan>{{user.globalId}}</app-clipspan>
+    </small>
+  </div>
+  <div class="col-1">
+    <small>{{user.whenCreated | shortdate}}</small>
+  </div>
+  <div class="col-3">
+    <button class="btn btn-outline-info btn-sm mx-1" (click)="view(user)">
+      <fa-icon [icon]="faList"></fa-icon>
+      <span>View</span>
+    </button>
+    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(user)">
+      <fa-icon [icon]="faTrash"></fa-icon>
+      <span>Delete</span>
+    </app-confirm-button>
+  </div>
+  <div *ngIf="viewed === user" class="col-12">
+
+      <div class="form-group bg-light">
+        <label for="role-input">Role</label><br/>
+        <div id="role-input" class="btn-group" btnRadioGroup [(ngModel)]="user.role" (click)="update(user)">
+          <label class="btn btn-outline-info btn-sm" btnRadio="user">User</label>
+          <label class="btn btn-outline-info btn-sm" btnRadio="builder">Builder</label>
+          <label class="btn btn-outline-info btn-sm" btnRadio="creator">Creator</label>
+          <label class="btn btn-outline-info btn-sm" btnRadio="administrator">Admin</label>
+        </div>
+      </div>
+
+      <div class="form-group bg-light">
+        <label class="mb=0" for="detail-template-limit">Workspace Limit</label>
+        <input id="detail-template-limit" class="form-control" type="number" [(ngModel)]="user.workspaceLimit" (input)="update(user)">
+      </div>
+
+
+  </div>
+</div>

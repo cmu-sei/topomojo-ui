@@ -5,7 +5,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { Template } from '../api/gen/models';
 import { TemplateService } from '../api/template.service';
 import { faEdit, faLink, faUnlink, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { VmControllerComponent } from '../vm-controller/vm-controller.component';
+import { VmControllerComponent } from '../utility/vm-controller/vm-controller.component';
 import { finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 

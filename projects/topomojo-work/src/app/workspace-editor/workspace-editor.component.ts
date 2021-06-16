@@ -3,8 +3,8 @@
 
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 import { Workspace } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 import { ConfigService } from '../config.service';
@@ -20,6 +20,8 @@ export class WorkspaceEditorComponent implements OnInit, OnDestroy {
   summary: Observable<Workspace>;
   section = 'settings';
   guid = '';
+  errors: any[] = [];
+  err: any;
 
   constructor(
     config: ConfigService,
@@ -35,8 +37,14 @@ export class WorkspaceEditorComponent implements OnInit, OnDestroy {
       debounceTime(500),
       distinctUntilChanged(),
       tap(id => this.guid = id),
-      tap(id => hub.joinWorkspace(id)),
-      switchMap(id => api.load(id)),
+      switchMap(id => api.load(id).pipe(
+        catchError(err => {
+          this.err = err;
+          return of({} as Workspace);
+        })
+      )),
+      filter(w => !!w.globalId),
+      tap(w => hub.joinWorkspace(w.globalId)),
       tap(w => config.updateLocal({last: `topo/${w.globalId}/${this.section}`}))
     );
 
@@ -49,6 +57,10 @@ export class WorkspaceEditorComponent implements OnInit, OnDestroy {
     this.hub.leaveWorkspace();
   }
 
+  bail(): void {
+    this.router.navigateByUrl('/');
+  }
+
   @HostListener('document:keydown', ['$event'])
   onKeydown(ev: KeyboardEvent): boolean {
     // console.log(ev);
@@ -59,27 +71,21 @@ export class WorkspaceEditorComponent implements OnInit, OnDestroy {
     if (ev.ctrlKey) {
       switch (ev.code) {
         case 'Digit1':
-        case 'KeyS':
           section = 'settings';
           break;
         case 'Digit2':
-        case 'KeyT':
           section = 'templates';
           break;
         case 'Digit3':
-        case 'KeyD':
           section = 'document';
           break;
         case 'Digit4':
-        case 'KeyC':
           section = 'challenge';
           break;
         case 'Digit5':
-        case 'KeyF':
           section = 'files';
           break;
         case 'Digit6':
-        case 'KeyP':
           section = 'play';
           break;
       }

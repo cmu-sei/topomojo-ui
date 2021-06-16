@@ -109,7 +109,7 @@ export class GamespaceComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   console(vm: Vm): void {
-    this.conf.openConsole(`?s=${this.gid}&v=${vm.name?.split('#')[0]}`);
+    this.conf.openConsole(`?f=1&s=${this.gid}&v=${vm.name?.split('#')[0]}`);
   }
 
 }

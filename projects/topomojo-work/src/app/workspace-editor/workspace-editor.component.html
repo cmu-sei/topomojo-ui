@@ -15,7 +15,6 @@
       <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../play']">Play</a>
     </div>
   <!-- </div> -->
-
   <div [ngSwitch]="section" class="reader">
     <app-settings-editor *ngSwitchCase="'settings'" [summary]="ws"></app-settings-editor>
     <app-templates-editor *ngSwitchCase="'templates'" [workspace]="ws"></app-templates-editor>
@@ -24,10 +23,18 @@
     <app-files-editor *ngSwitchCase="'files'" [summary]="ws"></app-files-editor>
     <app-workspace-player *ngSwitchCase="'play'" [summary]="ws"></app-workspace-player>
   </div>
+
 </div>
 
 <ng-template #loading>
-  <div class="reader-slim text-center my-4">
+  <div *ngIf="!err" class="reader-slim text-center my-4">
     <app-spinner></app-spinner>
+  </div>
+
+  <div *ngIf="!!err" class="text-center">
+    <h2 class="my-4 text-primary">{{err.error?.message || err.message || err | camelspace}}</h2>
+    <div class="my-4">
+      <button class="btn btn-primary" (click)="bail()">Continue</button>
+    </div>
   </div>
 </ng-template>

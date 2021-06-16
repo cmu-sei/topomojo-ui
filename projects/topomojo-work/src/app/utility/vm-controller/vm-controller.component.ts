@@ -1,14 +1,14 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Template, Vm, VmOperationTypeEnum } from '../api/gen/models';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Template, TemplateSummary, Vm, VmOperationTypeEnum } from '../../api/gen/models';
 import { faCircleNotch, faSyncAlt, faCog, faBolt, faTv, faPlay, faStop, faSave, faStepBackward, faUndoAlt, faTrash, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { iif, interval, Observable, of, Subject, Subscription, throwError, timer } from 'rxjs';
-import { VmService } from '../api/vm.service';
-import { catchError, debounceTime, delay, finalize, switchMap, takeUntil, tap, throttleTime } from 'rxjs/operators';
-import { NotificationService } from '../notification.service';
-import { ConfigService } from '../config.service';
+import { Observable, of, Subject, Subscription, timer } from 'rxjs';
+import { VmService } from '../../api/vm.service';
+import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
+import { NotificationService } from '../../notification.service';
+import { ConfigService } from '../../config.service';
 
 @Component({
   selector: 'app-vm-controller',
@@ -16,8 +16,8 @@ import { ConfigService } from '../config.service';
   styleUrls: ['./vm-controller.component.scss']
 })
 export class VmControllerComponent implements OnInit, OnDestroy {
-  @Input() template!: Template;
-  vm: Vm = {};
+  @Input() template: Template | TemplateSummary = { id: 0, workspaceGlobalId: ''};
+  @Input() vm: Vm = {};
   task = '';
   confirming = false;
   vm$: Observable<Vm>;
@@ -139,7 +139,7 @@ export class VmControllerComponent implements OnInit, OnDestroy {
     // this.errors.push(new Error('Unfortch. Hit a snag.'));
     // this.api.openConsole(this.vm.id || '', this.vm.name || '');
     const p = this.vm.name?.split('#') || ['', ''];
-    this.conf.openConsole(`?s=${p[1]}&v=${p[0]}`);
+    this.conf.openConsole(`?f=1&s=${p[1]}&v=${p[0]}`);
   }
 
 }

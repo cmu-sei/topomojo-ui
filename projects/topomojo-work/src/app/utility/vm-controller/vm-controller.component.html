@@ -48,7 +48,7 @@
 
       <button class="btn btn-outline-dark" (click)="do('save')"
       aria-label="save" tooltip="save"
-      *ngIf="!template.parentId">
+      *ngIf="template.id && !template.parentId">
         <fa-icon [icon]="faSave"></fa-icon>
       </button>
 
@@ -66,11 +66,11 @@
   </div>
 
   <div *ngIf="confirming" class="btn-group" role="group" aria-label="confirm buttons">
-    <button class="btn btn-outline-dark" (click)="do('delete');confirming=false"
+    <button class="btn btn-outline-dark btn-sm" (click)="do('delete');confirming=false"
     aria-label="confirm delete" tooltip="confirm delete">
       <fa-icon [icon]="faTrash"></fa-icon>
     </button>
-    <button class="btn btn-outline-dark" (click)="confirming=false"
+    <button class="btn btn-outline-dark btn-sm" (click)="confirming=false"
       aria-label="cancel delete" tooltip="cancel">
         <fa-icon [icon]="faTimes"></fa-icon>
       </button>

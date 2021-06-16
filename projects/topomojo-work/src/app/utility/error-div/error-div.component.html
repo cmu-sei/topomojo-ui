@@ -2,5 +2,5 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <alert *ngFor="let e of errors" type="danger" [dismissible]="true" (onClosed)="closed(e)">
-  {{e.error?.message || e.message || e | spaces}}
+  {{e.error?.message || e.message || e | camelspace}}
 </alert>

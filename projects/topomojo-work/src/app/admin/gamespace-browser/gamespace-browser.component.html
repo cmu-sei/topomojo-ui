@@ -1,0 +1,70 @@
+<h4>Gamespaces</h4>
+
+<div>
+  <div class="input-group input-group-sm">
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <fa-icon [icon]="faSearch"></fa-icon>
+        <span>Search</span>
+      </span>
+    </div>
+    <input type="search" [(ngModel)]="term" placeholder="term" class="form-control">
+  </div>
+  <small>not yet implemented</small>
+</div>
+
+<div class="text-right">
+  <button class="btn btn-outline-info btn-sm mx-1" (click)="refresh()">
+    <fa-icon [icon]="faSync"></fa-icon>
+    <span>Refresh</span>
+  </button>
+  <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="destroySelected()">
+    <fa-icon [icon]="faTrash"></fa-icon>
+    <span>Delete Selected</span>
+  </app-confirm-button>
+</div>
+
+<div>
+  <button class="btn btn-light btn-sm mr-1" (click)="toggleAll()" aria-label="toggle selection for list">
+    <fa-icon [icon]="selectAllValue ? faChecked : faUnChecked"></fa-icon>
+  </button>
+  <span><small>All</small></span>
+</div>
+
+<hr class="my-0"/>
+
+<div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
+  <div class="col-1">
+    <button class="btn btn-light btn-sm" (click)="toggle(g)">
+      <fa-icon [icon]="g.checked ? faChecked : faUnChecked"></fa-icon>
+    </button>
+  </div>
+  <div class="col-3">
+    <small class="pop-info px-1">{{g.globalId | slice:0:8}}</small>&nbsp;
+    <small>{{g.whenCreated | ago}}</small>
+  </div>
+  <div class="col-5">
+    <span>{{g.clientId}}</span>
+    <small> &mdash; {{g.name}}</small>
+  </div>
+  <div class="col-3">
+    <button class="btn btn-outline-info btn-sm mx-1" (click)="view(g)">
+      <fa-icon [icon]="faList"></fa-icon>
+      <span>View</span>
+    </button>
+    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="destroy(g)">
+      <fa-icon [icon]="faTrash"></fa-icon>
+      <span>Destroy</span>
+    </app-confirm-button>
+  </div>
+  <div *ngIf="viewed === g" class="col-12">
+    <div *ngFor="let vm of vms$ | async" class="row mb-1 align-items-center">
+      <div class="col-6 text-right">
+        <span class="pop-info px-1">{{vm.name | untag}}</span>
+      </div>
+      <div class="col-6">
+        <app-vm-controller [vm]="vm"></app-vm-controller>
+      </div>
+    </div>
+  </div>
+</div>

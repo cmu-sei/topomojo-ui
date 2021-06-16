@@ -1,0 +1,35 @@
+
+<h4>Hub Connections</h4>
+<div *ngFor="let c of connections | async; trackBy:trackById" class="mx-4 my-1">{{c.profileName}}</div>
+
+<h4>Announcement</h4>
+<div class="form-group bg-light">
+  <textarea id="announcement-input" class="form-control" placeholder="Message" rows="3" [(ngModel)]="announcement"></textarea>
+  <button class="btn btn-secondary btn-sm" (click)="announce()">
+    <fa-icon [icon]="faSend"></fa-icon>
+    <span>Send</span>
+  </button>
+</div>
+
+<h4>Import/Export</h4>
+<pre>// TODO</pre>
+
+<h4>Janitor</h4>
+<p>
+  <small>
+    Initiate cleanup on the server.  Cleanup generally runs on a schedule,
+    but can be fired manually here. It uses the settings specified at the
+    api application. (TODO: allow changing settings here.)
+  </small>
+</p>
+<div class="input">
+  <button class="btn btn-secondary" (click)="cleanup()">
+   Cleanup Report
+  </button>
+</div>
+<p *ngFor="let r of janitorResult | async">
+  <span>{{r.reason}}</span>,
+  <!-- <span>{{r.id}}</span>, -->
+  <span>{{r.name}}</span>,
+  <span>{{r.age}}</span>
+</p>

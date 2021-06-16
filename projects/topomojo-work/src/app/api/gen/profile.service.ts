@@ -25,7 +25,7 @@ export class GeneratedProfileService extends GeneratedService {
     public update(profile: UserProfile): Observable<any> {
         return this.http.put<any>(this.conf.api + '/user', profile);
     }
-    public delete(id: number): Observable<any> {
+    public delete(id: string): Observable<any> {
         return this.http.delete<any>(this.conf.api + '/user/' + id);
     }
     public sync(): Observable<any> {

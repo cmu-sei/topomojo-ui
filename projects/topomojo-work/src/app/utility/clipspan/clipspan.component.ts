@@ -4,7 +4,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
-import { ClipboardService } from '../clipboard.service';
+import { ClipboardService } from '../../clipboard.service';
 import { faClipboard, faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
