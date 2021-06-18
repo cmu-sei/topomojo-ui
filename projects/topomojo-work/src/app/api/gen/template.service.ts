@@ -19,10 +19,10 @@ export class GeneratedTemplateService extends GeneratedService {
     public list(search: Search): Observable<TemplateSummary[]> {
         return this.http.get<TemplateSummary[]>(this.conf.api + '/templates' + this.paramify(search));
     }
-    public load(id: number): Observable<Template> {
+    public load(id: string): Observable<Template> {
         return this.http.get<Template>(this.conf.api + '/template/' + id);
     }
-    public delete(id: number): Observable<any> {
+    public delete(id: string): Observable<any> {
         return this.http.delete<any>(this.conf.api + '/template/' + id);
     }
     public update(template: ChangedTemplate): Observable<any> {
@@ -34,7 +34,7 @@ export class GeneratedTemplateService extends GeneratedService {
     public unlink(link: TemplateLink): Observable<Template> {
         return this.http.post<Template>(this.conf.api + '/template/unlink', link);
     }
-    public loadDetail(id: number): Observable<TemplateDetail> {
+    public loadDetail(id: string): Observable<TemplateDetail> {
         return this.http.get<TemplateDetail>(this.conf.api + '/template-detail/' + id);
     }
     public createDetail(model: TemplateDetail): Observable<TemplateDetail> {

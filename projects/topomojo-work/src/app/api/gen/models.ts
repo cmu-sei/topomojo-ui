@@ -111,6 +111,7 @@ export interface ChangedUser {
 
 export interface TemplateSummary {
     id: number;
+    globalId: string;
     name?: string;
     description?: string;
     workspaceId?: number;
@@ -123,8 +124,8 @@ export interface TemplateSummary {
 
 export interface Template {
     id: number;
+    globalId: string;
     parentId?: number;
-    canEdit?: boolean;
     name?: string;
     description?: string;
     networks?: string;
@@ -132,12 +133,11 @@ export interface Template {
     guestinfo?: string;
     replicas?: number;
     isHidden?: boolean;
-    workspaceId?: number;
     workspaceGlobalId: string;
 }
 
 export interface ChangedTemplate {
-    id?: number;
+    globalId: string;
     name?: string;
     description?: string;
     networks?: string;
@@ -145,16 +145,15 @@ export interface ChangedTemplate {
     guestinfo?: string;
     replicas?: number;
     isHidden?: boolean;
-    workspaceId?: number;
 }
 
 export interface TemplateLink {
-    templateId?: number;
-    workspaceId?: number;
+    templateId: string;
+    workspaceId: string;
 }
 
 export interface TemplateDetail {
-    id?: number;
+    globalId: string;
     name?: string;
     description?: string;
     networks?: string;
@@ -212,7 +211,7 @@ export interface NewWorkspace {
 }
 
 export interface ChangedWorkspace {
-    id?: number;
+    globalId?: string;
     name?: string;
     description?: string;
     author?: string;
@@ -277,7 +276,6 @@ export interface VmQuestionChoice {
 export interface VmOperation {
     id?: string;
     type?: string | VmOperationTypeEnum;
-    workspaceId?: number;
 }
 
 export interface KeyValuePair {

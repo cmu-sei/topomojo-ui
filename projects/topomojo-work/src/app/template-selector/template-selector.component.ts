@@ -14,7 +14,7 @@ import { faPlus, faCheck } from '@fortawesome/free-solid-svg-icons';
   styleUrls: ['./template-selector.component.scss']
 })
 export class TemplateSelectorComponent implements OnInit, OnDestroy {
-  @Input() workspaceId = 0;
+  @Input() workspaceId = '';
   @Output() added = new EventEmitter<Template>();
   templates: Observable<TemplateSummary[]>;
   term = new BehaviorSubject<KeyboardEvent>(new KeyboardEvent('keyup'));
@@ -39,7 +39,7 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
     this.target$ = this.target.pipe(
       debounceTime(150),
       tap(t => this.active = t),
-      switchMap(t => api.link({workspaceId: this.workspaceId, templateId: t.id} as TemplateLink)),
+      switchMap(t => api.link({workspaceId: this.workspaceId, templateId: t.globalId} as TemplateLink)),
       tap(t => this.feedback(t))
     ).subscribe();
   }

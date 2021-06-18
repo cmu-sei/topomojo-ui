@@ -35,8 +35,8 @@ export class TemplateEditorComponent implements OnInit {
 
   unlink(): void {
     const s: Subscription = this.api.unlink({
-      templateId: this.template.id,
-      workspaceId: this.template.workspaceId
+      templateId: this.template.globalId,
+      workspaceId: this.template.workspaceGlobalId
     }).pipe(
       finalize(() => s.unsubscribe())
     ).subscribe(t => {
@@ -47,7 +47,7 @@ export class TemplateEditorComponent implements OnInit {
 
   delete(): void {
     console.log('delete');
-    const s: Subscription = this.api.delete(this.template.id).pipe(
+    const s: Subscription = this.api.delete(this.template.globalId).pipe(
       finalize(() => s.unsubscribe())
     ).subscribe(
       () => this.deleted.emit(this.template)

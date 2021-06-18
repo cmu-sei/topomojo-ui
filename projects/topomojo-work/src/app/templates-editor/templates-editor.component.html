@@ -23,4 +23,4 @@
 
 <app-template-editor *ngFor="let t of workspace.templates" [template]="t" (deleted)="remove($event)"></app-template-editor>
 
-<app-template-selector [workspaceId]="workspace.id" (added)="add($event)"></app-template-selector>
+<app-template-selector [workspaceId]="workspace.globalId" (added)="add($event)"></app-template-selector>

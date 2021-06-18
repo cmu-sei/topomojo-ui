@@ -34,7 +34,7 @@ export class TemplatesEditorComponent implements OnInit {
   }
 
   deleteGamespaces(): void {
-    this.api.deleteWorkspaceGames(this.workspace.id).subscribe(
+    this.api.deleteWorkspaceGames(this.workspace.globalId).subscribe(
       () => this.workspace.gamespaceCount = 0
     );
   }

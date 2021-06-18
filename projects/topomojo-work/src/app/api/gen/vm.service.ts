@@ -44,13 +44,13 @@ export class GeneratedVmService extends GeneratedService {
   public getVmTicket(id: string): Observable<ConsoleSummary> {
     return this.http.get<ConsoleSummary>(this.conf.api + '/vm-console/' + id);
   }
-  public getTemplateVm(id: number): Observable<Vm> {
+  public getTemplateVm(id: string): Observable<Vm> {
     return this.http.get<Vm>(this.conf.api + '/vm-template/' + id);
   }
-  public deployTemplate(id: number): Observable<Vm> {
+  public deployTemplate(id: string): Observable<Vm> {
     return this.http.post<Vm>(this.conf.api + '/vm-template/' + id, {});
   }
-  public initializeTemplate(id: number): Observable<Vm> {
+  public initializeTemplate(id: string): Observable<Vm> {
     return this.http.put<Vm>(this.conf.api + '/vm-template/' + id, {});
   }
   public reloadHost(host: string): Observable<any> {

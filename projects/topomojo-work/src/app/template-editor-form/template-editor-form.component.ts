@@ -1,13 +1,13 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { AfterViewInit, Component, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { ChangedTemplate, IsoFile, Template } from '../api/gen/models';
 import { TemplateService } from '../api/template.service';
-import { faUnlink, faToggleOff, faToggleOn, faPaste, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faUnlink, faToggleOff, faToggleOn, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { ClipboardService } from '../clipboard.service';
 
 @Component({

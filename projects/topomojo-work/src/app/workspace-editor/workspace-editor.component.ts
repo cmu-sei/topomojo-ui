@@ -40,6 +40,7 @@ export class WorkspaceEditorComponent implements OnInit, OnDestroy {
       switchMap(id => api.load(id).pipe(
         catchError(err => {
           this.err = err;
+          config.updateLocal({last: ''});
           return of({} as Workspace);
         })
       )),

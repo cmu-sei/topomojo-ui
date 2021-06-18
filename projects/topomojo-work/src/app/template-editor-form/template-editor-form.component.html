@@ -3,8 +3,8 @@
 
 <form #form="ngForm" [ngFormOptions]="{updateOn: 'blur'}" autocomplete="off" >
 
-  <input type="hidden" name="id" [ngModel]="template.id">
-  <input type="hidden" name="workspaceId" [ngModel]="template.workspaceId">
+  <!-- <input type="hidden" name="id" [ngModel]="template.id"> -->
+  <input type="hidden" name="globalId" [ngModel]="template.globalId">
   <input type="hidden" name="iso" [ngModel]="template.iso">
 
   <div class="form-group bg-light">

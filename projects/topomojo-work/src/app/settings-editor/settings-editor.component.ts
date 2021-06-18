@@ -35,7 +35,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
     private clipboard: ClipboardService
   ) {
     this.form = this.formBuilder.group({
-      id: ['', Validators.required],
+      globalId: ['', Validators.required],
       name: ['', Validators.required],
       description: [''],
       audience: [''],
@@ -60,7 +60,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
 
   mapToSettings(ws: Workspace): WorkspaceSettings {
     return {
-      id: ws.id,
+      globalId: ws.globalId,
       name: ws.name,
       description: ws.description,
       author: ws.author,
@@ -76,7 +76,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   }
 
   enlistCode(): void {
-    this.api.newInvitation(this.summary.id).pipe(
+    this.api.newInvitation(this.summary.globalId).pipe(
       finalize(() => {})
     ).subscribe(
       result => {
@@ -100,14 +100,14 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   }
 
   delete(): void {
-    this.api.delete(this.summary.id).subscribe(
+    this.api.delete(this.summary.globalId).subscribe(
       () => this.router.navigate(['/'])
     );
   }
 }
 
 interface WorkspaceSettings {
-  id: number;
+  globalId: string;
   name: string;
   description: string;
   author: string;

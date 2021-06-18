@@ -16,7 +16,7 @@ import { ConfigService } from '../../config.service';
   styleUrls: ['./vm-controller.component.scss']
 })
 export class VmControllerComponent implements OnInit, OnDestroy {
-  @Input() template: Template | TemplateSummary = { id: 0, workspaceGlobalId: ''};
+  @Input() template: Template | TemplateSummary = { id: 0, globalId: '', workspaceGlobalId: ''};
   @Input() vm: Vm = {};
   task = '';
   confirming = false;
@@ -85,25 +85,24 @@ export class VmControllerComponent implements OnInit, OnDestroy {
     switch (task) {
 
       case 'initialize':
-        q = this.api.initializeTemplate(this.template.id);
+        q = this.api.initializeTemplate(this.template.globalId);
         break;
 
       case 'deploy':
-        q = this.api.deployTemplate(this.template.id);
+        q = this.api.deployTemplate(this.template.globalId);
         break;
 
       case 'refresh':
       case '':
         q = (this.vm && this.vm.id)
         ? this.api.load(this.vm.id)
-        : this.api.getTemplateVm(this.template.id);
+        : this.api.getTemplateVm(this.template.globalId);
         break;
 
       default: // start stop save revert delete
         q = this.api.updateState({
           id: this.vm.id,
-          type: task as VmOperationTypeEnum,
-          workspaceId: this.template.workspaceId
+          type: task as VmOperationTypeEnum
         });
         break;
     }

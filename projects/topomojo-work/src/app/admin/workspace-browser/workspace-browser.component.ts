@@ -57,7 +57,7 @@ export class WorkspaceBrowserComponent implements OnInit {
   }
 
   delete(w: WorkspaceSummary): void {
-    this.api.delete(w.id).subscribe(() => {
+    this.api.delete(w.globalId).subscribe(() => {
       const found = this.source.find(f => f.globalId === w.globalId);
       if (found) {
         this.source.splice(

@@ -32,16 +32,16 @@ export class GeneratedWorkspaceService extends GeneratedService {
   public create(model: NewWorkspace): Observable<Workspace> {
       return this.http.post<Workspace>(this.conf.api + '/workspace', model);
   }
-  public delete(id: number): Observable<any> {
+  public delete(id: string): Observable<any> {
       return this.http.delete<any>(this.conf.api + '/workspace/' + id);
   }
-  public listWorkspaceGames(id: number): Observable<Array<GameState>> {
+  public listWorkspaceGames(id: string): Observable<Array<GameState>> {
       return this.http.get<Array<GameState>>(this.conf.api + '/workspace/' + id + '/games');
   }
-  public deleteWorkspaceGames(id: number): Observable<any> {
+  public deleteWorkspaceGames(id: string): Observable<any> {
       return this.http.delete<any>(this.conf.api + '/workspace/' + id + '/games');
   }
-  public newInvitation(id: number): Observable<WorkspaceState> {
+  public newInvitation(id: string): Observable<WorkspaceState> {
       return this.http.put<WorkspaceState>(this.conf.api + '/workspace/' + id + '/invite', {});
   }
   public createWorker(code: string): Observable<WorkspaceSummary> {
