@@ -3,7 +3,7 @@
 
 <div *ngIf="summary | async as ws; else loading" class="reader">
   <app-presence-bar></app-presence-bar>
-  <app-clipspan class="small text-muted">{{ws.globalId}}</app-clipspan>
+  <app-clipspan class="small text-muted">{{ws.id}}</app-clipspan>
   <h1 class="mb-0 pb-0">{{ws.name}}</h1>
   <!-- <div class="card mb-4"> -->
     <div class="mb-4">

@@ -1,5 +1,5 @@
 <form #form="ngForm" [ngFormOptions]="{updateOn: 'change'}" (ngSubmit)="update()">
-  <input type="hidden" name="id" [ngModel]="template.globalId">
+  <input type="hidden" name="id" [ngModel]="template.id">
   <input type="hidden" name="name" [ngModel]="template.name">
 
   <div *ngIf="!linked" class="form-group bg-light">

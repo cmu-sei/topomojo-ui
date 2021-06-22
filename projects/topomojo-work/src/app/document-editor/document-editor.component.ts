@@ -89,7 +89,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     this.saved$ = this.dirty$.pipe(
       debounceTime(4000),
       filter(() => !this.readOnly),
-      switchMap(() => api.updateDocument(this.summary.globalId, this.doctext)),
+      switchMap(() => api.updateDocument(this.summary.id, this.doctext)),
       mergeMap(() => timer(0, 4000).pipe(
         map(i => !(i % 2)),
         take(2)
@@ -183,11 +183,11 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
 
   ngAfterViewInit(): void {
     // initial "change" happens before subscription, so fire here after subscribed
-    this.docid$.next(this.summary.globalId);
+    this.docid$.next(this.summary.id);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.docid$.next(changes.summary.currentValue.globalId);
+    this.docid$.next(changes.summary.currentValue.id);
   }
 
   insertImage(text: string): void {

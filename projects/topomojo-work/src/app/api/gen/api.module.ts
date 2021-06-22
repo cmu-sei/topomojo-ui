@@ -2,7 +2,6 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { AdminService } from '../admin.service';
-import { ChatService } from '../chat.service';
 import { ConsoleService } from '../console.service';
 import { DocumentService } from '../document.service';
 import { FileService } from '../file.service';
@@ -21,7 +20,6 @@ import { ApiSettings } from '../api-settings';
     providers: [
         ApiSettings,
         AdminService,
-        ChatService,
         ConsoleService,
         DocumentService,
         FileService,

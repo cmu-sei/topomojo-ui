@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { faBars, faGlobe, faLink, faList, faMehBlank, faSearch, faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
 import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
-import { Search, Template, TemplateDetail, TemplateSummary } from '../../api/gen/models';
+import { Search, Template, TemplateDetail, TemplateSearch, TemplateSummary } from '../../api/gen/models';
 import { TemplateService } from '../../api/template.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class TemplateBrowserComponent implements OnInit {
   viewed: TemplateSummary | undefined = undefined;
   viewChange$ = new BehaviorSubject<TemplateSummary | undefined>(this.viewed);
   detail$: Observable<TemplateDetail>;
-  search: Search = { term: '', take: 100};
+  search: TemplateSearch = { term: '', take: 100};
 
   faTrash = faTrash;
   faList = faList;
@@ -42,7 +42,7 @@ export class TemplateBrowserComponent implements OnInit {
 
     this.detail$ = this.viewChange$.pipe(
       filter(t => !!t),
-      switchMap(t => api.loadDetail(t?.globalId || ''))
+      switchMap(t => api.loadDetail(t?.id || ''))
     );
   }
 
@@ -59,7 +59,7 @@ export class TemplateBrowserComponent implements OnInit {
   }
 
   delete(w: TemplateSummary): void {
-    this.api.delete(w.globalId).subscribe(() => {
+    this.api.delete(w.id).subscribe(() => {
       const found = this.source.find(f => f.id === w.id);
       if (found) {
         this.source.splice(
@@ -74,7 +74,7 @@ export class TemplateBrowserComponent implements OnInit {
     this.api.updateDetail(t).subscribe();
   }
 
-  trackById(index: number, t: TemplateSummary): number {
+  trackById(index: number, t: TemplateSummary): string {
     return t.id;
   }
 }

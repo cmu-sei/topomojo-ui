@@ -1,313 +1,363 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-
-export interface CachedConnection {
-    id: string;
-    room?: string;
-    profileId?: string;
-    profileName?: string;
+export interface Search {
+  term?: string;
+  skip?: number;
+  take?: number;
+  sort?: string;
+  filter?: string[];
 }
 
-export interface Message {
-    id?: number;
-    roomId?: string;
-    authorName?: string;
-    text?: string;
-    whenCreated?: string;
-    edited?: boolean;
-}
-
-export interface NewMessage {
-    roomId?: string;
-    text?: string;
-}
-
-export interface ChangedMessage {
-    id?: number;
-    text?: string;
-}
-
-export interface ImageFile {
-    filename?: string;
-    url?: string;
-}
+// #################################
+// ## GAMESPACE Models
+// #################################
 
 export interface Gamespace {
-    id: number;
-    globalId: string;
-    name?: string;
-    slug?: string;
-    clientId?: string;
-    audience?: string;
-    whenCreated?: string;
-    workspaceDocument?: string;
-    workspaceId?: number;
-    players?: Array<Player>;
-    checked: boolean;
+  id: string;
+  managerId: string;
+  managerName: string;
+  audience: string;
+  name: string;
+  slug: string;
+  whenCreated: string;
+  startTime: string;
+  stopTime: string;
+  expirationTime: string;
+  players?: Player[];
+  isActive: boolean;
+  checked: boolean;
 }
 
 export interface Player {
-    id?: number;
-    personId?: number;
-    personName?: string;
-    personGlobalId?: string;
-    canManage?: boolean;
-    canEdit?: boolean;
+  gamespaceId: string;
+  subjectId: number;
+  subjectName: string;
+  permission: string;
+  isManager: boolean;
 }
 
 export interface GameState {
-    id?: number;
-    name?: string;
-    globalId: string;
-    audience?: string;
-    whenCreated?: string;
-    workspaceDocument?: string;
-    markdown?: string;
-    shareCode?: string;
-    launchpointUrl?: string;
-    startTime: string;
-    stopTime: string;
-    expirationTime: string;
-    isActive?: boolean;
-    players?: Array<Player>;
-    vms?: Array<VmState>;
-    challenge?: ChallengeView;
+  id: string;
+  name: string;
+  audience: string;
+  managerId: string;
+  managerName: string;
+  markdown?: string;
+  launchpointUrl?: string;
+  whenCreated: string;
+  startTime: string;
+  stopTime: string;
+  expirationTime: string;
+  isActive: boolean;
+  players: Player[];
+  vms: VmState[];
+  challenge: ChallengeView;
 }
 
-export interface VmState {
-    id: string;
-    templateId: number;
-    name: string;
-    isRunning: boolean;
+export interface GamespaceRegistration {
+  resourceId: string;
+  variant?: number;
+  maxAttempts?: number;
+  maxMinutes?: number;
+  points?: number;
+  allowReset?: boolean;
+  allowPreview?: boolean;
+  startGamespace?: boolean;
+  players?: RegistrationPlayer[];
 }
 
-export interface Search {
-    term?: string;
-    skip?: number;
-    take?: number;
-    sort?: string;
-    filter?: Array<string>;
+export interface RegistrationPlayer {
+  subjectId: string;
+  subjectName?: string;
 }
 
-export interface UserProfile {
-    id: number;
-    globalId: string;
-    name?: string;
-    role?: string;
-    isAdmin?: boolean;
-    workspaceLimit?: number;
-    whenCreated?: string;
+// #################################
+// ## USER Models
+// #################################
+
+export interface ApiUser {
+  id: string;
+  name: string;
+  scope: string;
+  role: string;
+  isAdmin: boolean;
+  isCreator: boolean;
+  isBuilder: boolean;
+  workspaceLimit: number;
+  gamespaceLimit: number;
+  gamespaceMaxMinutes: number;
+  gamespaceCleanupGraceMinutes: number;
+  whenCreated: string;
 }
 
 export interface UserRegistration {
-  globalId?: string;
+  sub: string;
+  name: string;
 }
 
 export interface ChangedUser {
-    globalId?: string;
-    name?: string;
+  id: string;
+  name: string;
+  scope: string;
+  role: string;
+  workspaceLimit: number;
+  gamespaceLimit: number;
+  gamespaceMaxMinutes: number;
+  gamespaceCleanupGraceMinutes: number;
 }
 
+export interface ApiKeyResult {
+  value: string;
+}
+
+export interface ApiKey {
+  id: string;
+  name: string;
+  whenCreated: string;
+}
+
+// #################################
+// ## TEMPLATE Models
+// #################################
+
 export interface TemplateSummary {
-    id: number;
-    globalId: string;
-    name?: string;
-    description?: string;
-    workspaceId?: number;
-    workspaceGlobalId: string;
-    workspaceName?: string;
-    parentId?: string;
-    parentName?: string;
-    isPublished?: boolean;
+  id: string;
+  name?: string;
+  description?: string;
+  audience?: string;
+  workspaceId: string;
+  workspaceName?: string;
+  parentId?: string;
+  parentName?: string;
+  isPublished?: boolean;
 }
 
 export interface Template {
-    id: number;
-    globalId: string;
-    parentId?: number;
-    name?: string;
-    description?: string;
-    networks?: string;
-    iso?: string;
-    guestinfo?: string;
-    replicas?: number;
-    isHidden?: boolean;
-    workspaceGlobalId: string;
+  id: string;
+  name: string;
+  description: string;
+  audience: string;
+  networks: string;
+  iso: string;
+  guestinfo: string;
+  parentId: string;
+  workspaceId: string;
+  replicas: number;
+  isHidden: boolean;
 }
 
 export interface ChangedTemplate {
-    globalId: string;
-    name?: string;
-    description?: string;
-    networks?: string;
-    iso?: string;
-    guestinfo?: string;
-    replicas?: number;
-    isHidden?: boolean;
+  id: string;
+  name?: string;
+  description?: string;
+  networks?: string;
+  iso?: string;
+  guestinfo?: string;
+  replicas?: number;
+  isHidden?: boolean;
 }
 
 export interface TemplateLink {
-    templateId: string;
-    workspaceId: string;
+  templateId: string;
+  workspaceId: string;
 }
 
 export interface TemplateDetail {
-    globalId: string;
-    name?: string;
-    description?: string;
-    networks?: string;
-    guestinfo?: string;
-    detail?: string;
-    isPublished?: boolean;
+  id: string;
+  name?: string;
+  description?: string;
+  audience?: string;
+  networks?: string;
+  guestinfo?: string;
+  detail?: string;
+  isPublished?: boolean;
+}
+
+export interface TemplateSearch extends Search {
+  aud?: string;
+  pid?: string;
+}
+
+// #################################
+// ## WORKSPACE Models
+// #################################
+
+export interface Workspace {
+  id: string;
+  name: string;
+  description: string;
+  author: string;
+  audience: string;
+  whenCreated?: string;
+  templateLimit?: number;
+  challenge?: string;
+  workers?: Worker[];
+  templates?: Template[];
+  stats: WorkspaceStats;
 }
 
 export interface WorkspaceSummary {
-    id: number;
-    globalId: string;
-    name: string;
-    slug: string;
-    description: string;
-    canManage: boolean;
-    canEdit: boolean;
-    isPublished: boolean;
-    author: string;
-    audience: string;
-    whenCreated: string;
-}
-
-export interface Workspace {
-    id: number;
-    globalId: string;
-    name: string;
-    slug: string;
-    description: string;
-    documentUrl?: string;
-    shareCode?: string;
-    author: string;
-    audience: string;
-    whenCreated?: string;
-    canManage: boolean;
-    canEdit: boolean;
-    templateLimit?: number;
-    isPublished: boolean;
-    gamespaceCount?: number;
-    challenge?: string;
-    workers?: Array<Worker>;
-    templates?: Array<Template>;
-}
-
-export interface Worker {
-    id: number;
-    personName?: string;
-    personGlobalId?: string;
-    canManage?: boolean;
-    canEdit?: boolean;
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  author: string;
+  audience: string;
+  whenCreated: string;
 }
 
 export interface NewWorkspace {
-    name?: string;
-    description?: string;
+  name?: string;
+  description?: string;
+  author?: string;
+  audience?: string;
+  challenge?: string;
+  document?: string;
 }
 
 export interface ChangedWorkspace {
-    globalId?: string;
-    name?: string;
-    description?: string;
-    author?: string;
-    audience?: string;
-    isPublished?: boolean;
-    documentUrl?: string;
-    templateLimit?: number;
+  id: string;
+  name?: string;
+  description?: string;
+  author?: string;
+  audience?: string;
+  templateLimit?: number;
+  templateScope?: string;
 }
 
-export interface WorkspaceState {
-    id?: number;
-    shareCode?: string;
+export interface JoinCode {
+  id: string;
+  code: string;
+}
+
+export interface WorkspaceSearch extends Search {
+  aud?: string;
+}
+
+export interface Worker {
+  workspaceId: string;
+  subjectId: string;
+  subjectName?: string;
+  permission?: string;
+  canManage?: boolean;
+  canEdit?: boolean;
+}
+
+export interface WorkspaceStats {
+  id: string;
+  activeGamespaceCount: number;
+  launchCount: number;
+  lastActivity: string;
+}
+// #################################
+// ## VM Models
+// #################################
+
+export interface VmState {
+  id: string;
+  templateId: number;
+  name: string;
+  isRunning: boolean;
 }
 
 export interface VmOptions {
-    iso?: Array<string>;
-    net?: Array<string>;
+  iso?: string[];
+  net?: string[];
 }
 
-export interface ConsoleSummary {
-    id?: string;
-    isolationId?: string;
-    name?: string;
-    url?: string;
-    isRunning?: boolean;
+export interface VmConsole {
+  id: string;
+  isolationId: string;
+  name: string;
+  url: string;
+  isRunning: boolean;
 }
 
 export interface Vm {
-    id?: string;
-    name?: string;
-    host?: string;
-    path?: string;
-    reference?: string;
-    diskPath?: string;
-    stats?: string;
-    status?: string;
-    groupName?: string;
-    state?: VmStateEnum;
-    question?: VmQuestion;
-    task?: VmTask;
+  id?: string;
+  name?: string;
+  host?: string;
+  path?: string;
+  reference?: string;
+  diskPath?: string;
+  stats?: string;
+  status?: string;
+  groupName?: string;
+  state?: VmStateEnum;
+  question?: VmQuestion;
+  task?: VmTask;
 }
 
 export interface VmQuestion {
-    id?: string;
-    prompt?: string;
-    defaultChoice?: string;
-    choices?: Array<VmQuestionChoice>;
+  id: string;
+  prompt: string;
+  defaultChoice: string;
+  choices: VmQuestionChoice[];
 }
 
 export interface VmTask {
-    id?: string;
-    name?: string;
-    progress?: number;
-    whenCreated?: string;
+  id: string;
+  name: string;
+  progress: number;
+  whenCreated: string;
 }
 
 export interface VmQuestionChoice {
-    key?: string;
-    label?: string;
+  key: string;
+  label: string;
 }
 
 export interface VmOperation {
-    id?: string;
-    type?: string | VmOperationTypeEnum;
+  id: string;
+  type: string | VmOperationTypeEnum;
 }
 
 export interface KeyValuePair {
-    key?: string;
-    value?: string;
+  key: string;
+  value: string;
 }
 
 export interface VmAnswer {
-    questionId?: string;
-    choiceKey?: string;
+  questionId: string;
+  choiceKey: string;
 }
 
 export enum VmStateEnum {
-    off = 'off',
-    running = 'running',
-    suspended = 'suspended'
+  off = 'off',
+  running = 'running',
+  suspended = 'suspended'
 }
 
 export enum VmOperationTypeEnum {
-    start = 'start',
-    stop = 'stop',
-    save = 'save',
-    revert = 'revert',
-    delete = 'delete'
+  start = 'start',
+  stop = 'stop',
+  save = 'save',
+  revert = 'revert',
+  delete = 'delete'
 }
 
+// #################################
+// ## ADMIN Models
+// #################################
+
 export interface JanitorReport {
-  id?: number;
+  id?: string;
   name?: string;
   reason?: string;
   age?: string;
 }
+
+export interface CachedConnection {
+  id: string;
+  room?: string;
+  profileId?: string;
+  profileName?: string;
+}
+
+// #################################
+// ## Challenge Models
+// #################################
 
 export interface ChallengeSpec {
   text?: string;
@@ -353,55 +403,54 @@ export interface QuestionSpec {
 
 export interface ChallengeView {
   isActive: boolean;
-  text?: string;
+  text: string;
   maxPoints: number;
   maxAttempts: number;
   attempts: number;
-  score?: number;
-  sectionText?: string;
-  sectionCount?: number;
-  sectionIndex?: number;
-  sectionScore?: number;
-  questions?: QuestionView[];
+  score: number;
+  sectionText: string;
+  sectionCount: number;
+  sectionIndex: number;
+  sectionScore: number;
+  questions: QuestionView[];
 }
 
 export interface QuestionView {
-  text?: string;
-  hint?: string;
-  answer?: string;
-  example?: string;
+  text: string;
+  hint: string;
+  answer: string;
+  example: string;
   weight: number;
-  penalty?: number;
-  isCorrect?: boolean;
-  isGraded?: boolean;
+  penalty: number;
+  isCorrect: boolean;
+  isGraded: boolean;
 }
 
 export interface SectionSubmission {
-  sectionIndex?: number;
-  questions?: AnswerSubmission[];
+  sectionIndex: number;
+  questions: AnswerSubmission[];
 }
 
 export interface AnswerSubmission {
-  answer?: string;
+  answer: string;
 }
 
-export interface NewGamespace {
-  resourceId?: string;
-  variant?: number;
-  maxAttempts?: number;
-  maxMinutes?: number;
-  points?: number;
-  allowReset?: boolean;
-  allowPreview?: boolean;
-  startGamespace?: boolean;
-}
+// #################################
+// ## FILEUPLOAD Models
+// #################################
 
 export interface IsoFile {
   path: string;
   display: string;
 }
+
 export interface IsoDataFilter {
   term?: string;
   refresh?: boolean;
   local?: boolean;
+}
+
+export interface ImageFile {
+  filename: string;
+  url: string;
 }

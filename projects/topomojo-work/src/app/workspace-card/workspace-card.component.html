@@ -5,12 +5,12 @@
   <div class="card-body" [class.pop-info]="hovering && !rla.isActive" (mouseenter)="hovering=true" (mouseleave)="hovering=false">
     <div class="card-title">{{workspace.name}}</div>
     <div [hidden]="!(hovering || rla.isActive)">
-      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.globalId, 'settings']">Settings</a>
-      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.globalId, 'templates']">Templates</a>
-      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.globalId, 'document']">Document</a>
-      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.globalId, 'challenge']">Challenge</a>
-      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.globalId, 'files']">Files</a>
-      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.globalId, 'play']">Play</a>
+      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.id, 'settings']">Settings</a>
+      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.id, 'templates']">Templates</a>
+      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.id, 'document']">Document</a>
+      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.id, 'challenge']">Challenge</a>
+      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.id, 'files']">Files</a>
+      <a class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/topo', workspace.id, 'play']">Play</a>
     </div>
   </div>
 </div>

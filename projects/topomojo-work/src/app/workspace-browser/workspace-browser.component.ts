@@ -38,7 +38,7 @@ export class WorkspaceBrowserComponent implements OnInit {
 
   select(data: WorkspaceSummary[]): void {
     if (data.length === 1) {
-      this.router.navigate(['/topo', data[0].globalId, 'settings']);
+      this.router.navigate(['/topo', data[0].id, 'settings']);
     }
   }
 

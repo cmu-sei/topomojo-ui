@@ -39,7 +39,7 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
     this.target$ = this.target.pipe(
       debounceTime(150),
       tap(t => this.active = t),
-      switchMap(t => api.link({workspaceId: this.workspaceId, templateId: t.globalId} as TemplateLink)),
+      switchMap(t => api.link({workspaceId: this.workspaceId, templateId: t.id} as TemplateLink)),
       tap(t => this.feedback(t))
     ).subscribe();
   }

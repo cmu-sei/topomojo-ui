@@ -27,7 +27,7 @@
       <span>Start</span>
     </app-confirm-button>
   </div>
-  <app-confirm-button *ngIf="!!game.id && !launching" btnClass="btn btn-sm btn-warning" (confirm)="reset(game.globalId)">
+  <app-confirm-button *ngIf="!!game.id && !launching" btnClass="btn btn-sm btn-warning" (confirm)="reset(game.id)">
     <fa-icon [icon]="faTrash"></fa-icon>
     <span>Reset</span>
   </app-confirm-button>

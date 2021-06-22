@@ -60,7 +60,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
 
   mapToSettings(ws: Workspace): WorkspaceSettings {
     return {
-      globalId: ws.globalId,
+      globalId: ws.id,
       name: ws.name,
       description: ws.description,
       author: ws.author,
@@ -76,12 +76,11 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   }
 
   enlistCode(): void {
-    this.api.newInvitation(this.summary.globalId).pipe(
+    this.api.generateInvitation(this.summary.id).pipe(
       finalize(() => {})
     ).subscribe(
       result => {
-        this.summary.shareCode = result.shareCode;
-        this.inviteUrl = `${this.config.absoluteUrl}enlist/${result.shareCode}`;
+        this.inviteUrl = `${this.config.absoluteUrl}enlist/${result.code}`;
         this.clipboard.copyToClipboard(this.inviteUrl);
         timer(4000).subscribe(() => this.inviteUrl = '');
       }
@@ -89,9 +88,13 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   }
 
   delist(worker: Worker): void {
-    this.api.deleteWorker(worker.id).subscribe(
+    this.api.deleteWorker(worker).subscribe(
       () => {
-        const index = (this.summary.workers || []).findIndex(w => w.id === worker.id);
+
+        const index = (this.summary.workers || [])
+          .findIndex(w => w.subjectId === worker.subjectId)
+        ;
+
         if (index >= 0) {
           this.summary.workers?.splice(index, 1);
         }
@@ -100,7 +103,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   }
 
   delete(): void {
-    this.api.delete(this.summary.globalId).subscribe(
+    this.api.delete(this.summary.id).subscribe(
       () => this.router.navigate(['/'])
     );
   }

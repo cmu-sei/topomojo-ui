@@ -25,7 +25,7 @@
     </div>
 
     <div [hidden]="showPreview">
-      <app-image-manager [hidden]="!showImageManager" [guid]="summary.globalId" (added)="insertImage($event)"></app-image-manager>
+      <app-image-manager [hidden]="!showImageManager" [guid]="summary.id" (added)="insertImage($event)"></app-image-manager>
 
       <ngx-monaco-editor
         id="markdown-editor"

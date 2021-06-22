@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiSettings } from '../api-settings';
 import { GeneratedService } from './_service';
-import { ChangedTemplate, Search, Template, TemplateDetail, TemplateLink, TemplateSummary } from './models';
+import { ChangedTemplate, Search, Template, TemplateDetail, TemplateLink, TemplateSearch, TemplateSummary } from './models';
 
 @Injectable()
 export class GeneratedTemplateService extends GeneratedService {
@@ -16,7 +16,7 @@ export class GeneratedTemplateService extends GeneratedService {
        protected conf: ApiSettings
     ) { super(http, conf); }
 
-    public list(search: Search): Observable<TemplateSummary[]> {
+    public list(search: TemplateSearch): Observable<TemplateSummary[]> {
         return this.http.get<TemplateSummary[]>(this.conf.api + '/templates' + this.paramify(search));
     }
     public load(id: string): Observable<Template> {

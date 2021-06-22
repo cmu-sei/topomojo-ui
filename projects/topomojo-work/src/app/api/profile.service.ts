@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiSettings } from './api-settings';
 import { GeneratedProfileService } from './gen/profile.service';
-import { ChangedUser, UserProfile, Search } from './gen/models';
+import { ChangedUser, ApiUser, Search } from './gen/models';
 
 @Injectable()
 export class ProfileService extends GeneratedProfileService {

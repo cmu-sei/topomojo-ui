@@ -40,14 +40,14 @@ export class GamespaceBrowserComponent implements OnInit {
     ).pipe(
       debounceTime(500),
       switchMap(() => this.api.list('all')),
-      tap(r => r.forEach(g => g.checked = !!this.selected.find(s => s.globalId === g.globalId))),
+      tap(r => r.forEach(g => g.checked = !!this.selected.find(s => s.id === g.id))),
       tap(r => this.source = r),
       tap(() => this.review()),
     );
 
     this.vms$ = this.viewChange$.pipe(
       filter(g => !!g),
-      switchMap(g => vmSvc.list(g?.globalId || ''))
+      switchMap(g => vmSvc.list(g?.id || ''))
     );
   }
 
@@ -64,11 +64,11 @@ export class GamespaceBrowserComponent implements OnInit {
   }
 
   review(): void {
-    this.viewed = this.source.find(g => g.globalId === this.viewed?.globalId);
+    this.viewed = this.source.find(g => g.id === this.viewed?.id);
   }
 
   destroy(g: Gamespace): void {
-    this.api.delete(g.globalId).subscribe(() => this.removeDeleted(g));
+    this.api.delete(g.id).subscribe(() => this.removeDeleted(g));
   }
 
   toggleAll(): void {
@@ -85,7 +85,7 @@ export class GamespaceBrowserComponent implements OnInit {
 
   toggle(g: Gamespace): void {
 
-    const found = this.selected.find(f => f.globalId === g.globalId);
+    const found = this.selected.find(f => f.id === g.id);
     if (found) {
       this.selected.splice(
         this.selected.indexOf(found),
@@ -98,7 +98,7 @@ export class GamespaceBrowserComponent implements OnInit {
   }
 
   private removeDeleted(g: Gamespace): void {
-    const found = this.source.find(f => f.globalId === g.globalId);
+    const found = this.source.find(f => f.id === g.id);
     if (found) {
       this.source.splice(
         this.source.indexOf(found),
@@ -108,6 +108,6 @@ export class GamespaceBrowserComponent implements OnInit {
   }
 
   trackById(index: number, g: Gamespace): string {
-    return g.globalId;
+    return g.id;
   }
 }

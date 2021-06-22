@@ -17,10 +17,10 @@
 
 <div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
   <div class="col-8">
-    <a [routerLink]="['/topo', g.globalId]" class="text-secondary">{{g.name}}</a>
+    <a [routerLink]="['/topo', g.id]" class="text-secondary">{{g.name}}</a>
     <br/>
     <small class="text-muted ml-4">
-      <app-clipspan>{{g.globalId}}</app-clipspan> &mdash; {{g.author}}
+      <app-clipspan>{{g.id}}</app-clipspan> &mdash; {{g.author}}
     </small>
   </div>
   <div class="col-1">

@@ -7,8 +7,9 @@ import { iif, Observable, of } from 'rxjs';
 import { ApiSettings } from '../api-settings';
 import { GeneratedService } from './_service';
 // tslint:disable-next-line:max-line-length
-import { ChangedWorkspace, GameState, NewWorkspace, Player, Search, Template, Workspace, WorkspaceState, WorkspaceSummary, VmOptions, VmState, Worker, ChallengeSpec, Gamespace, IsoFile, IsoDataFilter } from './models';
-import { map, mergeMap, tap } from 'rxjs/operators';
+import { ChangedWorkspace, NewWorkspace, Search, Workspace, JoinCode, WorkspaceSummary, VmOptions, ChallengeSpec, IsoFile, IsoDataFilter, WorkspaceStats, TemplateSummary, Worker } from './models';
+import { map, tap } from 'rxjs/operators';
+import { identifierModuleUrl } from '@angular/compiler';
 
 @Injectable()
 export class GeneratedWorkspaceService extends GeneratedService {
@@ -26,29 +27,32 @@ export class GeneratedWorkspaceService extends GeneratedService {
   public load(id: string): Observable<Workspace> {
       return this.http.get<Workspace>(this.conf.api + '/workspace/' + id);
   }
-  public update(model: ChangedWorkspace): Observable<any> {
-      return this.http.put<any>(this.conf.api + '/workspace', model);
-  }
   public create(model: NewWorkspace): Observable<Workspace> {
       return this.http.post<Workspace>(this.conf.api + '/workspace', model);
+  }
+  public clone(id: string): Observable<Workspace> {
+      return this.http.post<Workspace>(this.conf.api + '/workspace/' + identifierModuleUrl, {});
+  }
+  public update(model: ChangedWorkspace): Observable<any> {
+      return this.http.put<any>(this.conf.api + '/workspace', model);
   }
   public delete(id: string): Observable<any> {
       return this.http.delete<any>(this.conf.api + '/workspace/' + id);
   }
-  public listWorkspaceGames(id: string): Observable<Array<GameState>> {
-      return this.http.get<Array<GameState>>(this.conf.api + '/workspace/' + id + '/games');
+  public getStats(id: string): Observable<WorkspaceStats> {
+      return this.http.get<WorkspaceStats>(this.conf.api + '/workspace/' + id + '/stats');
   }
-  public deleteWorkspaceGames(id: string): Observable<any> {
-      return this.http.delete<any>(this.conf.api + '/workspace/' + id + '/games');
+  public deleteWorkspaceGames(id: string): Observable<WorkspaceStats> {
+      return this.http.delete<WorkspaceStats>(this.conf.api + '/workspace/' + id + '/games');
   }
-  public newInvitation(id: string): Observable<WorkspaceState> {
-      return this.http.put<WorkspaceState>(this.conf.api + '/workspace/' + id + '/invite', {});
+  public generateInvitation(id: string): Observable<JoinCode> {
+      return this.http.put<JoinCode>(this.conf.api + '/workspace/' + id + '/invite', {});
   }
-  public createWorker(code: string): Observable<WorkspaceSummary> {
+  public enlist(code: string): Observable<WorkspaceSummary> {
       return this.http.post<WorkspaceSummary>(this.conf.api + '/worker/' + code, {});
   }
-  public deleteWorker(id: number): Observable<any> {
-      return this.http.delete<any>(this.conf.api + '/worker/' + id);
+  public deleteWorker(worker: Worker): Observable<any> {
+      return this.http.delete<any>(this.conf.api + `/workspace/${worker.workspaceId}/worker/${worker.subjectId}`);
   }
   public getWorkspaceIsos(id: string): Observable<VmOptions> {
       return this.http.get<VmOptions>(this.conf.api + '/workspace/' + id + '/isos');
@@ -56,11 +60,14 @@ export class GeneratedWorkspaceService extends GeneratedService {
   public getWorkspaceNets(id: string): Observable<VmOptions> {
       return this.http.get<VmOptions>(this.conf.api + '/workspace/' + id + '/nets');
   }
+  public getWorkspaceTemplates(id: string): Observable<TemplateSummary[]> {
+    return this.http.get<TemplateSummary[]>(this.conf.api + '/workspace/' + id + '/templates');
+  }
   public getWorkspaceChallenge(id: string): Observable<ChallengeSpec> {
-    return this.http.get(this.conf.api + '/workspace/' + id + '/challenge');
+    return this.http.get<ChallengeSpec>(this.conf.api + '/challenge/' + id);
   }
   public putWorkspaceChallenge(id: string, model: ChallengeSpec): Observable<any> {
-      return this.http.put(this.conf.api + '/workspace/' + id + '/challenge', model);
+      return this.http.put<any>(this.conf.api + '/challenge/' + id, model);
   }
   public getIsos(id: string, filter: IsoDataFilter): Observable<IsoFile[]> {
     return iif(() => filter.refresh || !this.isoCache || this.isoCacheId !== id,

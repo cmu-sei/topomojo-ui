@@ -3,9 +3,9 @@
 
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
-import { Workspace } from '../api/gen/models';
+import { combineLatest, concat, from, Observable, of, scheduled, zip } from 'rxjs';
+import { catchError, concatAll, debounceTime, distinctUntilChanged, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { Workspace, WorkspaceStats } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 import { ConfigService } from '../config.service';
 import { NotificationService } from '../notification.service';
@@ -31,22 +31,34 @@ export class WorkspaceEditorComponent implements OnInit, OnDestroy {
     private hub: NotificationService
   ) {
 
+    const query$ = (id: string) => zip(
+      api.load(id).pipe(
+        catchError(err => {
+          this.err = err;
+          config.updateLocal({last: ''});
+          return of({} as Workspace);
+        })
+      ),
+      api.getStats(id).pipe(
+        catchError(err => of({} as WorkspaceStats))
+      ),
+    ).pipe(
+      map(([workspace, stats]) => {
+        workspace.stats = stats;
+        return workspace;
+      })
+    );
+
     this.summary = route.params.pipe(
       tap(p => this.section = p.section),
       map(p => p.id),
       debounceTime(500),
       distinctUntilChanged(),
       tap(id => this.guid = id),
-      switchMap(id => api.load(id).pipe(
-        catchError(err => {
-          this.err = err;
-          config.updateLocal({last: ''});
-          return of({} as Workspace);
-        })
-      )),
-      filter(w => !!w.globalId),
-      tap(w => hub.joinWorkspace(w.globalId)),
-      tap(w => config.updateLocal({last: `topo/${w.globalId}/${this.section}`}))
+      switchMap(id => query$(id)),
+      filter(r => !!r.id),
+      tap(r => hub.joinWorkspace(r.id)),
+      tap(r => config.updateLocal({last: `topo/${r.id}/${this.section}`}))
     );
 
   }

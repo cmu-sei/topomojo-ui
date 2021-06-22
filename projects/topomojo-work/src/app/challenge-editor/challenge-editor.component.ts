@@ -52,7 +52,7 @@ export class ChallengeEditorComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (!!changes.summary) {
       setTimeout(() =>
-        this.id$.next(changes.summary.currentValue.globalId),
+        this.id$.next(changes.summary.currentValue.id),
         0
       );
     }
@@ -107,6 +107,6 @@ export class ChallengeEditorComponent implements OnInit, OnChanges {
   }
 
   save(): void {
-    this.api.putWorkspaceChallenge(this.summary.globalId, this.form.value).subscribe();
+    this.api.putWorkspaceChallenge(this.summary.id, this.form.value).subscribe();
   }
 }

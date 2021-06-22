@@ -32,7 +32,7 @@ export class GamespaceQuizComponent implements OnInit {
       sectionIndex: this.state.challenge?.sectionIndex,
       questions: this.state.challenge?.questions?.map(q => ({answer: q.answer}))
     };
-    this.api.grade(this.state.globalId || '', submission).subscribe(
+    this.api.grade(this.state.id || '', submission).subscribe(
       (c: ChallengeView) => this.state.challenge = c,
       (err: any) => { console.log(err); this.errors.push(err.error); }
     );

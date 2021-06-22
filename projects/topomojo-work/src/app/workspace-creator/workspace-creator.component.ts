@@ -30,7 +30,7 @@ export class WorkspaceCreatorComponent implements OnInit {
     // .pipe(ws => throwError({message: 'NotAllowed'}))
     .subscribe(
       (ws: Workspace) => {
-        this.router.navigate(['topo', ws.globalId, 'settings']);
+        this.router.navigate(['topo', ws.id, 'settings']);
       },
       error => this.errors.push(error)
     );

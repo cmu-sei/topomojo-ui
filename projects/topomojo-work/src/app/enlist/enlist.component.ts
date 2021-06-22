@@ -19,9 +19,9 @@ export class EnlistComponent implements OnInit {
     api: WorkspaceService
   ) {
     route.params.pipe(
-      switchMap(p => api.createWorker(p.code))
+      switchMap(p => api.enlist(p.code))
     ).subscribe(
-      ws => router.navigate(['/topo', ws.globalId, 'settings']),
+      ws => router.navigate(['/topo', ws.id, 'settings']),
       err => this.message = 'Invalid invitation code.'
     );
   }

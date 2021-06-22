@@ -25,7 +25,7 @@ export class WorkspaceCardComponent implements OnInit {
 
   go(): void {
     if (this.rla.isActive) { return; }
-    this.router.navigate(['topo', this.workspace.globalId, 'settings']);
+    this.router.navigate(['topo', this.workspace.id, 'settings']);
   }
 
   keydown(ev: KeyboardEvent): boolean {

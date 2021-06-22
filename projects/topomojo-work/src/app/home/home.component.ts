@@ -3,7 +3,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UserProfile } from '../api/gen/models';
+import { ApiUser } from '../api/gen/models';
 import { ConfigService } from '../config.service';
 import { UserService } from '../user.service';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -17,8 +17,8 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit {
   appname: string | undefined;
 
-  user$!: Observable<UserProfile | null>;
-  user!: UserProfile | null;
+  user$!: Observable<ApiUser | null>;
+  user!: ApiUser | null;
 
   faPlus = faPlus;
 

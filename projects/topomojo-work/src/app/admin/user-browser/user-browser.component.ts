@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { faList, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
 import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
-import { Search, UserProfile } from '../../api/gen/models';
+import { Search, ApiUser } from '../../api/gen/models';
 import { ProfileService } from '../../api/profile.service';
 import { UserService } from '../../user.service';
 
@@ -13,11 +13,11 @@ import { UserService } from '../../user.service';
 })
 export class UserBrowserComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);
-  source$: Observable<UserProfile[]>;
-  source: UserProfile[] = [];
-  selected: UserProfile[] = [];
-  viewed: UserProfile | undefined = undefined;
-  viewChange$ = new BehaviorSubject<UserProfile | undefined>(this.viewed);
+  source$: Observable<ApiUser[]>;
+  source: ApiUser[] = [];
+  selected: ApiUser[] = [];
+  viewed: ApiUser | undefined = undefined;
+  viewChange$ = new BehaviorSubject<ApiUser | undefined>(this.viewed);
   search: Search = { term: '', take: 100};
 
   faTrash = faTrash;
@@ -42,18 +42,18 @@ export class UserBrowserComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  view(u: UserProfile): void {
+  view(u: ApiUser): void {
     this.viewed = this.viewed !== u ? u : undefined;
     this.viewChange$.next(this.viewed);
   }
 
   review(): void {
-    this.viewed = this.source.find(g => g.globalId === this.viewed?.globalId);
+    this.viewed = this.source.find(g => g.id === this.viewed?.id);
   }
 
-  delete(model: UserProfile): void {
-    this.api.delete(model.globalId).subscribe(() => {
-      const found = this.source.find(f => f.globalId === model.globalId);
+  delete(model: ApiUser): void {
+    this.api.delete(model.id).subscribe(() => {
+      const found = this.source.find(f => f.id === model.id);
       if (found) {
         this.source.splice(
           this.source.indexOf(found),
@@ -64,11 +64,11 @@ export class UserBrowserComponent implements OnInit {
 
   }
 
-  update(model: UserProfile): void {
+  update(model: ApiUser): void {
     this.api.update(model).subscribe();
   }
 
-  trackById(index: number, model: UserProfile): string {
-    return model.globalId;
+  trackById(index: number, model: ApiUser): string {
+    return model.id;
   }
 }

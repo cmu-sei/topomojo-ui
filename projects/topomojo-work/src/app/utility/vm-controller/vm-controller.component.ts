@@ -16,7 +16,7 @@ import { ConfigService } from '../../config.service';
   styleUrls: ['./vm-controller.component.scss']
 })
 export class VmControllerComponent implements OnInit, OnDestroy {
-  @Input() template: Template | TemplateSummary = { id: 0, globalId: '', workspaceGlobalId: ''};
+  @Input() template: (Template | TemplateSummary) = { id: '', workspaceId: ''};
   @Input() vm: Vm = {};
   task = '';
   confirming = false;
@@ -62,7 +62,7 @@ export class VmControllerComponent implements OnInit, OnDestroy {
           if (event.action === 'VM.DELETE') { this.vm = {}; }
           this.do('refresh');
         }
-        if (event.action === 'VM.DEPLOY' && +event.model.id === this.template.id) {
+        if (event.action === 'VM.DEPLOY' && event.model.id === this.template.id) {
           this.do('refresh');
         }
       }
@@ -85,23 +85,23 @@ export class VmControllerComponent implements OnInit, OnDestroy {
     switch (task) {
 
       case 'initialize':
-        q = this.api.initializeTemplate(this.template.globalId);
+        q = this.api.initializeTemplate(this.template.id);
         break;
 
       case 'deploy':
-        q = this.api.deployTemplate(this.template.globalId);
+        q = this.api.deployTemplate(this.template.id);
         break;
 
       case 'refresh':
       case '':
         q = (this.vm && this.vm.id)
         ? this.api.load(this.vm.id)
-        : this.api.getTemplateVm(this.template.globalId);
+        : this.api.getTemplateVm(this.template.id);
         break;
 
       default: // start stop save revert delete
         q = this.api.updateState({
-          id: this.vm.id,
+          id: this.vm.id || '',
           type: task as VmOperationTypeEnum
         });
         break;

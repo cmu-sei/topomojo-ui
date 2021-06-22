@@ -3,7 +3,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Template, Workspace, WorkspaceSummary } from '../api/gen/models';
+import { Template, Workspace, WorkspaceStats, WorkspaceSummary } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 import { NotificationService } from '../notification.service';
 
@@ -14,6 +14,7 @@ import { NotificationService } from '../notification.service';
 })
 export class TemplatesEditorComponent implements OnInit {
   @Input() workspace!: Workspace;
+
   faTrash = faTrash;
 
   constructor(
@@ -34,8 +35,8 @@ export class TemplatesEditorComponent implements OnInit {
   }
 
   deleteGamespaces(): void {
-    this.api.deleteWorkspaceGames(this.workspace.globalId).subscribe(
-      () => this.workspace.gamespaceCount = 0
+    this.api.deleteWorkspaceGames(this.workspace.id).subscribe(
+      () => this.workspace.stats.activeGamespaceCount = 0
     );
   }
 }

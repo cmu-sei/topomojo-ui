@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiSettings } from '../api-settings';
 import { GeneratedService } from './_service';
-import { UserProfile, Search, UserRegistration } from './models';
+import { ApiKey, ApiKeyResult, ApiUser, Search, UserRegistration } from './models';
 
 @Injectable()
 export class GeneratedProfileService extends GeneratedService {
@@ -16,28 +16,41 @@ export class GeneratedProfileService extends GeneratedService {
        protected conf: ApiSettings
     ) { super(http, conf); }
 
-    public list(search: Search): Observable<UserProfile[]> {
-        return this.http.get<UserProfile[]>(this.conf.api + '/users' + this.paramify(search));
+    public list(search: Search): Observable<ApiUser[]> {
+        return this.http.get<ApiUser[]>(this.conf.api + '/users' + this.paramify(search));
     }
-    public load(): Observable<UserProfile> {
-        return this.http.get<UserProfile>(this.conf.api + '/user');
+    public load(): Observable<ApiUser> {
+        return this.http.get<ApiUser>(this.conf.api + '/user');
     }
-    public update(profile: UserProfile): Observable<any> {
+    public update(profile: ApiUser): Observable<any> {
         return this.http.put<any>(this.conf.api + '/user', profile);
     }
     public delete(id: string): Observable<any> {
         return this.http.delete<any>(this.conf.api + '/user/' + id);
     }
-    public sync(): Observable<any> {
-        return this.http.get(this.conf.api + '/version?ts=' + Date.now());
-    }
     public ticket(): Observable<any> {
         return this.http.get(this.conf.api + '/user/ticket');
     }
+    public login(): Observable<any> {
+        return this.http.post<any>(this.conf.api + '/user/login', null);
+    }
+    public logout(): Observable<any> {
+        return this.http.post<any>(this.conf.api + '/user/logout', null);
+    }
+    public getApiKeys(id: string): Observable<ApiKey> {
+        return this.http.get<ApiKey>(this.conf.api + `/user/${id}/apikeys`);
+    }
+    public generateApiKey(id: string): Observable<ApiKeyResult> {
+        return this.http.post<ApiKeyResult>(this.conf.api + `/apikey/${id}`, null);
+    }
+    public deleteApiKey(id: string): Observable<any> {
+        return this.http.delete<any>(this.conf.api + `/apikey/${id}`);
+    }
+
 
     // pass auth header since this is called as an initializer
-    public register(model: UserRegistration, auth: string): Observable<UserProfile> {
-      return this.http.post<UserProfile>(`${this.conf.api}/user/register`, model, { headers: { Authorization: auth}});
+    public register(model: UserRegistration, auth: string): Observable<ApiUser> {
+      return this.http.post<ApiUser>(`${this.conf.api}/user/register`, model, { headers: { Authorization: auth}});
     }
 
 }

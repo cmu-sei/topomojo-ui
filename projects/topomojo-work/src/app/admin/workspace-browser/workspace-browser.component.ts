@@ -33,14 +33,14 @@ export class WorkspaceBrowserComponent implements OnInit {
     ).pipe(
       debounceTime(500),
       switchMap(() => this.api.list(this.search)),
-      // tap(r => r.forEach(g => g.checked = !!this.selected.find(s => s.globalId === g.globalId))),
+      // tap(r => r.forEach(g => g.checked = !!this.selected.find(s => s.id === g.id))),
       tap(r => this.source = r),
       tap(() => this.review()),
     );
 
     this.detail$ = this.viewChange$.pipe(
       filter(g => !!g),
-      switchMap(g => api.load(g?.globalId || ''))
+      switchMap(g => api.load(g?.id || ''))
     );
   }
 
@@ -53,12 +53,12 @@ export class WorkspaceBrowserComponent implements OnInit {
   }
 
   review(): void {
-    this.viewed = this.source.find(g => g.globalId === this.viewed?.globalId);
+    this.viewed = this.source.find(g => g.id === this.viewed?.id);
   }
 
   delete(w: WorkspaceSummary): void {
-    this.api.delete(w.globalId).subscribe(() => {
-      const found = this.source.find(f => f.globalId === w.globalId);
+    this.api.delete(w.id).subscribe(() => {
+      const found = this.source.find(f => f.id === w.id);
       if (found) {
         this.source.splice(
           this.source.indexOf(found),
@@ -74,6 +74,6 @@ export class WorkspaceBrowserComponent implements OnInit {
   }
 
   trackById(index: number, g: WorkspaceSummary): string {
-    return g.globalId;
+    return g.id;
   }
 }

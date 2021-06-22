@@ -3,8 +3,8 @@
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of, Subscription } from 'rxjs';
-import { catchError, filter, finalize, switchMap, tap } from 'rxjs/operators';
-import { UserRegistration, UserProfile } from './api/gen/models';
+import { catchError, debounceTime, filter, finalize, switchMap, tap } from 'rxjs/operators';
+import { UserRegistration, ApiUser } from './api/gen/models';
 import { ProfileService } from './api/profile.service';
 import { AuthService, AuthTokenState } from './auth.service';
 
@@ -13,7 +13,7 @@ import { AuthService, AuthTokenState } from './auth.service';
 })
 export class UserService {
 
-  user$ = new BehaviorSubject<UserProfile | null>(null);
+  user$ = new BehaviorSubject<ApiUser | null>(null);
   init$ = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -22,6 +22,7 @@ export class UserService {
   ) {
     const validSub: Subscription = this.auth.tokenState$.pipe(
       filter(t => t === AuthTokenState.valid),
+      debounceTime(300),
       switchMap(u => this.api.register(
         this.auth.oidcUser?.profile as UserRegistration,
         this.auth.auth_header()).pipe(

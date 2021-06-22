@@ -4,7 +4,7 @@
 <form #form="ngForm" [ngFormOptions]="{updateOn: 'blur'}" autocomplete="off" >
 
   <!-- <input type="hidden" name="id" [ngModel]="template.id"> -->
-  <input type="hidden" name="globalId" [ngModel]="template.globalId">
+  <input type="hidden" name="globalId" [ngModel]="template.id">
   <input type="hidden" name="iso" [ngModel]="template.iso">
 
   <div class="form-group bg-light">
@@ -47,7 +47,7 @@
         </button>
       </div>
     </div>
-    <app-iso-selector [guid]="template.workspaceGlobalId" (added)="isoSelect($event)"></app-iso-selector>
+    <app-iso-selector [guid]="template.workspaceId" (added)="isoSelect($event)"></app-iso-selector>
   </div>
 
   <div class="form-group bg-light">

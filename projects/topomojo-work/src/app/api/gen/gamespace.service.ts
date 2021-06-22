@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiSettings } from '../api-settings';
 import { GeneratedService } from './_service';
-import { GameState, Gamespace, Player, VmState, ChallengeView, NewGamespace, SectionSubmission } from './models';
+import { GameState, Gamespace, Player, VmState, ChallengeView, GamespaceRegistration, SectionSubmission } from './models';
 
 @Injectable()
 export class GeneratedGamespaceService extends GeneratedService {
@@ -37,7 +37,7 @@ export class GeneratedGamespaceService extends GeneratedService {
     public delete(id: string): Observable<any> {
         return this.http.delete<any>(`${this.conf.api}/gamespace/${id}`);
     }
-    public register(model: NewGamespace): Observable<GameState> {
+    public register(model: GamespaceRegistration): Observable<GameState> {
         return this.http.post<GameState>(`${this.conf.api}/gamespace`, model);
     }
     public loadState(id: number): Observable<GameState> {
@@ -49,8 +49,8 @@ export class GeneratedGamespaceService extends GeneratedService {
     public createPlayer(code: string): Observable<any> {
       return this.http.post<any>(this.conf.api + '/player/' + code, {});
     }
-    public deletePlayer(id: number): Observable<any> {
-        return this.http.delete<any>(this.conf.api + '/player/' + id);
+    public deletePlayer(player: Player): Observable<any> {
+        return this.http.delete<any>(this.conf.api + `/gamespace/${player.gamespaceId}/player/${player.subjectId}`);
     }
     public grade(id: string, model: SectionSubmission): Observable<ChallengeView> {
       return this.http.post<ChallengeView>(`${this.conf.api}/gamespace/${id}/grade`, model);

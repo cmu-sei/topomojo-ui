@@ -3,7 +3,7 @@
 
 import { Component, HostListener } from '@angular/core';
 import { debounceTime, filter, tap } from 'rxjs/operators';
-import { UserProfile } from './api/gen/models';
+import { ApiUser } from './api/gen/models';
 import { ConfigService } from './config.service';
 import { UserService } from './user.service';
 import { AuthService, AuthTokenState } from './auth.service';
@@ -22,7 +22,7 @@ export class AppComponent {
   appname: string | undefined;
   open = true;
   pinned = false;
-  user: UserProfile | null = null;
+  user: ApiUser | null = null;
   websocket: Observable<HubState>;
 
   faOpen = faChevronLeft;
@@ -42,7 +42,7 @@ export class AppComponent {
     this.websocket = hubSvc.state$.pipe(debounceTime(500));
 
     userSvc.user$.pipe(
-      // tap(u => console.log('app user ' + u?.globalId))
+      // tap(u => console.log('app user ' + u?.id))
       // tap(u => console.log(u))
     ).subscribe(u => this.user = u);
 

@@ -5,7 +5,7 @@ import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges } fro
 import { Subject, Observable, merge } from 'rxjs';
 import { finalize, switchMap, tap } from 'rxjs/operators';
 import { GamespaceService } from '../api/gamespace.service';
-import { GameState, NewGamespace, Vm } from '../api/gen/models';
+import { GameState, GamespaceRegistration, Vm, VmState } from '../api/gen/models';
 import { faBolt, faToggleOff, faToggleOn, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
 import { ConfigService } from '../config.service';
 
@@ -25,7 +25,8 @@ export class GamespaceComponent implements OnInit, OnChanges, AfterViewInit {
   launching = false;
   deploying = false;
 
-  settings: NewGamespace = {
+  settings: GamespaceRegistration = {
+    resourceId: '',
     variant: 0,
     maxAttempts: 3,
     maxMinutes: 60,
@@ -52,7 +53,7 @@ export class GamespaceComponent implements OnInit, OnChanges, AfterViewInit {
       ),
       this.gs$
     ).pipe(
-      tap(g => this.gid = g.globalId)
+      tap(g => this.gid = g.id)
     );
   }
 
@@ -108,7 +109,7 @@ export class GamespaceComponent implements OnInit, OnChanges, AfterViewInit {
     );
   }
 
-  console(vm: Vm): void {
+  console(vm: VmState): void {
     this.conf.openConsole(`?f=1&s=${this.gid}&v=${vm.name?.split('#')[0]}`);
   }
 
