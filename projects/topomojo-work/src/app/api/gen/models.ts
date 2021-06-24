@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 export interface Search {
-  term?: string;
+  term: string;
   skip?: number;
   take?: number;
   sort?: string;
@@ -89,6 +89,7 @@ export interface ApiUser {
   gamespaceMaxMinutes: number;
   gamespaceCleanupGraceMinutes: number;
   whenCreated: string;
+  apiKeys: ApiKey[];
 }
 
 export interface UserRegistration {
@@ -97,14 +98,14 @@ export interface UserRegistration {
 }
 
 export interface ChangedUser {
-  id: string;
-  name: string;
-  scope: string;
-  role: string;
-  workspaceLimit: number;
-  gamespaceLimit: number;
-  gamespaceMaxMinutes: number;
-  gamespaceCleanupGraceMinutes: number;
+  id?: string;
+  name?: string;
+  scope?: string;
+  role?: string;
+  workspaceLimit?: number;
+  gamespaceLimit?: number;
+  gamespaceMaxMinutes?: number;
+  gamespaceCleanupGraceMinutes?: number;
 }
 
 export interface ApiKeyResult {
@@ -117,13 +118,17 @@ export interface ApiKey {
   whenCreated: string;
 }
 
+export interface UserSearch extends Search {
+  scope: string;
+}
+
 // #################################
 // ## TEMPLATE Models
 // #################################
 
 export interface TemplateSummary {
   id: string;
-  name?: string;
+  name: string;
   description?: string;
   audience?: string;
   workspaceId: string;
@@ -190,6 +195,7 @@ export interface Workspace {
   author: string;
   audience: string;
   whenCreated?: string;
+  templateScope: string;
   templateLimit?: number;
   challenge?: string;
   workers?: Worker[];
@@ -205,6 +211,15 @@ export interface WorkspaceSummary {
   author: string;
   audience: string;
   whenCreated: string;
+}
+
+export interface PlayableWorkspace {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+
+  expirationTime: string;
 }
 
 export interface NewWorkspace {

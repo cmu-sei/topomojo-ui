@@ -3,7 +3,7 @@ import { faCheck, faCheckSquare, faList, faSearch, faSquare, faSync, faSyncAlt, 
 import { BehaviorSubject, interval, merge, Observable, Subject } from 'rxjs';
 import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { GamespaceService } from '../../api/gamespace.service';
-import { Gamespace, Vm } from '../../api/gen/models';
+import { Gamespace, Search, Vm } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
 
 @Component({
@@ -20,6 +20,7 @@ export class GamespaceBrowserComponent implements OnInit {
   vms$: Observable<Vm[]>;
   viewChange$ = new BehaviorSubject<Gamespace | undefined>(this.viewed);
   selectAllValue = false;
+  search: Search = { term: '', filter: ['all', 'active']};
   term = '';
 
   faChecked = faCheckSquare;
@@ -39,7 +40,7 @@ export class GamespaceBrowserComponent implements OnInit {
       interval(60000)
     ).pipe(
       debounceTime(500),
-      switchMap(() => this.api.list('all')),
+      switchMap(() => this.api.list(this.search)),
       tap(r => r.forEach(g => g.checked = !!this.selected.find(s => s.id === g.id))),
       tap(r => this.source = r),
       tap(() => this.review()),

@@ -11,9 +11,26 @@
   <div *ngIf="!!user" class="reader my-4 text-center">
     <h3>Getting Started</h3>
     <p>
-      Browse your workspaces in the side bar, or create a new one.
+      We build in a workspace; then play in a gamespace.
     </p>
-    <app-workspace-creator></app-workspace-creator><br/>
+
+    <!-- Browse your workspaces in the side bar, or create a new one (permission required). -->
+    <button class="btn btn-outline-secondary btn-lg mb-2" (click)="openSidebar()">
+      <fa-icon [icon]="faChevronLeft"></fa-icon>
+      <fa-icon [icon]="faChevronLeft"></fa-icon>
+      <span>Find A Space</span>
+    </button>
+
+    <span class="mx-4"></span>
+
+    <app-workspace-creator></app-workspace-creator>
+
+    <!-- <p class="mt-2">Find a gamespace to launch</p>
+    <a class="btn btn-outline-secondary btn-lg mb-2" [routerLink]="['/mojo']">
+      <fa-icon [icon]="faBolt"></fa-icon>
+      <span>Select Gamespace</span>
+    </a>
+    <br/> -->
   </div>
 
   <div *ngIf="!user" class="row reader my-4">

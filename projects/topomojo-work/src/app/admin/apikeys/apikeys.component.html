@@ -1,0 +1,15 @@
+<div *ngFor="let key of list | async; trackBy:trackById">
+  <span class="mr-2">&mdash; <code>{{ key.whenCreated | slice:0:19 }}</code> by {{ key.name }}</span>
+  <app-confirm-button btnClass="btn btn-outline-info btn-sm" (confirm)="delete(key)">
+    <fa-icon [icon]="faTrash"></fa-icon>
+    <span>Delete</span>
+  </app-confirm-button>
+</div>
+
+<div>
+  <button class="btn btn-outline-info btn-sm mr-2" (click)="generate()">
+    <fa-icon [icon]="faPlus"></fa-icon>
+    <span>Generate</span>
+  </button>
+  <app-clipspan>{{newKey}}</app-clipspan>
+</div>

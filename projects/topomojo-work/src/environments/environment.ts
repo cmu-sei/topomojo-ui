@@ -9,12 +9,12 @@ export const environment = {
     apphost: 'http://localhost:5004',
     mkshost: 'http://localhost:4201',
     oidc: {
-      client_id: 'jam-code',
-      // authority: 'http://localhost:5000',
-      authority: 'https://devid.cmusei.dev',
+      client_id: 'dev-code',
+      authority: 'http://localhost:5000',
+      // authority: 'https://devid.cmusei.dev',
       redirect_uri: 'http://localhost:4200/oidc',
       response_type: 'code',
-      scope: 'openid profile jam-api',
+      scope: 'openid profile dev-api',
       monitorSession: false,
       loadUserInfo: true,
       useLocalStorage: true

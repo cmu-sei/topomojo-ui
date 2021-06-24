@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { TemplateDetailFormComponent } from './template-detail-form/template-detail-form.component';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { UserBrowserComponent } from './user-browser/user-browser.component';
+import { ApikeysComponent } from './apikeys/apikeys.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { UserBrowserComponent } from './user-browser/user-browser.component';
     TemplateBrowserComponent,
     VmBrowserComponent,
     TemplateDetailFormComponent,
-    UserBrowserComponent
+    UserBrowserComponent,
+    ApikeysComponent
   ],
   imports: [
     CommonModule,

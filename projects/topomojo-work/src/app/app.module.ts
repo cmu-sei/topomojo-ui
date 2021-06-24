@@ -53,6 +53,9 @@ import { GamespaceQuizComponent } from './gamespace-quiz/gamespace-quiz.componen
 import { IsoManagerComponent } from './iso-manager/iso-manager.component';
 import { DropzoneComponent } from './dropzone/dropzone.component';
 import { IsoSelectorComponent } from './iso-selector/iso-selector.component';
+import { ApikeysComponent } from './apikeys/apikeys.component';
+import { GamespaceBrowserComponent } from './gamespace-browser/gamespace-browser.component';
+import { GamespaceCardComponent } from './gamespace-card/gamespace-card.component';
 
 @NgModule({
   declarations: [
@@ -85,7 +88,10 @@ import { IsoSelectorComponent } from './iso-selector/iso-selector.component';
     GamespaceQuizComponent,
     IsoManagerComponent,
     DropzoneComponent,
-    IsoSelectorComponent
+    IsoSelectorComponent,
+    ApikeysComponent,
+    GamespaceBrowserComponent,
+    GamespaceCardComponent
   ],
   imports: [
     BrowserModule,

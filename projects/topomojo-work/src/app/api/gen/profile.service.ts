@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiSettings } from '../api-settings';
 import { GeneratedService } from './_service';
-import { ApiKey, ApiKeyResult, ApiUser, Search, UserRegistration } from './models';
+import { ApiKey, ApiKeyResult, ApiUser, ChangedUser, Search, UserRegistration, UserSearch } from './models';
 
 @Injectable()
 export class GeneratedProfileService extends GeneratedService {
@@ -16,14 +16,17 @@ export class GeneratedProfileService extends GeneratedService {
        protected conf: ApiSettings
     ) { super(http, conf); }
 
-    public list(search: Search): Observable<ApiUser[]> {
+    public list(search: UserSearch): Observable<ApiUser[]> {
         return this.http.get<ApiUser[]>(this.conf.api + '/users' + this.paramify(search));
+    }
+    public listScopes(): Observable<string[]> {
+        return this.http.get<string[]>(this.conf.api + '/user/scopes');
     }
     public load(): Observable<ApiUser> {
         return this.http.get<ApiUser>(this.conf.api + '/user');
     }
-    public update(profile: ApiUser): Observable<any> {
-        return this.http.put<any>(this.conf.api + '/user', profile);
+    public update(profile: ChangedUser): Observable<any> {
+        return this.http.post<any>(this.conf.api + '/user', profile);
     }
     public delete(id: string): Observable<any> {
         return this.http.delete<any>(this.conf.api + '/user/' + id);
@@ -37,8 +40,8 @@ export class GeneratedProfileService extends GeneratedService {
     public logout(): Observable<any> {
         return this.http.post<any>(this.conf.api + '/user/logout', null);
     }
-    public getApiKeys(id: string): Observable<ApiKey> {
-        return this.http.get<ApiKey>(this.conf.api + `/user/${id}/apikeys`);
+    public getApiKeys(id: string): Observable<ApiKey[]> {
+        return this.http.get<ApiKey[]>(this.conf.api + `/user/${id}/keys`);
     }
     public generateApiKey(id: string): Observable<ApiKeyResult> {
         return this.http.post<ApiKeyResult>(this.conf.api + `/apikey/${id}`, null);

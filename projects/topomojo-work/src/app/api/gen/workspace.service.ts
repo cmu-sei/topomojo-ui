@@ -31,7 +31,7 @@ export class GeneratedWorkspaceService extends GeneratedService {
       return this.http.post<Workspace>(this.conf.api + '/workspace', model);
   }
   public clone(id: string): Observable<Workspace> {
-      return this.http.post<Workspace>(this.conf.api + '/workspace/' + identifierModuleUrl, {});
+      return this.http.post<Workspace>(this.conf.api + '/workspace/' + id + '/clone', {});
   }
   public update(model: ChangedWorkspace): Observable<any> {
       return this.http.put<any>(this.conf.api + '/workspace', model);

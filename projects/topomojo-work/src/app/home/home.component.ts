@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { ApiUser } from '../api/gen/models';
 import { ConfigService } from '../config.service';
 import { UserService } from '../user.service';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faChevronLeft, faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 
 @Component({
@@ -21,6 +21,9 @@ export class HomeComponent implements OnInit {
   user!: ApiUser | null;
 
   faPlus = faPlus;
+  faSearch = faSearch;
+  faChevronLeft = faChevronLeft;
+  faBolt = faBolt;
 
   constructor(
     private config: ConfigService,
@@ -41,7 +44,8 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  add(): void {
-
+  openSidebar(): void {
+    this.config.sidebar$.next(true);
   }
+
 }

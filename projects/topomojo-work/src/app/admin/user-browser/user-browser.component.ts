@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { faList, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faList, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
 import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
-import { Search, ApiUser } from '../../api/gen/models';
+import { Search, ApiUser, UserSearch } from '../../api/gen/models';
 import { ProfileService } from '../../api/profile.service';
 import { UserService } from '../../user.service';
 
@@ -18,11 +18,15 @@ export class UserBrowserComponent implements OnInit {
   selected: ApiUser[] = [];
   viewed: ApiUser | undefined = undefined;
   viewChange$ = new BehaviorSubject<ApiUser | undefined>(this.viewed);
-  search: Search = { term: '', take: 100};
+  search: UserSearch = { term: '', scope: '', take: 100};
+  filter = '';
+  scope = '';
+  scopes: string[] = [];
 
   faTrash = faTrash;
   faList = faList;
   faSearch = faSearch;
+  faFilter = faFilter;
 
   constructor(
     private api: ProfileService,
@@ -37,9 +41,37 @@ export class UserBrowserComponent implements OnInit {
       tap(() => this.review()),
     );
 
+    api.listScopes().subscribe(
+      result => this.scopes = result
+    );
   }
 
   ngOnInit(): void {
+  }
+
+  toggleFilter(role: string): void {
+    this.filter = this.filter !== role ? role : '';
+    this.search.filter = [this.filter];
+    this.refresh$.next(true);
+  }
+
+  toggleScope(scope: string): void {
+    this.scope = this.scope !== scope ? scope : '';
+    this.search.scope = this.scope;
+    this.refresh$.next(true);
+  }
+
+  create(): void {
+    this.api.update({
+      name: this.search.term || 'NEW-USER'
+    }).pipe(
+      debounceTime(500)
+    ).subscribe(
+      (u: ApiUser) => {
+        this.source.unshift(u);
+        this.view(u);
+      }
+    );
   }
 
   view(u: ApiUser): void {

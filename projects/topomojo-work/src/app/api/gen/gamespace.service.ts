@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiSettings } from '../api-settings';
 import { GeneratedService } from './_service';
-import { GameState, Gamespace, Player, VmState, ChallengeView, GamespaceRegistration, SectionSubmission } from './models';
+import { GameState, Gamespace, Player, VmState, ChallengeView, GamespaceRegistration, SectionSubmission, Search } from './models';
 
 @Injectable()
 export class GeneratedGamespaceService extends GeneratedService {
@@ -16,8 +16,8 @@ export class GeneratedGamespaceService extends GeneratedService {
        protected conf: ApiSettings
     ) { super(http, conf); }
 
-    public list(filter: string): Observable<Array<Gamespace>> {
-        return this.http.get<Array<Gamespace>>(this.conf.api + '/gamespaces' + this.paramify({filter}));
+    public list(filter: Search): Observable<Gamespace[]> {
+        return this.http.get<Gamespace[]>(this.conf.api + '/gamespaces' + this.paramify(filter));
     }
     public preview(id: string): Observable<GameState> {
         return this.http.get<GameState>(`${this.conf.api}/preview/${id}`);

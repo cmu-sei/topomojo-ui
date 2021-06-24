@@ -7,9 +7,9 @@ export class AgedDatePipe implements PipeTransform {
         const n = new Date();
         const t = new Date(date); // + " GMT");
         const tag = [ 's', 'm', 'h', 'd' ];
-        // console.log(date);
-        // console.log(n);
-        // console.log(t);
+        console.log(date);
+        console.log(n);
+        console.log(t);
         let d: number = n.valueOf() - t.valueOf();
         const a: number[] = [
             d / 1000,

@@ -12,12 +12,12 @@
     <div class="input-group-prepend">
       <span id="search-label" class="input-group-text">Search</span>
     </div>
-    <input placeholder="term" class="form-control" (keyup)="term.next($event)" aria-label="search term" aria-describedby="search-label">
+    <input placeholder="term" class="form-control" [(ngModel)]="search.term" (input)="refresh$.next(true)" aria-label="search term" aria-describedby="search-label">
   </div>
 
   <!-- display results -->
   <ul class="list-unstyled">
-    <li class="d-flex align-items-center mb-1" *ngFor="let t of templates | async">
+    <li class="d-flex align-items-center mb-1" *ngFor="let t of templates$ | async">
       <button *ngIf="active !== t" class="btn btn-sm btn-light mr-2" (click)="target.next(t)">
         <fa-icon [icon]="faPlus"></fa-icon>
         <span>Add</span>

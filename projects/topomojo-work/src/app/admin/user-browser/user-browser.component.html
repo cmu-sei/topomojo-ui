@@ -10,12 +10,39 @@
     </div>
     <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
   </div>
-  <small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
+  <div>
+    <button class="btn btn-link text-primary btn-sm" (click)="create()">create</button>
+    |
+    <button class="mr-1 btn btn-link text-success btn-sm" (click)="toggleFilter('administrator')">
+      <fa-icon [hidden]="filter!=='administrator'" [icon]="faFilter"></fa-icon>
+      <span>admins</span>
+    </button>
+    <button class="mr-1 btn btn-link text-secondary btn-sm" (click)="toggleFilter('creator')">
+      <fa-icon [hidden]="filter!=='creator'" [icon]="faFilter"></fa-icon>
+      <span>creators</span>
+    </button>
+    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('builder')">
+      <fa-icon [hidden]="filter!=='builder'" [icon]="faFilter"></fa-icon>
+      <span>builders</span>
+    </button>
+    |
+    <button *ngFor="let s of scopes"
+      class="mr-1 btn btn-link text-dark btn-sm" (click)="toggleScope(s)">
+      <fa-icon [hidden]="scope!==s" [icon]="faFilter"></fa-icon>
+      <span>{{s}}</span>
+    </button>
+  </div>
 </div>
 
+<small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
 <hr/>
 
-<div *ngFor="let user of source$ | async; trackBy:trackById" class="row mb-1">
+<div *ngFor="let user of source$ | async; trackBy:trackById"
+  class="row mb-1"
+  [class.pop-success]="user.role==='administrator'"
+  [class.pop-secondary]="user.role==='creator'"
+  [class.pop-warning]="user.role==='builder'"
+  >
   <div class="col-8">
     <span class="text-secondary">{{user.name}}</span>
     <br/>
@@ -27,15 +54,19 @@
     <small>{{user.whenCreated | shortdate}}</small>
   </div>
   <div class="col-3">
+
     <button class="btn btn-outline-info btn-sm mx-1" (click)="view(user)">
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
+
     <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(user)">
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Delete</span>
     </app-confirm-button>
+
   </div>
+
   <div *ngIf="viewed === user" class="col-12">
 
       <div class="form-group bg-light">
@@ -46,13 +77,53 @@
           <label class="btn btn-outline-info btn-sm" btnRadio="creator">Creator</label>
           <label class="btn btn-outline-info btn-sm" btnRadio="administrator">Admin</label>
         </div>
+        <small><pre>
+          - Builder: bypasses some checks, like blocking bridge-net
+          - Creator: bypasses workspace and template limits
+        </pre></small>
       </div>
 
       <div class="form-group bg-light">
-        <label class="mb=0" for="detail-template-limit">Workspace Limit</label>
-        <input id="detail-template-limit" class="form-control" type="number" [(ngModel)]="user.workspaceLimit" (input)="update(user)">
+        <label class="mb-0" for="name-input">Name</label>
+        <input id="name-input" class="form-control" type="text" [(ngModel)]="user.name" (change)="update(user)">
+        <small>for client "user" (regular users names' update from auth token)</small>
       </div>
 
+      <div class="form-group bg-light">
+        <label class="mb-0" for="scope-input">Scope</label>
+        <input id="scope-input" class="form-control" type="text" [(ngModel)]="user.scope" (change)="update(user)">
+        <small>allowed gamespace audience list (space-delimited)</small><br/>
+        <small>users can only "play" workspaces with a matching audience tag</small>
+      </div>
+
+      <div class="form-group bg-light">
+        <label class="mb-0" for="input-wslimit">Workspace Limit</label>
+        <input id="input-wslimit" class="form-control" type="number" [(ngModel)]="user.workspaceLimit" (change)="update(user)">
+        <small>max workspaces this user can manage</small>
+      </div>
+
+      <div class="form-group bg-light">
+        <label class="mb-0" for="input-gslimit">Gamespace Limit</label>
+        <input id="input-gslimit" class="form-control" type="number" [(ngModel)]="user.gamespaceLimit" (change)="update(user)">
+        <small>max concurrent gamespaces allowed</small>
+      </div>
+
+      <div class="form-group bg-light">
+        <label class="mb-0" for="input-gsduration">Gamespace Max Duration</label>
+        <input id="input-gsduration" class="form-control" type="number" [(ngModel)]="user.gamespaceMaxMinutes" (change)="update(user)">
+        <small>max minutes allowed for a gamespace</small>
+      </div>
+
+      <div class="form-group bg-light">
+        <label class="mb-0" for="input-gscleanup">Gamespace Cleanup Grace time</label>
+        <input id="input-gscleanup" class="form-control" type="number" [(ngModel)]="user.gamespaceCleanupGraceMinutes" (change)="update(user)">
+        <small>grace minutes between expiration and teardown</small>
+      </div>
+
+      <div class="form-group bg-light">
+        <label class="mb-0" for="">ApiKeys</label>
+        <app-apikeys [id]="user.id"></app-apikeys>
+      </div>
 
   </div>
 </div>

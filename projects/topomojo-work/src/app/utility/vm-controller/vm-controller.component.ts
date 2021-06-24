@@ -16,7 +16,7 @@ import { ConfigService } from '../../config.service';
   styleUrls: ['./vm-controller.component.scss']
 })
 export class VmControllerComponent implements OnInit, OnDestroy {
-  @Input() template: (Template | TemplateSummary) = { id: '', workspaceId: ''};
+  @Input() template: (Template | TemplateSummary) = { id: '', name: '', workspaceId: ''};
   @Input() vm: Vm = {};
   task = '';
   confirming = false;

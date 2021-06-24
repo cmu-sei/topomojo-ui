@@ -41,6 +41,10 @@ export class AppComponent {
     this.appname = config.settings.appname;
     this.websocket = hubSvc.state$.pipe(debounceTime(500));
 
+    config.sidebar$.subscribe(
+      state => this.open = state
+    );
+
     userSvc.user$.pipe(
       // tap(u => console.log('app user ' + u?.id))
       // tap(u => console.log(u))

@@ -23,6 +23,7 @@ export class ConfigService {
   absoluteUrl = '';
   tabs: TabRef[] = [];
   settings$ = new BehaviorSubject<Settings>(this.settings);
+  sidebar$ = new Subject<boolean>();
 
   get lastUrl(): string {
     const url = !this.restorationComplete

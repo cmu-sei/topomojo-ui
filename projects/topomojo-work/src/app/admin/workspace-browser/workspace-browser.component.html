@@ -39,9 +39,15 @@
   <div *ngIf="viewed === g" class="col-12">
     <ng-container *ngIf="detail$ | async as detail">
 
-      <div class="form-group">
+      <div class="form-group bg-light">
         <label class="mb-0" for="detail-template-limit">Template Limit</label>
-        <input id="detail-template-limit" class="form-control" type="number" [(ngModel)]="detail.templateLimit" (input)="update(detail)">
+        <input id="detail-template-limit" class="form-control" type="number" [(ngModel)]="detail.templateLimit" (change)="update(detail)">
+      </div>
+
+      <div class="form-group bg-light">
+        <label class="mb-0" for="input-scope">Template Scope</label>
+        <input id="input-scope" class="form-control" type="text" [(ngModel)]="detail.templateScope" (change)="update(detail)">
+        <small>template scopes this workspace can link</small>
       </div>
 
       <div *ngFor="let t of detail.templates" class="row mb-1 align-items-center">

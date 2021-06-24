@@ -6,6 +6,11 @@
   <small>Inactive: "unpublished and idle" or "published and unused"</small>
 </alert>
 
+<pre>
+  Launch Count: {{summary.stats.launchCount}}
+  Last Activity: {{summary.stats.lastActivity}}
+</pre>
+
 <form [formGroup]="form">
 
   <div class="form-group bg-light">
@@ -15,7 +20,7 @@
 
   <div class="form-group bg-light">
     <label class="mb-0" for="description-input">Description</label>
-    <textarea id="description-input" type="text" rows=3 class="form-control" formControlName="description"></textarea>
+    <textarea id="description-input" type="text" rows="3" class="form-control" formControlName="description"></textarea>
     <small>Short description to display when browsing titles</small>
   </div>
 
@@ -27,7 +32,7 @@
 
   <div class="form-group bg-light">
     <label class="mb-0" for="audience-input">Audience</label>
-    <input id="audience-input" type="text" class="form-control" formControlName="audience">
+    <input id="audience-input" type="text" class="form-control" formControlName="audience" name="audience">
     <small>space-delimited list of clients that can launch this as a gamespace</small>
   </div>
 
@@ -56,10 +61,20 @@
   </div>
 
   <hr/>
+  <app-error-div [errors]="errors"></app-error-div>
   <div class="text-center mb-4">
+
+    <app-confirm-button btnClass="btn btn-outline-secondary btn-lg" (confirm)="clone()">
+      <fa-icon [icon]="faCopy"></fa-icon>
+      <span>Clone</span>
+    </app-confirm-button>
+
+    <span class="m-2"></span>
+
     <app-confirm-button btnClass="btn btn-outline-danger btn-lg" (confirm)="delete()">
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Delete</span>
     </app-confirm-button>
+
   </div>
 </form>

@@ -1,4 +1,8 @@
 <form #form="ngForm" [ngFormOptions]="{updateOn: 'change'}" (ngSubmit)="update()">
+  <div class="text-center">
+    <button class="btn btn-secondary btn-sm" type="submit" [disabled]="!form.dirty || !form.valid">Save Settings</button>
+  </div>
+
   <input type="hidden" name="id" [ngModel]="template.id">
   <input type="hidden" name="name" [ngModel]="template.name">
 
@@ -22,6 +26,16 @@
     <div class="d-flex">
       <div class="spacer"></div>
       <small class="text-right">{{(''+template.description).length}} / 255</small>
+    </div>
+  </div>
+
+  <div class="form-group bg-light">
+    <label for="audience-input">Audience</label>
+    <input id="audience-input" class="form-control" name="audience" type="text" placeholder="Audience" [(ngModel)]="template.audience" maxlength="64">
+    <div class="d-flex">
+      <small>audience controls which workspaces can view/link this template</small>
+      <div class="spacer"></div>
+      <small class="text-right">{{(''+template.audience).length}} / 64</small>
     </div>
   </div>
 

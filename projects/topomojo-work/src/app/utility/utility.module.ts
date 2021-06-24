@@ -12,6 +12,7 @@ import { VmControllerComponent } from './vm-controller/vm-controller.component';
 import { UntagPipe } from './untag.pipe';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ClipspanComponent } from './clipspan/clipspan.component';
+import { CountdownPipe } from './countdown.pipe';
 
 
 
@@ -25,7 +26,8 @@ import { ClipspanComponent } from './clipspan/clipspan.component';
     ErrorDivComponent,
     SpinnerComponent,
     VmControllerComponent,
-    ClipspanComponent
+    ClipspanComponent,
+    CountdownPipe
   ],
   imports: [
     CommonModule,
@@ -42,7 +44,8 @@ import { ClipspanComponent } from './clipspan/clipspan.component';
     ErrorDivComponent,
     SpinnerComponent,
     VmControllerComponent,
-    ClipspanComponent
+    ClipspanComponent,
+    CountdownPipe
   ]
 })
 export class UtilityModule { }

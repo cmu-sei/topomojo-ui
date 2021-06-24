@@ -2,11 +2,12 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, Subscription, timer } from 'rxjs';
-import { debounceTime, distinctUntilChanged, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { Template, TemplateLink, TemplateSummary } from '../api/gen/models';
+import { BehaviorSubject, concat, merge, Observable, of, Subject, Subscription, timer, zip } from 'rxjs';
+import { concatAll, concatMap, debounceTime, distinctUntilChanged, filter, finalize, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { Template, TemplateLink, TemplateSearch, TemplateSummary } from '../api/gen/models';
 import { TemplateService } from '../api/template.service';
-import { faPlus, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faCheck, faFilter } from '@fortawesome/free-solid-svg-icons';
+import { WorkspaceService } from '../api/workspace.service';
 
 @Component({
   selector: 'app-template-selector',
@@ -16,28 +17,44 @@ import { faPlus, faCheck } from '@fortawesome/free-solid-svg-icons';
 export class TemplateSelectorComponent implements OnInit, OnDestroy {
   @Input() workspaceId = '';
   @Output() added = new EventEmitter<Template>();
-  templates: Observable<TemplateSummary[]>;
+  refresh$ = new BehaviorSubject<boolean>(true);
+  templates$: Observable<TemplateSummary[]>;
+  templates: TemplateSummary[] = [];
   term = new BehaviorSubject<KeyboardEvent>(new KeyboardEvent('keyup'));
   target = new Subject<TemplateSummary>();
   active!: TemplateSummary | null;
+  scopes: string[] = [];
   showing = false;
   target$: Subscription;
-
+  search: TemplateSearch = { term: '', filter: ['published'] };
+  filter = 'public';
   faPlus = faPlus;
   faCheck = faCheck;
+  faFilter = faFilter;
 
   constructor(
-    api: TemplateService
+    private api: TemplateService,
+    private wsapi: WorkspaceService
   ) {
-    this.templates = this.term.pipe(
-      map((e: KeyboardEvent) => (e.target as HTMLInputElement || {}).value),
-      debounceTime(150),
-      distinctUntilChanged(),
-      switchMap(term => api.list({term, filter: ['published']}))
+
+    // local filter/sort
+    const tfilter = (a: TemplateSummary[]) => a.filter(i =>
+      i.name.match(this.search.term) ||
+      i.description?.match(this.search.term)
+    ).sort((i: TemplateSummary, j: TemplateSummary) =>
+      i.name < j.name ? -1 : i.name > j.name ? 1 : 0
     );
 
+    // refresh view
+    this.templates$ = this.refresh$.pipe(
+      debounceTime(250),
+      switchMap(() => of(this.templates)),
+      map(a => tfilter(a))
+    );
+
+    // link action
     this.target$ = this.target.pipe(
-      debounceTime(150),
+      debounceTime(250),
       tap(t => this.active = t),
       switchMap(t => api.link({workspaceId: this.workspaceId, templateId: t.id} as TemplateLink)),
       tap(t => this.feedback(t))
@@ -45,6 +62,16 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    // initial data load
+    zip(
+      this.api.list({ term: '', filter: ['published'] }),
+      this.wsapi.getWorkspaceTemplates(this.workspaceId)
+    ).pipe(
+      map(([a, b]) => [...a, ...b])
+    ).subscribe(result =>
+      this.templates = result
+    );
   }
 
   ngOnDestroy(): void {
@@ -58,4 +85,8 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
     ).subscribe(() => this.active = null);
   }
 
+  toggleAudience(aud: string): void {
+    this.filter = aud;
+    this.refresh$.next(true);
+  }
 }

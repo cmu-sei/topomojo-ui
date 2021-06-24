@@ -17,14 +17,15 @@
 
 <div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
   <div class="col-8">
-    <span class="mx-1">{{g.name}}</span>
-    <span class="mx-1">
+    <span class="m-1">{{g.name}}</span>
+    <span class="m-1">
       <fa-icon [icon]="g.parentId ? faLink : faUnlink"></fa-icon>
       <span *ngIf="g.parentId" >{{g.parentName}}</span>
     </span>
-    <span *ngIf="g.isPublished" class="pop-success px-2 mx-1">
+    <span [hidden]="!g.isPublished" class="pop-success px-2 m-1">
       <fa-icon [icon]="faGlobe"></fa-icon>
     </span>
+    <span [hidden]="!g.audience" class="pop-warning px-2">{{g.audience}}</span>
     <br/>
     <small class="text-muted ml-4">
       <a *ngIf="g.workspaceId" [routerLink]="['/topo', g.workspaceId]" class="text-secondary">{{g.workspaceName}}</a>

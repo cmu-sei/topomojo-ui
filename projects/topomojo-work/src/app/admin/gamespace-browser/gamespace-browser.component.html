@@ -8,9 +8,8 @@
         <span>Search</span>
       </span>
     </div>
-    <input type="search" [(ngModel)]="term" placeholder="term" class="form-control">
+    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh()">
   </div>
-  <small>not yet implemented</small>
 </div>
 
 <div class="text-right">

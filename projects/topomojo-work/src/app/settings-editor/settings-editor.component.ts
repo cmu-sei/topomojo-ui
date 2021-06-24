@@ -10,7 +10,7 @@ import { ChangedWorkspace, Workspace, WorkspaceSummary, Worker } from '../api/ge
 import { WorkspaceService } from '../api/workspace.service';
 import { ClipboardService } from '../clipboard.service';
 import { ConfigService } from '../config.service';
-import { faClipboardCheck, faTimes, faUserCog, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-settings-editor',
@@ -21,11 +21,13 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   @Input() summary!: Workspace;
   form: FormGroup;
   inviteUrl = '';
+  errors: any[] = [];
 
   faClipboardCheck = faClipboardCheck;
   faTimes = faTimes;
   faUserCog = faUserCog;
   faTrash = faTrash;
+  faCopy = faCopy;
 
   constructor(
     private config: ConfigService,
@@ -35,7 +37,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
     private clipboard: ClipboardService
   ) {
     this.form = this.formBuilder.group({
-      globalId: ['', Validators.required],
+      id: ['', Validators.required],
       name: ['', Validators.required],
       description: [''],
       audience: [''],
@@ -60,7 +62,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
 
   mapToSettings(ws: Workspace): WorkspaceSettings {
     return {
-      globalId: ws.id,
+      id: ws.id,
       name: ws.name,
       description: ws.description,
       author: ws.author,
@@ -102,15 +104,23 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
     );
   }
 
+  clone(): void {
+    this.api.clone(this.summary.id).subscribe(
+      w => this.router.navigate(['/topo', w.id, 'settings']),
+      (err) => this.errors.push(err)
+    );
+  }
+
   delete(): void {
     this.api.delete(this.summary.id).subscribe(
-      () => this.router.navigate(['/'])
+      () => this.router.navigate(['/']),
+      (err) => this.errors.push(err)
     );
   }
 }
 
 interface WorkspaceSettings {
-  globalId: string;
+  id: string;
   name: string;
   description: string;
   author: string;
