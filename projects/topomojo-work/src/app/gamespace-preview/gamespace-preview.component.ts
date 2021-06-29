@@ -42,9 +42,6 @@ export class GamespacePreviewComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  ngOnDestroy(): void {
-  }
-
   bail(): void {
     this.router.navigateByUrl('/');
   }
