@@ -2,8 +2,8 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, Subscription } from 'rxjs';
-import { catchError, debounceTime, filter, finalize, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, interval, of, Subscription } from 'rxjs';
+import { catchError, debounceTime, filter, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { UserRegistration, ApiUser } from './api/gen/models';
 import { ProfileService } from './api/profile.service';
 import { AuthService, AuthTokenState } from './auth.service';
@@ -20,6 +20,21 @@ export class UserService {
     private api: ProfileService,
     private auth: AuthService
   ) {
+
+    // every half hour grab a fresh mks cookie if token still good
+    combineLatest([
+      interval(1800000),
+      this.auth.tokenState$
+    ]).pipe(
+      map(([i, t]) => t),
+      filter(t => t === AuthTokenState.valid),
+      ).subscribe(t => {
+        this.api.register(
+          this.auth.oidcUser?.profile as unknown as UserRegistration,
+          this.auth.auth_header()
+        );
+    });
+
     const validSub: Subscription = this.auth.tokenState$.pipe(
       filter(t => t === AuthTokenState.valid),
       debounceTime(300),
@@ -36,6 +51,7 @@ export class UserService {
     const invalidSub: Subscription = this.auth.tokenState$.pipe(
       filter(t => t === AuthTokenState.invalid || t === AuthTokenState.expired),
       tap(() => this.init$.next(true)),
+      tap(() => this.api.logout()),
       finalize(() => invalidSub.unsubscribe())
     ).subscribe(() => this.user$.next(null));
   }

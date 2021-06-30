@@ -1,9 +1,11 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
+import { PlatformLocation } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { interval, Observable, of } from 'rxjs';
+import { switchMap, map, catchError } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { ConsoleRequest, ConsoleSummary, KeyValuePair, VmAnswer, VmOperation, VmOptions } from './api.models';
 
@@ -12,11 +14,20 @@ import { ConsoleRequest, ConsoleSummary, KeyValuePair, VmAnswer, VmOperation, Vm
 })
 export class ApiService {
   url = '';
+  heartbeat$: Observable<boolean>;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    platform: PlatformLocation
   ) {
-    this.url = environment.apiUrl || '/api';
+    this.url = environment.apiUrl || `${platform.getBaseHrefFromDOM()}api`;
+
+    this.heartbeat$ = interval(60000).pipe(
+      switchMap(() => this.ping().pipe(
+        map(() => true),
+        catchError(err => of(false))
+      ))
+    );
   }
 
   redeem(token: string): Observable<any> {
@@ -47,4 +58,7 @@ export class ApiService {
     return this.http.get<VmOptions>(this.url + '/vm/' + id + '/nets');
   }
 
+  ping(): Observable<any> {
+    return this.http.get<any>(this.url + '/user/ping');
+  }
 }

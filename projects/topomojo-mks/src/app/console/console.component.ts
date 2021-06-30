@@ -67,6 +67,13 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.audience = hubSvc.audience;
 
+    api.heartbeat$.subscribe(
+      good => {
+        if (!good) {
+          this.reload();
+        }
+      }
+    );
     this.nets$ = this.refreshNets$.pipe(
       debounceTime(500),
       switchMap(() => api.nets(this.vmId)),

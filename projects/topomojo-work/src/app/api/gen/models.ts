@@ -271,8 +271,8 @@ export interface WorkspaceStats {
 
 export interface VmState {
   id: string;
-  templateId: number;
   name: string;
+  isolationId: string;
   isRunning: boolean;
 }
 
@@ -285,8 +285,8 @@ export interface VmConsole {
   id: string;
   isolationId: string;
   name: string;
-  url: string;
   isRunning: boolean;
+  url: string;
 }
 
 export interface Vm {
