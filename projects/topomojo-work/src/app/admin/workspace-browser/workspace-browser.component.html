@@ -50,6 +50,12 @@
         <small>template scopes this workspace can link</small>
       </div>
 
+      <div class="form-group bg-light">
+        <label class="mb-0" for="input-audience">Audience</label>
+        <input id="input-audience" class="form-control" type="text" [(ngModel)]="detail.audience" (change)="update(detail)">
+        <small>template scopes this workspace can link</small>
+      </div>
+
       <div *ngFor="let t of detail.templates" class="row mb-1 align-items-center">
         <div class="col-6 text-right">
           <span class="pop-info px-1">{{t.name}}</span>
