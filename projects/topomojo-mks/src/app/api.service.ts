@@ -20,7 +20,9 @@ export class ApiService {
     private http: HttpClient,
     platform: PlatformLocation
   ) {
-    this.url = environment.apiUrl || `${platform.getBaseHrefFromDOM()}api`;
+    const target = platform.getBaseHrefFromDOM();
+    const basehref = target.split('/').slice(0, -2).join('/');
+    this.url = environment.apiUrl || `${basehref}/api`;
 
     this.heartbeat$ = interval(60000).pipe(
       switchMap(() => this.ping().pipe(
