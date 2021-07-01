@@ -442,6 +442,7 @@ export interface QuestionView {
 }
 
 export interface SectionSubmission {
+  id: string;
   sectionIndex: number;
   questions: AnswerSubmission[];
 }

@@ -1,11 +1,11 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
-<ng-container *ngIf="state.challenge as challenge">
+<ng-container *ngIf="state.challenge">
 
-  <markdown [data]="challenge.sectionText"></markdown>
+  <markdown [data]="state.challenge.sectionText"></markdown>
 
-  <div *ngFor="let q of challenge.questions; let i=index" class="form-group p-2 mt-2"
+  <div *ngFor="let q of state.challenge.questions; let i=index" class="form-group p-2 mt-2"
   [class.pop-info]="!q.isGraded"
   [class.pop-success]="q.isGraded && q.isCorrect"
   [class.pop-warning]="q.isGraded && !q.isCorrect"
@@ -18,15 +18,15 @@
   <app-error-div [errors]="errors"></app-error-div>
 
   <div class="d-flex align-items-center">
-    <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()" [disabled]="!challenge.isActive">
+    <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()" [disabled]="!state.isActive">
       <fa-icon [icon]="faSubmit"></fa-icon>
       <span>Submit</span>
     </app-confirm-button>
-    <label *ngIf="challenge.isActive" class="pop-warning px-1 ml-2">
-      {{challenge.attempts + 1}} of {{challenge.maxAttempts}}
+    <label *ngIf="state.isActive" class="pop-warning px-1 ml-2">
+      {{state.challenge.attempts + 1}} of {{state.challenge.maxAttempts}}
     </label>
     <div class="spacer"></div>
-    <div>Score: {{challenge.score}} of {{challenge.maxPoints}}</div>
+    <div>Score: {{state.challenge.score}} of {{state.challenge.maxPoints}}</div>
   </div>
 
 </ng-container>

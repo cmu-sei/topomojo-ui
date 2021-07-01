@@ -52,7 +52,7 @@ export class GeneratedGamespaceService extends GeneratedService {
     public deletePlayer(player: Player): Observable<any> {
         return this.http.delete<any>(this.conf.api + `/gamespace/${player.gamespaceId}/player/${player.subjectId}`);
     }
-    public grade(id: string, model: SectionSubmission): Observable<ChallengeView> {
-      return this.http.post<ChallengeView>(`${this.conf.api}/gamespace/${id}/grade`, model);
+    public grade(model: SectionSubmission): Observable<GameState> {
+      return this.http.post<GameState>(`${this.conf.api}/gamespace/grade`, model);
     }
 }
