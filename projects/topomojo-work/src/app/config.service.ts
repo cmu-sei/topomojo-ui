@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { UserManagerSettings } from 'oidc-client';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'projects/topomojo-work/src/environments/environment';
-import { PlatformLocation } from '@angular/common';
+import { Location, PlatformLocation } from '@angular/common';
 import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 // import { MarkedRenderer, MarkedOptions } from 'ngx-markdown';
 
@@ -33,6 +33,10 @@ export class ConfigService {
     return url;
   }
 
+  get currentPath(): string {
+    return this.location.path();
+  }
+
   embeddedMonacoOptions = {
     // theme: this.codeTheme,
     language: 'markdown',
@@ -49,6 +53,7 @@ export class ConfigService {
 
   constructor(
     private http: HttpClient,
+    private location: Location,
     platform: PlatformLocation
   ) {
     this.basehref = platform.getBaseHrefFromDOM();

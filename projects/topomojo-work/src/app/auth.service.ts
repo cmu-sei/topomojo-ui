@@ -86,7 +86,7 @@ export class AuthService {
     }
 
     private onTokenExpiring(): void {
-        if (Date.now() - this.lastCall < 30000) {
+        if (Date.now() - this.lastCall < 300000) {
             this.silentLogin();
         } else {
             if (!this.mgr.settings.automaticSilentRenew) {

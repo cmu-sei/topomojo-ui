@@ -2,11 +2,13 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, interval, of, Subscription } from 'rxjs';
 import { catchError, debounceTime, filter, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { UserRegistration, ApiUser } from './api/gen/models';
 import { ProfileService } from './api/profile.service';
 import { AuthService, AuthTokenState } from './auth.service';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,43 +19,51 @@ export class UserService {
   init$ = new BehaviorSubject<boolean>(false);
 
   constructor(
-    private api: ProfileService,
-    private auth: AuthService
+    api: ProfileService,
+    auth: AuthService,
+    config: ConfigService,
+    router: Router
   ) {
 
     // every half hour grab a fresh mks cookie if token still good
     combineLatest([
       interval(1800000),
-      this.auth.tokenState$
+      auth.tokenState$
     ]).pipe(
       map(([i, t]) => t),
       filter(t => t === AuthTokenState.valid),
       ).subscribe(t => {
-        this.api.register(
-          this.auth.oidcUser?.profile as unknown as UserRegistration,
-          this.auth.auth_header()
+        api.register(
+          auth.oidcUser?.profile as unknown as UserRegistration,
+          auth.auth_header()
         );
     });
 
-    const validSub: Subscription = this.auth.tokenState$.pipe(
+    auth.tokenState$.pipe(
       filter(t => t === AuthTokenState.valid),
       debounceTime(300),
-      switchMap(u => this.api.register(
-        this.auth.oidcUser?.profile as UserRegistration,
-        this.auth.auth_header()).pipe(
+      switchMap(u => api.register(
+        auth.oidcUser?.profile as UserRegistration,
+        auth.auth_header()).pipe(
           catchError(err => of(null))
         )
       ),
       tap(() => this.init$.next(true)),
-      finalize(() => validSub.unsubscribe())
     ).subscribe(p => this.user$.next(p));
 
-    const invalidSub: Subscription = this.auth.tokenState$.pipe(
-      filter(t => t === AuthTokenState.invalid || t === AuthTokenState.expired),
+    auth.tokenState$.pipe(
+      filter(t => t === AuthTokenState.invalid),
       tap(() => this.init$.next(true)),
-      tap(() => this.api.logout()),
-      finalize(() => invalidSub.unsubscribe())
     ).subscribe(() => this.user$.next(null));
+
+    auth.tokenState$.pipe(
+      filter(t => t === AuthTokenState.expired),
+      tap(() => auth.redirectUrl = config.currentPath),
+    ).subscribe(() => {
+      api.logout().subscribe()
+      this.user$.next(null);
+      router.navigate(['/login']);
+    });
   }
 
   // an app initializer to register the user and retrieve the user's profile.

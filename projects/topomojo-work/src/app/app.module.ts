@@ -56,6 +56,7 @@ import { IsoSelectorComponent } from './iso-selector/iso-selector.component';
 import { ApikeysComponent } from './apikeys/apikeys.component';
 import { GamespaceBrowserComponent } from './gamespace-browser/gamespace-browser.component';
 import { GamespaceCardComponent } from './gamespace-card/gamespace-card.component';
+import { OidcSilentComponent } from './oidc-silent/oidc-silent.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { GamespaceCardComponent } from './gamespace-card/gamespace-card.componen
     HomeComponent,
     LoginComponent,
     OidcComponent,
+    OidcSilentComponent,
     WorkspaceEditorComponent,
     DocumentEditorComponent,
     TemplatesEditorComponent,

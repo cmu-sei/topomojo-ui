@@ -20,6 +20,7 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'login', component: LoginComponent },
   { path: 'oidc', component: OidcComponent },
+  { path: 'oidc-silent', component: OidcComponent },
   { path: '', canActivate: [AuthGuard], canActivateChild: [AuthGuard], children: [
     { path: 'enlist/:code', component: EnlistComponent },
     { path: 'mojo/:id/:slug', component: GamespacePreviewComponent },
