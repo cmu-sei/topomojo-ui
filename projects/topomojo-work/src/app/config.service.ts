@@ -167,6 +167,9 @@ export function markedOptionsFactory(): MarkedOptions {
   renderer.blockquote = (quote) => {
     return `<blockquote class="blockquote">${quote}</blockquote>`;
   };
+  renderer.table = (header, body) => {
+    return `<table class="table table-striped"><thead>${header}</thead><tbody>${body}</tbody></table>`;
+  };
 
   return {
     renderer,
