@@ -13,6 +13,8 @@ RUN $(npm bin)/ng build topomojo-work --output-path /app/dist && \
     sed -i s/##COMMIT##/"$commit"/ /app/dist/index.html &&  \
     $(npm bin)/ng build topomojo-mks --base-href=/mks/ --output-path /app/dist/mks && \
     sed -i s/##COMMIT##/"$commit"/ /app/dist/mks/index.html &&  \
+    $(npm bin)/ng build topomojo-launchpoint --base-href=/lp/ --output-path /app/dist/lp && \
+    sed -i s/##COMMIT##/"$commit"/ /app/dist/lp/index.html &&  \
     echo $commit > /app/dist/commit.txt
 CMD ["npm", "start"]
 

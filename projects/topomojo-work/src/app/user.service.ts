@@ -59,8 +59,9 @@ export class UserService {
     auth.tokenState$.pipe(
       filter(t => t === AuthTokenState.expired),
       tap(() => auth.redirectUrl = config.currentPath),
+      switchMap(() => api.logout()),
+      tap(() => console.log('token expired'))
     ).subscribe(() => {
-      api.logout().subscribe()
       this.user$.next(null);
       router.navigate(['/login']);
     });

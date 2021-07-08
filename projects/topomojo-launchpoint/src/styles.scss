@@ -1,0 +1,124 @@
+/* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+$primary: #434;
+$danger: #b00;
+$success: #0b0;
+$light: #ddd;
+
+body {
+  background-color: black;
+  color: gray;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 18px;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+main {
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: center;
+  // align-items: stretch;
+  // width: 100vw;
+  // height: 100vh;
+}
+h1 {
+  font-size: 3em;
+  font-weight: 300;
+  text-align: center;
+}
+div.nav-top {
+  position: absolute;
+  top: 0;
+  // left: 0;
+  right: 0;
+  width: 220px;
+  text-align: center;
+  // z-index: 10;
+}
+.flex-h {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+}
+.flex-v {
+  display: flex;
+  flex-direction: column;
+}
+.flex-end {
+  justify-content: flex-end;
+}
+.z10 {
+  z-index: 10;
+}
+.z20 {
+  z-index: 20;
+}
+.text-danger {
+  color: $danger;
+}
+.text-success {
+  color: $success;
+}
+.btn {
+  margin: 4px;
+  padding: 8px 16px;
+  background-color: $primary;
+  color: $light;
+  border-radius: 6px;
+  font-size: 1em;
+  border: none;
+  cursor: default;
+}
+.btn:hover {
+  background-color: rgba($primary, .8)
+}
+.btn-lg {
+  margin: 8px;
+  padding: 16px;
+  font-size: 1.3rem;
+}
+.main {
+  // position: relative;
+  // // height: 100vh;
+  // width: 100vw;
+  // overflow-y: scroll;
+  // display: flex;
+  // justify-content: center;
+}
+.reader {
+  margin: .5rem auto;
+  max-width: 800px;
+  background-color: #222;
+  color: #ddd;
+  border-radius: 6px;
+  padding: 8px 24px;
+}
+img {
+  width: 800px;
+}
+span {
+  margin: 0 .25rem;
+}
+table {
+  width: 100%;
+  thead {
+    tr {
+      border-bottom: $light solid 1px;
+    }
+    th {
+      padding: .5rem;
+    }
+  }
+  tbody{
+    td {
+      padding: .5rem;
+    }
+    tr:nth-child(odd) {
+      background-color: #333;
+    }
+  }
+}
