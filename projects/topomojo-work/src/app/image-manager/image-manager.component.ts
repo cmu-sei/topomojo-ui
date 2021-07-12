@@ -24,7 +24,7 @@ export class ImageManagerComponent implements OnInit, OnChanges {
   images$!: Observable<ImageFile[]>;
   images: ImageFile[] = [];
   activeImage: ImageFile | null = null;
-  maxImageSize = 5E6;
+  maxImageSize = 5E7;
 
   faTrash = faTrash;
   faArrowDown = faArrowDown;
@@ -42,7 +42,8 @@ export class ImageManagerComponent implements OnInit, OnChanges {
 
     this.drops.pipe(
       mergeMap((list: FileList) => Array.from(list)),
-      filter((f: File) => (f.type.match(/image\/(png|jpg|jpeg|gif|webp)/) || false) && f.size < this.maxImageSize),
+      filter((f: File) => f.size < this.maxImageSize),
+      filter((f: File) => !!f.type.match(/(image|application)\/(png|jpeg|gif|webp|pdf)/)),
       // tap((f: File) => console.log(f.name + ' ' + f.size)),
       mergeMap((f: File) => api.uploadImage(this.guid, f)),
       tap((img: ImageFile) => this.dropped(img))
@@ -70,9 +71,13 @@ export class ImageManagerComponent implements OnInit, OnChanges {
   }
 
   emitMarkdown(img: ImageFile): void {
-    this.added.emit(
-      `![${img.filename}](${img.url})`
-    );
+    let link = `[${img.filename}](${img.url})`;
+
+    if (img.filename.match(/\.(jgp|jpeg|png|gif|webp)$/)) {
+      link = '!' + link;
+    }
+
+    this.added.emit(link);
   }
 
   delete(img: ImageFile): void {

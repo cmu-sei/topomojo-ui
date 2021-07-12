@@ -8,7 +8,7 @@
       <span class="btn btn-sm btn-outline-secondary">Browse</span>
     </label>
 
-    <small> or drag images here. 5MB limit. Markdown is inserted at cursor. (Or click image to insert markdown.)</small>
+    <small> or drag images or pdf here. 5MB limit. Markdown is inserted at cursor. (Or click image to insert markdown.)</small>
 
   <div class="d-flex scroll-x">
     <div class="img" *ngFor="let img of images$ | async" tabindex="0" (focus)="focus(img)" (mouseenter)="focus(img)" (mouseleave)="blur(img)">
