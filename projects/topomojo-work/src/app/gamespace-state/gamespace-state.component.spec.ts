@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GamespaceBrowserComponent } from './gamespace-browser.component';
+import { GamespaceStateComponent } from './gamespace-state.component';
 
-describe('GamespaceBrowserComponent', () => {
-  let component: GamespaceBrowserComponent;
-  let fixture: ComponentFixture<GamespaceBrowserComponent>;
+describe('GamespaceStateComponent', () => {
+  let component: GamespaceStateComponent;
+  let fixture: ComponentFixture<GamespaceStateComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GamespaceBrowserComponent ]
+      declarations: [ GamespaceStateComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GamespaceBrowserComponent);
+    fixture = TestBed.createComponent(GamespaceStateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -140,6 +140,8 @@ export class ConfigService {
 export interface LocalAppSettings {
   theme?: string;
   last?: string;
+  browseMode?: string;
+  browseTerm?: string;
 }
 
 export interface Settings {

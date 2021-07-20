@@ -18,7 +18,7 @@ import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy } from '@fortawes
   styleUrls: ['./settings-editor.component.scss']
 })
 export class SettingsEditorComponent implements OnInit, OnChanges {
-  @Input() summary!: Workspace;
+  @Input() workspace!: Workspace;
   form: FormGroup;
   inviteUrl = '';
   errors: any[] = [];
@@ -41,7 +41,8 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
       name: ['', Validators.required],
       description: [''],
       audience: [''],
-      author: ['']
+      author: [''],
+      durationMinutes: ['']
     }, {updateOn: 'blur'});
 
     this.form.valueChanges.pipe(
@@ -52,8 +53,8 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!!changes.summary) {
-      this.form.reset(this.mapToSettings(changes.summary.currentValue));
+    if (!!changes.workspace) {
+      this.form.reset(this.mapToSettings(changes.workspace.currentValue));
     }
   }
 
@@ -66,19 +67,21 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
       name: ws.name,
       description: ws.description,
       author: ws.author,
-      audience: ws.audience
+      audience: ws.audience,
+      durationMinutes: ws.durationMinutes || 0
     };
   }
 
   mapToWorkspace(model: WorkspaceSettings): void {
-    this.summary.name = model.name;
-    this.summary.description = model.description;
-    this.summary.author = model.author;
-    this.summary.audience = model.audience;
+    this.workspace.name = model.name;
+    this.workspace.description = model.description;
+    this.workspace.author = model.author;
+    this.workspace.audience = model.audience;
+    this.workspace.durationMinutes = model.durationMinutes;
   }
 
   enlistCode(): void {
-    this.api.generateInvitation(this.summary.id).pipe(
+    this.api.generateInvitation(this.workspace.id).pipe(
       finalize(() => {})
     ).subscribe(
       result => {
@@ -93,26 +96,26 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
     this.api.deleteWorker(worker).subscribe(
       () => {
 
-        const index = (this.summary.workers || [])
+        const index = (this.workspace.workers || [])
           .findIndex(w => w.subjectId === worker.subjectId)
         ;
 
         if (index >= 0) {
-          this.summary.workers?.splice(index, 1);
+          this.workspace.workers?.splice(index, 1);
         }
       }
     );
   }
 
   clone(): void {
-    this.api.clone(this.summary.id).subscribe(
+    this.api.clone(this.workspace.id).subscribe(
       w => this.router.navigate(['/topo', w.id, 'settings']),
       (err) => this.errors.push(err)
     );
   }
 
   delete(): void {
-    this.api.delete(this.summary.id).subscribe(
+    this.api.delete(this.workspace.id).subscribe(
       () => this.router.navigate(['/']),
       (err) => this.errors.push(err)
     );
@@ -125,4 +128,5 @@ interface WorkspaceSettings {
   description: string;
   author: string;
   audience: string;
+  durationMinutes: number;
 }

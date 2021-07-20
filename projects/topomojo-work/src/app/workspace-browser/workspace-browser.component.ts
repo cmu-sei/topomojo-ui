@@ -10,6 +10,7 @@ import { GamespaceService } from '../api/gamespace.service';
 import { Gamespace, WorkspaceSummary } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 import { AuthService } from '../auth.service';
+import { ConfigService } from '../config.service';
 
 @Component({
   selector: 'app-workspace-browser',
@@ -30,8 +31,14 @@ export class WorkspaceBrowserComponent implements OnInit {
     private auth: AuthService,
     private api: WorkspaceService,
     private gsapi: GamespaceService,
-    private router: Router
+    private router: Router,
+    private config: ConfigService
   ) {
+
+    const local = config.getLocal();
+    this.mode = local.browseMode || 'workspace';
+    this.term = local.browseTerm || '';
+
     this.workspaces = this.refresh$.pipe(
       debounceTime(150),
       // distinctUntilChanged(),
@@ -46,7 +53,8 @@ export class WorkspaceBrowserComponent implements OnInit {
         gsapi.list({term: this.term, filter: ['active']}),
         api.list({term: this.term, filter: ['play']})
       ).pipe(
-        map(([gs, ws]) => [...gs, ...(ws as unknown as Gamespace[])])
+        map(([gs, ws]) => [...gs, ...(ws as unknown as Gamespace[])]),
+        tap(() => this.config.updateLocal({browseTerm: this.term}))
       ))
     );
   }
@@ -59,12 +67,13 @@ export class WorkspaceBrowserComponent implements OnInit {
   }
 
   termed(e: Event): void {
-      this.term = (e.target as HTMLInputElement || {}).value;
+      // this.term = (e.target as HTMLInputElement || {}).value;
       this.refresh$.next(true);
   }
 
   setMode(mode: string): void {
     this.mode = mode;
+    this.config.updateLocal({browseMode: mode});
   }
 
   selectWs(data: WorkspaceSummary[]): void {
@@ -75,7 +84,7 @@ export class WorkspaceBrowserComponent implements OnInit {
 
   selectGs(data: Gamespace[]): void {
     if (data.length === 1) {
-      this.router.navigate(['/mojo', data[0].id]);
+      this.router.navigate(['/mojo', data[0].id, data[0].slug]);
     }
   }
 

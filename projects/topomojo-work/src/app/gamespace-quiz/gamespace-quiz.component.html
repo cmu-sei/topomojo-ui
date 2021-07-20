@@ -18,13 +18,15 @@
   <app-error-div [errors]="errors"></app-error-div>
 
   <div class="d-flex align-items-center">
-    <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()" [disabled]="!state.isActive">
-      <fa-icon [icon]="faSubmit"></fa-icon>
-      <span>Submit</span>
-    </app-confirm-button>
-    <label *ngIf="state.isActive" class="pop-warning px-1 ml-2">
-      {{state.challenge.attempts + 1}} of {{state.challenge.maxAttempts}}
-    </label>
+    <ng-container *ngIf="!state.gameOver && state.session.isDuring">
+      <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()">
+        <fa-icon [icon]="faSubmit"></fa-icon>
+        <span>Submit</span>
+      </app-confirm-button>
+      <label class="pop-warning px-1 ml-2">
+        {{state.challenge.attempts + 1}} of {{state.challenge.maxAttempts}}
+      </label>
+    </ng-container>
     <div class="spacer"></div>
     <div>Score: {{state.challenge.score}} of {{state.challenge.maxPoints}}</div>
   </div>

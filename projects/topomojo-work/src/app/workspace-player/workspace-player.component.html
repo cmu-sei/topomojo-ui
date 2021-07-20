@@ -1,8 +1,45 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
-<div class="form-group bg-light">
-  <div class="form-control player">
-    <app-gamespace [id]="summary.id"></app-gamespace>
+<div *ngIf="gamespace$ | async as game" class="mb-4">
+
+  <div *ngIf="(game.gameOver || game.session.isBefore || game.session.isAfter) && !launching">
+    <div class="form-row mb-1">
+      <div class="col-3">
+        <label class="mb-0 form-label-sm" for="variant-input">Variant</label>
+        <input id="variant-input" class="form-control form-control-sm" type="number" [(ngModel)]="settings.variant">
+      </div>
+      <div class="col-3">
+        <label class="mb-0 form-label-sm" for="maxattempts-input">Max Attempts</label>
+        <input id="maxattempts-input" class="form-control form-control-sm" type="number" [(ngModel)]="settings.maxAttempts">
+      </div>
+      <div class="col-3">
+        <label class="mb-0 form-label-sm" for="maxminutes-input">Max Minutes</label>
+        <input id="maxminutes-input" class="form-control form-control-sm" type="number" [(ngModel)]="settings.maxMinutes">
+      </div>
+      <div class="col-3">
+        <label class="mb-0 form-label-sm" for="points-input">Point Value</label>
+        <input id="points-input" class="form-control form-control-sm" type="number" [(ngModel)]="settings.points">
+      </div>
+    </div>
+    <app-confirm-button  btnClass="btn btn-sm btn-secondary" (confirm)="launch()">
+      <fa-icon [icon]="faBolt"></fa-icon>
+      <span>Start</span>
+    </app-confirm-button>
   </div>
+  <div *ngIf="!game.gameOver && game.session.isDuring && !launching" class="text-center">
+    <app-confirm-button btnClass="btn btn-sm btn-warning my-2" (confirm)="reset(game.id)">
+      <fa-icon [icon]="faTrash"></fa-icon>
+      <span>Reset</span>
+    </app-confirm-button>
+    <div><span class="clock">{{game.session.countdown | clock}}</span></div>
+  </div>
+  <div class="text-center">
+    <app-spinner *ngIf="launching" class=""></app-spinner>
+  </div>
+
+  <app-error-div [errors]="errors"></app-error-div>
+
+  <app-gamespace-state [game]="game"></app-gamespace-state>
+
 </div>

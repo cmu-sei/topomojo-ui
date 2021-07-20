@@ -5,18 +5,16 @@
   <app-presence-bar></app-presence-bar>
   <app-clipspan class="small text-muted">{{ws.id}}</app-clipspan>
   <h1 class="mb-0 pb-0">{{ws.name}}</h1>
-  <!-- <div class="card mb-4"> -->
-    <div class="mb-4">
-      <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../settings']">Settings</a>
-      <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../templates']">Templates</a>
-      <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../document']">Document</a>
-      <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../challenge']">Challenge</a>
-      <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../files']">Files</a>
-      <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../play']">Play</a>
-    </div>
-  <!-- </div> -->
+  <div class="mb-4">
+    <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../settings']">Settings</a>
+    <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../templates']">Templates</a>
+    <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../document']">Document</a>
+    <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../challenge']">Challenge</a>
+    <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../files']">Files</a>
+    <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../play']">Play</a>
+  </div>
   <div [ngSwitch]="section" class="reader">
-    <app-settings-editor *ngSwitchCase="'settings'" [summary]="ws"></app-settings-editor>
+    <app-settings-editor *ngSwitchCase="'settings'" [workspace]="ws"></app-settings-editor>
     <app-templates-editor *ngSwitchCase="'templates'" [workspace]="ws"></app-templates-editor>
     <app-document-editor *ngSwitchCase="'document'" [summary]="ws"></app-document-editor>
     <app-challenge-editor *ngSwitchCase="'challenge'" [summary]="ws"></app-challenge-editor>

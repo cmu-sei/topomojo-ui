@@ -1,27 +1,25 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { Subject, Observable, merge } from 'rxjs';
-import { finalize, switchMap, tap } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { Subject, Observable, merge, scheduled, asyncScheduler, timer, of } from 'rxjs';
+import { catchError, filter, finalize, map, switchMap, tap, zipAll } from 'rxjs/operators';
 import { GamespaceService } from '../api/gamespace.service';
-import { GameState, GamespaceRegistration, Vm, VmState } from '../api/gen/models';
-import { faBolt, faToggleOff, faToggleOn, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
+import { GameState, GamespaceRegistration } from '../api/gen/models';
+import { faBolt, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { ConfigService } from '../config.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-gamespace',
   templateUrl: './gamespace.component.html',
   styleUrls: ['./gamespace.component.scss']
 })
-export class GamespaceComponent implements OnInit, OnChanges, AfterViewInit {
-  @Input() id!: string;
-  id$ = new Subject<string>();
-  gs$ = new Subject<GameState>();
+export class GamespaceComponent implements OnInit {
   gamespace$: Observable<GameState>;
-  gid = '';
+  changed$ = new Subject<GameState>();
+  state!: GameState;
   errors: any[] = [];
-
   launching = false;
   deploying = false;
 
@@ -29,44 +27,47 @@ export class GamespaceComponent implements OnInit, OnChanges, AfterViewInit {
     resourceId: '',
     variant: 0,
     maxAttempts: 3,
-    maxMinutes: 60,
+    maxMinutes: 0,
     points: 100,
-    allowReset: true,
+    allowReset: false,
     allowPreview: false,
     startGamespace: true
   };
 
   faBolt = faBolt;
   faTrash = faTrash;
-  faTv = faTv;
-  faToggleOn = faToggleOn;
-  faToggleOff = faToggleOff;
 
   constructor(
+    route: ActivatedRoute,
     private api: GamespaceService,
     private conf: ConfigService
   ) {
-    this.gamespace$ = merge(
-      this.id$.pipe(
-        tap(id => this.settings.resourceId = id),
-        switchMap(id => api.preview(id))
-      ),
-      this.gs$
-    ).pipe(
-      tap(g => this.gid = g.id)
+
+    const loaded$ = (id: string) => scheduled([
+      api.load(id).pipe(catchError(err => of({} as GameState))),
+      api.preview(id).pipe(catchError(err => of({} as GameState)))
+    ], asyncScheduler).pipe(
+      zipAll(),
+      map(([g, w]) => !!g.id ? g : w)
     );
+
+    this.gamespace$ = merge(
+      route.params.pipe(
+        tap(p => this.settings.resourceId = p.id),
+        switchMap(p => loaded$(p.id)),
+      ),
+      this.changed$,
+      timer(0, 1000).pipe(
+        filter(() => !!this.state && !!this.state.id),
+        map(i => api.transform(this.state) as GameState)
+      )
+    ).pipe(
+      tap(g => this.state = g)
+    );
+
   }
 
   ngOnInit(): void {
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.id$.next(changes.id.currentValue);
-  }
-
-  ngAfterViewInit(): void {
-    // initial "change" happens before subscription, so fire here after subscribed
-    this.id$.next(this.id);
   }
 
   launch(): void {
@@ -74,43 +75,19 @@ export class GamespaceComponent implements OnInit, OnChanges, AfterViewInit {
     this.api.register(this.settings).pipe(
       finalize(() => this.launching = false)
     ).subscribe(
-      gs => this.gs$.next(gs),
+      gs => this.changed$.next(gs),
       err => this.errors.push(err)
     );
   }
 
-  reset(id: string | undefined): void {
-    if (!id) { return; }
+  complete(id: string | undefined): void {
     this.launching = true;
-    this.api.delete(id).pipe(
+    this.api.complete(this.state.id).pipe(
       finalize(() => this.launching = false)
     ).subscribe(
-      () => this.id$.next(this.id)
+      gs => this.changed$.next(gs),
+      err => this.errors.push(err)
     );
-  }
-
-  start(): void {
-    if (!this.gid) { return; }
-    this.deploying = true;
-    this.api.start(this.gid).pipe(
-      finalize(() => this.deploying = false)
-    ).subscribe(
-      gs => this.gs$.next(gs)
-    );
-  }
-
-  stop(): void {
-    if (!this.gid) { return; }
-    this.deploying = true;
-    this.api.stop(this.gid).pipe(
-      finalize(() => this.deploying = false)
-    ).subscribe(
-      gs => this.gs$.next(gs)
-    );
-  }
-
-  console(vm: VmState): void {
-    this.conf.openConsole(`?f=1&s=${this.gid}&v=${vm.name?.split('#')[0]}`);
   }
 
 }

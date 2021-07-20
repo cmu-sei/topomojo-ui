@@ -13,6 +13,7 @@ import { UntagPipe } from './untag.pipe';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ClipspanComponent } from './clipspan/clipspan.component';
 import { CountdownPipe } from './countdown.pipe';
+import { ClockPipe } from './clock.pipe';
 
 
 
@@ -27,7 +28,8 @@ import { CountdownPipe } from './countdown.pipe';
     SpinnerComponent,
     VmControllerComponent,
     ClipspanComponent,
-    CountdownPipe
+    CountdownPipe,
+    ClockPipe
   ],
   imports: [
     CommonModule,
@@ -45,7 +47,8 @@ import { CountdownPipe } from './countdown.pipe';
     SpinnerComponent,
     VmControllerComponent,
     ClipspanComponent,
-    CountdownPipe
+    CountdownPipe,
+    ClockPipe
   ]
 })
 export class UtilityModule { }

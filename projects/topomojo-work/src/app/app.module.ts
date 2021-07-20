@@ -54,9 +54,9 @@ import { IsoManagerComponent } from './iso-manager/iso-manager.component';
 import { DropzoneComponent } from './dropzone/dropzone.component';
 import { IsoSelectorComponent } from './iso-selector/iso-selector.component';
 import { ApikeysComponent } from './apikeys/apikeys.component';
-import { GamespaceBrowserComponent } from './gamespace-browser/gamespace-browser.component';
 import { GamespaceCardComponent } from './gamespace-card/gamespace-card.component';
 import { OidcSilentComponent } from './oidc-silent/oidc-silent.component';
+import { GamespaceStateComponent } from './gamespace-state/gamespace-state.component';
 
 @NgModule({
   declarations: [
@@ -92,8 +92,8 @@ import { OidcSilentComponent } from './oidc-silent/oidc-silent.component';
     DropzoneComponent,
     IsoSelectorComponent,
     ApikeysComponent,
-    GamespaceBrowserComponent,
-    GamespaceCardComponent
+    GamespaceCardComponent,
+    GamespaceStateComponent
   ],
   imports: [
     BrowserModule,

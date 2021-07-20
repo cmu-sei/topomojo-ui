@@ -10,7 +10,7 @@
       <!-- <label for="search-input" class="input-group-text">Search</label> -->
       <span id="search-label" class="input-group-text">Search</span>
     </div>
-    <input #search id="search-input" type="search" [placeholder]="mode" class="form-control" (input)="termed($event)" aria-label="search term" aria-describedby="search-label">
+    <input #search id="search-input" type="search" [placeholder]="mode" class="form-control" [(ngModel)]="term" (input)="termed($event)" aria-label="search term" aria-describedby="search-label">
   </div>
 
   <!-- filters -->

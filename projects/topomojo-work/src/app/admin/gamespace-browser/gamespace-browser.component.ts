@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { faCheck, faCheckSquare, faList, faSearch, faSquare, faSync, faSyncAlt, faTintSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, interval, merge, Observable, Subject } from 'rxjs';
-import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
+import { faCheck, faCheckSquare, faFilter, faList, faSearch, faSquare, faSync, faSyncAlt, faTintSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { asyncScheduler, BehaviorSubject, combineLatest, interval, merge, Observable, scheduled, Subject } from 'rxjs';
+import { debounceTime, filter, map, switchMap, tap, zipAll } from 'rxjs/operators';
 import { GamespaceService } from '../../api/gamespace.service';
-import { Gamespace, Search, Vm } from '../../api/gen/models';
+import { Gamespace, GameState, Search, Vm } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
 
 @Component({
@@ -17,11 +17,12 @@ export class GamespaceBrowserComponent implements OnInit {
   source: Gamespace[] = [];
   selected: Gamespace[] = [];
   viewed: Gamespace | undefined = undefined;
-  vms$: Observable<Vm[]>;
+  view$: Observable<{ g: any, v: Vm[]}>;
   viewChange$ = new BehaviorSubject<Gamespace | undefined>(this.viewed);
   selectAllValue = false;
   search: Search = { term: '', filter: ['all', 'active']};
   term = '';
+  filter = 'active';
 
   faChecked = faCheckSquare;
   faUnChecked = faSquare;
@@ -30,6 +31,7 @@ export class GamespaceBrowserComponent implements OnInit {
   faSync = faSyncAlt;
   faList = faList;
   faSearch = faSearch;
+  faFilter = faFilter;
 
   constructor(
     private api: GamespaceService,
@@ -46,9 +48,16 @@ export class GamespaceBrowserComponent implements OnInit {
       tap(() => this.review()),
     );
 
-    this.vms$ = this.viewChange$.pipe(
+    const detail$ = (id: string) => combineLatest([
+      api.challenge(id),
+      vmSvc.list(id)
+    ]).pipe(
+      map(([g, v]) => ({ g, v}))
+    );
+
+    this.view$ = this.viewChange$.pipe(
       filter(g => !!g),
-      switchMap(g => vmSvc.list(g?.id || ''))
+      switchMap(g => detail$(g?.id || ''))
     );
   }
 
@@ -70,6 +79,12 @@ export class GamespaceBrowserComponent implements OnInit {
 
   destroy(g: Gamespace): void {
     this.api.delete(g.id).subscribe(() => this.removeDeleted(g));
+  }
+
+  toggleFilter(f: string): void {
+    this.filter = f;
+    this.search.filter = ['all', f];
+    this.refresh();
   }
 
   toggleAll(): void {

@@ -5,7 +5,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AboutComponent } from './about/about.component';
 import { AdminGuard } from './admin.guard';
-import { GamespaceBrowserComponent } from './gamespace-browser/gamespace-browser.component';
 import { AuthGuard } from './auth.guard';
 import { EnlistComponent } from './enlist/enlist.component';
 import { HomeComponent } from './home/home.component';
@@ -13,7 +12,7 @@ import { LoginComponent } from './login/login.component';
 import { OidcComponent } from './oidc/oidc.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { WorkspaceEditorComponent } from './workspace-editor/workspace-editor.component';
-import { GamespacePreviewComponent } from './gamespace-preview/gamespace-preview.component';
+import { GamespaceComponent } from './gamespace/gamespace.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -23,7 +22,7 @@ const routes: Routes = [
   { path: 'oidc-silent', component: OidcComponent },
   { path: '', canActivate: [AuthGuard], canActivateChild: [AuthGuard], children: [
     { path: 'enlist/:code', component: EnlistComponent },
-    { path: 'mojo/:id/:slug', component: GamespacePreviewComponent },
+    { path: 'mojo/:id/:slug', component: GamespaceComponent },
     { path: 'topo/:id', pathMatch: 'full', redirectTo: 'topo/:id/settings'},
     { path: 'topo/:id/:section', component: WorkspaceEditorComponent},
     {

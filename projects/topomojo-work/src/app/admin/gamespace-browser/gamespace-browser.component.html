@@ -12,7 +12,16 @@
   </div>
 </div>
 
-<div class="text-right">
+<div class="d-flex">
+  <button class="mr-1 btn btn-link text-success btn-sm" (click)="toggleFilter('active')">
+    <fa-icon [hidden]="filter!=='active'" [icon]="faFilter"></fa-icon>
+    <span>active</span>
+  </button>
+  <button class="mr-1 btn btn-link text-success btn-sm" (click)="toggleFilter('inactive')">
+    <fa-icon [hidden]="filter!=='inactive'" [icon]="faFilter"></fa-icon>
+    <span>inactive</span>
+  </button>
+  <div class="spacer"></div>
   <button class="btn btn-outline-info btn-sm mx-1" (click)="refresh()">
     <fa-icon [icon]="faSync"></fa-icon>
     <span>Refresh</span>
@@ -39,8 +48,8 @@
     </button>
   </div>
   <div class="col-3">
-    <small class="pop-info px-1">{{g.id | slice:0:8}}</small>&nbsp;
-    <small>{{g.whenCreated | ago}}</small>
+    <small class="px-1" [class.pop-success]="!g.gameOver" [class.pop-dark]="g.gameOver">{{g.id | slice:0:8}}</small>&nbsp;
+    <small>{{g.session.countdown | countdown}}</small>
   </div>
   <div class="col-5">
     <span>{{g.managerName}}</span>
@@ -57,13 +66,18 @@
     </app-confirm-button>
   </div>
   <div *ngIf="viewed === g" class="col-12">
-    <div *ngFor="let vm of vms$ | async" class="row mb-1 align-items-center">
-      <div class="col-6 text-right">
-        <span class="pop-info px-1">{{vm.name | untag}}</span>
+    <ng-container *ngIf="view$ | async as view">
+      <div *ngFor="let vm of view.v" class="row mb-1 align-items-center">
+        <div class="col-6 text-right">
+          <span class="pop-info px-1">{{vm.name | untag}}</span>
+        </div>
+        <div class="col-6">
+          <app-vm-controller [vm]="vm"></app-vm-controller>
+        </div>
       </div>
-      <div class="col-6">
-        <app-vm-controller [vm]="vm"></app-vm-controller>
+      <div>
+        <pre>{{view.g | json}}</pre>
       </div>
-    </div>
+    </ng-container>
   </div>
 </div>

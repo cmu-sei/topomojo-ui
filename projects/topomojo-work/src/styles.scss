@@ -139,3 +139,13 @@ app-spinner svg {
   color: black;
   opacity: 0.6;
 }
+.clock {
+  background-color: black;
+  color: lightgray;
+  font-size: 1.2rem;
+  font-family: monospace;
+  padding: .25rem;
+  border-radius: .25rem;
+  border: lightgray 2px solid;
+  width: 100px;
+}

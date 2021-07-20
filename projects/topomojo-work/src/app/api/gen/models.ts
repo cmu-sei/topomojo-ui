@@ -20,13 +20,15 @@ export interface Gamespace {
   audience: string;
   name: string;
   slug: string;
-  whenCreated: string;
-  startTime: string;
-  stopTime: string;
-  expirationTime: string;
+  whenCreated: Date;
+  startTime: Date;
+  endTime: Date;
+  expirationTime: Date;
   players?: Player[];
   isActive: boolean;
   checked: boolean;
+  session: TimeWindow;
+  gameOver: boolean;
 }
 
 export interface Player {
@@ -45,14 +47,16 @@ export interface GameState {
   managerName: string;
   markdown?: string;
   launchpointUrl?: string;
-  whenCreated: string;
-  startTime: string;
-  stopTime: string;
-  expirationTime: string;
+  whenCreated: Date;
+  startTime: Date;
+  endTime: Date;
+  expirationTime: Date;
   isActive: boolean;
   players: Player[];
   vms: VmState[];
   challenge: ChallengeView;
+  session: TimeWindow;
+  gameOver: boolean;
 }
 
 export interface GamespaceRegistration {
@@ -197,6 +201,7 @@ export interface Workspace {
   whenCreated?: string;
   templateScope: string;
   templateLimit?: number;
+  durationMinutes?: number;
   challenge?: string;
   workers?: Worker[];
   templates?: Template[];
@@ -237,8 +242,9 @@ export interface ChangedWorkspace {
   description?: string;
   author?: string;
   audience?: string;
-  templateLimit?: number;
   templateScope?: string;
+  templateLimit?: number;
+  durationMinutes?: number;
 }
 
 export interface JoinCode {
@@ -469,4 +475,28 @@ export interface IsoDataFilter {
 export interface ImageFile {
   filename: string;
   url: string;
+}
+
+export class TimeWindow {
+  isBefore: boolean;
+  isDuring: boolean;
+  isAfter: boolean;
+  window: number;
+  countdown: number;
+
+  constructor(a: Date, b: Date) {
+    const ts = new Date().valueOf();
+    const start = new Date(a).valueOf();
+    const end = new Date(b).valueOf();
+    this.window = start > 0 && ts >= start ? end > 0 && ts > end ? 1 : 0 : -1;
+    this.isBefore = this.window < 0;
+    this.isDuring = this.window === 0;
+    this.isAfter = this.window > 0;
+    this.countdown = this.isBefore && start > 0
+      ? start - ts
+      : this.isDuring && end > 0
+        ? end - ts
+        : 0
+    ;
+  }
 }
