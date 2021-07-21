@@ -24,6 +24,7 @@ CMD ["npm", "start"]
 FROM nginx:alpine
 WORKDIR /var/www
 COPY --from=dev /app/dist .
+COPY --from=dev /app/dist/assets/oidc-silent.html .
 COPY --from=dev /app/LICENSE.md ./LICENSE.md
 COPY --from=dev /app/nginx-static.conf /etc/nginx/conf.d/default.conf
 COPY --from=dev /app/nginx-basehref.sh /docker-entrypoint.d/90-basehref.sh

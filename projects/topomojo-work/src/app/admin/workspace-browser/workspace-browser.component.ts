@@ -1,3 +1,6 @@
+// Copyright 2021 Carnegie Mellon University.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
+
 import { Component, OnInit } from '@angular/core';
 import { faCheckSquare, faSquare, faTrash, faCheck, faSyncAlt, faList, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';

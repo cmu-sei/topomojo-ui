@@ -1,3 +1,6 @@
+// Copyright 2021 Carnegie Mellon University.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
+
 import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { faBolt, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
