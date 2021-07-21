@@ -179,8 +179,14 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   create(info: ConsoleSummary): void {
-    if (!info.id || !info.url) {
+
+    if (!info.id) {
       this.changeState('failed');
+      return;
+    }
+
+    if (!info.url || !info.isRunning) {
+      this.changeState('stopped');
       return;
     }
 
@@ -192,15 +198,11 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
       ? this.injector.get(MockConsoleService)
       : this.injector.get(WmksConsoleService);
 
-    if (info.isRunning) {
-      this.console.connect(
-        info.url,
-        (state: string) => this.changeState(state),
-        { canvasId: this.canvasId, viewOnly: this.viewOnly, changeResolution: !!this.request.fullbleed }
-      );
-    } else {
-      this.changeState('stopped');
-    }
+    this.console.connect(
+      info.url,
+      (state: string) => this.changeState(state),
+      { canvasId: this.canvasId, viewOnly: this.viewOnly, changeResolution: !!this.request.fullbleed }
+    );
   }
 
   start(): void {
@@ -291,7 +293,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
     // this.hotspot.x = event.target.innerWidth - this.hotspot.w;
-    this.console.refresh();
+    this.console?.refresh();
   }
 
   @HostListener('window:focus', ['$event'])
