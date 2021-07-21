@@ -34,4 +34,7 @@ export class GeneratedAdminService extends GeneratedService {
     public cleanup(): Observable<JanitorReport[]> {
       return this.http.post<JanitorReport[]>(this.conf.api + '/admin/janitor', null);
     }
+    public getlog(since: string): Observable<any> {
+      return this.http.get<any>(this.conf.api + '/admin/log', {params: {since}});
+    }
 }

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OidcSilentComponent } from './oidc-silent.component';
+import { LogViewerComponent } from './log-viewer.component';
 
-describe('OidcSilentComponent', () => {
-  let component: OidcSilentComponent;
-  let fixture: ComponentFixture<OidcSilentComponent>;
+describe('LogViewerComponent', () => {
+  let component: LogViewerComponent;
+  let fixture: ComponentFixture<LogViewerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OidcSilentComponent ]
+      declarations: [ LogViewerComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(OidcSilentComponent);
+    fixture = TestBed.createComponent(LogViewerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

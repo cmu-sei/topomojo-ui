@@ -14,6 +14,7 @@ import { TemplateDetailFormComponent } from './template-detail-form/template-det
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { UserBrowserComponent } from './user-browser/user-browser.component';
 import { ApikeysComponent } from './apikeys/apikeys.component';
+import { LogViewerComponent } from './log-viewer/log-viewer.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ApikeysComponent } from './apikeys/apikeys.component';
     VmBrowserComponent,
     TemplateDetailFormComponent,
     UserBrowserComponent,
-    ApikeysComponent
+    ApikeysComponent,
+    LogViewerComponent
   ],
   imports: [
     CommonModule,

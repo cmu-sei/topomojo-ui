@@ -55,7 +55,6 @@ import { DropzoneComponent } from './dropzone/dropzone.component';
 import { IsoSelectorComponent } from './iso-selector/iso-selector.component';
 import { ApikeysComponent } from './apikeys/apikeys.component';
 import { GamespaceCardComponent } from './gamespace-card/gamespace-card.component';
-import { OidcSilentComponent } from './oidc-silent/oidc-silent.component';
 import { GamespaceStateComponent } from './gamespace-state/gamespace-state.component';
 
 @NgModule({
@@ -65,7 +64,6 @@ import { GamespaceStateComponent } from './gamespace-state/gamespace-state.compo
     HomeComponent,
     LoginComponent,
     OidcComponent,
-    OidcSilentComponent,
     WorkspaceEditorComponent,
     DocumentEditorComponent,
     TemplatesEditorComponent,
@@ -150,15 +148,11 @@ export class AppModule { }
 export function loadSettings(
   config: ConfigService,
 ): (() => Observable<any>) {
-  return (): Observable<any> => config.load()
-  // .pipe(tap(s => console.log('done settings init')))
-  ;
+  return (): Observable<any> => config.load();
 }
 
 export function register(
-  user: UserService
+  user: UserService,
 ): (() => Promise<void>) {
-  return (): Promise<void> => user.register()
-  // .then(() => console.log('done user init'))
-  ;
+  return (): Promise<void> => user.register();
 }

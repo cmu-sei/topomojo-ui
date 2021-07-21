@@ -13,11 +13,14 @@ export const environment = {
       authority: 'http://localhost:5000',
       // authority: 'https://devid.cmusei.dev',
       redirect_uri: 'http://localhost:4200/oidc',
+      silent_redirect_uri: 'http://localhost:4200/assets/oidc-silent.html',
       response_type: 'code',
       scope: 'openid profile dev-api',
       monitorSession: false,
       loadUserInfo: true,
-      useLocalStorage: true
+      useLocalStorage: true,
+      accessTokenExpiringNotificationTime: 30,
+      automaticSilentRenew: true
     }
   }
 };

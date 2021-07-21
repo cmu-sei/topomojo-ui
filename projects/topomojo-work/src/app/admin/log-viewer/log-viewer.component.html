@@ -1,0 +1,18 @@
+<ng-container *ngIf="log$ | async as log; else loading">
+  <div *ngFor="let ex of log; let i = index">
+    <span class="muted">{{ex.timestamp}}</span><br/>
+    <button class="btn btn-sm btn-light" (click)="select(i)">
+      <fa-icon [icon]="trace===i ? faCaretDown : faCaretRight"></fa-icon>
+    </button>
+    <span>{{ex.message}}</span>
+    <pre *ngIf="trace===i">
+      {{ex.stackTrace}}
+    </pre>
+  </div>
+</ng-container>
+
+<ng-template #loading>
+  <div class="text-center">
+    <app-spinner></app-spinner>
+  </div>
+</ng-template>

@@ -1,15 +1,17 @@
 {
   "appname": "TopoMojo",
-  "apphost": "http://localhost:5004",
-  "mkshost": "http://localhost:4201",
+  "apphost": "",
+  "mkshost": "",
   "oidc": {
-    "client_id": "jam-code",
     "authority": "https://devid.cmusei.dev",
-    "redirect_uri": "http://localhost:4200/oidc",
+    "client_id": "client-with-code-grant",
     "response_type": "code",
     "scope": "openid profile jam-api",
+    "redirect_uri": "http://localhost:4200/oidc",
+    "silent_redirect_uri": "http://localhost:4200/assets/oidc-silent.html",
     "monitorSession": false,
     "loadUserInfo": true,
-    "useLocalStorage": true
+    "useLocalStorage": true,
+    "automaticSilentRenew": true
   }
 }

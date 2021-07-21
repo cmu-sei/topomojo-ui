@@ -1,0 +1,16 @@
+<?doctype html?>
+<html>
+
+<body>
+  <h1>OIDC verification</h1>
+  <p>just posting the url from this hidden iframe to the listening parent for verification.</p>
+  <script>
+    (function () {
+      if (window.parent && window !== window.parent) {
+        window.parent.postMessage(window.location.href, location.protocol + "//" + location.host);
+      }
+    })();
+  </script>
+</body>
+
+</html>

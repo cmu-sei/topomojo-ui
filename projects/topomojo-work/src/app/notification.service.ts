@@ -4,7 +4,7 @@
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HttpTransportType, LogLevel, HubConnectionState, IHttpConnectionOptions } from '@microsoft/signalr';
 import { BehaviorSubject, Subject, timer } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 import { AuthService, AuthTokenState } from './auth.service';
 import { ProfileService } from './api/profile.service';
