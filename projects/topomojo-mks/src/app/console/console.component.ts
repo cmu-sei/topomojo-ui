@@ -162,17 +162,15 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.changeState('loading');
     this.api.ticket(this.request).pipe(
-      catchError((err: Error) => {
+      catchError((err: Error) => of({} as ConsoleSummary))
         // // testing
-        // return of({
+        // of({
         //   id: '1234',
         //   name: 'vm',
         //   isolationId: '5555',
         //   url: 'ws://local.mock/ticket/1234',
         //   isRunning: true
         // });
-        return ObservableThrower(err);
-      })
     ).subscribe(
       (info: ConsoleSummary) => this.create(info),
       (err) => this.changeState('failed')
@@ -181,6 +179,11 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   create(info: ConsoleSummary): void {
+    if (!info.id || !info.url) {
+      this.changeState('failed');
+      return;
+    }
+
     this.vmId = info.id;
 
     this.isMock = !!(info.url.match(/mock/i));
@@ -189,18 +192,14 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
       ? this.injector.get(MockConsoleService)
       : this.injector.get(WmksConsoleService);
 
-    if (info.id) {
-      if (info.isRunning) {
-        this.console.connect(
-          info.url,
-          (state: string) => this.changeState(state),
-          { canvasId: this.canvasId, viewOnly: this.viewOnly, changeResolution: !!this.request.fullbleed }
-        );
-      } else {
-        this.changeState('stopped');
-      }
+    if (info.isRunning) {
+      this.console.connect(
+        info.url,
+        (state: string) => this.changeState(state),
+        { canvasId: this.canvasId, viewOnly: this.viewOnly, changeResolution: !!this.request.fullbleed }
+      );
     } else {
-      this.changeState('failed');
+      this.changeState('stopped');
     }
   }
 
