@@ -3,8 +3,8 @@
 
 import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { faBolt, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { merge, Observable, Subject, timer } from 'rxjs';
-import { filter, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { asyncScheduler, merge, Observable, of, scheduled, Subject, timer } from 'rxjs';
+import { catchError, filter, finalize, map, switchMap, tap, zipAll } from 'rxjs/operators';
 import { GamespaceService } from '../api/gamespace.service';
 import { GamespaceRegistration, GameState, Workspace } from '../api/gen/models';
 import { ConfigService } from '../config.service';
@@ -43,10 +43,19 @@ export class WorkspacePlayerComponent implements OnInit, OnChanges, AfterViewIni
     private api: GamespaceService,
     private conf: ConfigService
   ) {
+
+    const loader$ = (id: string) => scheduled([
+      api.load(id).pipe(catchError(err => of({} as GameState))),
+      api.preview(id).pipe(catchError(err => of({} as GameState)))
+    ], asyncScheduler).pipe(
+      zipAll(),
+      map(([g, w]) => !!g.id ? g : w)
+    );
+
     this.gamespace$ = merge(
       this.id$.pipe(
         tap(id => this.settings.resourceId = id),
-        switchMap(id => api.load(id)),
+        switchMap(id => loader$(id)),
         tap(g => this.state = g)
       ),
       this.changed$.pipe(
@@ -56,7 +65,6 @@ export class WorkspacePlayerComponent implements OnInit, OnChanges, AfterViewIni
         filter(() => !!this.state && !!this.state.id),
         map(i => api.transform(this.state) as GameState)
       )
-    ).pipe(
     );
   }
 
