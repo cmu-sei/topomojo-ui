@@ -9,7 +9,7 @@
 
   <div class="form-group bg-light">
     <label class="mb-0" for="name-input">Name</label>
-    <input id="name-input" type="text" class="form-control" [(ngModel)]="template.name" name="name" #name="ngModel" required maxlength="24" (input)="nospace($event)">
+    <input id="name-input" type="text" class="form-control" [(ngModel)]="template.name" name="name" #name="ngModel" required maxlength="64" (input)="nospace($event)">
     <small [hidden]="name.valid || name.pristine" class="text-danger">Please enter a name for this template.</small>
   </div>
 
