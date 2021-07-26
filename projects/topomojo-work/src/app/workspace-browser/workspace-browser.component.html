@@ -1,0 +1,50 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<!-- search workspaces -->
+<div class="m-2">
+
+  <!-- input -->
+  <div class="input-group mb-0">
+    <div class="input-group-prepend">
+      <!-- <label for="search-input" class="input-group-text">Search</label> -->
+      <span id="search-label" class="input-group-text">Search</span>
+    </div>
+    <input #search id="search-input" type="search" [placeholder]="mode" class="form-control" [(ngModel)]="term" (input)="termed($event)" aria-label="search term" aria-describedby="search-label">
+  </div>
+
+  <!-- filters -->
+  <div class="mb-2">
+    <button class="mr-1 btn btn-link text-secondary btn-sm" (click)="setMode('workspace')">
+      <fa-icon [hidden]="mode!=='workspace'" [icon]="faFilter"></fa-icon>
+      <span>workspace</span>
+    </button>
+    <button class="mr-1 btn btn-link text-secondary btn-sm" (click)="setMode('gamespace')">
+      <fa-icon [hidden]="mode!=='gamespace'" [icon]="faFilter"></fa-icon>
+      <span>gamespace</span>
+    </button>
+    <button class="mr-1 btn btn-link text-secondary btn-sm" (click)="refresh()">
+      <fa-icon [icon]="faSync"></fa-icon>
+      <span>refresh</span>
+    </button>
+  </div>
+
+  <!-- display workspace cards -->
+  <ng-container *ngIf="mode === 'workspace'">
+    <ng-container *ngFor="let ws of workspaces | async">
+      <app-workspace-card [workspace]="ws"></app-workspace-card>
+    </ng-container>
+  </ng-container>
+
+  <!-- display gamespace cards -->
+  <ng-container *ngIf="mode === 'gamespace'">
+    <ng-container *ngFor="let g of gamespaces | async">
+      <app-gamespace-card [gamespace]="g"></app-gamespace-card>
+    </ng-container>
+  </ng-container>
+
+</div>
+
+<ng-template #loading>
+  <app-spinner></app-spinner>
+</ng-template>

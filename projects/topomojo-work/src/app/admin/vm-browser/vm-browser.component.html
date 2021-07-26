@@ -1,0 +1,27 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<h4>Machines</h4>
+
+<div>
+  <div class="input-group input-group-sm">
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <fa-icon [icon]="faSearch"></fa-icon>
+        <span>Search</span>
+      </span>
+    </div>
+    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
+  </div>
+  <small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
+</div>
+
+<hr/>
+
+<div *ngFor="let vm of source$ | async; trackBy:trackById" class="row mb-1">
+  <div class="col-12">
+    <span>{{vm.name}} </span><br/>
+    <small class="ml-4"> {{vm.groupName}} </small><br/>
+    <small class="ml-4"> ({{vm.host ? vm.host.split('.').shift() : 'unknown'}}) </small>
+  </div>
+</div>

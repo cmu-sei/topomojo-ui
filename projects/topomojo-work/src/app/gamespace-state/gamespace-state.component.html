@@ -1,0 +1,30 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<markdown [data]="game.markdown"></markdown>
+
+<markdown [data]="game.challenge?.text || ''"></markdown>
+
+<ng-container *ngIf="!!game.id && game.isActive">
+  <h3>Gamespace Resources</h3>
+  <div *ngIf="!deploying" class="d-flex my-4">
+    <button *ngFor="let vm of game.vms" class="btn btn-sm btn-dark mr-2" (click)="console(vm)">
+      <fa-icon [icon]="faTv"></fa-icon>
+      <span>{{vm.name}}</span>
+    </button>
+    <app-confirm-button *ngIf="game.vms?.length" btnClass="btn btn-sm btn-outline-warning" (confirm)="stop()">
+      <fa-icon [icon]="faTrash"></fa-icon>
+      <span>Destroy</span>
+    </app-confirm-button>
+    <app-confirm-button *ngIf="!game.vms?.length" btnClass="btn btn-sm btn-outline-warning" (confirm)="start()">
+      <fa-icon [icon]="faBolt"></fa-icon>
+      <span>Deploy</span>
+    </app-confirm-button>
+  </div>
+  <div *ngIf="deploying" class="text-center">
+    <app-spinner></app-spinner>
+  </div>
+</ng-container>
+
+<h3 *ngIf="game.challenge?.questions?.length">Challenge Questions</h3>
+<app-gamespace-quiz [state]="game"></app-gamespace-quiz>

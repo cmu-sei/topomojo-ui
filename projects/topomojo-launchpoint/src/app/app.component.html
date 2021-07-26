@@ -1,0 +1,53 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<main>
+
+  <ng-container *ngIf="state$ | async as state; else loading">
+
+    <div *ngIf="state.id" class="nav-top z20">
+      <div class="flex-v">
+        <button *ngIf="state.isBefore && !acting" class="btn" (click)="start(state)">
+          <fa-icon [icon]="faBolt"></fa-icon>
+          <span> Deploy</span>
+        </button>
+        <ng-container *ngIf="state.isDuring && !acting">
+          <button class="btn" (click)="done(state)">
+            <fa-icon [icon]="faTrash"></fa-icon>
+            <span> End Session</span>
+          </button>
+          <span>Session ends in {{timewindow.countdown | countdown}}</span>
+        </ng-container>
+        <app-spinner *ngIf="acting"></app-spinner>
+        <span *ngIf="state.isAfter">Session Over</span>
+        <span>Support Code: {{state.id | slice:0:8}}</span>
+      </div>
+    </div>
+
+    <h1 *ngIf="state.error" class="text-danger">{{state.error | spaces}}</h1>
+
+    <div *ngIf="state.vms" class="flex-h z10">
+
+      <div class="btn btn-lg" *ngFor="let vm of state.vms" (click)="open(vm)">
+        <fa-icon [icon]="faTv"></fa-icon>
+        <span>{{vm.name}}</span>
+      </div>
+
+    </div>
+
+    <div class="reader">
+
+      <pre *ngIf="showDetail">{{state | json}}</pre>
+
+      <markdown [data]="state.markdown"></markdown>
+    </div>
+
+  </ng-container>
+
+</main>
+
+<ng-template #loading>
+  <app-spinner></app-spinner>
+</ng-template>
+
+<footer></footer>

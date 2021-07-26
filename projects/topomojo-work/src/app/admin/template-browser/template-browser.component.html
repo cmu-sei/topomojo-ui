@@ -1,0 +1,69 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<h4>Templates</h4>
+
+<div>
+  <div class="input-group input-group-sm">
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <fa-icon [icon]="faSearch"></fa-icon>
+        <span>Search</span>
+      </span>
+    </div>
+    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
+  </div>
+  <small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
+</div>
+
+<hr/>
+
+<div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
+  <div class="col-8">
+    <span class="m-1">{{g.name}}</span>
+    <span class="m-1">
+      <fa-icon [icon]="g.parentId ? faLink : faUnlink"></fa-icon>
+      <span *ngIf="g.parentId" >{{g.parentName}}</span>
+    </span>
+    <span [hidden]="!g.isPublished" class="pop-success px-2 m-1">
+      <fa-icon [icon]="faGlobe"></fa-icon>
+    </span>
+    <span [hidden]="!g.audience" class="pop-warning px-2">{{g.audience}}</span>
+    <br/>
+    <small class="text-muted ml-4">
+      <a *ngIf="g.workspaceId" [routerLink]="['/topo', g.workspaceId]" class="text-secondary">{{g.workspaceName}}</a>
+      <span *ngIf="!g.workspaceId">Stock Template</span>
+    </small>
+  </div>
+  <div class="col-4">
+    <button class="btn btn-outline-info btn-sm mx-1" (click)="view(g)">
+      <fa-icon [icon]="faList"></fa-icon>
+      <span>View</span>
+    </button>
+    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(g)">
+      <fa-icon [icon]="faTrash"></fa-icon>
+      <span>Delete</span>
+    </app-confirm-button>
+  </div>
+  <div *ngIf="viewed === g" class="col-12">
+    <ng-container *ngIf="detail$ | async as detail">
+      <!-- <div *ngIf="!g.workspaceId" class="pop-warning p-2">
+
+      </div> -->
+      <div class="row mb-1 align-items-center">
+        <div class="col-6 text-right">
+          <span class="pop-info px-1">{{detail.name}}</span>
+        </div>
+        <div class="col-6">
+          <app-vm-controller [template]="g"></app-vm-controller>
+          <small class="text-warning">
+            Note: there is no isolation checking outside of a workspace.
+          </small>
+        </div>
+      </div>
+
+      <app-template-detail-form [template]="detail" [linked]="!!g.parentId"></app-template-detail-form>
+
+    </ng-container>
+  </div>
+</div>

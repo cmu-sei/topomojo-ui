@@ -1,0 +1,23 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div *ngIf="gamestate | async as ws; else loading" class="reader">
+  <app-presence-bar></app-presence-bar>
+  <span class="small text-muted mr-1">Support Code:</span>
+  <app-clipspan class="small text-muted">{{ws.id | slice:0:8}}</app-clipspan>
+  <h1 class="mb-0 pb-0">{{section || 'Preview'}}</h1>
+  <h4>Under development</h4>
+</div>
+
+<ng-template #loading>
+  <div *ngIf="!err" class="reader-slim text-center my-4">
+    <app-spinner></app-spinner>
+  </div>
+
+  <div *ngIf="!!err" class="text-center">
+    <h2 class="my-4 text-primary">{{err.error?.message || err.message || err | camelspace}}</h2>
+    <div class="my-4">
+      <button class="btn btn-primary" (click)="bail()">Continue</button>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,43 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<ng-container *ngIf="gamespace$ | async as game">
+  <div class="reader mb-4">
+    <div class="text-center">
+      <div *ngIf="game.session?.isBefore && !launching">
+        <app-confirm-button btnClass="btn btn-lg btn-secondary my-2" (confirm)="launch()">
+          <fa-icon [icon]="faBolt"></fa-icon>
+          <span>Start</span>
+        </app-confirm-button>
+      </div>
+      <ng-container *ngIf="!game.gameOver && game.session?.isDuring && !launching">
+        <app-confirm-button btnClass="btn btn-lg btn-warning my-2" (confirm)="complete(game.id)">
+          <fa-icon [icon]="faTrash"></fa-icon>
+          <span>End</span>
+        </app-confirm-button>
+        <div><span class="clock">{{game.session.countdown | clock}}</span></div>
+      </ng-container>
+      <div *ngIf="game.gameOver" class="text-center">
+        <span>Game Over</span>
+      </div>
+      <div>
+        <app-spinner *ngIf="launching" class=""></app-spinner>
+      </div>
+    </div>
+
+    <app-error-div [errors]="errors"></app-error-div>
+
+    <app-gamespace-state [game]="game"></app-gamespace-state>
+
+    <div *ngIf="!game.gameOver && game.session?.isDuring" class="text-center">
+      <app-confirm-button btnClass="btn btn-warning my-2" (confirm)="complete(game.id)">
+        <fa-icon [icon]="faTrash"></fa-icon>
+        <span>End</span>
+      </app-confirm-button>
+      <div><span class="clock">{{game.session.countdown | clock}}</span></div>
+    </div>
+    <div *ngIf="game.gameOver" class="text-center">
+      <span>Game Over</span>
+    </div>
+  </div>
+</ng-container>

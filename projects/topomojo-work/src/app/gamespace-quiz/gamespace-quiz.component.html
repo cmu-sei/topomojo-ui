@@ -1,0 +1,34 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<ng-container *ngIf="state.challenge">
+
+  <markdown [data]="state.challenge.sectionText"></markdown>
+
+  <div *ngFor="let q of state.challenge.questions; let i=index" class="form-group p-2 mt-2"
+  [class.pop-info]="!q.isGraded"
+  [class.pop-success]="q.isGraded && q.isCorrect"
+  [class.pop-warning]="q.isGraded && !q.isCorrect"
+  >
+    <label>{{i+1}}. ({{q.weight}}) {{q.text}}</label>
+    <input class="form-control" [readonly]="q.isCorrect" [(ngModel)]="q.answer">
+    <small [hidden]="!q.example">Example answer: {{q.example}}</small>
+  </div>
+
+  <app-error-div [errors]="errors"></app-error-div>
+
+  <div class="d-flex align-items-center">
+    <ng-container *ngIf="!state.gameOver && state.session.isDuring">
+      <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()">
+        <fa-icon [icon]="faSubmit"></fa-icon>
+        <span>Submit</span>
+      </app-confirm-button>
+      <label class="pop-warning px-1 ml-2">
+        {{state.challenge.attempts + 1}} of {{state.challenge.maxAttempts}}
+      </label>
+    </ng-container>
+    <div class="spacer"></div>
+    <div>Score: {{state.challenge.score}} of {{state.challenge.maxPoints}}</div>
+  </div>
+
+</ng-container>

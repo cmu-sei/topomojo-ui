@@ -1,0 +1,15 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div class="card shadow-sm mb-2" routerLinkActive="pop-success" #rla="routerLinkActive" tabindex="0" (click)="go()" (keydown)="keydown($event)">
+  <div class="card-body" [class.pop-info]="hovering && !rla.isActive" (mouseenter)="hovering=true" (mouseleave)="hovering=false">
+    <div class="card-title">
+      <span>{{gamespace.name}}</span>
+      <small *ngIf="countdown$ | async as dday"> &mdash; expires in: {{dday | countdown}}</small>
+    </div>
+    <div [hidden]="!(hovering || rla.isActive)">
+      <a *ngIf="!!gamespace.startTime" class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/mojo', gamespace.id, gamespace.slug]">Continue</a>
+      <a *ngIf="!gamespace.startTime" class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/mojo',  gamespace.id, gamespace.slug]">Preview</a>
+    </div>
+  </div>
+</div>

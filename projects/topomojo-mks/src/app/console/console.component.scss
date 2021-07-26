@@ -1,0 +1,108 @@
+:host {
+  z-index: 1;
+}
+
+.tools {
+  opacity: .9;
+  width: 400px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 220;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-y: scroll;
+
+  button {
+    margin: 0 0 4px 0;
+    border-radius: 0;
+  }
+}
+.tools-text {
+  padding:  1em;
+  margin: 1em 0 2em;
+  border-radius: 4px;
+}
+.embedded {
+    position: relative;
+    text-align: center;
+    width: 1280px;
+    height: 1024px;
+    border-radius: 4px;
+    z-index: 190;
+}
+
+.canvas {
+    position: fixed;
+    text-align: center;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    height: 100%;
+    z-index: 190;
+}
+.overlay {
+    position: absolute;
+    z-index: 200;
+    // text-shadow: 1px 0 16px lightgray;
+    opacity: .8;
+}
+.overlay-tr {
+    top: 24px;
+    right: 24px;
+}
+.overlay-tl {
+    top: 24px;
+    left: 24px;
+}
+
+.align-mm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+}
+
+.overlay-box {
+  padding: 8px 16px;
+  background-color: rgb(black, .55);
+  border-radius: 4px;
+}
+
+.mock-console-connected {
+    background-color: #48f;
+}
+
+.cog {
+    font-size: 2em;
+  }
+.mb-2 {
+  margin-bottom: 2em;
+}
+.px-4 {
+  padding-right: 2em;
+  padding-left: 2em;
+}
+textarea.form-control {
+  padding: 4px;
+  width: 392px;
+  border: none;
+}
+input.form-check-input {
+  width: 20px;
+  height: 20px;
+}
+.audience {
+  width: 224px;
+  opacity: .8;
+  border-radius: 4px;
+  cursor: move;
+}
+div.audience-item {
+  margin: 6px;
+  font-weight: 600;
+}

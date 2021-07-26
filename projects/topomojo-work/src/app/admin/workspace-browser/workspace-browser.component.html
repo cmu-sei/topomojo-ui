@@ -1,0 +1,72 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<h4>Workspaces</h4>
+
+<div>
+  <div class="input-group input-group-sm">
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <fa-icon [icon]="faSearch"></fa-icon>
+        <span>Search</span>
+      </span>
+    </div>
+    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
+  </div>
+  <small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
+</div>
+
+<hr/>
+
+<div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
+  <div class="col-8">
+    <a [routerLink]="['/topo', g.id]" class="text-secondary">{{g.name}}</a>
+    <br/>
+    <small class="text-muted ml-4">
+      <app-clipspan>{{g.id}}</app-clipspan> &mdash; {{g.author}}
+    </small>
+  </div>
+  <div class="col-1">
+    <small>{{g.whenCreated | shortdate}}</small>
+  </div>
+  <div class="col-3">
+    <button class="btn btn-outline-info btn-sm mx-1" (click)="view(g)">
+      <fa-icon [icon]="faList"></fa-icon>
+      <span>View</span>
+    </button>
+    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(g)">
+      <fa-icon [icon]="faTrash"></fa-icon>
+      <span>Delete</span>
+    </app-confirm-button>
+  </div>
+  <div *ngIf="viewed === g" class="col-12">
+    <ng-container *ngIf="detail$ | async as detail">
+
+      <div class="form-group bg-light">
+        <label class="mb-0" for="detail-template-limit">Template Limit</label>
+        <input id="detail-template-limit" class="form-control" type="number" [(ngModel)]="detail.templateLimit" (change)="update(detail)">
+      </div>
+
+      <div class="form-group bg-light">
+        <label class="mb-0" for="input-scope">Template Scope</label>
+        <input id="input-scope" class="form-control" type="text" [(ngModel)]="detail.templateScope" (change)="update(detail)">
+        <small>template scopes this workspace can link</small>
+      </div>
+
+      <div class="form-group bg-light">
+        <label class="mb-0" for="input-audience">Audience</label>
+        <input id="input-audience" class="form-control" type="text" [(ngModel)]="detail.audience" (change)="update(detail)">
+        <small>template scopes this workspace can link</small>
+      </div>
+
+      <div *ngFor="let t of detail.templates" class="row mb-1 align-items-center">
+        <div class="col-6 text-right">
+          <span class="pop-info px-1">{{t.name}}</span>
+        </div>
+        <div class="col-6">
+          <app-vm-controller [template]="t"></app-vm-controller>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

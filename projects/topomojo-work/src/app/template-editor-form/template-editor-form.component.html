@@ -1,0 +1,65 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<form #form="ngForm" [ngFormOptions]="{updateOn: 'blur'}" autocomplete="off" >
+
+  <!-- <input type="hidden" name="id" [ngModel]="template.id"> -->
+  <input type="hidden" name="id" [ngModel]="template.id">
+  <input type="hidden" name="iso" [ngModel]="template.iso">
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="name-input">Name</label>
+    <input id="name-input" type="text" class="form-control" [(ngModel)]="template.name" name="name" #name="ngModel" required maxlength="64" (input)="nospace($event)">
+    <small [hidden]="name.valid || name.pristine" class="text-danger">Please enter a name for this template.</small>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="description-input">Description</label>
+    <textarea id="description-input" type="text" rows=5 class="form-control" [(ngModel)]="template.description" name="description" maxlength="255"></textarea>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="network-input">Networks</label>
+    <input id="network-input" type="text" class="form-control" [(ngModel)]="template.networks" name="networks" maxlength="64">
+    <small>space-delimited list of network names (i.e. `lan wan`)</small>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="guestinfo-input">Guest Settings</label>
+    <textarea id="guestinfo-input" type="text" rows=5 class="form-control" placeholder="key = value" [(ngModel)]="template.guestinfo" name="guestinfo" maxlength="255"></textarea>
+    <small>key = value (lines commented with # are ignored)</small>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="replicas-input">Replicas</label>
+    <input id="replicas-input" type="number" class="form-control" [(ngModel)]="template.replicas" name="replicas" >
+    <small>how many copies to deploy in a <em>gamespace</em>. (<code>-1</code> means one per player)</small>
+  </div>
+
+  <div class="form-group bg-light">
+    <label for="mb-0 iso-input">Iso</label>
+    <div class="input-group input-group-sm mb-1">
+      <label id="iso-input" class="form-control" name="iso">{{template.iso?.split('/')?.pop()}}</label>
+      <div class="input-group-append">
+        <button class="btn btn-sm btn-outline-info" (click)="isoClear()">
+          <fa-icon [icon]="faTimes"></fa-icon>
+          <span>Remove</span>
+        </button>
+      </div>
+    </div>
+    <app-iso-selector [guid]="template.workspaceId" (added)="isoSelect($event)"></app-iso-selector>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="hidden-toggle">Console Access</label>
+    <div class="form-control auto-h d-flex align-items-center">
+      <label>Hidden</label>
+      <label class="btn text-info" btnCheckbox [btnCheckboxTrue]="false" [btnCheckboxFalse]="true" [ngModelOptions]="{updateOn: 'change'}" [(ngModel)]="template.isHidden" name="isHidden">
+        <fa-icon *ngIf="template.isHidden" [icon]="faToggleOff" size="lg"></fa-icon>
+        <fa-icon *ngIf="!template.isHidden" [icon]="faToggleOn" size="lg"></fa-icon>
+      </label>
+      <label>Visible</label>
+    </div>
+    <small>prevent console access by hiding this template</small>
+  </div>
+</form>

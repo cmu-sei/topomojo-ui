@@ -1,0 +1,10 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<ng-container *ngIf="context | async as ctx; else loading">
+  <app-console [request]="ctx"></app-console>
+</ng-container>
+
+<ng-template #loading>
+  <!-- <app-spinner></app-spinner> -->
+</ng-template>
