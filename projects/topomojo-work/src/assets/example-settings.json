@@ -11,7 +11,8 @@
     "silent_redirect_uri": "http://localhost:4200/assets/oidc-silent.html",
     "monitorSession": false,
     "loadUserInfo": true,
+    "automaticSilentRenew": true,
     "useLocalStorage": true,
-    "automaticSilentRenew": true
+    "debug": false
   }
 }

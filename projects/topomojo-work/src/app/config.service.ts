@@ -154,6 +154,7 @@ export interface Settings {
 export interface AppUserManagerSettings extends UserManagerSettings {
   useLocalStorage?: boolean;
   silentRenewIfActiveSeconds?: number;
+  debug?: boolean;
 }
 
 export interface TabRef {

@@ -4,7 +4,7 @@
 import { Injectable } from '@angular/core';
 import { UserManager, UserManagerSettings, User, WebStorageStateStore, Log } from 'oidc-client';
 import { BehaviorSubject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { ConfigService, Settings } from './config.service';
 
 export enum AuthTokenState {
@@ -29,12 +29,19 @@ export class AuthService {
   constructor(
     private config: ConfigService
   ) {
+
     // Log.level = Log.DEBUG;
     // Log.logger = console;
 
     config.settings$.pipe(
+      tap(s => console.log(s.oidc?.authority)),
       filter(s => !!s.oidc.authority)
     ).subscribe((s: Settings) => {
+
+      if (s.oidc.debug) {
+        Log.level = Log.DEBUG;
+        Log.logger = console;
+      }
 
       this.authority = s.oidc?.authority?.
         replace(/https?:\/\//, '').split('/').reverse().pop() || 'Identity Provider';

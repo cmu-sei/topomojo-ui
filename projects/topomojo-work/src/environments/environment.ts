@@ -18,9 +18,9 @@ export const environment = {
       scope: 'openid profile dev-api',
       monitorSession: false,
       loadUserInfo: true,
+      automaticSilentRenew: true,
       useLocalStorage: true,
-      accessTokenExpiringNotificationTime: 30,
-      automaticSilentRenew: true
+      debug: false
     }
   }
 };
