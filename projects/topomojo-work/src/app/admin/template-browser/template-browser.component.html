@@ -13,9 +13,10 @@
     </div>
     <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
   </div>
-  <small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
+  <button class="btn btn-link text-primary btn-sm" (click)="create()">create</button>
 </div>
 
+<small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
 <hr/>
 
 <div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">

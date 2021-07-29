@@ -7,7 +7,16 @@
   </div>
 
   <input type="hidden" name="id" [ngModel]="template.id">
-  <input type="hidden" name="name" [ngModel]="template.name">
+
+  <div class="form-group bg-light">
+    <label for="name-input">Name</label>
+    <input id="name-input" class="form-control" name="name" type="text" placeholder="Name" [(ngModel)]="template.name" maxlength="64">
+    <div class="d-flex">
+      <small></small>
+      <div class="spacer"></div>
+      <small class="text-right">{{(''+template.name).length}} / 64</small>
+    </div>
+  </div>
 
   <div *ngIf="!linked" class="form-group bg-light">
     <label class="mb-0" for="hidden-toggle">Published</label>

@@ -73,6 +73,15 @@ export class TemplateBrowserComponent implements OnInit {
     });
   }
 
+  create(): void {
+    this.api.createDetail({name: 'template'} as TemplateDetail).subscribe(
+      r => {
+        this.source.unshift(r as TemplateSummary);
+        this.view(r as TemplateSummary);
+      }
+    );
+  }
+
   update(t: TemplateDetail): void {
     this.api.updateDetail(t).subscribe();
   }
