@@ -7,6 +7,9 @@
 </button>
 
 <div *ngIf="showing" class="slim mb-4">
+
+  <app-error-div [errors]="errors"></app-error-div>
+
   <!-- search templates -->
   <div class="input-group my-2">
     <div class="input-group-prepend">

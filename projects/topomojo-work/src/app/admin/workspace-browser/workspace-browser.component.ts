@@ -73,7 +73,7 @@ export class WorkspaceBrowserComponent implements OnInit {
   }
 
   update(w: Workspace): void {
-    this.api.update(w).subscribe();
+    this.api.privilegedUpdate(w).subscribe();
   }
 
   trackById(index: number, g: WorkspaceSummary): string {

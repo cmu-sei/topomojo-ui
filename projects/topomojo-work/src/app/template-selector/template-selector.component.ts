@@ -3,7 +3,7 @@
 
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { BehaviorSubject, concat, merge, Observable, of, Subject, Subscription, timer, zip } from 'rxjs';
-import { concatAll, concatMap, debounceTime, distinctUntilChanged, filter, finalize, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { catchError, concatAll, concatMap, debounceTime, distinctUntilChanged, filter, finalize, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { Template, TemplateLink, TemplateSearch, TemplateSummary } from '../api/gen/models';
 import { TemplateService } from '../api/template.service';
 import { faPlus, faCheck, faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -31,6 +31,7 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
   faPlus = faPlus;
   faCheck = faCheck;
   faFilter = faFilter;
+  errors: any[] = [];
 
   constructor(
     private api: TemplateService,
@@ -56,7 +57,12 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
     this.target$ = this.target.pipe(
       debounceTime(250),
       tap(t => this.active = t),
-      switchMap(t => api.link({workspaceId: this.workspaceId, templateId: t.id} as TemplateLink)),
+      switchMap(t => api.link({workspaceId: this.workspaceId, templateId: t.id} as TemplateLink).pipe(
+        catchError(err => {
+          this.errors.push(err);
+          return of({} as Template);
+        })
+      )),
       tap(t => this.feedback(t))
     ).subscribe();
   }
@@ -79,7 +85,9 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
   }
 
   feedback(t: Template): void {
-    this.added.emit(t);
+    if (!!t.id) {
+      this.added.emit(t);
+    }
     const sub: Subscription = timer(2000).pipe(
       finalize(() => sub.unsubscribe())
     ).subscribe(() => this.active = null);

@@ -36,6 +36,9 @@ export class GeneratedWorkspaceService extends GeneratedService {
   public update(model: ChangedWorkspace): Observable<any> {
       return this.http.put<any>(this.conf.api + '/workspace', model);
   }
+  public privilegedUpdate(model: ChangedWorkspace): Observable<any> {
+      return this.http.put<any>(this.conf.api + '/workspace/priv', model);
+  }
   public delete(id: string): Observable<any> {
       return this.http.delete<any>(this.conf.api + '/workspace/' + id);
   }
