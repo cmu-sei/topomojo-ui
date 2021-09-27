@@ -157,6 +157,7 @@ export interface Template {
   parentId: string;
   workspaceId: string;
   replicas: number;
+  variant: number;
   isHidden: boolean;
 }
 
@@ -168,6 +169,7 @@ export interface ChangedTemplate {
   iso?: string;
   guestinfo?: string;
   replicas?: number;
+  variant: number;
   isHidden?: boolean;
 }
 

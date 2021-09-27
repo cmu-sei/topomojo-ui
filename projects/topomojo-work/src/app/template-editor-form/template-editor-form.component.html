@@ -37,6 +37,12 @@
   </div>
 
   <div class="form-group bg-light">
+    <label class="mb-0" for="variant-input">Variant</label>
+    <input id="variant-input" type="number" class="form-control" [(ngModel)]="template.variant" name="variant" >
+    <small>only deploy for a specific <em>challenge variant</em>. (<code>0</code> means all variants) If not `0`, template name should have variant suffix like `_v1`</small>
+  </div>
+
+  <div class="form-group bg-light">
     <label for="mb-0 iso-input">Iso</label>
     <div class="input-group input-group-sm mb-1">
       <label id="iso-input" class="form-control" name="iso">{{template.iso?.split('/')?.pop()}}</label>
