@@ -5,7 +5,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { QuestionSpec } from 'projects/topomojo-work/src/app/api/gen/models';
 import { ChallengeFormService } from '../challenge-form.service';
-import { faTrash, faPlus, faBaby} from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faPlus, faInfoCircle} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-question-form',
@@ -18,10 +18,11 @@ export class QuestionFormComponent implements OnInit {
   @Input() vindex = 0;
   @Input() more = false;
   hoveritem = 0;
-  matchtip = 0;
+  infotip = 0;
 
   faTrash = faTrash;
   faPlus = faPlus;
+  faHelp = faInfoCircle;
 
   constructor(
     private svc: ChallengeFormService
