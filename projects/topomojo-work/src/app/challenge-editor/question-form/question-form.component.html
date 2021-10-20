@@ -48,6 +48,10 @@
       </div> -->
 
       <div class="form-row" [hidden]="!more">
+        <div class="form-group col-12 py-0">
+          <label for="hidden-input{{vindex}}.{{this.index}}.{{i}}" class="mr-2">Hidden</label>
+          <input id="hidden-input{{vindex}}.{{this.index}}.{{i}}" type="checkbox" class="form-control-checkbox" formControlName="hidden">
+        </div>
         <div class="form-group col-6 py-0">
           <label for="grader-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Grader</label>
           <div id="grader-input{{vindex}}.{{this.index}}.{{i}}" class="btn-group" btnRadioGroup formControlName="grader" (mouseleave)="matchtip=0">

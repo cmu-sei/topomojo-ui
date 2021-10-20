@@ -426,6 +426,7 @@ export interface QuestionSpec {
   grader?: string;
   weight?: number;
   penalty?: number;
+  hidden?: boolean;
 }
 
 export interface ChallengeView {
