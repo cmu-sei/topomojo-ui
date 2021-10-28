@@ -4,9 +4,9 @@
 import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { faBolt, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
-import { asyncScheduler, combineLatest, interval, merge, Observable, of, scheduled, Subject, timer } from 'rxjs';
-import { catchError, map, mergeAll, switchMap, tap } from 'rxjs/operators';
-import { GameState, LaunchParams, TimeWindow, Vm, VmState } from './api.models';
+import { asyncScheduler, combineLatest, interval, Observable, of, scheduled, Subject, timer } from 'rxjs';
+import { catchError, debounceTime, finalize, map, mergeAll, switchMap, tap } from 'rxjs/operators';
+import { GameState, TimeWindow, VmState } from './api.models';
 import { ApiService } from './api.service';
 
 @Component({
@@ -16,7 +16,6 @@ import { ApiService } from './api.service';
 })
 export class AppComponent {
   title = 'launchpoint';
-  launchParams!: LaunchParams;
   state$: Observable<GameState>;
   starting$ = new Subject<GameState>();
   stopping$ = new Subject<GameState>();
@@ -45,16 +44,18 @@ export class AppComponent {
         switchMap(g => api.complete(g.id || ''))
       ),
       route.queryParams.pipe(
-        map(p => ({token: p.t, gid: p.g})),
-        tap(m => this.launchParams = m),
-        switchMap(p => api.login(p.token)),
-        tap(r => console.log(r)),
-        switchMap(u => api.launch(this.launchParams.gid))
+        // debounceTime(100),
+        switchMap(p => api.login(p.t).pipe(
+          catchError(err => of({})),
+          map(() => p)
+        )),
+        switchMap(p => api.launch(p.g).pipe(
+          catchError(err => of(({error: err.error?.message || err.statusText}) as GameState))
+        ))
       )
     ], asyncScheduler).pipe(
       mergeAll(),
-      catchError(err => of(({error: err.error?.message || err.statusText} as GameState))),
-      tap(r => this.acting = false)
+      finalize(() => this.acting = false)
     );
 
     this.state$ = combineLatest([
@@ -68,6 +69,7 @@ export class AppComponent {
     interval(1800000).pipe(
       switchMap(() => api.login(''))
     ).subscribe();
+
   }
 
   open(vm: VmState): void {

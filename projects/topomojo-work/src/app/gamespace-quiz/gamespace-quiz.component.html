@@ -18,7 +18,7 @@
   <app-error-div [errors]="errors"></app-error-div>
 
   <div class="d-flex align-items-center">
-    <ng-container *ngIf="!state.gameOver && state.session.isDuring">
+    <ng-container *ngIf="!state.gameOver && state.session.isDuring && state.challenge.questions.length > 0">
       <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()">
         <fa-icon [icon]="faSubmit"></fa-icon>
         <span>Submit</span>
