@@ -25,7 +25,6 @@ export interface GameState {
   isAfter: boolean;
   window: number;
   countdown: number;
-
 }
 
 export interface VmState {
