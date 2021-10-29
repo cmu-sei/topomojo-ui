@@ -78,7 +78,7 @@ export class ChallengeFormService {
       penalty: [q?.penalty || 0, Validators.pattern(/\d*/)],
       grader: [q?.grader || 'match'],
       weight: [q?.weight || 0, Validators.pattern(/\d*/)],
-      hidden: [q?.hidden]
+      hidden: [q?.hidden || false]
     });
   }
 }
