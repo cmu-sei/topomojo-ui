@@ -122,3 +122,16 @@ table {
     }
   }
 }
+input {
+  width: 100%;
+  padding: 4px;
+  margin: 2px 0 8px 0;
+  border-radius: 4px;
+  font-size: 1.1em;
+}
+.form {
+  margin: .5rem auto;
+  max-width: 300px;
+  border-radius: 6px;
+  padding: 8px 24px;
+}

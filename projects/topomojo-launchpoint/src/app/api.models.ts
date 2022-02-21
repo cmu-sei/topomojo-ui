@@ -43,6 +43,21 @@ export interface Player {
   canEdit?: boolean;
 }
 
+export interface JoinCode {
+  id?: number;
+  code?: string;
+}
+
+export interface Enlistee {
+  name?: string;
+  code?: string;
+}
+
+export interface Enlistment {
+  gamespaceId?: string;
+  token?: string;
+}
+
 export class TimeWindow {
   isBefore: boolean;
   isDuring: boolean;

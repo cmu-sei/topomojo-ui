@@ -12,6 +12,10 @@
           <span> Deploy</span>
         </button>
         <ng-container *ngIf="state.isDuring && !acting">
+          <button class="btn" (click)="invite(state)">
+            <fa-icon [icon]="faCopy"></fa-icon>
+            <span>Invite</span>
+          </button>
           <button class="btn" (click)="done(state)">
             <fa-icon [icon]="faTrash"></fa-icon>
             <span> End Session</span>
@@ -41,6 +45,23 @@
 
       <markdown [data]="state.markdown"></markdown>
 
+    </div>
+
+    <div *ngIf="!state.id" class="form">
+      <p>To join an existing gamespace, submit the following information:</p>
+      <div class="form-group">
+        <label for="name-input">Name</label>
+        <input type="text" class="form-control" id="name-input" placeholder="player name" maxlength="40" [(ngModel)]="subjectName">
+      </div>
+      <div class="form-group">
+        <label for="name-input">Invitation</label>
+        <input type="text" class="form-control" id="name-input" placeholder="code" maxlength="40" [(ngModel)]="inviteCode">
+      </div>
+      <button class="btn" (click)="join()">
+        <!-- <fa-icon [icon]="faCopy"></fa-icon> -->
+        <span>Join</span>
+      </button>
+      <h3 class="text-danger">{{errorMsg | spaces}}</h3>
     </div>
 
   </ng-container>

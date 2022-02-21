@@ -3,7 +3,8 @@
 
 import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faBolt, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faClipboard, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
+import { ClipboardService } from 'projects/topomojo-work/src/app/clipboard.service';
 import { asyncScheduler, combineLatest, interval, Observable, of, scheduled, Subject, timer } from 'rxjs';
 import { catchError, debounceTime, finalize, map, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { GameState, TimeWindow, VmState } from './api.models';
@@ -22,29 +23,38 @@ export class AppComponent {
   ending$ = new Subject<GameState>();
   acting = false;
   showDetail = false;
+  inviteCode = '';
+  subjectName = '';
   timewindow!: TimeWindow;
+  errorMsg = '';
 
   faTv = faTv;
   faTrash = faTrash;
   faBolt = faBolt;
+  faCopy = faClipboard;
 
   constructor(
     route: ActivatedRoute,
-    private api: ApiService
+    private api: ApiService,
+    private clipboard: ClipboardService
   ) {
 
     const actions$ = scheduled([
       this.starting$.pipe(
-        switchMap(g => api.start(g.id || ''))
+        switchMap(g => api.start(g.id || '')),
+        tap(() => this.acting = false)
       ),
       this.stopping$.pipe(
-        switchMap(g => api.stop(g.id || ''))
+        switchMap(g => api.stop(g.id || '')),
+        tap(() => this.acting = false)
       ),
       this.ending$.pipe(
-        switchMap(g => api.complete(g.id || ''))
+        switchMap(g => api.complete(g.id || '')),
+        tap(() => this.acting = false)
       ),
       route.queryParams.pipe(
         // debounceTime(100),
+        tap(p => this.inviteCode = p.c || ''),
         switchMap(p => api.login(p.t).pipe(
           catchError(err => of({})),
           map(() => p)
@@ -54,8 +64,8 @@ export class AppComponent {
         ))
       )
     ], asyncScheduler).pipe(
-      mergeAll(),
-      finalize(() => this.acting = false)
+      finalize(() => this.acting = false),
+      mergeAll()
     );
 
     this.state$ = combineLatest([
@@ -88,6 +98,34 @@ export class AppComponent {
   done(s: GameState): void {
     this.acting = true;
     this.ending$.next(s);
+  }
+
+  invite(s: GameState): void {
+    // fetch code and put on clipboard
+    this.api.invite(s.id || '').subscribe(result => {
+      this.clipboard.copyToClipboard(
+        `${location.origin}${location.pathname}?c=${result.code}`
+      );
+    });
+  }
+
+  join(): void {
+    if (!this.inviteCode || !this.subjectName) {
+      return;
+    }
+
+    const model = {
+      code: this.inviteCode,
+      name: this.subjectName
+    };
+
+    this.api.enlist(model).subscribe(
+      result => {
+        window.location.search = `g=${result.gamespaceId}&t=${result.token}`;
+      },
+      (err) => this.errorMsg = err.error?.message || err.message || err
+    );
+
   }
 
   @HostListener('document:keydown', ['$event'])
