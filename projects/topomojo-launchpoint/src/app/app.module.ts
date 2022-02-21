@@ -3,10 +3,12 @@
 
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
+import { ClipboardService } from 'projects/topomojo-work/src/app/clipboard.service';
 import { CountdownPipe } from 'projects/topomojo-work/src/app/utility/countdown.pipe';
 import { SpinnerComponent } from 'projects/topomojo-work/src/app/utility/spinner/spinner.component';
 import { markedOptionsFactory } from './api.service';
@@ -24,6 +26,7 @@ import { SpacesPipe } from './spaces.pipe';
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     HttpClientModule,
     RouterModule.forRoot([]),
     MarkdownModule.forRoot({
@@ -32,14 +35,15 @@ import { SpacesPipe } from './spaces.pipe';
         useFactory: markedOptionsFactory,
       },
     }),
-    FontAwesomeModule,
+    FontAwesomeModule
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpInterceptorService,
       multi: true,
-    }
+    },
+    ClipboardService
   ],
   bootstrap: [AppComponent]
 })

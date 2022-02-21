@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
-import { GameState, TabRef } from './api.models';
+import { Enlistee, Enlistment, GameState, JoinCode, TabRef } from './api.models';
 
 @Injectable({
   providedIn: 'root'
@@ -43,9 +43,14 @@ export class ApiService {
     return this.http.post<GameState>(this.url + `/gamespace/${id}/complete`, null);
   }
   delete(id: string): Observable<any> {
-      return this.http.delete<any>(this.url + `/gamespace/${id}`);
+    return this.http.delete<any>(this.url + `/gamespace/${id}`);
   }
-
+  invite(id: string): Observable<JoinCode> {
+    return this.http.post<JoinCode>(this.url + `/gamespace/${id}/invite`, null);
+  }
+  enlist(model: Enlistee): Observable<Enlistment> {
+    return this.http.put<Enlistment>(this.url + `/player/enlist`, model);
+  }
   openConsole(qs: string): void {
     this.showTab(this.mks + qs);
   }
