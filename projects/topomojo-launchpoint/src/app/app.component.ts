@@ -3,7 +3,7 @@
 
 import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faBolt, faClipboard, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faClipboard, faShareAlt, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
 import { ClipboardService } from 'projects/topomojo-work/src/app/clipboard.service';
 import { asyncScheduler, combineLatest, interval, Observable, of, scheduled, Subject, timer } from 'rxjs';
 import { catchError, debounceTime, finalize, map, mergeAll, switchMap, tap } from 'rxjs/operators';
@@ -23,6 +23,7 @@ export class AppComponent {
   ending$ = new Subject<GameState>();
   acting = false;
   showDetail = false;
+  inviteCopied = false;
   inviteCode = '';
   subjectName = '';
   timewindow!: TimeWindow;
@@ -31,7 +32,8 @@ export class AppComponent {
   faTv = faTv;
   faTrash = faTrash;
   faBolt = faBolt;
-  faCopy = faClipboard;
+  faClipboard = faClipboard;
+  faShare = faShareAlt;
 
   constructor(
     route: ActivatedRoute,
@@ -106,6 +108,8 @@ export class AppComponent {
       this.clipboard.copyToClipboard(
         `${location.origin}${location.pathname}?c=${result.code}`
       );
+      this.inviteCopied = true;
+      timer(3000).subscribe(() => this.inviteCopied = false);
     });
   }
 

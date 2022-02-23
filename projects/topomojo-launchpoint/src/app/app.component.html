@@ -13,7 +13,7 @@
         </button>
         <ng-container *ngIf="state.isDuring && !acting">
           <button class="btn" (click)="invite(state)">
-            <fa-icon [icon]="faCopy"></fa-icon>
+            <fa-icon [icon]="inviteCopied ? faClipboard : faShare"></fa-icon>
             <span>Invite</span>
           </button>
           <button class="btn" (click)="done(state)">
