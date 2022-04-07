@@ -29,23 +29,23 @@
     <fa-icon [icon]="faSync"></fa-icon>
     <span>Refresh</span>
   </button>
-  <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="destroySelected()">
+  <app-confirm-button *ngIf="fullAdminView" btnClass="btn btn-outline-danger btn-sm" (confirm)="destroySelected()">
     <fa-icon [icon]="faTrash"></fa-icon>
     <span>Delete Selected</span>
   </app-confirm-button>
 </div>
 
-<div>
+<div *ngIf="fullAdminView">
   <button class="btn btn-light btn-sm mr-1" (click)="toggleAll()" aria-label="toggle selection for list">
     <fa-icon [icon]="selectAllValue ? faChecked : faUnChecked"></fa-icon>
   </button>
   <span><small>All</small></span>
 </div>
 
-<hr class="my-0"/>
+<hr class="my-0" [class]="!fullAdminView ? 'mt-2' : ''"/>
 
 <div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
-  <div class="col-1">
+  <div class="col-1" *ngIf="fullAdminView">
     <button class="btn btn-light btn-sm" (click)="toggle(g)">
       <fa-icon [icon]="g.checked ? faChecked : faUnChecked"></fa-icon>
     </button>
@@ -54,16 +54,16 @@
     <small class="px-1" [class.pop-success]="!g.gameOver" [class.pop-dark]="g.gameOver">{{g.id | slice:0:8}}</small>&nbsp;
     <small>{{g.session.countdown | countdown}}</small>
   </div>
-  <div class="col-5">
+  <div [class]="fullAdminView ? 'col-5' : 'col-6'">
     <span>{{g.managerName}}</span>
     <small> &mdash; {{g.name}}</small>
   </div>
-  <div class="col-3">
+  <div class="col-3 d-flex justify-content-end">
     <button class="btn btn-outline-info btn-sm mx-1" (click)="view(g)">
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
-    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="destroy(g)">
+    <app-confirm-button *ngIf="fullAdminView" btnClass="btn btn-outline-danger btn-sm" (confirm)="destroy(g)">
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Destroy</span>
     </app-confirm-button>

@@ -19,7 +19,7 @@
 
   <div [ngSwitch]="section" class="mb-4">
     <app-dashboard *ngSwitchCase="'dashboard' || ''"></app-dashboard>
-    <app-gamespace-browser *ngSwitchCase="'gamespaces'"></app-gamespace-browser>
+    <app-gamespace-browser *ngSwitchCase="'gamespaces'" [fullAdminView]="true"></app-gamespace-browser>
     <app-workspace-browser *ngSwitchCase="'workspaces'"></app-workspace-browser>
     <app-template-browser *ngSwitchCase="'templates'"></app-template-browser>
     <app-vm-browser *ngSwitchCase="'machines'"></app-vm-browser>

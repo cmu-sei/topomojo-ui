@@ -1,7 +1,7 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { faCheck, faCheckSquare, faFilter, faList, faSearch, faSquare, faSync, faSyncAlt, faTintSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { asyncScheduler, BehaviorSubject, combineLatest, interval, merge, Observable, scheduled, Subject } from 'rxjs';
 import { debounceTime, filter, map, switchMap, tap, zipAll } from 'rxjs/operators';
@@ -15,6 +15,7 @@ import { VmService } from '../../api/vm.service';
   styleUrls: ['./gamespace-browser.component.scss']
 })
 export class GamespaceBrowserComponent implements OnInit {
+  @Input() fullAdminView: boolean = false;
   refresh$ = new BehaviorSubject<boolean>(true);
   source$: Observable<Gamespace[]>;
   source: Gamespace[] = [];
