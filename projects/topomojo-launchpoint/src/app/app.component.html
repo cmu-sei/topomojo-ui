@@ -30,7 +30,7 @@
 
     <h1 *ngIf="state.error" class="text-danger">{{state.error | spaces}}</h1>
 
-    <div *ngIf="state.vms" class="flex-h z10">
+    <div *ngIf="state.vms" class="flex-h z10 vms">
 
       <div class="btn btn-lg" *ngFor="let vm of state.vms" (click)="open(vm)">
         <fa-icon [icon]="faTv"></fa-icon>
