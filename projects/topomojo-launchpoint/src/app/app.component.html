@@ -16,10 +16,10 @@
             <fa-icon [icon]="inviteCopied ? faClipboard : faShare"></fa-icon>
             <span>Invite</span>
           </button>
-          <button class="btn" (click)="done(state)">
+          <app-confirm-button btnClass="btn" (confirm)="done(state)">
             <fa-icon [icon]="faTrash"></fa-icon>
             <span> End Session</span>
-          </button>
+          </app-confirm-button>
           <span>Session ends in {{timewindow.countdown | countdown}}</span>
         </ng-container>
         <app-spinner *ngIf="acting"></app-spinner>
