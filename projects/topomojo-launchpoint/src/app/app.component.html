@@ -13,9 +13,16 @@
         </button>
         <ng-container *ngIf="state.isDuring && !acting">
           <button class="btn" (click)="invite(state)">
-            <fa-icon [icon]="inviteCopied ? faClipboard : faShare"></fa-icon>
-            <span>Invite</span>
+            <fa-icon [icon]="faShare"></fa-icon>
+            <span>Generate Invite</span>
           </button>
+          <span *ngIf="generatedInviteCode" (click)="copyInvite()" style="margin: 8px 0px 8px 0px"
+            (mouseenter)="copyHovering=true" (mouseleave)="copyHovering=false">
+            Copy Link
+            <span *ngIf="inviteCopied || copyHovering" [class.text-success]="inviteCopied">
+              <fa-icon [icon]="inviteCopied ? faClipboardCheck : faClipboard" size="sm"></fa-icon>
+            </span>
+          </span>
           <app-confirm-button btnClass="btn" (confirm)="done(state)">
             <fa-icon [icon]="faTrash"></fa-icon>
             <span> End Session</span>

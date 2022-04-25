@@ -3,9 +3,9 @@
 
 import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faBolt, faClipboard, faShareAlt, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faClipboard, faClipboardCheck, faShareAlt, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
 import { ClipboardService } from 'projects/topomojo-work/src/app/clipboard.service';
-import { asyncScheduler, combineLatest, interval, Observable, of, scheduled, Subject, timer } from 'rxjs';
+import { asyncScheduler, combineLatest, interval, Observable, of, scheduled, Subject, Subscription, timer } from 'rxjs';
 import { catchError, debounceTime, finalize, map, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { GameState, TimeWindow, VmState } from './api.models';
 import { ApiService } from './api.service';
@@ -23,16 +23,19 @@ export class AppComponent {
   ending$ = new Subject<GameState>();
   acting = false;
   showDetail = false;
-  inviteCopied = false;
   inviteCode = '';
   subjectName = '';
   timewindow!: TimeWindow;
   errorMsg = '';
+  generatedInviteCode = '';
+  copyHovering = false;
+  inviteCopied = false;
 
   faTv = faTv;
   faTrash = faTrash;
   faBolt = faBolt;
   faClipboard = faClipboard;
+  faClipboardCheck = faClipboardCheck;
   faShare = faShareAlt;
 
   constructor(
@@ -103,14 +106,25 @@ export class AppComponent {
   }
 
   invite(s: GameState): void {
-    // fetch code and put on clipboard
+    this.generatedInviteCode = '';
+    // fetch code and display "Copy Link" option
     this.api.invite(s.id || '').subscribe(result => {
-      this.clipboard.copyToClipboard(
-        `${location.origin}${location.pathname}?c=${result.code}`
-      );
-      this.inviteCopied = true;
-      timer(3000).subscribe(() => this.inviteCopied = false);
+      if (!!result?.code) {
+        this.generatedInviteCode = `${location.origin}${location.pathname}?c=${result.code}`;
+        this.inviteCopied = false;
+      }
     });
+  }
+
+  copyInvite(): void {
+    if (this.inviteCopied) return;
+    this.clipboard.copyToClipboard(this.generatedInviteCode);
+    this.inviteCopied = true;
+    // after 3 sec, stop showing green copied icon
+    const c: Subscription = timer(3000).pipe(
+      tap(() => this.inviteCopied = false),
+      finalize(() => c.unsubscribe())
+    ).subscribe();
   }
 
   join(): void {
