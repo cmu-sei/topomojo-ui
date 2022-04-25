@@ -21,6 +21,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   @Input() workspace!: Workspace;
   form: FormGroup;
   inviteUrl = '';
+  copiedInvite = false;
   errors: any[] = [];
 
   faClipboardCheck = faClipboardCheck;
@@ -81,13 +82,17 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   }
 
   enlistCode(): void {
+    this.inviteUrl = '';
     this.api.generateInvitation(this.workspace.id).pipe(
       finalize(() => {})
     ).subscribe(
       result => {
         this.inviteUrl = `${this.config.absoluteUrl}enlist/${result.code}`;
         this.clipboard.copyToClipboard(this.inviteUrl);
-        timer(4000).subscribe(() => this.inviteUrl = '');
+        this.copiedInvite = true;
+        timer(4000).subscribe(() => {
+          this.copiedInvite = false;
+        });
       }
     );
   }

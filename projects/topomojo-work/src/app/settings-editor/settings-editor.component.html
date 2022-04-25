@@ -57,10 +57,10 @@
 
     <div class="mt-2">
       <button class="btn btn-outline-secondary" (click)="enlistCode()">
-        <fa-icon [icon]="faUserCog"></fa-icon>
+        <fa-icon [icon]="copiedInvite ? faClipboardCheck : faUserCog"></fa-icon>
         <span>Generate invitation</span>
       </button>
-      <fa-icon *ngIf="inviteUrl" class="text-success ml-2" [icon]="faClipboardCheck"></fa-icon>
+      <app-clipspan class="mx-2">{{inviteUrl}}</app-clipspan>
     </div>
     <small>Invite collaborators by sharing an invitation url. (Invalidates existing invitation)</small>
 
