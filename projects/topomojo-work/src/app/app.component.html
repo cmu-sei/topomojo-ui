@@ -17,6 +17,7 @@
     <a class="btn btn-outline-light btn-sm" [routerLink]="['/']">Home</a>
     <a class="btn btn-outline-light btn-sm ml-2" [routerLink]="['/about']">About</a>
     <button *ngIf="!!user && user.isAdmin" class="btn btn-outline-light btn-sm ml-2" [routerLink]="['/admin']">Admin</button>
+    <button *ngIf="!!user && user.isObserver && !user.isAdmin" class="btn btn-outline-light btn-sm ml-2" [routerLink]="['/observe']">Observe</button>
     <button *ngIf="!!user" class="btn btn-outline-light btn-sm ml-2" (click)="logout()">Logout</button>
   </div>
 </nav>

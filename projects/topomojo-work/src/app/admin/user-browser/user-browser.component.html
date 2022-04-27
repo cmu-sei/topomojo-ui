@@ -20,6 +20,10 @@
       <fa-icon [hidden]="filter!=='administrator'" [icon]="faFilter"></fa-icon>
       <span>admins</span>
     </button>
+    <button class="mr-1 btn btn-link text-info btn-sm" (click)="toggleFilter('observer')">
+      <fa-icon [hidden]="filter!=='observer'" [icon]="faFilter"></fa-icon>
+      <span>observers</span>
+    </button>
     <button class="mr-1 btn btn-link text-secondary btn-sm" (click)="toggleFilter('creator')">
       <fa-icon [hidden]="filter!=='creator'" [icon]="faFilter"></fa-icon>
       <span>creators</span>
@@ -78,6 +82,7 @@
           <label class="btn btn-outline-info btn-sm" btnRadio="user">User</label>
           <label class="btn btn-outline-info btn-sm" btnRadio="builder">Builder</label>
           <label class="btn btn-outline-info btn-sm" btnRadio="creator">Creator</label>
+          <label class="btn btn-outline-info btn-sm" btnRadio="observer">Observer</label>
           <label class="btn btn-outline-info btn-sm" btnRadio="administrator">Admin</label>
           <label class="btn btn-outline-info btn-sm" btnRadio="disabled">Disabled</label>
         </div>

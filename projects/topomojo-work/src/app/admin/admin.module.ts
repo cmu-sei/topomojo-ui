@@ -18,6 +18,7 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { UserBrowserComponent } from './user-browser/user-browser.component';
 import { ApikeysComponent } from './apikeys/apikeys.component';
 import { LogViewerComponent } from './log-viewer/log-viewer.component';
+import { ObserveComponent } from './observe/observe.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { LogViewerComponent } from './log-viewer/log-viewer.component';
     TemplateDetailFormComponent,
     UserBrowserComponent,
     ApikeysComponent,
-    LogViewerComponent
+    LogViewerComponent,
+    ObserveComponent
   ],
   imports: [
     CommonModule,

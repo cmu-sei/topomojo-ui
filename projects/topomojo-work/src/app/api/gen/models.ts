@@ -90,6 +90,7 @@ export interface ApiUser {
   scope: string;
   role: string;
   isAdmin: boolean;
+  isObserver: boolean;
   isCreator: boolean;
   isBuilder: boolean;
   workspaceLimit: number;
