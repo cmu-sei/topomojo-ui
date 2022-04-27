@@ -13,13 +13,20 @@
         </button>
         <ng-container *ngIf="state.isDuring && !acting">
           <button class="btn" (click)="invite(state)">
-            <fa-icon [icon]="inviteCopied ? faClipboard : faShare"></fa-icon>
-            <span>Invite</span>
+            <fa-icon [icon]="faShare"></fa-icon>
+            <span>Generate Invite</span>
           </button>
-          <button class="btn" (click)="done(state)">
+          <span *ngIf="generatedInviteCode" (click)="copyInvite()" style="margin: 8px 0px 8px 0px"
+            (mouseenter)="copyHovering=true" (mouseleave)="copyHovering=false">
+            Copy Link
+            <span *ngIf="inviteCopied || copyHovering" [class.text-success]="inviteCopied">
+              <fa-icon [icon]="inviteCopied ? faClipboardCheck : faClipboard" size="sm"></fa-icon>
+            </span>
+          </span>
+          <app-confirm-button btnClass="btn" (confirm)="done(state)">
             <fa-icon [icon]="faTrash"></fa-icon>
             <span> End Session</span>
-          </button>
+          </app-confirm-button>
           <span>Session ends in {{timewindow.countdown | countdown}}</span>
         </ng-container>
         <app-spinner *ngIf="acting"></app-spinner>
@@ -30,7 +37,7 @@
 
     <h1 *ngIf="state.error" class="text-danger">{{state.error | spaces}}</h1>
 
-    <div *ngIf="state.vms" class="flex-h z10">
+    <div *ngIf="state.vms" class="flex-h z10 vms">
 
       <div class="btn btn-lg" *ngFor="let vm of state.vms" (click)="open(vm)">
         <fa-icon [icon]="faTv"></fa-icon>

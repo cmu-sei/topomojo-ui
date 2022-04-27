@@ -16,13 +16,15 @@ import { markedOptionsFactory } from './api.service';
 import { AppComponent } from './app.component';
 import { HttpInterceptorService } from './http-interceptor.service';
 import { SpacesPipe } from './spaces.pipe';
+import { ConfirmButtonComponent } from './utility/confirm-button/confirm-button.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SpinnerComponent,
     SpacesPipe,
-    CountdownPipe
+    CountdownPipe,
+    ConfirmButtonComponent
   ],
   imports: [
     BrowserModule,
