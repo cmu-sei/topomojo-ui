@@ -57,7 +57,7 @@
         <fa-icon [icon]="faStepBackward"></fa-icon>
       </button>
 
-      <button *ngIf="fullAdminView" class="btn btn-outline-dark" (click)="confirming=true"
+      <button *ngIf="!hideDelete" class="btn btn-outline-dark" (click)="confirming=true"
       aria-label="delete" tooltip="delete">
         <fa-icon [icon]="faTrash"></fa-icon>
       </button>

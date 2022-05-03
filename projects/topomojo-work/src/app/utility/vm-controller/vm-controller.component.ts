@@ -18,7 +18,7 @@ import { ConfigService } from '../../config.service';
 export class VmControllerComponent implements OnInit, OnDestroy {
   @Input() template: (Template | TemplateSummary) = { id: '', name: '', workspaceId: ''};
   @Input() vm: Vm = {};
-  @Input() fullAdminView: boolean = false;
+  @Input() hideDelete: boolean = false;
   task = '';
   confirming = false;
   vm$: Observable<Vm>;
