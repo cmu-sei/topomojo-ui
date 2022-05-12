@@ -29,7 +29,7 @@
     <fa-icon [icon]="faSync"></fa-icon>
     <span>Refresh</span>
   </button>
-  <app-confirm-button *ngIf="fullAdminView" btnClass="btn btn-outline-danger btn-sm" (confirm)="destroySelected()">
+  <app-confirm-button *ngIf="fullAdminView" btnClass="btn btn-outline-danger btn-sm" (confirm)="deleteSelected()">
     <fa-icon [icon]="faTrash"></fa-icon>
     <span>Delete Selected</span>
   </app-confirm-button>
@@ -63,9 +63,9 @@
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
-    <app-confirm-button *ngIf="fullAdminView" btnClass="btn btn-outline-danger btn-sm" (confirm)="destroy(g)">
+    <app-confirm-button *ngIf="fullAdminView" btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(g)">
       <fa-icon [icon]="faTrash"></fa-icon>
-      <span>Destroy</span>
+      <span>Delete</span>
     </app-confirm-button>
   </div>
   <div *ngIf="viewed === g" class="col-12">
@@ -79,7 +79,11 @@
         </div>
       </div>
       <div>
-        <pre>{{view.g | json}}</pre>
+        <h5 class="mb-0">Dispatcher</h5>
+        <app-gamespace-interact [id]="g.id" [vms]="view.v"></app-gamespace-interact>
+
+        <h5 class="mb-0">Detail</h5>
+        <app-gamespace-detail [detail]="view.g"></app-gamespace-detail>
       </div>
     </ng-container>
   </div>

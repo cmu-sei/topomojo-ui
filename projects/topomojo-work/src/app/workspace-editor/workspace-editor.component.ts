@@ -57,7 +57,7 @@ export class WorkspaceEditorComponent implements OnInit, OnDestroy {
       tap(id => this.guid = id),
       switchMap(id => query$(id)),
       filter(r => !!r.id),
-      tap(r => hub.joinWorkspace(r.id)),
+      tap(r => hub.joinChannel(r.id)),
       tap(r => config.updateLocal({last: `topo/${r.id}/${this.section}`}))
     );
 
@@ -67,7 +67,7 @@ export class WorkspaceEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.hub.leaveWorkspace();
+    this.hub.leaveChannel();
   }
 
   bail(): void {

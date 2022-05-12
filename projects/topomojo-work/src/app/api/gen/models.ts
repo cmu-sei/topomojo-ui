@@ -508,3 +508,35 @@ export class TimeWindow {
     ;
   }
 }
+
+// #################################
+// ## DISPATCH Models
+// #################################
+export interface Dispatch {
+  id: string;
+  trigger: string;
+  targetGroup: string;
+  targetName: string;
+  result: string;
+  error: string;
+  whenCreated: Date;
+  whenUpdated: Date;
+}
+
+export interface ChangedDispatch {
+  id: string;
+  result: string;
+  error: string;
+}
+
+export interface NewDispatch {
+  referenceId: string;
+  trigger: string;
+  targetGroup: string;
+  targetName: string;
+}
+
+export interface DispatchSearch extends Search {
+  gs?: string;
+  since?: string;
+}

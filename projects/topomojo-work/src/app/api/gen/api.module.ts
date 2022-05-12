@@ -10,6 +10,7 @@ import { ProfileService } from '../profile.service';
 import { TemplateService } from '../template.service';
 import { WorkspaceService } from '../workspace.service';
 import { VmService } from '../vm.service';
+import { DispatchService } from '../dispatch.service';
 
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
@@ -27,7 +28,8 @@ import { ApiSettings } from '../api-settings';
         ProfileService,
         TemplateService,
         WorkspaceService,
-        VmService
+        VmService,
+        DispatchService
     ]
 })
 export class ApiModule { }
