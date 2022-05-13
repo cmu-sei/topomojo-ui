@@ -79,11 +79,14 @@
         </div>
       </div>
       <div>
-        <h5 class="mb-0">Dispatcher</h5>
-        <app-gamespace-interact [id]="g.id" [vms]="view.v"></app-gamespace-interact>
+        <!-- <div class="mb-4" *ngIf="viewmode==='dispatch'">
+          <h5 class="mt-2 mb-0">Dispatcher</h5>
+          <app-gamespace-interact [id]="g.id"></app-gamespace-interact>
+        </div> -->
 
-        <h5 class="mb-0">Detail</h5>
-        <app-gamespace-detail [detail]="view.g"></app-gamespace-detail>
+        <div class="mb-4">
+          <app-gamespace-detail [detail]="view.g" [gamespace]="g"></app-gamespace-detail>
+        </div>
       </div>
     </ng-container>
   </div>

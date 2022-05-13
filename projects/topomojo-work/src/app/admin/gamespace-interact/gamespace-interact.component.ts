@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { faRedo, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faInfo, faInfoCircle, faRedo, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Subject, Subscription, timer } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { DispatchService } from '../../api/dispatch.service';
@@ -24,6 +24,7 @@ export class GamespaceInteractComponent implements OnInit, OnChanges, AfterViewI
   cmd = '';
   faTrash = faTrash;
   faRedo = faRedo;
+  faInfo = faInfoCircle;
 
   constructor(
     private api: DispatchService,
