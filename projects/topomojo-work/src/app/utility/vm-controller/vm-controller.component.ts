@@ -6,7 +6,7 @@ import { Template, TemplateSummary, Vm, VmOperationTypeEnum } from '../../api/ge
 import { faCircleNotch, faSyncAlt, faCog, faBolt, faTv, faPlay, faStop, faSave, faStepBackward, faUndoAlt, faTrash, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Observable, of, Subject, Subscription, timer } from 'rxjs';
 import { VmService } from '../../api/vm.service';
-import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../notification.service';
 import { ConfigService } from '../../config.service';
 
@@ -86,7 +86,9 @@ export class VmControllerComponent implements OnInit, OnDestroy {
     switch (task) {
 
       case 'initialize':
-        q = this.api.initializeTemplate(this.template.id);
+        q = this.api.initializeTemplate(this.template.id).pipe(
+          map(i => ({...this.vm, task: {progress: i}} as Vm) )
+        );
         break;
 
       case 'deploy':
