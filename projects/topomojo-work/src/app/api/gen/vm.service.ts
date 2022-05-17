@@ -50,8 +50,8 @@ export class GeneratedVmService extends GeneratedService {
   public deployTemplate(id: string): Observable<Vm> {
     return this.http.post<Vm>(this.conf.api + `/vm-template/${id}`, {});
   }
-  public initializeTemplate(id: string): Observable<Vm> {
-    return this.http.put<Vm>(this.conf.api + `/vm-template/${id}`, {});
+  public initializeTemplate(id: string): Observable<number> {
+    return this.http.put<number>(this.conf.api + `/vm-template/${id}`, {});
   }
   public reloadHost(host: string): Observable<any> {
     return this.http.post<any>(this.conf.api + `/pod/` + host, {});
