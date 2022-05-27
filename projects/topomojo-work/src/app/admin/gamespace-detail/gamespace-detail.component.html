@@ -1,0 +1,25 @@
+<div class="text-center">
+  <button class="btn btn-outline-info btn-sm mx-1" (click)="show('default')">
+    <fa-icon [icon]="faList"></fa-icon>
+    <span>Detail</span>
+  </button>
+  <button class="btn btn-outline-info btn-sm mx-1" (click)="show('json')">
+    <fa-icon [icon]="faJson"></fa-icon>
+    <span>Json</span>
+  </button>
+  <button class="btn btn-outline-info btn-sm mx-1" (click)="show('dispatch')">
+    <fa-icon [icon]="faKeyboard"></fa-icon>
+    <span>Dispatcher</span>
+  </button>
+</div>
+
+<pre *ngIf="showing==='json'">{{detail | json}}</pre>
+
+<div *ngIf="showing==='dispatch'">
+  <app-gamespace-interact [id]="gamespace.id"></app-gamespace-interact>
+</div>
+
+<div *ngIf="showing==='default'">
+  <!-- TODO: make ui -->
+  <span>TODO: pretty ui</span>
+</div>

@@ -31,7 +31,7 @@ export class GeneratedService {
         return (qs) ? '?' + qs : '';
     }
 
-    private encodeKVP(key: string, value: string) {
+    private encodeKVP(key: string, value: string): string {
         return encodeURIComponent(key) + '=' + encodeURIComponent(value);
     }
 }

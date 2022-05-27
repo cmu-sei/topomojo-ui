@@ -76,7 +76,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     );
     this.nets$ = this.refreshNets$.pipe(
       debounceTime(500),
-      switchMap(() => api.nets(this.vmId)),
+      switchMap(() => api.nets(this.request.sessionId || '')),
       map(r => r.net)
     );
   }

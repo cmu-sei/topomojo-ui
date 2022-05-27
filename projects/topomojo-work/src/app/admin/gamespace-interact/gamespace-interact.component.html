@@ -1,0 +1,28 @@
+<div class="widget">
+  <div class="display text-monospace" #scrolltarget>
+    <div *ngFor="let d of dispatches">
+      <div>
+        <app-confirm-button btnClass="btn btn-sm btn-light" (confirm)="delete(d.id)">
+          <fa-icon [icon]="faTrash"></fa-icon>
+        </app-confirm-button>
+        <small class="text-light bg-secondary rounded p-1 ml-1">{{d.whenCreated}}</small>
+        <small class="text-light bg-secondary rounded p-1 ml-1">{{d.targetName}}</small>
+        <span class="m-1">&nbsp;{{d.trigger}}</span>
+        <app-confirm-button btnClass="btn btn-sm btn-light" (confirm)="repeat(d)">
+          <fa-icon [icon]="faRedo"></fa-icon>
+        </app-confirm-button>
+      </div>
+      <pre>{{d.result}}</pre>
+      <pre class="text-danger wrap">{{d.error}}</pre>
+    </div>
+  </div>
+  <div class="command">
+    <div class="m-1">
+      <input class="form-control border-0" [(ngModel)]="cmd" (keyup.enter)="send()" placeholder="[target] command">
+    </div>
+  </div>
+</div>
+<small>
+  <fa-icon [icon]="faInfo"></fa-icon>
+  Specifying the target name is optional.  If omitted, the command will be processed by all listening agents.
+</small>

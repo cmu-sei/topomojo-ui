@@ -19,6 +19,8 @@ import { UserBrowserComponent } from './user-browser/user-browser.component';
 import { ApikeysComponent } from './apikeys/apikeys.component';
 import { LogViewerComponent } from './log-viewer/log-viewer.component';
 import { ObserveComponent } from './observe/observe.component';
+import { GamespaceDetailComponent } from './gamespace-detail/gamespace-detail.component';
+import { GamespaceInteractComponent } from './gamespace-interact/gamespace-interact.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import { ObserveComponent } from './observe/observe.component';
     UserBrowserComponent,
     ApikeysComponent,
     LogViewerComponent,
-    ObserveComponent
+    ObserveComponent,
+    GamespaceDetailComponent,
+    GamespaceInteractComponent
   ],
   imports: [
     CommonModule,

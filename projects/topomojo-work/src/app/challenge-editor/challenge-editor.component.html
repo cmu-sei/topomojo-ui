@@ -37,8 +37,7 @@
         </button>
         <pre *ngIf="showTransformExamples">
           id &mdash; the gamespace id
-          grader_key &mdash; the grading apikey
-          grader_url &mdash; the grading url
+          variant &mdash; the gamespace variant index
           hex &mdash; yields 8 hex characters
           b64 &mdash; yields 24 base64 characters
           int &mdash; yields decimal string
@@ -48,6 +47,10 @@
           int:99-999 &mdash; yields decimal string between 99 and 999
           list:one two three four &mdash; yields a single word
           list:2:one two three four five &mdash; yields two words (and indexed keys `##key_1##`, `##key_2##`)
+          index:3:zero one two three four &mdash; yields "three"
+          app_url, topomojo_url &mdash; this application url (no path)
+          grader_url &mdash; the grading url endpoint
+          api_key, grader_key &mdash; the gamespace apikey (not for participants)
         </pre>
       </small>
     </div>

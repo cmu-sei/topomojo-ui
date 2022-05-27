@@ -24,6 +24,7 @@ export class NotificationService {
   vmEvents = new Subject<HubEvent>();
   templateEvents = new Subject<HubEvent>();
   documentEvents = new Subject<HubEvent>();
+  dispatchEvents = new Subject<HubEvent>();
   me = '';
   colormap = ['success', 'secondary', 'info', 'warning', 'primary'];
 
@@ -53,16 +54,16 @@ export class NotificationService {
 
   }
 
-  async joinWorkspace(id: string): Promise<void> {
+  async joinChannel(id: string): Promise<void> {
 
     // prevent race if trying to join channel before connection is fully up
     if (this.connection.state !== HubConnectionState.Connected) {
-      timer(1000).subscribe(() => this.joinWorkspace(id));
+      timer(1000).subscribe(() => this.joinChannel(id));
       return;
     }
 
     try {
-      await this.leaveWorkspace();
+      await this.leaveChannel();
       if (!!id) {
         await this.connection.invoke('Listen', id);
         this.hubState.id = id;
@@ -74,7 +75,7 @@ export class NotificationService {
     }
   }
 
-  async leaveWorkspace(): Promise<void> {
+  async leaveChannel(): Promise<void> {
     if (!!this.hubState.id && this.connection.state === HubConnectionState.Connected) {
       await this.connection.invoke('Leave', this.hubState.id);
       this.hubState.id = '';
@@ -119,6 +120,7 @@ export class NotificationService {
     connection.on('vmEvent', (e: HubEvent) => this.vmEvents.next(e));
     connection.on('templateEvent', (e: HubEvent) => this.templateEvents.next(e));
     connection.on('globalEvent', (e: HubEvent) => this.globalEvents.next(e));
+    connection.on('dispatchEvent', (e: HubEvent) => this.dispatchEvents.next(e));
 
     return connection;
   }
@@ -152,7 +154,7 @@ export class NotificationService {
     this.hubState.initialized = true;
     this.postState();
     if (this.hubState.id){
-      await this.joinWorkspace(this.hubState.id); // rejoin if was previously joined
+      await this.joinChannel(this.hubState.id); // rejoin if was previously joined
     }
   }
 

@@ -20,7 +20,7 @@
       <fa-icon [hidden]="filter!=='administrator'" [icon]="faFilter"></fa-icon>
       <span>admins</span>
     </button>
-    <button class="mr-1 btn btn-link text-info btn-sm" (click)="toggleFilter('observer')">
+    <button class="mr-1 btn btn-link text-pink btn-sm" (click)="toggleFilter('observer')">
       <fa-icon [hidden]="filter!=='observer'" [icon]="faFilter"></fa-icon>
       <span>observers</span>
     </button>
@@ -49,6 +49,7 @@
   [class.pop-success]="user.role==='administrator'"
   [class.pop-secondary]="user.role==='creator'"
   [class.pop-warning]="user.role==='builder'"
+  [class.pop-pink]="user.role==='observer'"
   >
   <div class="col-8">
     <span class="text-secondary">{{user.name}}</span>
@@ -57,11 +58,8 @@
       <app-clipspan>{{user.id}}</app-clipspan>
     </small>
   </div>
-  <div class="col-1">
-    <small>{{user.whenCreated | shortdate}}</small>
-  </div>
-  <div class="col-3">
-
+  <div class="col-4 align-self-center text-right">
+    <small class="mr-2">{{user.whenCreated | shortdate}}</small>
     <button class="btn btn-outline-info btn-sm mx-1" (click)="view(user)">
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>

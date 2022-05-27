@@ -15,7 +15,7 @@ import { VmService } from '../../api/vm.service';
   styleUrls: ['./gamespace-browser.component.scss']
 })
 export class GamespaceBrowserComponent implements OnInit {
-  @Input() fullAdminView: boolean = false;
+  @Input() fullAdminView = false;
   refresh$ = new BehaviorSubject<boolean>(true);
   source$: Observable<Gamespace[]>;
   source: Gamespace[] = [];
@@ -81,7 +81,7 @@ export class GamespaceBrowserComponent implements OnInit {
     this.viewed = this.source.find(g => g.id === this.viewed?.id);
   }
 
-  destroy(g: Gamespace): void {
+  delete(g: Gamespace): void {
     this.api.delete(g.id).subscribe(() => this.removeDeleted(g));
   }
 
@@ -99,8 +99,8 @@ export class GamespaceBrowserComponent implements OnInit {
       : [];
   }
 
-  destroySelected(): void {
-    [...this.selected].forEach(g => this.destroy(g));
+  deleteSelected(): void {
+    [...this.selected].forEach(g => this.delete(g));
   }
 
   toggle(g: Gamespace): void {
