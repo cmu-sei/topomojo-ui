@@ -85,7 +85,7 @@
         <i class="fa fa-arrows-alt fa-2x"></i> Refresh
       </button>
       <button *ngFor="let net of nets$ | async" class="btn" (click)="setNet(net)">
-        <i class="fa fa-arrows-alt fa-2x"></i> {{net}}
+        <i class="fa fa-arrows-alt fa-2x"></i> {{net.split('#')[0]}}
       </button>
     </div>
 
