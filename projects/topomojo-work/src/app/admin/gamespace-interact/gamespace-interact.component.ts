@@ -1,3 +1,6 @@
+// Copyright 2021 Carnegie Mellon University.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
+
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { faInfo, faInfoCircle, faRedo, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Subject, Subscription, timer } from 'rxjs';

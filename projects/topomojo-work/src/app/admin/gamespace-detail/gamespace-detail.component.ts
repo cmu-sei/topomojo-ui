@@ -1,3 +1,6 @@
+// Copyright 2021 Carnegie Mellon University.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
+
 import { Component, Input, OnInit } from '@angular/core';
 import { faCode, faKeyboard, faList } from '@fortawesome/free-solid-svg-icons';
 import { Gamespace } from '../../api/gen/models';
