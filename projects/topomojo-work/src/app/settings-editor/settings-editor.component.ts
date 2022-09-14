@@ -87,7 +87,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
       finalize(() => {})
     ).subscribe(
       result => {
-        this.inviteUrl = `${this.config.absoluteUrl}enlist/${result.code}`;
+        this.inviteUrl = this.config.externalUrl(`/topo/${this.workspace.id}/invite/${result.code}`);
         this.clipboard.copyToClipboard(this.inviteUrl);
         this.copiedInvite = true;
         timer(4000).subscribe(() => {

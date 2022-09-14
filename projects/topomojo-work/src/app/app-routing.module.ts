@@ -15,6 +15,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { WorkspaceEditorComponent } from './workspace-editor/workspace-editor.component';
 import { GamespaceComponent } from './gamespace/gamespace.component';
 import { ObserveComponent } from './admin/observe/observe.component';
+import { GamespaceJoinComponent } from './gamespace-join/gamespace-join.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -23,12 +24,13 @@ const routes: Routes = [
   { path: 'oidc', component: OidcComponent },
   { path: 'oidc-silent', component: OidcComponent },
   { path: '', canActivate: [AuthGuard], canActivateChild: [AuthGuard], children: [
-    { path: 'enlist/:code', component: EnlistComponent },
+    { path: 'mojo/:id/:slug/:code', component: GamespaceJoinComponent },
     { path: 'mojo/:id/:slug', component: GamespaceComponent },
-    { path: 'topo/:id', pathMatch: 'full', redirectTo: 'topo/:id/settings'},
+    { path: 'topo/:id/invite/:code', component: EnlistComponent },
     { path: 'topo/:id/:section', component: WorkspaceEditorComponent},
-    { 
-      path: 'observe', 
+    { path: 'topo/:id', pathMatch: 'full', redirectTo: 'topo/:id/settings'},
+    {
+      path: 'observe',
       canLoad: [ObserverGuard], canActivate: [ObserverGuard], canActivateChild: [ObserverGuard],
       component: ObserveComponent
     },

@@ -25,6 +25,7 @@ export class NotificationService {
   templateEvents = new Subject<HubEvent>();
   documentEvents = new Subject<HubEvent>();
   dispatchEvents = new Subject<HubEvent>();
+  gameEvents = new Subject<HubEvent>();
   me = '';
   colormap = ['success', 'secondary', 'info', 'warning', 'primary'];
 
@@ -34,7 +35,7 @@ export class NotificationService {
     private profileSvc: ProfileService
   ) {
 
-    this.connection = this.getConnection(`${config.apphost}hub`);
+    this.connection = this.getConnection(`${config.apphost}/hub`);
 
     // refresh connection on token refresh
     auth.tokenState$.pipe(
@@ -121,6 +122,7 @@ export class NotificationService {
     connection.on('templateEvent', (e: HubEvent) => this.templateEvents.next(e));
     connection.on('globalEvent', (e: HubEvent) => this.globalEvents.next(e));
     connection.on('dispatchEvent', (e: HubEvent) => this.dispatchEvents.next(e));
+    connection.on('gameEvent', (e: HubEvent) => this.gameEvents.next(e));
 
     return connection;
   }

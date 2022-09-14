@@ -46,6 +46,7 @@ export interface Player {
 export interface GameState {
   id: string;
   name: string;
+  slug: string;
   audience: string;
   managerId: string;
   managerName: string;

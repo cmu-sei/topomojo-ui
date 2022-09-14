@@ -5,22 +5,19 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { UserManagerSettings } from 'oidc-client';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from 'projects/topomojo-work/src/environments/environment';
-import { Location, PlatformLocation } from '@angular/common';
+import { Location } from '@angular/common';
 import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 // import { MarkedRenderer, MarkedOptions } from 'ngx-markdown';
 
 @Injectable({providedIn: 'root'})
 export class ConfigService {
 
-  private url = 'assets/settings.json';
   private restorationComplete = false;
   storageKey = 'topomojo';
-  basehref = '';
   settings: Settings = environment.settings;
   local: LocalAppSettings = {};
-  absoluteUrl = '';
   tabs: TabRef[] = [];
   settings$ = new BehaviorSubject<Settings>(this.settings);
   sidebar$ = new Subject<boolean>();
@@ -53,32 +50,27 @@ export class ConfigService {
 
   constructor(
     private http: HttpClient,
-    private location: Location,
-    platform: PlatformLocation
+    private location: Location
   ) {
-    this.basehref = platform.getBaseHrefFromDOM();
-    this.absoluteUrl = `${window.location.protocol}//${window.location.host}${this.basehref}`;
     this.local = this.getLocal();
   }
 
   get apphost(): string {
-    let path = this.settings.apphost || this.basehref;
-    if (!path.endsWith('/')) {
-      path += '/';
-    }
-    return path;
+    return this.settings.apphost
+      ? this.location.normalize(this.settings.apphost)
+      : this.location.prepareExternalUrl('/')
+    ;
   }
 
   get mkshost(): string {
-    let path = this.settings.mkshost || `${this.basehref}mks`;
-    if (!path.endsWith('/')) {
-      path += '/';
-    }
-    return path;
+    return this.settings.mkshost
+      ? this.location.normalize(this.settings.mkshost)
+      : this.location.prepareExternalUrl('/mks')
+    ;
   }
 
   load(): Observable<any> {
-    return this.http.get<Settings>(this.basehref + this.url)
+    return this.http.get<Settings>(this.location.prepareExternalUrl('/assets/settings.json'))
       .pipe(
         catchError((err: Error) => {
           return of({} as Settings);
@@ -92,8 +84,12 @@ export class ConfigService {
       );
   }
 
+  externalUrl(path: string): string {
+    return `${window.location.protocol}//${window.location.host}${this.location.prepareExternalUrl(path)}`;
+  }
+
   openConsole(qs: string): void {
-    this.showTab(this.mkshost + qs);
+    this.showTab(this.mkshost + '/' + qs);
   }
 
   showTab(url: string): void {

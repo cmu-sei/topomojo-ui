@@ -3,6 +3,7 @@
 
 <ng-container *ngIf="gamespace$ | async as game">
   <div class="reader mb-4">
+    <app-presence-bar></app-presence-bar>
     <div class="text-center">
       <div *ngIf="game.session?.isBefore && !launching">
         <app-confirm-button btnClass="btn btn-lg btn-secondary my-2" (confirm)="launch()">
@@ -15,6 +16,10 @@
           <fa-icon [icon]="faTrash"></fa-icon>
           <span>End</span>
         </app-confirm-button>
+        <button class="btn btn-lg btn-info m-2" (click)="invite(game)">
+          <fa-icon [icon]="invited ? faClipboardCheck : faShare"></fa-icon>
+          <span>Invite</span>
+        </button>
         <div><span class="clock">{{game.session.countdown | clock}}</span></div>
       </ng-container>
       <div *ngIf="game.gameOver" class="text-center">

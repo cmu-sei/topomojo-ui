@@ -56,6 +56,7 @@ import { IsoSelectorComponent } from './iso-selector/iso-selector.component';
 import { ApikeysComponent } from './apikeys/apikeys.component';
 import { GamespaceCardComponent } from './gamespace-card/gamespace-card.component';
 import { GamespaceStateComponent } from './gamespace-state/gamespace-state.component';
+import { GamespaceJoinComponent } from './gamespace-join/gamespace-join.component';
 
 @NgModule({
   declarations: [
@@ -91,7 +92,8 @@ import { GamespaceStateComponent } from './gamespace-state/gamespace-state.compo
     IsoSelectorComponent,
     ApikeysComponent,
     GamespaceCardComponent,
-    GamespaceStateComponent
+    GamespaceStateComponent,
+    GamespaceJoinComponent
   ],
   imports: [
     BrowserModule,

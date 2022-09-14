@@ -1,27 +1,30 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, OnInit } from '@angular/core';
-import { Subject, Observable, merge, scheduled, asyncScheduler, timer, of } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject, Observable, merge, scheduled, asyncScheduler, timer, of, Subscription } from 'rxjs';
 import { catchError, filter, finalize, map, switchMap, tap, zipAll } from 'rxjs/operators';
 import { GamespaceService } from '../api/gamespace.service';
-import { GameState, GamespaceRegistration } from '../api/gen/models';
-import { faBolt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { GameState, GamespaceRegistration, JoinCode } from '../api/gen/models';
+import { faBolt, faClipboardCheck, faShare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { ConfigService } from '../config.service';
 import { ActivatedRoute } from '@angular/router';
+import { ClipboardService } from '../clipboard.service';
+import { NotificationService } from '../notification.service';
 
 @Component({
   selector: 'app-gamespace',
   templateUrl: './gamespace.component.html',
   styleUrls: ['./gamespace.component.scss']
 })
-export class GamespaceComponent implements OnInit {
+export class GamespaceComponent implements OnInit, OnDestroy {
   gamespace$: Observable<GameState>;
   changed$ = new Subject<GameState>();
   state!: GameState;
   errors: any[] = [];
   launching = false;
   deploying = false;
+  invited = false;
 
   settings: GamespaceRegistration = {
     resourceId: '',
@@ -36,11 +39,15 @@ export class GamespaceComponent implements OnInit {
 
   faBolt = faBolt;
   faTrash = faTrash;
+  faShare = faShare;
+  faClipboardCheck = faClipboardCheck;
 
   constructor(
     route: ActivatedRoute,
     private api: GamespaceService,
-    private conf: ConfigService
+    private conf: ConfigService,
+    private clip: ClipboardService,
+    private hub: NotificationService
   ) {
 
     const loaded$ = (id: string) => scheduled([
@@ -55,8 +62,13 @@ export class GamespaceComponent implements OnInit {
       route.params.pipe(
         tap(p => this.settings.resourceId = p.id),
         switchMap(p => loaded$(p.id)),
+        tap(g => { if (g.isActive) { hub.joinChannel(g.id); } })
       ),
       this.changed$,
+      hub.gameEvents.pipe(
+        map(e => api.transform(e.model) as GameState),
+        tap(e => console.log(e))
+      ),
       timer(0, 1000).pipe(
         filter(() => !!this.state && !!this.state.id),
         map(i => api.transform(this.state) as GameState)
@@ -65,14 +77,21 @@ export class GamespaceComponent implements OnInit {
       tap(g => this.state = g)
     );
 
+    // todo: if /c=code, api.createPlayer(code)
+
   }
 
   ngOnInit(): void {
   }
 
+  ngOnDestroy(): void {
+    this.hub.leaveChannel();
+  }
+
   launch(): void {
     this.launching = true;
     this.api.register(this.settings).pipe(
+      tap(g => { if (g.isActive) { this.hub.joinChannel(g.id); } }),
       finalize(() => this.launching = false)
     ).subscribe(
       gs => this.changed$.next(gs),
@@ -90,4 +109,20 @@ export class GamespaceComponent implements OnInit {
     );
   }
 
+  invite(state: GameState): void {
+    if (!state?.id) { return; }
+    this.invited = false;
+    this.api.invite(state.id).subscribe(
+      (result: JoinCode) => {
+        this.clip.copyToClipboard(
+          this.conf.externalUrl(`/mojo/${state.id}/${state.slug}/${result.code}`)
+        );
+        this.invited = true;
+        const c: Subscription = timer(3000).pipe(
+          tap(() => this.invited = false),
+          finalize(() => c.unsubscribe())
+        ).subscribe();
+      }
+    );
+  }
 }

@@ -43,7 +43,6 @@ export class WorkspaceBrowserComponent implements OnInit {
       debounceTime(150),
       // distinctUntilChanged(),
       switchMap(() => this.api.list({term: this.term})),
-      tap(data => this.selectWs(data))
     );
 
     this.gamespaces = this.refresh$.pipe(
@@ -67,25 +66,12 @@ export class WorkspaceBrowserComponent implements OnInit {
   }
 
   termed(e: Event): void {
-      // this.term = (e.target as HTMLInputElement || {}).value;
       this.refresh$.next(true);
   }
 
   setMode(mode: string): void {
     this.mode = mode;
     this.config.updateLocal({browseMode: mode});
-  }
-
-  selectWs(data: WorkspaceSummary[]): void {
-    if (data.length === 1) {
-      this.router.navigate(['/topo', data[0].id, 'settings']);
-    }
-  }
-
-  selectGs(data: Gamespace[]): void {
-    if (data.length === 1) {
-      this.router.navigate(['/mojo', data[0].id, data[0].slug]);
-    }
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -98,9 +84,4 @@ export class WorkspaceBrowserComponent implements OnInit {
     return true;
   }
 
-}
-
-interface GamespaceContext {
-  gs: Gamespace[];
-  ws: WorkspaceSummary[];
 }

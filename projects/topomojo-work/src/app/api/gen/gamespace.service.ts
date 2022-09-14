@@ -6,8 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiSettings } from '../api-settings';
 import { GeneratedService } from './_service';
-import { GameState, Gamespace, Player, VmState, ChallengeView, GamespaceRegistration, SectionSubmission, Search, TimeWindow } from './models';
-import { map, tap } from 'rxjs/operators';
+import { GameState, Gamespace, Player, GamespaceRegistration, SectionSubmission, Search, TimeWindow, JoinCode } from './models';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class GeneratedGamespaceService extends GeneratedService {
@@ -79,6 +79,9 @@ export class GeneratedGamespaceService extends GeneratedService {
     }
     public challenge(id: string): Observable<any> {
       return this.http.get<any>(`${this.conf.api}/gamespace/${id}/challenge`);
+    }
+    public invite(id: string): Observable<JoinCode> {
+      return this.http.post<JoinCode>(`${this.conf.api}/gamespace/${id}/invite`, null);
     }
 
     transform(state: GameState | Gamespace): GameState | Gamespace {
