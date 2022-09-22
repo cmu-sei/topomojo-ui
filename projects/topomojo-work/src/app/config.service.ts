@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { UserManagerSettings } from 'oidc-client';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from 'projects/topomojo-work/src/environments/environment';
-import { Location } from '@angular/common';
+import { Location, PlatformLocation } from '@angular/common';
 import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 // import { MarkedRenderer, MarkedOptions } from 'ngx-markdown';
 
@@ -21,6 +21,7 @@ export class ConfigService {
   tabs: TabRef[] = [];
   settings$ = new BehaviorSubject<Settings>(this.settings);
   sidebar$ = new Subject<boolean>();
+  basehref = '';
 
   get lastUrl(): string {
     const url = !this.restorationComplete
@@ -55,22 +56,25 @@ export class ConfigService {
     this.local = this.getLocal();
   }
 
+  // use setting, or relative
   get apphost(): string {
-    return this.settings.apphost
-      ? this.location.normalize(this.settings.apphost)
-      : this.location.prepareExternalUrl('/')
+    const v = this.settings.apphost
+      ? this.location.normalize(this.settings.apphost) + '/'
+      : ''
     ;
+    return v;
   }
 
+  // use setting or assume sibling app 'mks'
   get mkshost(): string {
     return this.settings.mkshost
       ? this.location.normalize(this.settings.mkshost)
-      : this.location.prepareExternalUrl('/mks')
+      :  'mks'
     ;
   }
 
   load(): Observable<any> {
-    return this.http.get<Settings>(this.location.prepareExternalUrl('/assets/settings.json'))
+    return this.http.get<Settings>('assets/settings.json')
       .pipe(
         catchError((err: Error) => {
           return of({} as Settings);
