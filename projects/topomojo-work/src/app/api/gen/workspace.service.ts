@@ -25,7 +25,9 @@ export class GeneratedWorkspaceService extends GeneratedService {
       return this.http.get<WorkspaceSummary[]>(this.conf.api + '/workspaces' + this.paramify(search));
   }
   public load(id: string): Observable<Workspace> {
-      return this.http.get<Workspace>(this.conf.api + '/workspace/' + id);
+      return this.http.get<Workspace>(this.conf.api + '/workspace/' + id).pipe(
+        tap(w => w.templates = w.templates?.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
+      );
   }
   public create(model: NewWorkspace): Observable<Workspace> {
       return this.http.post<Workspace>(this.conf.api + '/workspace', model);
