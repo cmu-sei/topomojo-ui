@@ -2,11 +2,11 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, Input, OnInit } from '@angular/core';
-import { faCheck, faCheckSquare, faFilter, faList, faSearch, faSquare, faSync, faSyncAlt, faTintSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { asyncScheduler, BehaviorSubject, combineLatest, interval, merge, Observable, scheduled, Subject } from 'rxjs';
-import { debounceTime, filter, map, switchMap, tap, zipAll } from 'rxjs/operators';
+import { faCheck, faCheckSquare, faFilter, faList, faSearch, faSquare, faSyncAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { BehaviorSubject, combineLatest, interval, merge, Observable } from 'rxjs';
+import { debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
 import { GamespaceService } from '../../api/gamespace.service';
-import { Gamespace, GameState, Search, Vm } from '../../api/gen/models';
+import { Gamespace, Search, Vm } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
 
 @Component({
@@ -27,6 +27,9 @@ export class GamespaceBrowserComponent implements OnInit {
   search: Search = { term: '', filter: ['all', 'active']};
   term = '';
   filter = 'active';
+  skip = 0;
+  take = 100;
+  paging = false;
 
   faChecked = faCheckSquare;
   faUnChecked = faSquare;
@@ -49,6 +52,7 @@ export class GamespaceBrowserComponent implements OnInit {
       switchMap(() => this.api.list(this.search)),
       tap(r => r.forEach(g => g.checked = !!this.selected.find(s => s.id === g.id))),
       tap(r => this.source = r),
+      tap(() => this.paging = this.skip > 0 || this.source.length === this.take),
       tap(() => this.review()),
     );
 
@@ -69,7 +73,29 @@ export class GamespaceBrowserComponent implements OnInit {
   }
 
   refresh(): void {
+    this.search.skip = this.skip;
+    this.search.take = this.take;
     this.refresh$.next(true);
+  }
+
+  term_changed(): void {
+    this.skip = 0;
+    this.refresh();
+  }
+
+  next(): void {
+    this.skip += this.take;
+    this.refresh();
+  }
+
+  prev(): void {
+    this.skip = Math.max(0, this.skip - this.take);
+    this.refresh();
+  }
+
+  top(): void {
+    this.skip = 0;
+    this.refresh();
   }
 
   view(g: Gamespace): void {
@@ -88,6 +114,7 @@ export class GamespaceBrowserComponent implements OnInit {
   toggleFilter(f: string): void {
     this.filter = f;
     this.search.filter = ['all', f];
+    this.search.skip = 0;
     this.refresh();
   }
 
