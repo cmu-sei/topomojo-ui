@@ -21,7 +21,10 @@ export class TemplateBrowserComponent implements OnInit {
   viewed: TemplateSummary | undefined = undefined;
   viewChange$ = new BehaviorSubject<TemplateSummary | undefined>(this.viewed);
   detail$: Observable<TemplateDetail>;
-  search: TemplateSearch = { term: '', take: 100};
+  search: TemplateSearch = { term: '', skip: 0, take: 100};
+  skip = 0;
+  take = 100;
+  count = 0;
 
   faTrash = faTrash;
   faList = faList;
@@ -41,6 +44,7 @@ export class TemplateBrowserComponent implements OnInit {
       switchMap(() => this.api.list(this.search)),
       tap(r => this.source = r),
       tap(() => this.review()),
+      tap(() => this.count = this.source.length)
     );
 
     this.detail$ = this.viewChange$.pipe(
@@ -50,6 +54,22 @@ export class TemplateBrowserComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  refresh(): void {
+    this.search.skip = this.skip;
+    this.search.take = this.take;
+    this.refresh$.next(true);
+  }
+
+  paged(s: number): void {
+    this.skip = s;
+    this.refresh();
+  }
+
+  termed(): void {
+    this.skip = 0;
+    this.refresh();
   }
 
   view(w: TemplateSummary): void {

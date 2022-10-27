@@ -22,6 +22,9 @@ export class UserBrowserComponent implements OnInit {
   viewed: ApiUser | undefined = undefined;
   viewChange$ = new BehaviorSubject<ApiUser | undefined>(this.viewed);
   search: UserSearch = { term: '', scope: '', take: 100};
+  skip = 0;
+  take = 100;
+  count = 0;
   filter = '';
   scope = '';
   scopes: string[] = [];
@@ -41,6 +44,7 @@ export class UserBrowserComponent implements OnInit {
       debounceTime(500),
       switchMap(() => this.api.list(this.search)),
       tap(r => this.source = r),
+      tap(r => this.count = r.length),
       tap(() => this.review()),
     );
 
@@ -52,16 +56,34 @@ export class UserBrowserComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  refresh(): void {
+    this.search.skip = this.skip;
+    this.search.take = this.take;
+    this.refresh$.next(true);
+  }
+
+  paged(s: number): void {
+    this.skip = s;
+    this.refresh();
+  }
+
+  termed(): void {
+    this.skip = 0;
+    this.refresh();
+  }
+
   toggleFilter(role: string): void {
     this.filter = this.filter !== role ? role : '';
     this.search.filter = [this.filter];
-    this.refresh$.next(true);
+    this.skip = 0;
+    this.refresh();
   }
 
   toggleScope(scope: string): void {
     this.scope = this.scope !== scope ? scope : '';
     this.search.scope = this.scope;
-    this.refresh$.next(true);
+    this.skip = 0;
+    this.refresh();
   }
 
   create(): void {

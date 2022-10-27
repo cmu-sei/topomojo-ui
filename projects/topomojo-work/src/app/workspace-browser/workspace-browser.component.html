@@ -10,7 +10,7 @@
       <!-- <label for="search-input" class="input-group-text">Search</label> -->
       <span id="search-label" class="input-group-text">Search</span>
     </div>
-    <input #search id="search-input" type="search" [placeholder]="mode" class="form-control" [(ngModel)]="term" (input)="termed($event)" aria-label="search term" aria-describedby="search-label">
+    <input #searchterm id="search-input" type="search" [placeholder]="mode" class="form-control" [(ngModel)]="search.term" (input)="termed($event)" aria-label="search term" aria-describedby="search-label">
   </div>
 
   <!-- filters -->
@@ -29,6 +29,9 @@
     </button>
   </div>
 
+  <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
+  <hr class="mt-0 mb-2"/>
+
   <!-- display workspace cards -->
   <ng-container *ngIf="mode === 'workspace'">
     <ng-container *ngFor="let ws of workspaces | async">
@@ -42,6 +45,9 @@
       <app-gamespace-card [gamespace]="g"></app-gamespace-card>
     </ng-container>
   </ng-container>
+
+  <hr class="my-0"/>
+  <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
 
 </div>
 

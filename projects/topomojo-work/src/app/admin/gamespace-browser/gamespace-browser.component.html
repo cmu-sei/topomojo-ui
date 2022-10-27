@@ -11,7 +11,7 @@
         <span>Search</span>
       </span>
     </div>
-    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="term_changed()">
+    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="termed()">
   </div>
 </div>
 
@@ -42,18 +42,7 @@
   <span><small>All</small></span>
 </div>
 
-<div *ngIf="paging" class="text-center">
-  <!-- <button [disabled]="skip===0" class="mr-1 btn btn-link text-warning btn-sm" (click)="top()" aria-label="top page">
-    <span>top</span>
-  </button> | -->
-  <button [disabled]="skip===0" class="mr-1 btn btn-link text-warning btn-sm" (click)="prev()" aria-label="prev page">
-    <span>prev</span>
-  </button> |
-  <small>{{skip+1}} - {{skip + source.length}}</small> |
-  <button [disabled]="source.length < take" class="mr-1 btn btn-link text-warning btn-sm" (click)="next()" aria-label="next page">
-    <span>next</span>
-  </button>
-</div>
+<app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
 <hr class="my-0" [class]="!fullAdminView ? 'mt-2' : ''"/>
 
 <div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
@@ -105,15 +94,4 @@
 </div>
 
 <hr class="my-0" [class]="!fullAdminView ? 'mt-2' : ''"/>
-<div *ngIf="paging" class="text-center">
-  <!-- <button [disabled]="skip===0" class="mr-1 btn btn-link text-warning btn-sm" (click)="top()" aria-label="top page">
-    <span>top</span>
-  </button> | -->
-  <button [disabled]="skip===0" class="mr-1 btn btn-link text-warning btn-sm" (click)="prev()" aria-label="prev page">
-    <span>prev</span>
-  </button> |
-  <small>{{skip+1}} - {{skip + source.length }}</small> |
-  <button [disabled]="source.length < take" class="mr-1 btn btn-link text-warning btn-sm" (click)="next()" aria-label="next page">
-    <span>next</span>
-  </button>
-</div>
+<app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>

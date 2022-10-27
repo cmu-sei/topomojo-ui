@@ -21,7 +21,10 @@ export class WorkspaceBrowserComponent implements OnInit {
   viewed: WorkspaceSummary | undefined = undefined;
   viewChange$ = new BehaviorSubject<WorkspaceSummary | undefined>(this.viewed);
   detail$: Observable<Workspace>;
-  search: Search = { term: '', take: 100};
+  search: Search = { term: '', skip: 0, take: 100};
+  skip = 0;
+  take = 100;
+  count = 0;
 
   faTrash = faTrash;
   faList = faList;
@@ -38,6 +41,7 @@ export class WorkspaceBrowserComponent implements OnInit {
       switchMap(() => this.api.list(this.search)),
       // tap(r => r.forEach(g => g.checked = !!this.selected.find(s => s.id === g.id))),
       tap(r => this.source = r),
+      tap(r => this.count = r.length),
       tap(() => this.review()),
     );
 
@@ -48,6 +52,22 @@ export class WorkspaceBrowserComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  refresh(): void {
+    this.search.skip = this.skip;
+    this.search.take = this.take;
+    this.refresh$.next(true);
+  }
+
+  paged(s: number): void {
+    this.skip = s;
+    this.refresh();
+  }
+
+  termed(): void {
+    this.skip = 0;
+    this.refresh();
   }
 
   view(w: WorkspaceSummary): void {

@@ -3,11 +3,11 @@
 
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { faFilter, faSync, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
-import { Observable, BehaviorSubject, of, zip } from 'rxjs';
-import { map, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { faFilter, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { Observable, BehaviorSubject, zip } from 'rxjs';
+import { map, debounceTime, switchMap, tap } from 'rxjs/operators';
 import { GamespaceService } from '../api/gamespace.service';
-import { Gamespace, WorkspaceSummary } from '../api/gen/models';
+import { Gamespace, Search, WorkspaceSummary } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 import { AuthService } from '../auth.service';
 import { ConfigService } from '../config.service';
@@ -18,11 +18,14 @@ import { ConfigService } from '../config.service';
   styleUrls: ['./workspace-browser.component.scss']
 })
 export class WorkspaceBrowserComponent implements OnInit {
-  @ViewChild('search') search!: ElementRef;
+  @ViewChild('search') searchterm!: ElementRef;
   workspaces: Observable<WorkspaceSummary[]>;
   gamespaces: Observable<Gamespace[]>;
   refresh$ = new BehaviorSubject<boolean>(true);
-  term = '';
+  search: Search = { term: '', take: 100, filter: ['all', 'active']};
+  skip = 0;
+  take = 100;
+  count = 0;
   mode = 'workspace';
   faFilter = faFilter;
   faSync = faSyncAlt;
@@ -37,23 +40,25 @@ export class WorkspaceBrowserComponent implements OnInit {
 
     const local = config.getLocal();
     this.mode = local.browseMode || 'workspace';
-    this.term = local.browseTerm || '';
+    this.search.term = local.browseTerm || '';
 
     this.workspaces = this.refresh$.pipe(
       debounceTime(150),
       // distinctUntilChanged(),
-      switchMap(() => this.api.list({term: this.term})),
+      switchMap(() => this.api.list(this.search)),
+      tap(l => this.count = l.length)
     );
 
     this.gamespaces = this.refresh$.pipe(
       debounceTime(150),
       // distinctUntilChanged(),
       switchMap(() => zip(
-        gsapi.list({term: this.term, filter: ['active']}),
-        api.list({term: this.term, filter: ['play']})
+        gsapi.list({...this.search, filter: ['active']}),
+        api.list({...this.search, filter: ['play']})
       ).pipe(
         map(([gs, ws]) => [...gs, ...(ws as unknown as Gamespace[])]),
-        tap(() => this.config.updateLocal({browseTerm: this.term}))
+        tap(l => this.count = l.length),
+        tap(() => this.config.updateLocal({browseTerm: this.search.term}))
       ))
     );
   }
@@ -62,11 +67,19 @@ export class WorkspaceBrowserComponent implements OnInit {
   }
 
   refresh(): void {
+    this.search.skip = this.skip;
+    this.search.take = this.take;
     this.refresh$.next(true);
   }
 
   termed(e: Event): void {
-      this.refresh$.next(true);
+    this.skip = 0;
+    this.refresh$.next(true);
+  }
+
+  paged(s: number): void {
+    this.skip = s;
+    this.refresh();
   }
 
   setMode(mode: string): void {
@@ -77,8 +90,8 @@ export class WorkspaceBrowserComponent implements OnInit {
   @HostListener('document:keydown', ['$event'])
   onKeydown(ev: KeyboardEvent): boolean {
     if (ev.ctrlKey && ev.code === 'KeyO') {
-      this.search.nativeElement.focus();
-      this.search.nativeElement.select();
+      this.searchterm.nativeElement.focus();
+      this.searchterm.nativeElement.select();
       return false;
     }
     return true;

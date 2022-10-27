@@ -11,12 +11,12 @@
         <span>Search</span>
       </span>
     </div>
-    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
+    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="termed()">
   </div>
-  <small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
 </div>
 
-<hr/>
+<app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
+<hr  class="mt-0 mb-2"/>
 
 <div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
   <div class="col-8">
@@ -70,3 +70,6 @@
     </ng-container>
   </div>
 </div>
+
+<hr class="my-0"/>
+<app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>

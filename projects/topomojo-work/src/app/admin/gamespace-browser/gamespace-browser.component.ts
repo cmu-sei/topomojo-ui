@@ -29,7 +29,7 @@ export class GamespaceBrowserComponent implements OnInit {
   filter = 'active';
   skip = 0;
   take = 100;
-  paging = false;
+  count = 0;
 
   faChecked = faCheckSquare;
   faUnChecked = faSquare;
@@ -52,7 +52,7 @@ export class GamespaceBrowserComponent implements OnInit {
       switchMap(() => this.api.list(this.search)),
       tap(r => r.forEach(g => g.checked = !!this.selected.find(s => s.id === g.id))),
       tap(r => this.source = r),
-      tap(() => this.paging = this.skip > 0 || this.source.length === this.take),
+      tap(r => this.count = r.length),
       tap(() => this.review()),
     );
 
@@ -78,23 +78,13 @@ export class GamespaceBrowserComponent implements OnInit {
     this.refresh$.next(true);
   }
 
-  term_changed(): void {
+  termed(): void {
     this.skip = 0;
     this.refresh();
   }
 
-  next(): void {
-    this.skip += this.take;
-    this.refresh();
-  }
-
-  prev(): void {
-    this.skip = Math.max(0, this.skip - this.take);
-    this.refresh();
-  }
-
-  top(): void {
-    this.skip = 0;
+  paged(s: number): void {
+    this.skip = s;
     this.refresh();
   }
 
@@ -114,7 +104,7 @@ export class GamespaceBrowserComponent implements OnInit {
   toggleFilter(f: string): void {
     this.filter = f;
     this.search.filter = ['all', f];
-    this.search.skip = 0;
+    this.skip = 0;
     this.refresh();
   }
 

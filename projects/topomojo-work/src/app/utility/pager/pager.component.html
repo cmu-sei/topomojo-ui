@@ -1,0 +1,12 @@
+<div *ngIf="count>0" class="text-center">
+  <!-- <button [disabled]="skip===0" class="mr-1 btn btn-link text-warning btn-sm" (click)="top()" aria-label="top page">
+    <span>top</span>
+  </button> | -->
+  <button [disabled]="skip===0" class="mr-1 btn btn-link text-warning btn-sm" (click)="prev()" aria-label="prev page">
+    <span>prev</span>
+  </button> |
+  <small>{{skip+1}} - {{skip + count}}</small> |
+  <button [disabled]="count < take" class="mr-1 btn btn-link text-warning btn-sm" (click)="next()" aria-label="next page">
+    <span>next</span>
+  </button>
+</div>

@@ -17,6 +17,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ClipspanComponent } from './clipspan/clipspan.component';
 import { CountdownPipe } from './countdown.pipe';
 import { ClockPipe } from './clock.pipe';
+import { PagerComponent } from './pager/pager.component';
 
 
 
@@ -32,7 +33,8 @@ import { ClockPipe } from './clock.pipe';
     VmControllerComponent,
     ClipspanComponent,
     CountdownPipe,
-    ClockPipe
+    ClockPipe,
+    PagerComponent
   ],
   imports: [
     CommonModule,
@@ -51,7 +53,8 @@ import { ClockPipe } from './clock.pipe';
     VmControllerComponent,
     ClipspanComponent,
     CountdownPipe,
-    ClockPipe
+    ClockPipe,
+    PagerComponent
   ]
 })
 export class UtilityModule { }
