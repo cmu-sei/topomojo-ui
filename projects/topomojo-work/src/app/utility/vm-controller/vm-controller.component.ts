@@ -6,7 +6,7 @@ import { Template, TemplateSummary, Vm, VmOperationTypeEnum } from '../../api/ge
 import { faCircleNotch, faSyncAlt, faCog, faBolt, faTv, faPlay, faStop, faSave, faStepBackward, faUndoAlt, faTrash, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Observable, of, Subject, Subscription, timer } from 'rxjs';
 import { VmService } from '../../api/vm.service';
-import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { NotificationService } from '../../notification.service';
 import { ConfigService } from '../../config.service';
 
@@ -46,8 +46,7 @@ export class VmControllerComponent implements OnInit, OnDestroy {
     private hub: NotificationService
   ) {
     this.vm$ = this.task$.pipe(
-      // throttleTime(500),
-      // tap(t => console.log('running task ' + t)),
+      debounceTime(300),
       tap(t => this.task = !!t ? t : this.task),
       switchMap(t => this.taskQuery(t)),
       catchError((err: Error) => {
