@@ -15,6 +15,7 @@ import { ConsolePresence, ConsoleRequest, ConsoleSummary } from '../api.models';
 import { ApiService } from '../api.service';
 import { ClipboardService } from '../clipboard.service';
 import { HubService } from '../hub.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-console',
@@ -50,6 +51,8 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   justClipped = false;
   justPasted = false;
   nets$: Observable<string[]>;
+  changedNet = '';
+  netIndex = '';
   refreshNets$ = new Subject<boolean>();
   subs: Array<Subscription> = [];
   audience: Observable<ConsolePresence[]>;
@@ -141,6 +144,10 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
         this.stateIcon = 'Failed';
         break;
 
+      case 'unauthorized':
+        this.stateIcon = 'Unauthorized';
+        break;
+
       default:
         this.stateIcon = '';
     }
@@ -162,23 +169,32 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.changeState('loading');
     this.api.ticket(this.request).pipe(
-      catchError((err: Error) => of({} as ConsoleSummary))
-        // // testing
-        // of({
-        //   id: '1234',
-        //   name: 'vm',
-        //   isolationId: '5555',
-        //   url: 'ws://local.mock/ticket/1234',
-        //   isRunning: true
-        // });
+      catchError((err: HttpErrorResponse) => of({error: err.statusText.toLowerCase()} as unknown as ConsoleSummary))
     ).subscribe(
       (info: ConsoleSummary) => this.create(info),
       (err) => this.changeState('failed')
     );
 
+    // // testing
+    // of({
+    //   id: '1234',
+    //   name: 'vm',
+    //   isolationId: '5555',
+    //   url: 'ws://local.mock/ticket/1234',
+    //   isRunning: true
+    // }).subscribe(
+    //   (info: ConsoleSummary) => this.create(info),
+    //   (err) => this.changeState('failed')
+    // );
+
   }
 
   create(info: ConsoleSummary): void {
+
+    if (!!info.error) {
+      this.changeState(info.error);
+      return;
+    }
 
     if (!info.id) {
       this.changeState('failed');
@@ -252,8 +268,12 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setNet(net: string): void {
-    this.api.update(this.vmId, { key: 'net', value: net}).subscribe();
-    // todo: show feedback
+    this.changedNet = '';
+    this.api.update(this.vmId, { key: 'net', value: net + this.netIndex}).subscribe(
+      () => {
+        this.changedNet = net;
+      }
+    );
   }
 
   clip(): void {

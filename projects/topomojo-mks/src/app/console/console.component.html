@@ -27,7 +27,7 @@
 
     <app-spinner *ngIf="shadowstate==='loading'" class="align-mm"></app-spinner>
 
-    <div *ngIf="state==='failed'||state==='forbidden'" class="align-mm">
+    <div *ngIf="state==='failed'||state==='forbidden'||state==='unauthorized'" class="align-mm">
       <h1 class="text-danger">{{stateIcon}}</h1>
       <button class="btn" (click)="stateButtonClicked()">Retry</button>
     </div>
@@ -84,8 +84,23 @@
       <button class="btn" (click)="getNet()">
         <i class="fa fa-arrows-alt fa-2x"></i> Refresh
       </button>
+      <div class="btn-group">
+        <div class="form-group form-check">
+          <label class="form-check-label" for="net1">nic1</label>
+          <input type="radio" class="form-check-input" id="net1" value=":0" [(ngModel)]="netIndex">
+        </div>
+        <div class="form-group form-check">
+          <label class="form-check-label" for="net1">nic2</label>
+          <input type="radio" class="form-check-input" id="net1" value=":1" [(ngModel)]="netIndex">
+        </div>
+        <div class="form-group form-check">
+          <label class="form-check-label" for="net1">nic3</label>
+          <input type="radio" class="form-check-input" id="net1" value=":2" [(ngModel)]="netIndex">
+        </div>
+      </div>
       <button *ngFor="let net of nets$ | async" class="btn" (click)="setNet(net)">
         <i class="fa fa-arrows-alt fa-2x"></i> {{net.split('#')[0]}}
+        <span *ngIf="changedNet===net">&nbsp; &#x2713;</span>
       </button>
     </div>
 
