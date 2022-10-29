@@ -31,7 +31,7 @@
           <tbody>
             <tr><td>Description</td><td><pre>{{template.description}}</pre></td></tr>
             <tr><td>Networks</td><td>{{template.networks}}</td></tr>
-            <tr><td>Iso</td><td>{{template.iso?.split('/')?.pop()}}</td></tr>
+            <tr><td>Iso</td><td>{{template.iso.split('/').pop()}}</td></tr>
             <tr><td>Guest Settings</td><td><pre>{{template.guestinfo}}</pre></td></tr>
             <tr><td>Replicas</td><td>{{template.replicas}}</td></tr>
             <tr><td>Access</td><td>{{template.isHidden ? 'Hidden' : 'Visible'}}</td></tr>

@@ -18,7 +18,8 @@ import { ConfigService } from '../../config.service';
 export class VmControllerComponent implements OnInit, OnDestroy {
   @Input() template: (Template | TemplateSummary) = { id: '', name: '', workspaceId: ''};
   @Input() vm: Vm = {};
-  @Input() hideDelete: boolean = false;
+  @Input() hideDelete = false;
+  @Input() fullbleed = true;
   task = '';
   confirming = false;
   vm$: Observable<Vm>;
@@ -138,10 +139,9 @@ export class VmControllerComponent implements OnInit, OnDestroy {
   }
 
   console(): void {
-    // this.errors.push(new Error('Unfortch. Hit a snag.'));
-    // this.api.openConsole(this.vm.id || '', this.vm.name || '');
     const p = this.vm.name?.split('#') || ['', ''];
-    this.conf.openConsole(`?f=1&s=${p[1]}&v=${p[0]}`);
+    const f = this.fullbleed ? 1 : 0;
+    this.conf.openConsole(`?f=${f}&s=${p[1]}&v=${p[0]}`);
   }
 
 }
