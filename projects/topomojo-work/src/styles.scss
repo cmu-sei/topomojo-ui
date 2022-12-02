@@ -149,3 +149,14 @@ app-spinner svg {
   border: lightgray 2px solid;
   width: 100px;
 }
+
+// reboot.css breaks header alignment, so set explicitly
+th[align="left"] {
+  text-align: left;
+}
+th[align="right"] {
+  text-align: right;
+}
+th[align="center"] {
+  text-align: center;
+}
