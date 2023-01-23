@@ -1,7 +1,6 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { ThrowStmt } from '@angular/compiler';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons';

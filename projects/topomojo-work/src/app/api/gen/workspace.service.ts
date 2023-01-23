@@ -9,7 +9,6 @@ import { GeneratedService } from './_service';
 // tslint:disable-next-line:max-line-length
 import { ChangedWorkspace, NewWorkspace, Search, Workspace, JoinCode, WorkspaceSummary, VmOptions, ChallengeSpec, IsoFile, IsoDataFilter, WorkspaceStats, TemplateSummary, Worker } from './models';
 import { map, tap } from 'rxjs/operators';
-import { identifierModuleUrl } from '@angular/compiler';
 
 @Injectable()
 export class GeneratedWorkspaceService extends GeneratedService {
