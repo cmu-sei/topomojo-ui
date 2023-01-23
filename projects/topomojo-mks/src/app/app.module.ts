@@ -25,7 +25,7 @@ import { SpinnerComponent } from './spinner/spinner.component';
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    RouterModule.forRoot([], { relativeLinkResolution: 'legacy' }),
+    RouterModule.forRoot([], {}),
     MarkdownModule.forRoot()
   ],
   providers: [

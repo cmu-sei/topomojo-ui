@@ -2,8 +2,8 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, Input, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { VariantSpec, SectionSpec, IsoFile } from 'projects/topomojo-work/src/app/api/gen/models';
+import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
+import { SectionSpec, IsoFile } from 'projects/topomojo-work/src/app/api/gen/models';
 import { ChallengeFormService } from '../challenge-form.service';
 import { faTrash, faPlus, faCopy, faEllipsisV, faTimes, faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons';
 import { ConfigService } from 'projects/topomojo-work/src/app/config.service';
@@ -14,7 +14,7 @@ import { ConfigService } from 'projects/topomojo-work/src/app/config.service';
   styleUrls: ['./variant-form.component.scss']
 })
 export class VariantFormComponent implements OnInit {
-  @Input() form!: FormGroup;
+  @Input() form!: UntypedFormGroup;
   @Input() index = 0;
   @Input() detail = false;
   @Input() guid = '';
@@ -40,8 +40,8 @@ export class VariantFormComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  get sections(): FormArray {
-    return this.form.get('sections') as FormArray;
+  get sections(): UntypedFormArray {
+    return this.form.get('sections') as UntypedFormArray;
   }
   addSet(s?: SectionSpec): void {
     this.sections.push(this.svc.mapQuestionSet(s));

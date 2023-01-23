@@ -3,7 +3,7 @@
 
 <markdown [data]="game.markdown"></markdown>
 
-<markdown [data]="game.challenge?.text || ''"></markdown>
+<markdown [data]="game.challenge.text || ''"></markdown>
 
 <ng-container *ngIf="!!game.id && game.isActive">
   <h3>Gamespace Resources</h3>

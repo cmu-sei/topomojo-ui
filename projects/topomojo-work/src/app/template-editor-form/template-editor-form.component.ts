@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, NgForm } from '@angular/forms';
+import { UntypedFormGroup, NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { ChangedTemplate, IsoFile, Template } from '../api/gen/models';
@@ -17,7 +17,7 @@ import { ClipboardService } from '../clipboard.service';
 })
 export class TemplateEditorFormComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() template!: Template;
-  @ViewChild(NgForm) form!: FormGroup;
+  @ViewChild(NgForm) form!: UntypedFormGroup;
   private sub!: Subscription;
 
   faUnlink = faUnlink;

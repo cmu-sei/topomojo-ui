@@ -12,7 +12,7 @@ import { ApiModule } from './api/gen/api.module';
 import { UtilityModule } from './utility/utility.module';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MonacoEditorModule } from 'ngx-monaco-editor';
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
