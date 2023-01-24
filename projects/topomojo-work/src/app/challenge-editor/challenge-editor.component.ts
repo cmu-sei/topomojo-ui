@@ -2,13 +2,13 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, of, Subject, Subscription, timer } from 'rxjs';
-import { debounceTime, delay, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { ChallengeFormService } from './challenge-form.service';
 import { WorkspaceService } from '../api/workspace.service';
-import { ChallengeSpec, VariantSpec, KeyValuePair, QuestionSpec, SectionSpec, Workspace, WorkspaceSummary } from '../api/gen/models';
-import { faTrash, faPlus, faCopy, faEllipsisV, faSave, faCloudUploadAlt, faInfoCircle} from '@fortawesome/free-solid-svg-icons';
+import { VariantSpec, KeyValuePair, Workspace } from '../api/gen/models';
+import { faTrash, faPlus, faCopy, faEllipsisV, faCloudUploadAlt, faInfoCircle} from '@fortawesome/free-solid-svg-icons';
 import { ConfigService } from '../config.service';
 
 @Component({
@@ -18,8 +18,8 @@ import { ConfigService } from '../config.service';
 })
 export class ChallengeEditorComponent implements OnInit, OnChanges {
   @Input() summary!: Workspace;
-  form!: FormGroup;
-  form$: Observable<FormGroup>;
+  form!: UntypedFormGroup;
+  form$: Observable<UntypedFormGroup>;
   id$ = new Subject<string>();
   detail: boolean[] = [];
   showTransformExamples = false;
@@ -86,8 +86,8 @@ export class ChallengeEditorComponent implements OnInit, OnChanges {
   }
 
 
-  get transforms(): FormArray {
-    return this.form.get('transforms') as FormArray;
+  get transforms(): UntypedFormArray {
+    return this.form.get('transforms') as UntypedFormArray;
   }
   addTransform(kv?: KeyValuePair): void {
     this.transforms?.push(this.svc.mapTransform(kv));
@@ -96,8 +96,8 @@ export class ChallengeEditorComponent implements OnInit, OnChanges {
     this.transforms.removeAt(index);
   }
 
-  get variants(): FormArray {
-    return this.form.get('variants') as FormArray;
+  get variants(): UntypedFormArray {
+    return this.form.get('variants') as UntypedFormArray;
   }
   addVariant(v?: VariantSpec): void {
     this.variants.push(this.svc.mapVariant(v));

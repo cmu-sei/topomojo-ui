@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { QuestionSpec } from 'projects/topomojo-work/src/app/api/gen/models';
 import { ChallengeFormService } from '../challenge-form.service';
 import { faTrash, faPlus, faInfoCircle} from '@fortawesome/free-solid-svg-icons';
@@ -13,7 +13,7 @@ import { faTrash, faPlus, faInfoCircle} from '@fortawesome/free-solid-svg-icons'
   styleUrls: ['./question-form.component.scss']
 })
 export class QuestionFormComponent implements OnInit {
-  @Input() form!: FormGroup;
+  @Input() form!: UntypedFormGroup;
   @Input() index = 0;
   @Input() vindex = 0;
   @Input() more = false;
@@ -31,8 +31,8 @@ export class QuestionFormComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  get questions(): FormArray {
-    return this.form.get('questions') as FormArray;
+  get questions(): UntypedFormArray {
+    return this.form.get('questions') as UntypedFormArray;
   }
   addQuestion(q?: QuestionSpec): void {
     this.questions.push(this.svc.mapQuestion(q));

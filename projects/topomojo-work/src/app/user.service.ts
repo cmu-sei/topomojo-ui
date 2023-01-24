@@ -71,7 +71,7 @@ export class UserService {
   register(): Promise<void> {
     return new Promise<void>(resolve => {
       this.init$.pipe(
-        tap(v => console.log(v)),
+        tap(v => console.log(`user init: ${v}`)),
         filter(v => v)
       ).subscribe(() => resolve());
     });

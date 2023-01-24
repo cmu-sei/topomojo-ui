@@ -2,11 +2,11 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, timer } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { ChangedWorkspace, Workspace, WorkspaceSummary, Worker } from '../api/gen/models';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { timer } from 'rxjs';
+import { filter, finalize, switchMap } from 'rxjs/operators';
+import { ChangedWorkspace, Workspace, Worker } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 import { ClipboardService } from '../clipboard.service';
 import { ConfigService } from '../config.service';
@@ -19,7 +19,7 @@ import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy } from '@fortawes
 })
 export class SettingsEditorComponent implements OnInit, OnChanges {
   @Input() workspace!: Workspace;
-  form: FormGroup;
+  form: UntypedFormGroup;
   inviteUrl = '';
   copiedInvite = false;
   errors: any[] = [];
@@ -34,7 +34,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
     private config: ConfigService,
     private router: Router,
     private api: WorkspaceService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private clipboard: ClipboardService
   ) {
     this.form = this.formBuilder.group({

@@ -6,7 +6,7 @@ import { Workspace } from '../api/gen/models';
 import { BehaviorSubject, interval, Observable, of, Subject, Subscription, timer } from 'rxjs';
 import { DocumentService } from '../api/document.service';
 import { auditTime, buffer, catchError, debounceTime, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
-import { NgxEditorModel } from 'ngx-monaco-editor';
+import { NgxEditorModel } from 'ngx-monaco-editor-v2';
 import { faCloudUploadAlt, faImages, faFileImage, faSpinner, faLock } from '@fortawesome/free-solid-svg-icons';
 import { NotificationService, HubEvent, Actor } from '../notification.service';
 import { CollaborationService, MonacoEditor, Position, Range, Selection,

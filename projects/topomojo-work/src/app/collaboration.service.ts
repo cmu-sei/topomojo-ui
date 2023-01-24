@@ -2,7 +2,6 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
-import { NotificationService } from './notification.service';
 import { SelectionDirection, Position, IRange, Range, Selection, editor as MonacoEditor } from 'monaco-editor';
 
 @Injectable({
@@ -14,7 +13,6 @@ export class CollaborationService {
   editorEol = '\n';
 
   constructor(
-    private hub: NotificationService
   ) { }
 
   storeTransformationLog(batches: DocumentChange[], uid: string): void {

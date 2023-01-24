@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ChallengeSpec, VariantSpec, KeyValuePair, QuestionSpec, SectionSpec } from '../api/gen/models';
 
 @Injectable({
@@ -11,10 +11,10 @@ import { ChallengeSpec, VariantSpec, KeyValuePair, QuestionSpec, SectionSpec } f
 export class ChallengeFormService {
 
   constructor(
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
-  mapToForm(c?: ChallengeSpec): FormGroup {
+  mapToForm(c?: ChallengeSpec): UntypedFormGroup {
     if (!c || c.variants?.length === 0) {
       c = { variants: [{sections: [{questions: [{}]}]}]};
     }
@@ -32,14 +32,14 @@ export class ChallengeFormService {
     });
   }
 
-  mapTransform(kv?: KeyValuePair): FormGroup {
+  mapTransform(kv?: KeyValuePair): UntypedFormGroup {
     return this.fb.group({
       key: [kv?.key || '', Validators.required],
       value: [kv?.value || '', Validators.required]
     });
   }
 
-  mapVariant(v?: VariantSpec): FormGroup {
+  mapVariant(v?: VariantSpec): UntypedFormGroup {
     if (!v) {
       v = {sections: [{questions: [{}]}]};
     }
@@ -56,7 +56,7 @@ export class ChallengeFormService {
     });
   }
 
-  mapQuestionSet(s?: SectionSpec): FormGroup {
+  mapQuestionSet(s?: SectionSpec): UntypedFormGroup {
     if (!s) {
       s = {questions: [{}]};
     }
@@ -69,7 +69,7 @@ export class ChallengeFormService {
     });
   }
 
-  mapQuestion(q?: QuestionSpec): FormGroup {
+  mapQuestion(q?: QuestionSpec): UntypedFormGroup {
     return this.fb.group({
       text: [q?.text, Validators.required],
       answer: [q?.answer, Validators.required],

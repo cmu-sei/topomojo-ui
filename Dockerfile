@@ -6,7 +6,8 @@ ARG commit
 WORKDIR /app
 COPY package.json package-lock.json tools/ ./
 RUN npm install && \
-    sh fixup-wmks.sh
+    sh fixup-wmks.sh && \
+    sh fixup-monaco-esm.sh
 COPY . .
 RUN if [ -e "wmks.tar" ]; then tar xf wmks.tar -C node_modules/vmware-wmks; fi
 RUN $(npm bin)/ng build topomojo-work --output-path /app/dist && \
