@@ -59,7 +59,7 @@ export interface GameState {
   isActive: boolean;
   players: Player[];
   vms: VmState[];
-  challenge: ChallengeView;
+  challenge?: ChallengeView;
   session: TimeWindow;
   gameOver: boolean;
 }

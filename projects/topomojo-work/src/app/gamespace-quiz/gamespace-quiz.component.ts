@@ -29,8 +29,8 @@ export class GamespaceQuizComponent implements OnInit {
 
   submit(): void {
     const submission = {
-      sectionIndex: this.state.challenge?.sectionIndex,
-      questions: this.state.challenge?.questions?.map(q => ({answer: q.answer}))
+      sectionIndex: this.state.challenge!.sectionIndex,
+      questions: this.state.challenge!.questions.map(q => ({answer: q.answer}))
     };
     this.api.grade({...submission, id: this.state.id}).subscribe(
       (c: GameState) => this.state = c,

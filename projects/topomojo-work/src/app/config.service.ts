@@ -142,6 +142,7 @@ export interface LocalAppSettings {
   last?: string;
   browseMode?: string;
   browseTerm?: string;
+  detail?: boolean;
 }
 
 export interface Settings {

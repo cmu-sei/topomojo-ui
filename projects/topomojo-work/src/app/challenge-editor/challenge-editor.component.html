@@ -70,7 +70,7 @@
 
     <div class="form-group bg-light">
       <label>Variants</label>
-      <div>
+      <p>
         <small>
           At deploy-time, one challenge variant is selected randomly.
           A variant is comprised of an iso-attachment instruction and one or more question sets.
@@ -78,7 +78,13 @@
           if a prerequisite score was earned in the prior question set. (Progressive challenges
           are not yet supported.)
         </small>
-      </div>
+      </p>
+      <p>
+        <button class="btn btn-sm btn-outline-dark mr-1" btnCheckbox [(ngModel)]="showDetail" [ngModelOptions]="{standalone: true}" (click)="updateDetail()">
+          <fa-icon [icon]="showDetail ? faCheck : faUnchecked"></fa-icon>
+          <span>Show Variant Detail</span>
+        </button>
+      </p>
     </div>
 
     <div *ngFor="let v of variants.controls; let i = index" [formGroupName]="i" class="form-group bg-light mt-2">
@@ -99,7 +105,7 @@
         </app-confirm-button>
       </div>
 
-      <app-variant-form [form]="$any(v)" [index]="i" [detail]="detail[i]" [guid]="summary.id"></app-variant-form>
+      <app-variant-form [form]="$any(v)" [index]="i" [detail]="showDetail || detail[i]" [guid]="summary.id"></app-variant-form>
 
     </div>
   </div>
