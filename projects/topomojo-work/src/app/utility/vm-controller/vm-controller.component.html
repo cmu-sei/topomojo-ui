@@ -5,6 +5,7 @@
 
   <div *ngIf="!!task">
     <fa-icon [icon]="faCircleNotch" [spin]="true"></fa-icon>
+    <span *ngIf="vm.task && vm.task.progress">&nbsp;{{vm.task.progress}}%</span>
     {{task}}
   </div>
 
