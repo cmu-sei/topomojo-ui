@@ -34,7 +34,7 @@
     "ngx-bootstrap": "^10.2.0",
     "ngx-markdown": "^15.1.0",
     "ngx-monaco-editor-v2": "^15.0.1",
-    "oidc-client": "^1.11.5",
+    "oidc-client-ts": "^2.2.1",
     "rxjs": "~6.6.7",
     "tslib": "^2.4.1",
     "vmware-wmks": "^1.0.0",

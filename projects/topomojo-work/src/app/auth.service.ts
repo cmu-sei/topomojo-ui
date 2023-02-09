@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
-import { UserManager, UserManagerSettings, User, WebStorageStateStore, Log } from 'oidc-client';
+import { UserManager, UserManagerSettings, User, WebStorageStateStore, Log } from 'oidc-client-ts';
 import { BehaviorSubject } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { ConfigService, Settings } from './config.service';
@@ -39,8 +39,8 @@ export class AuthService {
     ).subscribe((s: Settings) => {
 
       if (s.oidc.debug) {
-        Log.level = Log.DEBUG;
-        Log.logger = console;
+        Log.setLevel(Log.DEBUG);
+        Log.setLogger(console);
       }
 
       this.authority = s.oidc?.authority?.
