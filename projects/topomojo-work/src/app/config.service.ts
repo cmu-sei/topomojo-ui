@@ -4,7 +4,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { UserManagerSettings } from 'oidc-client';
+import { UserManagerSettings } from 'oidc-client-ts';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from 'projects/topomojo-work/src/environments/environment';
 import { Location, PlatformLocation } from '@angular/common';
@@ -16,7 +16,7 @@ export class ConfigService {
 
   private restorationComplete = false;
   storageKey = 'topomojo';
-  settings: Settings = environment.settings;
+  settings: Settings = environment.settings as Settings;
   local: LocalAppSettings = {};
   tabs: TabRef[] = [];
   settings$ = new BehaviorSubject<Settings>(this.settings);

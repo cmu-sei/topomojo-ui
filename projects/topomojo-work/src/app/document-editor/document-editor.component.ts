@@ -59,7 +59,9 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
   private beginTypingTime?: number;
   private userTimestamps: UserTimeMap = {};
   private timeLastSaved = 0;
-  private selections$ = new BehaviorSubject<Selection[]>([new Selection(1, 1, 1, 1)]);
+  private selections$ = new BehaviorSubject<Selection[]>([
+    { selectionStartLineNumber: 1, selectionStartColumn: 1, positionLineNumber: 1, positionColumn: 1} as Selection
+  ]);
   private edits$ = new Subject<DocumentChange>();
   private editorWriteable$ = new Subject<boolean>();
   private editing = false;
@@ -192,7 +194,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
 
   insertImage(text: string): void {
     text = `\n${text}\n\n`;
-    const range = this.editor.getSelection() || new Selection(1, 1, 1, 1);
+    const range = this.editor.getSelection() || { selectionStartLineNumber: 1, selectionStartColumn: 1, positionLineNumber: 1, positionColumn: 1} as Selection // new Selection(1, 1, 1, 1);
     this.editor.executeEdits('image-manager', [{range, text, forceMoveMarkers: true}], );
     this.editor.focus();
   }
@@ -205,7 +207,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     else {
       this.saveEditorViewState();
     }
-    editor.getModel()?.setEOL(MonacoEditor.EndOfLineSequence.LF); // must be consistent across browsers
+    editor.getModel()?.setEOL(0); // MonacoEditor.EndOfLineSequence.LF); // must be consistent across browsers
     this.collab.editorEol = this.editor.getModel()?.getEOL() || '\n';
     this.tooltipMessage = this.editor?.getContribution('editor.contrib.messageController');
 
@@ -264,7 +266,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   private editorViewChanged(reason?: MonacoEditor.CursorChangeReason): void {
-    if (reason && reason === MonacoEditor.CursorChangeReason.ContentFlush) {
+    if (reason && reason === 1) { // MonacoEditor.CursorChangeReason.ContentFlush) {
       this.restoreEditorViewState();
     }
     else {
@@ -302,7 +304,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
 
     this.editorViewChanged(event.reason);
 
-    if (event.reason === MonacoEditor.CursorChangeReason.ContentFlush) {
+    if (event.reason === 1) { //MonacoEditor.CursorChangeReason.ContentFlush) {
       return;
     }
 
@@ -310,7 +312,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
 
     this.emitCursorSelections(selections);
 
-    if (event.reason === MonacoEditor.CursorChangeReason.NotSet &&
+    if (event.reason === 0 && // MonacoEditor.CursorChangeReason.NotSet &&
         event.source === 'keyboard'
      ) {
       return;
@@ -323,7 +325,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
 
   private emitCursorSelections(selections?: Selection[]): void {
     this.selections$.next(
-      selections || [ new Selection(1, 1, 1, 1) ]
+      selections || [ { selectionStartLineNumber: 1, selectionStartColumn: 1, positionLineNumber: 1, positionColumn: 1} as Selection ]
     );
   }
 
@@ -356,8 +358,18 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
       user.positions.forEach(cursor => {
         const range = cursor.range;
         const isSelection = !cursor.range.isEmpty();
-        const cursorPosition = cursor.rtl ? range.getStartPosition() : range.getEndPosition();
-        const cursorRange = Range.fromPositions(cursorPosition, cursorPosition);
+        // const cursorPosition = cursor.rtl ? range.getStartPosition() : range.getEndPosition();
+        // const cursorRange = Range.fromPositions(cursorPosition, cursorPosition);
+        const cursorPosition = cursor.rtl
+          ? { lineNumber: range.startLineNumber, column: range.startColumn } as Position
+          : { lineNumber: range.endLineNumber, column: range.endColumn } as Position
+        ;
+        const cursorRange = {
+          startLineNumber: cursorPosition.lineNumber,
+          startColumn: cursorPosition.column,
+          endLineNumber: cursorPosition.lineNumber,
+          endColumn: cursorPosition.column
+        } as Range;
         const cursorBetween = cursorPosition.column === 1 ? '' : 'editor-cursor-between';
         const decor = { isWholeLine: false, stickiness: 1 };
         if (isSelection) { // Selection decoration
@@ -386,8 +398,12 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
   private storeBeginPositions(selections?: Selection[]): void {
 
     this.beginTypingPositions = selections?.map(s => s.getStartPosition())
-      .sort((a, b) =>  -Position.compare(a, b) ) ?? [];
+      .sort((a, b) =>  -this.comparePosition(a, b) ) ?? [];
 
+  }
+
+  private comparePosition(a: Position, b: Position) : number {
+    return (a.lineNumber|1) * 100_000 + (a.column|1) - (b.lineNumber|1) * 100_000 + (b.column|1);
   }
 
   private startEdit(timestamp: number): void {
