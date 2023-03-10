@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
-import { SelectionDirection, Position, IRange, Range, Selection, editor as MonacoEditor } from 'monaco-editor';
+import type { Position, IRange, Range, Selection, editor as MonacoEditor } from 'monaco-editor';
 
 @Injectable({
   providedIn: 'root'
@@ -68,7 +68,7 @@ export class CollaborationService {
 
           if (
             appliedEdit.lineDelta !== 0 ||
-            Range.spansMultipleLines(appliedEdit.range)
+            appliedEdit.range.endLineNumber > appliedEdit.range.startLineNumber
           ) { // Line number change/modified multiple lines
 
             // Case 1: added content with newline on the same line before incoming change
@@ -126,19 +126,21 @@ export class CollaborationService {
   }
 
   shiftRange(range: Range, lineDelta: number, colDelta: number): Range {
-    return new Range(
-      range.startLineNumber + lineDelta, range.startColumn + colDelta,
-      range.endLineNumber + lineDelta,  range.endColumn + colDelta
-    );
+    return {
+      startLineNumber: range.startLineNumber + lineDelta,
+      startColumn: range.startColumn + colDelta,
+      endLineNumber: range.endLineNumber + lineDelta,
+      endColumn: range.endColumn + colDelta
+    } as Range;
   }
 
   createRange(range: IRange): Range {
-    return new Range(
-      range.startLineNumber,
-      range.startColumn,
-      range.endLineNumber,
-      range.endColumn
-    );
+    return {
+      startLineNumber: range.startLineNumber,
+      startColumn: range.startColumn,
+      endLineNumber: range.endLineNumber,
+      endColumn: range.endColumn
+    } as Range;
   }
 
   /* ----- Manual mapping to smaller data objects to send -----
@@ -176,7 +178,7 @@ export class CollaborationService {
   toSelectionsDTO(selections: Selection[]): any {
     return selections.map(selection => {
       const selectionDTO: SelectionDTO = this.toRangeDTO(selection) as SelectionDTO;
-      selectionDTO.r = selection.getDirection() === SelectionDirection.RTL;
+      selectionDTO.r = selection.getDirection() === 1; //SelectionDirection.RTL;
       return selectionDTO;
     });
   }
@@ -198,13 +200,18 @@ export class CollaborationService {
   }
 
   toRange(rangeDTO: RangeDTO): Range {
-    return new Range(rangeDTO.s.l, rangeDTO.s.c, rangeDTO.e.l, rangeDTO.e.c);
+    return {
+      startLineNumber: rangeDTO.s.l,
+      startColumn: rangeDTO.s.c,
+      endLineNumber: rangeDTO.e.l,
+      endColumn: rangeDTO.e.c
+    } as Range;
   }
 
   toPositions(positions: PositionDTO[]): Position[] {
-    return positions.map(position => {
-        return new Position(position.l, position.c);
-    });
+    return positions.map(position =>
+      ({lineNumber: position.l, column: position.c} as Position)
+    );
   }
 
 }

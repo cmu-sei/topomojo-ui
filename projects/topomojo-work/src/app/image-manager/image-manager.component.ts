@@ -73,7 +73,7 @@ export class ImageManagerComponent implements OnInit, OnChanges {
   emitMarkdown(img: ImageFile): void {
     let link = `[${img.filename}](${img.url})`;
 
-    if (img.filename.match(/\.(jgp|jpeg|png|gif|webp)$/)) {
+    if (img.filename.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
       link = '!' + link;
     }
 
@@ -124,7 +124,7 @@ export class ImageManagerComponent implements OnInit, OnChanges {
   @HostListener('drop', ['$event'])
   onDrop(event: DragEvent): boolean {
     this.dropzone = false;
-    this.drops.next(event.dataTransfer?.files);
+    this.drops.next(event.dataTransfer!.files);
     return false;
   }
 }
