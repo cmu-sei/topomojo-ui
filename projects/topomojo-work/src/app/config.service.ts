@@ -16,7 +16,7 @@ export class ConfigService {
 
   private restorationComplete = false;
   storageKey = 'topomojo';
-  settings: Settings = environment.settings;
+  settings: Settings = environment.settings as Settings;
   local: LocalAppSettings = {};
   tabs: TabRef[] = [];
   settings$ = new BehaviorSubject<Settings>(this.settings);
