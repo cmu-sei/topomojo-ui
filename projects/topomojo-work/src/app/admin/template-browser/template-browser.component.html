@@ -13,7 +13,19 @@
     </div>
     <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="termed()">
   </div>
-  <button class="btn btn-link text-primary btn-sm" (click)="create()">create</button>
+  <button class="btn btn-link text-primary btn-sm" (click)="create()">create</button> |
+  <button class="btn btn-link btn-sm text-secondary" (click)="togglePublished()">
+    <fa-icon *ngIf="filterPublished" [icon]="faFilter"/>
+    <span>published</span>
+  </button>
+  <button *ngIf="search.pid" class="btn btn-link btn-sm text-secondary" (click)="clearParent()">
+    <fa-icon [icon]="faFilter"/>
+    <span>parent[{{filterTag}}]</span>
+  </button>
+  <!-- <button *ngIf="search.sid" class="btn btn-link btn-sm text-secondary" (click)="clearSource()">
+    <fa-icon [icon]="faFilter"/>
+    <span>source[{{filterTag}}]</span>
+  </button> -->
 </div>
 
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
@@ -22,17 +34,30 @@
 <div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
   <div class="col-8">
     <span class="m-1">{{g.name}}</span>
-    <span class="m-1">
-      <fa-icon [icon]="g.parentId ? faLink : faUnlink"></fa-icon>
-      <span *ngIf="g.parentId" >{{g.parentName}}</span>
+    <!-- <button *ngIf="g.sourceId===g.parentId" class="btn btn-sm pop-info px-2 mx-1" (click)="filterSource(g)">
+      <fa-icon [icon]="faLink"></fa-icon>
+      <span>{{g.sourceName}}</span>
+    </button> -->
+    <span *ngIf="g.parentId" class="pop-info px-2 mx-1">
+      <fa-icon [icon]="g.isLinked ? faLink : faUnlink"></fa-icon>
+      <span>{{g.parentName}}</span>
+      <span *ngIf="g.workspaceId" class="btn btn-sm btn-link text-muted ml-1" (click)="filterParent(g)">
+        <fa-icon [icon]="faFilter"/>
+      </span>
     </span>
-    <span [hidden]="!g.isPublished" class="pop-success px-2 m-1">
-      <fa-icon [icon]="faGlobe"></fa-icon>
-    </span>
-    <span [hidden]="!g.audience" class="pop-warning px-2">{{g.audience}}</span>
+    <small [hidden]="!g.isPublished" class="pop-success px-2 m-1">
+      <fa-icon [icon]="faEye"></fa-icon>
+    </small>
+    <small [hidden]="!g.audience" class="pop-warning px-2">
+      <fa-icon [icon]="faEye"/>
+      <span>{{g.audience}}</span>
+    </small>
     <br/>
     <small class="text-muted ml-4">
-      <a *ngIf="g.workspaceId" [routerLink]="['/topo', g.workspaceId]" class="text-secondary">{{g.workspaceName}}</a>
+      <a *ngIf="g.workspaceId" [routerLink]="['/topo', g.workspaceId, 'templates']" class="text-secondary">{{g.workspaceName}}</a>
+      <button *ngIf="g.workspaceId" class="btn btn-sm text-muted ml-2" (click)="filterWorkspace(g.workspaceId)">
+        <fa-icon [icon]="faFilter"/>
+      </button>
       <span *ngIf="!g.workspaceId">Stock Template</span>
     </small>
   </div>
@@ -40,6 +65,10 @@
     <button class="btn btn-outline-info btn-sm mx-1" (click)="view(g)">
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
+    </button>
+    <button class="btn btn-outline-info btn-sm mx-1" (click)="clone(g)">
+      <fa-icon [icon]="faCopy"></fa-icon>
+      <span>Clone</span>
     </button>
     <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(g)">
       <fa-icon [icon]="faTrash"></fa-icon>
@@ -63,7 +92,7 @@
         </div>
       </div>
 
-      <app-template-detail-form [template]="detail" [linked]="!!g.parentId"></app-template-detail-form>
+      <app-template-detail-form [template]="detail" [linked]="g.isLinked!"></app-template-detail-form>
 
     </ng-container>
   </div>

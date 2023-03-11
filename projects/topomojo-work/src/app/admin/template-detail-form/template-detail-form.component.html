@@ -73,9 +73,13 @@
     </div>
   </div>
 
-  <div *ngIf="!linked" class="form-group bg-light">
+  <div *ngIf="!template.isLinked" class="form-group bg-light">
     <label for="detail-input">Detail</label>
     <textarea id="detail-input" name="detail" class="form-control json" spellcheck="false" rows="20" placeholder="Detail" [(ngModel)]="template.detail"></textarea>
+  </div>
+  <div *ngIf="template.isLinked" class="form-group bg-light">
+    <label for="">Parent Detail</label>
+    <pre>{{template.parent!.detail! | jsonParse | json}}</pre>
   </div>
 
   <div class="text-center">

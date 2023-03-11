@@ -146,6 +146,7 @@ export interface TemplateSummary {
   parentId?: string;
   parentName?: string;
   isPublished?: boolean;
+  isLinked?: boolean;
 }
 
 export interface Template {
@@ -157,10 +158,13 @@ export interface Template {
   iso: string;
   guestinfo: string;
   parentId: string;
+  parentName?: string;
   workspaceId: string;
+  workspaceName?: string;
   replicas: number;
   variant: number;
   isHidden: boolean;
+  isLinked: boolean;
 }
 
 export interface ChangedTemplate {
@@ -179,8 +183,31 @@ export interface TemplateLink {
   templateId: string;
   workspaceId: string;
 }
+export interface TemplateReLink {
+  templateId: string;
+  parentId: string;
+  workspaceId: string;
+}
+
+export interface TemplateClone {
+  id: string;
+  name?: string;
+}
 
 export interface TemplateDetail {
+  id: string;
+  name?: string;
+  description?: string;
+  audience?: string;
+  networks?: string;
+  guestinfo?: string;
+  detail?: string;
+  isPublished?: boolean;
+  isLinked?: boolean;
+  parent?: TemplateDetail;
+}
+
+export interface ChangedTemplateDetail {
   id: string;
   name?: string;
   description?: string;
@@ -204,6 +231,7 @@ export interface Workspace {
   id: string;
   name: string;
   description: string;
+  tags: string;
   author: string;
   audience: string;
   whenCreated?: string;
@@ -238,16 +266,20 @@ export interface PlayableWorkspace {
 export interface NewWorkspace {
   name?: string;
   description?: string;
+  tags?: string;
   author?: string;
   audience?: string;
   challenge?: string;
   document?: string;
+  templateScope?: string;
+  templateLimit?: number;
 }
 
 export interface ChangedWorkspace {
   id: string;
   name?: string;
   description?: string;
+  tags?: string;
   author?: string;
   audience?: string;
   templateScope?: string;

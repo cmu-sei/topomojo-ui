@@ -21,6 +21,13 @@
   <hr>
 </div>
 
-<app-template-editor *ngFor="let t of workspace.templates" [template]="t" (deleted)="remove($event)"></app-template-editor>
+<div *ngFor="let t of workspace.templates; trackBy:trackById" >
+  <app-template-editor [template]="t" (deleted)="remove($event)"></app-template-editor>
+
+</div>
+
+<div>
+  <a class="btn btn-link btn-sm text-secondary" [routerLink]="['/admin', 'templates']" [queryParams]="{term: workspace.id}">Template Manager (admin)</a>
+</div>
 
 <app-template-selector [workspaceId]="workspace.id" (added)="add($event)"></app-template-selector>

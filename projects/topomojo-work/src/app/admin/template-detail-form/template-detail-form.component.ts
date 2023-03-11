@@ -4,7 +4,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons';
-import { TemplateDetail } from '../../api/gen/models';
+import { ChangedTemplateDetail, TemplateDetail } from '../../api/gen/models';
 import { TemplateService } from '../../api/template.service';
 
 @Component({
@@ -35,7 +35,7 @@ export class TemplateDetailFormComponent implements OnInit {
         const s = JSON.parse(this.template?.detail || '');
       }
       console.log(this.template);
-      this.api.updateDetail(this.template).subscribe(
+      this.api.updateDetail(this.template as ChangedTemplateDetail).subscribe(
           (data) => {
               this.form.reset(this.form.value);
           },

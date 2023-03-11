@@ -20,6 +20,19 @@
 
   <!-- display results -->
   <ul class="list-unstyled">
+    <li class="d-flex align-items-center mb-1" *ngFor="let s of templateSets">
+      <button *ngIf="active !== s" class="btn btn-sm btn-light mr-2" (click)="addSet(s.id)">
+        <fa-icon [icon]="faPlus"></fa-icon>
+        <span>Add</span>
+      </button>
+      <label *ngIf="active === s" class="text-success mr-2">
+        <fa-icon [icon]="faCheck"></fa-icon>
+        <span><small>Added</small></span>
+      </label>
+      <span>{{s.name}}</span>
+      <div class="spacer"></div>
+      <small class="thin">published template set</small>
+    </li>
     <li class="d-flex align-items-center mb-1" *ngFor="let t of templates$ | async">
       <button *ngIf="active !== t" class="btn btn-sm btn-light mr-2" (click)="target.next(t)">
         <fa-icon [icon]="faPlus"></fa-icon>

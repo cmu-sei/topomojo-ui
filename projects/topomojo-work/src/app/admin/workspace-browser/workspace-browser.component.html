@@ -13,6 +13,14 @@
     </div>
     <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="termed()">
   </div>
+  <button class="btn btn-sm btn-link text-primary" (click)="showCreatePanel=!showCreatePanel">
+    <fa-icon [icon]="faPlus"/>
+    <span>Create</span>
+  </button>
+</div>
+
+<div *ngIf="showCreatePanel" class="my-2">
+  <app-workspace-creator></app-workspace-creator>
 </div>
 
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>

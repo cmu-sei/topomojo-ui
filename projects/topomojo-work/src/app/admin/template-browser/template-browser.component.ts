@@ -2,10 +2,11 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, OnInit } from '@angular/core';
-import { faBars, faGlobe, faLink, faList, faMehBlank, faSearch, faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
+import { ActivatedRoute } from '@angular/router';
+import { faBars, faCopy, faEye, faFilter, faGlobe, faLink, faList, faMehBlank, faSearch, faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
-import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
-import { Search, Template, TemplateDetail, TemplateSearch, TemplateSummary } from '../../api/gen/models';
+import { debounceTime, filter, first, map, switchMap, tap } from 'rxjs/operators';
+import { Search, Template, TemplateClone, TemplateDetail, TemplateSearch, TemplateSummary } from '../../api/gen/models';
 import { TemplateService } from '../../api/template.service';
 
 @Component({
@@ -25,6 +26,8 @@ export class TemplateBrowserComponent implements OnInit {
   skip = 0;
   take = 100;
   count = 0;
+  filterPublished = false;
+  filterTag = "";
 
   faTrash = faTrash;
   faList = faList;
@@ -32,13 +35,21 @@ export class TemplateBrowserComponent implements OnInit {
   faGlobe = faGlobe;
   faLink = faLink;
   faUnlink = faUnlink;
+  faEye = faEye;
+  faFilter = faFilter;
+  faCopy = faCopy;
 
   constructor(
+    route: ActivatedRoute,
     private api: TemplateService
   ) {
     this.source$ = merge(
       this.refresh$,
-      interval(60000)
+      interval(60000),
+      route.queryParams.pipe(
+        tap(p => this.search.term = p.term),
+        map(p => true)
+      )
     ).pipe(
       debounceTime(500),
       switchMap(() => this.api.list(this.search)),
@@ -108,5 +119,44 @@ export class TemplateBrowserComponent implements OnInit {
 
   trackById(index: number, t: TemplateSummary): string {
     return t.id;
+  }
+
+  filterParent(m: TemplateSummary): void {
+    this.search.pid = m.parentId;
+    this.filterTag = m.parentName || "";
+    this.paged(0);
+  }
+
+  clearParent(): void {
+    this.search.pid = undefined;
+    this.paged(0);
+  }
+
+  // filterSource(m: TemplateSummary): void {
+  //   this.search.sid = m.sourceId;
+  //   this.filterTag = m.sourceName || "";
+  //   this.paged(0);
+  // }
+
+  // clearSource(): void {
+  //   this.search.sid = undefined;
+  //   this.paged(0);
+  // }
+
+  filterWorkspace(id: string): void {
+    this.search.term = id;
+    this.termed();
+  }
+
+  togglePublished(): void {
+    this.filterPublished = !this.filterPublished;
+    this.search.filter = this.filterPublished ? ['published'] : [];
+    this.termed();
+  }
+
+  clone(m: TemplateSummary): void {
+    this.api.clone({id: m.id}).pipe(
+      first()
+    ).subscribe(_ => this.refresh())
   }
 }

@@ -17,17 +17,14 @@ export class PagerComponent implements OnInit {
   }
 
   next(): void {
-    this.skip += this.take;
-    this.changed.next(this.skip);
+    this.changed.next(this.skip + this.take);
   }
 
   prev(): void {
-    this.skip = Math.max(0, this.skip - this.take);
-    this.changed.next(this.skip);
+    this.changed.next(Math.max(0, this.skip - this.take));
   }
 
   top(): void {
-    this.skip = 0;
-    this.changed.next(this.skip);
+    this.changed.next(0);
   }
 }
