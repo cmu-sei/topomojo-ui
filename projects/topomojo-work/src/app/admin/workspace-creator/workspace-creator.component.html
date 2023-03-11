@@ -1,0 +1,43 @@
+<div>
+  <div class="form-group bg-light">
+    <label class="mb-0" for="input-scope">Name</label>
+    <input id="input-scope" class="form-control" type="text" [(ngModel)]="model.name">
+    <small>name of new workspace</small>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="model-template-limit">Template Limit</label>
+    <input id="model-template-limit" class="form-control" type="number" [(ngModel)]="model.templateLimit">
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="input-scope">Template Scope</label>
+    <input id="input-scope" class="form-control" type="text" [(ngModel)]="model.templateScope">
+    <small>template scopes this workspace can link</small>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="input-audience">Audience</label>
+    <input id="input-audience" class="form-control" type="text" [(ngModel)]="model.audience">
+    <small>audience(s) that can deploy workspace as gamespace</small>
+  </div>
+
+  <div class="form-group bg-light">
+    <label class="mb-0" for="input-count">Create</label>
+    <div class="input-group">
+      <input id="input-count" class="form-control" type="number" [(ngModel)]="count">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2" (click)="create()">Create</button>
+      </div>
+    </div>
+    <small>if creating multiple, index is appended to name</small>
+  </div>
+
+  <ng-container *ngIf="created$ | async">
+    <ul class="list-unstyled">
+      <li *ngFor="let w of created">
+        <a [routerLink]="['/topo', w.id]">{{w.name}}</a>
+      </li>
+    </ul>
+  </ng-container>
+</div>

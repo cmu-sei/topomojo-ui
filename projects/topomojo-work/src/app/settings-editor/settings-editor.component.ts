@@ -41,6 +41,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
       id: ['', Validators.required],
       name: ['', Validators.required],
       description: [''],
+      tags: [''],
       audience: [''],
       author: [''],
       durationMinutes: ['']
@@ -67,6 +68,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
       id: ws.id,
       name: ws.name,
       description: ws.description,
+      tags: ws.tags,
       author: ws.author,
       audience: ws.audience,
       durationMinutes: ws.durationMinutes || 0
@@ -76,6 +78,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   mapToWorkspace(model: WorkspaceSettings): void {
     this.workspace.name = model.name;
     this.workspace.description = model.description;
+    this.workspace.tags = model.tags;
     this.workspace.author = model.author;
     this.workspace.audience = model.audience;
     this.workspace.durationMinutes = model.durationMinutes;
@@ -131,6 +134,7 @@ interface WorkspaceSettings {
   id: string;
   name: string;
   description: string;
+  tags: string;
   author: string;
   audience: string;
   durationMinutes: number;

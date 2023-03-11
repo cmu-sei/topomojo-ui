@@ -18,6 +18,7 @@ import { ClipspanComponent } from './clipspan/clipspan.component';
 import { CountdownPipe } from './countdown.pipe';
 import { ClockPipe } from './clock.pipe';
 import { PagerComponent } from './pager/pager.component';
+import { JsonParsePipe } from './json-parse.pipe';
 
 
 
@@ -34,7 +35,8 @@ import { PagerComponent } from './pager/pager.component';
     ClipspanComponent,
     CountdownPipe,
     ClockPipe,
-    PagerComponent
+    PagerComponent,
+    JsonParsePipe
   ],
   imports: [
     CommonModule,
@@ -54,7 +56,8 @@ import { PagerComponent } from './pager/pager.component';
     ClipspanComponent,
     CountdownPipe,
     ClockPipe,
-    PagerComponent
+    PagerComponent,
+    JsonParsePipe
   ]
 })
 export class UtilityModule { }

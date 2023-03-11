@@ -5,6 +5,10 @@
 
   <div class="col-6">
     <label class="label pop-info">{{template.name | lowercase}}</label>
+    <small class="ml-2 text-muted">
+      <fa-icon [icon]="template.isLinked ? faLink : faUnlink"/>
+      {{template.parentName}}
+    </small>
   </div>
 
   <div class="col-1 btn-group btn-group-sm">
@@ -18,6 +22,22 @@
   </div>
 
 </div>
+
+<ng-container *ngIf="revisions$ | async as revisions">
+  <div *ngFor="let rev of revisions" class="d-flex justify-content-between mx-4 mb-2 px-2 text-warning">
+    <small *ngIf="template.isLinked">Change parent to {{rev.name}}?</small>
+    <small *ngIf="!template.isLinked">Manually updated to match {{rev.name}}?</small>
+    <span class="">
+      <app-confirm-button btnClass="btn btn-sm btn-outline-warning" (confirm)="relink(rev)">
+        <span>Resolve</span>
+      </app-confirm-button>
+      <span class="mx-1"></span>
+      <button class="btn btn-sm btn-outline-warning">
+        <span>Ignore</span>
+      </button>
+    </span>
+  </div>
+</ng-container>
 
 <div *ngIf="editing" class="row my-2">
   <div class="col-12">
@@ -35,7 +55,7 @@
             <tr><td>Guest Settings</td><td><pre>{{template.guestinfo}}</pre></td></tr>
             <tr><td>Replicas</td><td>{{template.replicas}}</td></tr>
             <tr><td>Access</td><td>{{template.isHidden ? 'Hidden' : 'Visible'}}</td></tr>
-            <tr><td>Link</td><td>{{template.parentId ? 'Linked' : 'Unlinked'}}</td></tr>
+            <tr><td>Link</td><td>{{template.isLinked ? 'Linked to ' : 'Unlinked from '}}{{template.parentName}}</td></tr>
           </tbody>
         </table>
       </div>
@@ -44,7 +64,7 @@
 
         <app-template-editor-form [template]="template"></app-template-editor-form>
 
-        <div class="form-group bg-light" *ngIf="!!template.parentId">
+        <div class="form-group bg-light" *ngIf="template.isLinked">
           <label for="unlink-input">Linked</label>
           <div class="form-control auto-h">
             <app-confirm-button btnClass="btn btn-info btn-sm" (confirm)="unlink()">

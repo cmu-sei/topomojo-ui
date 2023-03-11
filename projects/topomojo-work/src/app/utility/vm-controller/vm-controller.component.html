@@ -49,7 +49,7 @@
 
       <button class="btn btn-outline-dark" (click)="do('save')"
       aria-label="save" tooltip="save"
-      *ngIf="template.id && !template.parentId">
+      *ngIf="template.id && !template.isLinked">
         <fa-icon [icon]="faSave"></fa-icon>
       </button>
 

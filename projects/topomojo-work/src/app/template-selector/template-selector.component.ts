@@ -32,6 +32,7 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
   faCheck = faCheck;
   faFilter = faFilter;
   errors: any[] = [];
+  templateSets: any[] = [];
 
   constructor(
     private api: TemplateService,
@@ -46,18 +47,26 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
       i.name < j.name ? -1 : i.name > j.name ? 1 : 0
     );
 
+    const distinctFilter = (v: TemplateSummary, i: number, s: TemplateSummary[]) => {
+      return v.workspaceId
+        ? s.indexOf(s.find(t => t.workspaceId === v.workspaceId)!) === i
+        : false
+      ;
+    }
+
     // refresh view
     this.templates$ = this.refresh$.pipe(
       debounceTime(250),
       switchMap(() => of(this.templates)),
-      map(a => tfilter(a))
+      map(a => tfilter(a)),
+      tap(a => this.templateSets = a.filter(distinctFilter).map(t => ({id: t.workspaceId, name: t.workspaceName})))
     );
 
     // link action
     this.target$ = this.target.pipe(
-      debounceTime(250),
+      // debounceTime(250),
       tap(t => this.active = t),
-      switchMap(t => api.link({workspaceId: this.workspaceId, templateId: t.id} as TemplateLink).pipe(
+      concatMap(t => api.link({workspaceId: this.workspaceId, templateId: t.id} as TemplateLink).pipe(
         catchError(err => {
           this.errors.push(err);
           return of({} as Template);
@@ -96,5 +105,12 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
   toggleAudience(aud: string): void {
     this.filter = aud;
     this.refresh$.next(true);
+  }
+
+  addSet(id: string): void {
+    this.templates
+      .filter(t => t.workspaceId === id)
+      .forEach(t => this.target.next(t))
+    ;
   }
 }

@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, OnInit } from '@angular/core';
-import { faCheckSquare, faSquare, faTrash, faCheck, faSyncAlt, faList, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faCheckSquare, faSquare, faTrash, faCheck, faSyncAlt, faList, faSearch, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
 import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { Search, Workspace, WorkspaceSummary } from '../../api/gen/models';
@@ -25,7 +25,8 @@ export class WorkspaceBrowserComponent implements OnInit {
   skip = 0;
   take = 100;
   count = 0;
-
+  showCreatePanel = false;
+  faPlus = faPlus;
   faTrash = faTrash;
   faList = faList;
   faSearch = faSearch;

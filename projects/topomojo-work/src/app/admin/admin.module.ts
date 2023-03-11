@@ -21,6 +21,7 @@ import { LogViewerComponent } from './log-viewer/log-viewer.component';
 import { ObserveComponent } from './observe/observe.component';
 import { GamespaceDetailComponent } from './gamespace-detail/gamespace-detail.component';
 import { GamespaceInteractComponent } from './gamespace-interact/gamespace-interact.component';
+import { WorkspaceCreatorComponent } from './workspace-creator/workspace-creator.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { GamespaceInteractComponent } from './gamespace-interact/gamespace-inter
     LogViewerComponent,
     ObserveComponent,
     GamespaceDetailComponent,
-    GamespaceInteractComponent
+    GamespaceInteractComponent,
+    WorkspaceCreatorComponent,
   ],
   imports: [
     CommonModule,

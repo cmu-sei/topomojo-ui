@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { ChangedTemplate, IsoFile, Template } from '../api/gen/models';
 import { TemplateService } from '../api/template.service';
-import { faUnlink, faToggleOff, faToggleOn, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faUnlink, faToggleOff, faToggleOn, faTimes, faLink } from '@fortawesome/free-solid-svg-icons';
 import { ClipboardService } from '../clipboard.service';
 
 @Component({
@@ -20,6 +20,7 @@ export class TemplateEditorFormComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild(NgForm) form!: UntypedFormGroup;
   private sub!: Subscription;
 
+  faLink = faLink;
   faUnlink = faUnlink;
   faToggleOff = faToggleOff;
   faToggleOn = faToggleOn;

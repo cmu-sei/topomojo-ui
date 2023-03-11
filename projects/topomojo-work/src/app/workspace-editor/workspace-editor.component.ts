@@ -3,8 +3,8 @@
 
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, concat, from, Observable, of, scheduled, zip } from 'rxjs';
-import { catchError, concatAll, debounceTime, distinctUntilChanged, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { Observable, of, zip } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 import { Workspace, WorkspaceStats } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 import { ConfigService } from '../config.service';
