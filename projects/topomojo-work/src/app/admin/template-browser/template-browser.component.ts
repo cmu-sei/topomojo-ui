@@ -1,12 +1,12 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faBars, faCopy, faEye, faFilter, faGlobe, faLink, faList, faMehBlank, faSearch, faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faEye, faFilter, faGlobe, faLink, faList, faSearch, faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
-import { debounceTime, filter, first, map, switchMap, tap } from 'rxjs/operators';
-import { Search, Template, TemplateClone, TemplateDetail, TemplateSearch, TemplateSummary } from '../../api/gen/models';
+import { debounceTime, filter, first, switchMap, tap } from 'rxjs/operators';
+import { TemplateDetail, TemplateSearch, TemplateSummary } from '../../api/gen/models';
 import { TemplateService } from '../../api/template.service';
 
 @Component({
@@ -14,7 +14,7 @@ import { TemplateService } from '../../api/template.service';
   templateUrl: './template-browser.component.html',
   styleUrls: ['./template-browser.component.scss']
 })
-export class TemplateBrowserComponent implements OnInit {
+export class TemplateBrowserComponent {
   refresh$ = new BehaviorSubject<boolean>(true);
   source$: Observable<TemplateSummary[]>;
   source: TemplateSummary[] = [];
@@ -43,13 +43,11 @@ export class TemplateBrowserComponent implements OnInit {
     route: ActivatedRoute,
     private api: TemplateService
   ) {
+    this.search.term = route.snapshot.queryParams.term;
+
     this.source$ = merge(
       this.refresh$,
-      interval(60000),
-      route.queryParams.pipe(
-        tap(p => this.search.term = p.term),
-        map(p => true)
-      )
+      interval(60000)
     ).pipe(
       debounceTime(500),
       switchMap(() => this.api.list(this.search)),
@@ -62,9 +60,6 @@ export class TemplateBrowserComponent implements OnInit {
       filter(t => !!t),
       switchMap(t => api.loadDetail(t?.id || ''))
     );
-  }
-
-  ngOnInit(): void {
   }
 
   refresh(): void {

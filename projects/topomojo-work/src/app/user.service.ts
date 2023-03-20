@@ -3,8 +3,8 @@
 
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, interval, of } from 'rxjs';
-import { catchError, debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, of, timer } from 'rxjs';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { UserRegistration, ApiUser } from './api/gen/models';
 import { ProfileService } from './api/profile.service';
 import { AuthService, AuthTokenState } from './auth.service';
@@ -27,21 +27,11 @@ export class UserService {
 
     // every half hour grab a fresh mks cookie if token still good
     combineLatest([
-      interval(1800000),
+      timer(1000, 1800000),
       auth.tokenState$
     ]).pipe(
       map(([i, t]) => t),
       filter(t => t === AuthTokenState.valid),
-      ).subscribe(t => {
-        api.register(
-          auth.oidcUser?.profile as unknown as UserRegistration,
-          auth.auth_header()
-        );
-    });
-
-    auth.tokenState$.pipe(
-      filter(t => t === AuthTokenState.valid),
-      debounceTime(300),
       switchMap(u => api.register(
         auth.oidcUser?.profile as UserRegistration,
         auth.auth_header()).pipe(

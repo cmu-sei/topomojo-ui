@@ -9,9 +9,7 @@
     "scope": "openid profile jam-api",
     "redirect_uri": "http://localhost:4200/oidc",
     "silent_redirect_uri": "http://localhost:4200/assets/oidc-silent.html",
-    "monitorSession": false,
     "loadUserInfo": true,
-    "automaticSilentRenew": true,
     "useLocalStorage": true,
     "debug": false
   }
