@@ -30,9 +30,6 @@ export class AuthService {
     private config: ConfigService
   ) {
 
-    // Log.level = Log.DEBUG;
-    // Log.logger = console;
-
     config.settings$.pipe(
       tap(s => console.log(s.oidc?.authority)),
       filter(s => !!s.oidc.authority)
@@ -114,6 +111,7 @@ export class AuthService {
   }
 
   private onRenewError(err: Error): void {
+    console.log(err);
     this.expireToken();
   }
 
@@ -145,7 +143,8 @@ export class AuthService {
   }
 
   silentLoginCallback(): void {
-    this.mgr.signinSilentCallback();
+    this.mgr.signinSilentCallback()
+      .catch(e => console.log(e));
   }
 
   clearStaleState(): void {

@@ -1,16 +1,20 @@
 <?doctype html?>
 <html>
-
 <body>
-  <h1>OIDC verification</h1>
-  <p>just posting the url from this hidden iframe to the listening parent for verification.</p>
+  <h1>OIDC Silent Renew</h1>
   <script>
     (function () {
       if (window.parent && window !== window.parent) {
-        window.parent.postMessage(window.location.href, location.protocol + "//" + location.host);
+        window.parent.postMessage(
+          {
+            source: "oidc-client",
+            url: window.location.href,
+            keepOpen: false
+          },
+          window.location.origin
+        );
       }
     })();
   </script>
 </body>
-
 </html>
