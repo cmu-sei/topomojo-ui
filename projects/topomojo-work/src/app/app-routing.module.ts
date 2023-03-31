@@ -25,7 +25,9 @@ const routes: Routes = [
   { path: 'oidc-silent', component: OidcComponent },
   { path: '', canActivate: [AuthGuard], canActivateChild: [AuthGuard], children: [
     { path: 'mojo/:id/:slug/:code', component: GamespaceJoinComponent },
-    { path: 'mojo/:id/:slug', component: GamespaceComponent },
+    { path: 'mojo/:id', children: [
+      { path: '**', component: GamespaceComponent }
+    ]},
     { path: 'topo/:id/invite/:code', component: EnlistComponent },
     { path: 'topo/:id/:section', component: WorkspaceEditorComponent},
     { path: 'topo/:id', pathMatch: 'full', redirectTo: 'topo/:id/settings'},
