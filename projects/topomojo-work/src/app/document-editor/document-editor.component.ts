@@ -3,7 +3,7 @@
 
 import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Workspace } from '../api/gen/models';
-import { BehaviorSubject, interval, Observable, of, Subject, Subscription, timer } from 'rxjs';
+import { BehaviorSubject, interval, merge, Observable, of, Subject, Subscription, timer } from 'rxjs';
 import { DocumentService } from '../api/document.service';
 import { auditTime, buffer, catchError, debounceTime, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { NgxEditorModel } from 'ngx-monaco-editor-v2';
@@ -22,6 +22,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
   @Input() summary!: Workspace;
   docid$ = new Subject<string>();
   dirty$ = new Subject<boolean>();
+  save$ = new Subject<boolean>();
   saved$ = new Observable<boolean>();
   editorModel$ = new Observable<NgxEditorModel>();
   doctext = '';
@@ -88,9 +89,11 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
       }) as NgxEditorModel)
     );
 
-    this.saved$ = this.dirty$.pipe(
-      debounceTime(4000),
-      filter(() => !this.readOnly),
+    this.saved$ = merge(
+      this.dirty$.pipe(debounceTime(5000)),
+      this.save$
+    ).pipe(
+      filter(b => !!b && !this.readOnly),
       switchMap(() => api.updateDocument(this.summary.id, this.doctext)),
       mergeMap(() => timer(0, 4000).pipe(
         map(i => !(i % 2)),
@@ -197,6 +200,11 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
     const range = this.editor.getSelection() || { selectionStartLineNumber: 1, selectionStartColumn: 1, positionLineNumber: 1, positionColumn: 1} as Selection // new Selection(1, 1, 1, 1);
     this.editor.executeEdits('image-manager', [{range, text, forceMoveMarkers: true}], );
     this.editor.focus();
+  }
+
+  save() : void {
+    this.save$.next(true);
+    this.dirty$.next(false);
   }
 
   editorInit(editor: Editor): void {

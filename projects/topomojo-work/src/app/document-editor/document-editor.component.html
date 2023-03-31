@@ -14,6 +14,10 @@
       <span *ngIf="readOnly" class="mr-2">
         <fa-icon [icon]="faLock"></fa-icon>
       </span>
+      <button class="btn btn-sm btn-outline-secondary mr-2" [hidden]="readOnly" (click)="save()">
+        <fa-icon [icon]="faSave"></fa-icon>
+        <span>Save</span>
+      </button>
       <button class="btn btn-sm btn-outline-secondary mr-2" [hidden]="showPreview" btnCheckbox [(ngModel)]="showImageManager">
         <fa-icon [icon]="faImage"></fa-icon>
         <span>Images</span>
