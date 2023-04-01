@@ -45,7 +45,7 @@ export class WorkspaceBrowserComponent implements OnInit {
     this.workspaces = this.refresh$.pipe(
       debounceTime(150),
       // distinctUntilChanged(),
-      switchMap(() => this.api.list(this.search)),
+      switchMap(() => this.api.list({...this.search, filter: ['my']})),
       tap(l => this.count = l.length)
     );
 

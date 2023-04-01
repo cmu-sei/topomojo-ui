@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { UserManagerSettings } from 'oidc-client-ts';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from 'projects/topomojo-work/src/environments/environment';
-import { Location, PlatformLocation } from '@angular/common';
+import { Location } from '@angular/common';
 import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 // import { MarkedRenderer, MarkedOptions } from 'ngx-markdown';
 
@@ -54,6 +54,7 @@ export class ConfigService {
     private location: Location
   ) {
     this.local = this.getLocal();
+    this.storageKey += `__${window.location.host}${this.location.prepareExternalUrl('')}`;
   }
 
   // use setting, or relative
