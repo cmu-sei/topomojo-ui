@@ -34,7 +34,7 @@ export class TemplateDetailFormComponent implements OnInit {
       if (!!this.template.detail) {
         const s = JSON.parse(this.template?.detail || '');
       }
-      console.log(this.template);
+      // console.log(this.template);
       this.api.updateDetail(this.template as ChangedTemplateDetail).subscribe(
           (data) => {
               this.form.reset(this.form.value);

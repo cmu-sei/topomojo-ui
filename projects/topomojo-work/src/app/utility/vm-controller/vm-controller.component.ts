@@ -59,7 +59,7 @@ export class VmControllerComponent implements OnInit, OnDestroy {
     this.hubsub = hub.vmEvents.subscribe(
       (event) => {
         if (event.model.id === this.vm.id) {
-          console.log(event.action + ' ' + event.model.id);
+          // console.log(event.action + ' ' + event.model.id);
           if (event.action === 'VM.DELETE') { this.vm = {}; }
           this.do('refresh');
         }

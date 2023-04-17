@@ -28,7 +28,7 @@ export class LogViewerComponent implements OnInit {
       interval(30000)
     ).pipe(
       switchMap(() => api.getlog(this.since)),
-      tap(r => console.log(r))
+      // tap(r => console.log(r))
       // tap(() => this.since = (new Date()).toISOString())
     );
   }

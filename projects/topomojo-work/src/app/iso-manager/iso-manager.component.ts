@@ -29,7 +29,7 @@ export class IsoManagerComponent implements OnInit, OnChanges {
 
     this.drops.pipe(
       mergeMap((list: File[]) => list),
-      tap((f: File) => console.log(f.name + ' ' + f.size)),
+      // tap((f: File) => console.log(f.name + ' ' + f.size)),
       mergeMap((f: File) => api.uploadIso(this.guid, f).pipe(
         tap((e: HttpEvent<any>) => this.progress(e, f)),
         finalize(() => this.progressEnd(f))

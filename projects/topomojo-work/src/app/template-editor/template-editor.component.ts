@@ -71,7 +71,7 @@ export class TemplateEditorComponent implements OnInit, AfterViewInit {
   }
 
   delete(): void {
-    console.log('delete');
+    // console.log('delete');
     const s: Subscription = this.api.delete(this.template.id).pipe(
       finalize(() => s.unsubscribe())
     ).subscribe(
