@@ -18,6 +18,14 @@
       <div class="d-flex align-items-center">
         <label for="">Q.{{i+1}}</label>
         <div class="spacer"></div>
+        <button class="btn btn-sm btn-outline-dark" (click)="moveQuestion(i, -1)">
+          <fa-icon [icon]="faUpArrow"></fa-icon>
+          <span>Move Up</span>
+        </button>
+        <button class="btn btn-sm btn-outline-dark" (click)="moveQuestion(i, 1)">
+          <fa-icon [icon]="faDownArrow"></fa-icon>
+          <span>Move Down</span>
+        </button>
         <app-confirm-button btnClass="btn btn-sm btn-outline-dark" (confirm)="removeQuestion(i)">
           <fa-icon [icon]="faTrash"></fa-icon>
           <span>Remove</span>

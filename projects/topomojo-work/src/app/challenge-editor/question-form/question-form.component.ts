@@ -5,7 +5,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { QuestionSpec } from 'projects/topomojo-work/src/app/api/gen/models';
 import { ChallengeFormService } from '../challenge-form.service';
-import { faTrash, faPlus, faInfoCircle} from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faPlus, faInfoCircle, faArrowDown, faArrowUp} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-question-form',
@@ -23,6 +23,8 @@ export class QuestionFormComponent implements OnInit {
   faTrash = faTrash;
   faPlus = faPlus;
   faHelp = faInfoCircle;
+  faUpArrow = faArrowUp;
+  faDownArrow = faArrowDown;
 
   constructor(
     private svc: ChallengeFormService
@@ -40,5 +42,9 @@ export class QuestionFormComponent implements OnInit {
   removeQuestion(index: number): void {
     this.questions.removeAt(index);
   }
-
+  moveQuestion(index: number, direction: number): void {
+    const tmp = this.questions.controls[index];
+    this.questions.removeAt(index);
+    this.questions.insert(index+direction, tmp);
+  }
 }
