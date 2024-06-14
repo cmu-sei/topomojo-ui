@@ -16,6 +16,7 @@ import { ApiService } from '../api.service';
 import { ClipboardService } from '../clipboard.service';
 import { HubService } from '../hub.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NoVNCConsoleService } from './services/novnc-console.service';
 
 @Component({
   selector: 'app-console',
@@ -23,7 +24,8 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./console.component.scss'],
   providers: [
     MockConsoleService,
-    WmksConsoleService
+    WmksConsoleService,
+    NoVNCConsoleService
   ]
 })
 export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -210,15 +212,20 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.isMock = !!(info.url.match(/mock/i));
 
-    this.console = this.isMock
-      ? this.injector.get(MockConsoleService)
-      : this.injector.get(WmksConsoleService);
+    if (this.isMock) {
+      this.console = this.injector.get(MockConsoleService);
+    } else if (info.ticket != null) {
+      this.console = this.injector.get(NoVNCConsoleService);
+    } else {
+      this.console = this.injector.get(WmksConsoleService);
+    }
 
-    this.console.connect(
-      info.url,
-      (state: string) => this.changeState(state),
-      { canvasId: this.canvasId, viewOnly: this.viewOnly, changeResolution: !!this.request.fullbleed }
-    );
+    this.console.connect(info.url, (state: string) => this.changeState(state), {
+      canvasId: this.canvasId,
+      viewOnly: this.viewOnly,
+      changeResolution: !!this.request.fullbleed,
+      ticket: info.ticket,
+    });
   }
 
   start(): void {
