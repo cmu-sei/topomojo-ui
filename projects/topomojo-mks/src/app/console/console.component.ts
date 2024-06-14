@@ -3,10 +3,10 @@
 
 import {
   Component, OnInit, ViewChild, AfterViewInit,
-  ElementRef, Input, Injector, HostListener, OnDestroy, Renderer2
+  ElementRef, Input, Injector, HostListener, OnDestroy, Renderer2,
 } from '@angular/core';
 import { catchError, debounceTime, map, distinctUntilChanged, tap, finalize, switchMap } from 'rxjs/operators';
-import { throwError as ObservableThrower, fromEvent, Subscription, timer, Observable, of, Subject } from 'rxjs';
+import { fromEvent, Subscription, timer, Observable, of, Subject } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { MockConsoleService } from './services/mock-console.service';
 import { WmksConsoleService } from './services/wmks-console.service';
@@ -16,6 +16,8 @@ import { ApiService } from '../api.service';
 import { ClipboardService } from '../clipboard.service';
 import { HubService } from '../hub.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NoVNCConsoleService } from './services/novnc-console.service';
+import { ConsoleSupportsFeatures } from './console.models';
 
 @Component({
   selector: 'app-console',
@@ -23,11 +25,11 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./console.component.scss'],
   providers: [
     MockConsoleService,
-    WmksConsoleService
+    WmksConsoleService,
+    NoVNCConsoleService
   ]
 })
 export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
-
   @Input() index = 0;
   @Input() viewOnly = false;
   @Input() request!: ConsoleRequest;
@@ -56,9 +58,12 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   refreshNets$ = new Subject<boolean>();
   subs: Array<Subscription> = [];
   audience: Observable<ConsolePresence[]>;
+
+  protected clipboardHelpMarkdown$ = of("");
+  protected enableAutoCopyVmSelection = false;
+  protected consoleSupportsFeatures?: ConsoleSupportsFeatures;
+
   private audiencePos!: MouseEvent | null;
-  private audienceEl: any;
-  private hotspot = { x: 0, y: 0, w: 8, h: 8 };
 
   constructor(
     private injector: Injector,
@@ -77,6 +82,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     );
+
     this.nets$ = this.refreshNets$.pipe(
       debounceTime(500),
       switchMap(() => api.nets(this.request.sessionId || '')),
@@ -84,12 +90,9 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void { }
 
   ngAfterViewInit(): void {
-
     this.initHotspot();
 
     const el = this.consoleCanvas.nativeElement;
@@ -116,7 +119,6 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   changeState(state: string): void {
-
     if (state.startsWith('clip:')) {
       this.cliptext = state.substring(5);
       this.clipSvc.copyToClipboard(this.cliptext);
@@ -166,10 +168,9 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   reload(): void {
-
     this.changeState('loading');
     this.api.ticket(this.request).pipe(
-      catchError((err: HttpErrorResponse) => of({error: err.statusText.toLowerCase()} as unknown as ConsoleSummary))
+      catchError((err: HttpErrorResponse) => of({ error: err.statusText.toLowerCase() } as unknown as ConsoleSummary))
     ).subscribe(
       (info: ConsoleSummary) => this.create(info),
       (err) => this.changeState('failed')
@@ -186,11 +187,9 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     //   (info: ConsoleSummary) => this.create(info),
     //   (err) => this.changeState('failed')
     // );
-
   }
 
   create(info: ConsoleSummary): void {
-
     if (!!info.error) {
       this.changeState(info.error);
       return;
@@ -207,18 +206,29 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.vmId = info.id;
-
     this.isMock = !!(info.url.match(/mock/i));
 
-    this.console = this.isMock
-      ? this.injector.get(MockConsoleService)
-      : this.injector.get(WmksConsoleService);
+    if (this.isMock) {
+      this.console = this.injector.get(MockConsoleService);
+    } else if (info.ticket != null) {
+      this.console = this.injector.get(NoVNCConsoleService);
+    } else {
+      this.console = this.injector.get(WmksConsoleService);
+    }
 
-    this.console.connect(
-      info.url,
-      (state: string) => this.changeState(state),
-      { canvasId: this.canvasId, viewOnly: this.viewOnly, changeResolution: !!this.request.fullbleed }
-    );
+    this.console.connect(info.url, (state: string) => this.changeState(state), {
+      canvasId: this.canvasId,
+      viewOnly: this.viewOnly,
+      changeResolution: !!this.request.fullbleed,
+      ticket: info.ticket,
+    });
+
+    this.clipboardHelpMarkdown$ = this.console.clipboardHelpText$;
+    this.consoleSupportsFeatures = this.console.getSupportedFeatures();
+
+    if (this.consoleSupportsFeatures.autoCopyVmSelection) {
+      this.handleAutoCopyVmEnableToggle(true);
+    }
   }
 
   start(): void {
@@ -244,7 +254,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   enterFullscreen(): void {
     if (!!this.console) {
-      this.console.fullscreen();
+      this.console.fullscreen(this.consoleCanvas);
       this.showTools = false;
     }
   }
@@ -269,7 +279,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setNet(net: string): void {
     this.changedNet = '';
-    this.api.update(this.vmId, { key: 'net', value: net + this.netIndex}).subscribe(
+    this.api.update(this.vmId, { key: 'net', value: net + this.netIndex }).subscribe(
       () => {
         this.changedNet = net;
       }
@@ -310,6 +320,11 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  protected handleAutoCopyVmEnableToggle(isEnabled: boolean) {
+    this.enableAutoCopyVmSelection = isEnabled;
+    this.console.setAutoCopyVmSelection(isEnabled);
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
     // this.hotspot.x = event.target.innerWidth - this.hotspot.w;
@@ -333,9 +348,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('document:mousemove', ['$event'])
   dragging(e: MouseEvent): void {
-
     if (!!this.audiencePos) {
-
       e.preventDefault();
 
       const deltaX = this.audiencePos.clientX - e.clientX;

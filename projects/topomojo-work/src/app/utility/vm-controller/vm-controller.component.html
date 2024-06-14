@@ -54,7 +54,8 @@
       </button>
 
       <button class="btn btn-outline-dark" (click)="do('revert')"
-      aria-label="revert" tooltip="revert">
+      aria-label="revert" tooltip="revert"
+      *ngIf="vm.id && vm.hypervisorType === 'vsphere'">
         <fa-icon [icon]="faStepBackward"></fa-icon>
       </button>
 

@@ -348,6 +348,7 @@ export interface Vm {
   state?: VmStateEnum;
   question?: VmQuestion;
   task?: VmTask;
+  hypervisorType?: HypervisorTypeEnum;
 }
 
 export interface VmQuestion {
@@ -387,7 +388,7 @@ export interface VmAnswer {
 export enum VmStateEnum {
   off = 'off',
   running = 'running',
-  suspended = 'suspended'
+  suspended = 'suspended',
 }
 
 export enum VmOperationTypeEnum {
@@ -395,7 +396,12 @@ export enum VmOperationTypeEnum {
   stop = 'stop',
   save = 'save',
   revert = 'revert',
-  delete = 'delete'
+  delete = 'delete',
+}
+
+export enum HypervisorTypeEnum {
+  vsphere = 'vsphere',
+  proxmox = 'proxmox',
 }
 
 // #################################

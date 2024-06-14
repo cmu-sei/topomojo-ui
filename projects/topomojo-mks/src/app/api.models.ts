@@ -18,6 +18,7 @@ export interface ConsoleSummary {
   isolationId: string;
   name: string;
   url: string;
+  ticket: string;
   isRunning?: boolean;
   error?: string;
 }

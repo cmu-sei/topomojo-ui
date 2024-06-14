@@ -2,8 +2,9 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
-import { timer } from 'rxjs';
+import { of, timer } from 'rxjs';
 import { ConsoleService } from './console.service';
+import { ConsoleOptions, ConsoleSupportsFeatures } from '../console.models';
 declare var WMKS: any;
 
 @Injectable()
@@ -16,13 +17,21 @@ export class WmksConsoleService implements ConsoleService {
     position: 0, // WMKS.CONST.Position.CENTER,
   };
   stateChanged!: (state: string) => void;
+  clipboardHelpText$ = of(`
+      COPY transfers the vm clip to _your_ clipboard. Select/Copy text in the vm using **CTRL-C** or context menu
+      before clicking COPY here. (Clicking COPY shows text below _AND_ adds to your clipboard.)
+
+PASTE sends the text below to the vm. Ensure the vm cursor is focused in a window that
+accepts keyboard input before clicking PASTE here.
+    `.trim()
+  );
 
   constructor() { }
 
-  connect(url: string, stateCallback: (state: string) => void, options: any = {} ): void {
+  connect(url: string, stateCallback: (state: string) => void, options: ConsoleOptions): void {
 
     if (stateCallback) { this.stateChanged = stateCallback; }
-    this.options = {...this.options, ...options};
+    this.options = { ...this.options, ...options };
 
     if (this.wmks) {
       this.wmks.destroy();
@@ -30,39 +39,39 @@ export class WmksConsoleService implements ConsoleService {
     }
 
     let wmks = WMKS.createWMKS(options.canvasId, this.options)
-    .register(WMKS.CONST.Events.CONNECTION_STATE_CHANGE, (event: any, data: any) => {
+      .register(WMKS.CONST.Events.CONNECTION_STATE_CHANGE, (event: any, data: any) => {
 
-      switch (data.state) {
-        case WMKS.CONST.ConnectionState.CONNECTED:
-        stateCallback('connected');
-        break;
+        switch (data.state) {
+          case WMKS.CONST.ConnectionState.CONNECTED:
+            stateCallback('connected');
+            break;
 
-        case WMKS.CONST.ConnectionState.DISCONNECTED:
-        stateCallback('disconnected');
-        wmks.destroy();
-        wmks = null;
-        break;
-      }
-    })
-    .register(WMKS.CONST.Events.REMOTE_SCREEN_SIZE_CHANGE, (e: any, data: any) => {
-      // console.log('wmks remote_screen_size_change: ' + data.width + 'x' + data.height);
-      // TODO: if embedded, pass along dimension to canvas wrapper element
-    })
-    .register(WMKS.CONST.Events.HEARTBEAT, (e: any, data: any) => {
+          case WMKS.CONST.ConnectionState.DISCONNECTED:
+            stateCallback('disconnected');
+            wmks.destroy();
+            wmks = null;
+            break;
+        }
+      })
+      .register(WMKS.CONST.Events.REMOTE_SCREEN_SIZE_CHANGE, (e: any, data: any) => {
+        // console.log('wmks remote_screen_size_change: ' + data.width + 'x' + data.height);
+        // TODO: if embedded, pass along dimension to canvas wrapper element
+      })
+      .register(WMKS.CONST.Events.HEARTBEAT, (e: any, data: any) => {
         // debug('wmks heartbeat: ' + data);
         console.log('wmks heartbeat: ' + data);
-    })
-    .register(WMKS.CONST.Events.COPY, (e: any, data: any) => {
+      })
+      .register(WMKS.CONST.Events.COPY, (e: any, data: any) => {
         // console.log('wmks copy: ' + data);
         stateCallback('clip:' + data);
-    })
-    .register(WMKS.CONST.Events.ERROR, (e: any, data: any) => {
+      })
+      .register(WMKS.CONST.Events.ERROR, (e: any, data: any) => {
         // debug('wmks error: ' + data.errorType);
 
-    })
-    .register(WMKS.CONST.Events.FULL_SCREEN_CHANGE, (e: any, data: any) => {
+      })
+      .register(WMKS.CONST.Events.FULL_SCREEN_CHANGE, (e: any, data: any) => {
         // debug('wmks full_screen_change: ' + data.isFullScreen);
-    });
+      });
 
     this.wmks = wmks;
 
@@ -77,9 +86,26 @@ export class WmksConsoleService implements ConsoleService {
     if (this.wmks) {
       this.wmks.disconnect();
       this.stateChanged('disconnected');
-      if (this.options.hideDisconnectedScreen ) {
+      if (this.options.hideDisconnectedScreen) {
         this.dispose();
       }
+    }
+  }
+
+  getClipboardHelpMarkdown(): string {
+    return `
+      COPY transfers the vm clip to _your_ clipboard. Select/Copy text in the vm using **CTRL-C** or context menu
+      before clicking COPY here. (Clicking COPY shows text below _AND_ adds to your clipboard.)
+
+PASTE sends the text below to the vm. Ensure the vm cursor is focused in a window that
+accepts keyboard input before clicking PASTE here.
+    `.trim();
+  }
+
+  getSupportedFeatures(): ConsoleSupportsFeatures {
+    return {
+      autoCopyVmSelection: false,
+      virtualKeyboard: true
     }
   }
 
@@ -87,6 +113,10 @@ export class WmksConsoleService implements ConsoleService {
     if (this.wmks) {
       this.wmks.sendCAD();
     }
+  }
+
+  setAutoCopyVmSelection(enabled: boolean): void {
+    // unsupported over wmks
   }
 
   copy(): void {

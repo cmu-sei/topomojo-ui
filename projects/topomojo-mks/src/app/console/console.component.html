@@ -15,8 +15,7 @@
       <!-- <div class="audience-item">t1-player3</div> -->
     </div>
 
-    <div *ngIf="state==='stopped'||state==='disconnected'" class="align-mm"
-      [class.hidden]="isConnected">
+    <div *ngIf="state==='stopped'||state==='disconnected'" class="align-mm" [class.hidden]="isConnected">
       <h1>{{shadowstate}}</h1>
       <button class="btn btn-lg" (click)="stateButtonClicked()">{{stateIcon}}</button>
     </div>
@@ -31,11 +30,9 @@
       <h1 class="text-danger">{{stateIcon}}</h1>
       <button class="btn" (click)="stateButtonClicked()">Retry</button>
     </div>
-
   </div>
 
   <div *ngIf="isConnected && showTools" class="tools">
-
     <div class="">
       <button class="btn cog" (click)="showUtilities()">&#x2699;</button>
     </div>
@@ -74,7 +71,7 @@
       <button class="btn" (click)="enterFullscreen()">
         <i class="fa fa-arrows-alt fa-2x"></i> Enter Fullscreen
       </button>
-      <button class="btn" (click)="console.showKeyboard()">
+      <button class="btn" *ngIf="consoleSupportsFeatures?.virtualKeyboard" (click)="console.showKeyboard()">
         <i class="fa fa-keyboard-o fa-2x"></i> Show Device Keyboard
       </button>
     </div>
@@ -104,36 +101,31 @@
       </button>
     </div>
 
-      <!-- <div class="flex-h">
-      <span>[Clipboard] </span>
-      <button class="btn" (click)="showClipboard=!showClipboard">
-        <i class="fa fa-clipboard fa-2x"></i> Show
-      </button>
-    </div> -->
-
     <div *ngIf="showClipboard">
       <div class="tools-text">
         <h3>Clipboard</h3>
-        <p>
+        <p *ngIf="consoleSupportsFeatures?.autoCopyVmSelection && enableAutoCopyVmSelection">
           <small>
-            COPY transfers the vm clip to <em>your</em> clipboard.
-            Select/Copy text in the vm using crtl-c or context menu
-            before clicking COPY here. (Clicking COPY shows text
-            below *AND* adds to your clipboard.)
+            This virtual console automatically copies the clipboard in the virtualized
+            machine to <strong>your local machine's clipboard</strong>. You can use the
+            checkbox below to disable this behavior.
           </small>
         </p>
-        <p>
-          <small>
-            PASTE sends the text below to the vm.
-            Ensure the vm cursor is focused in a window that
-            accepts keyboard input before clicking PASTE here.
-          </small>
-        </p>
+        <small *ngIf="console?.clipboardHelpText$ | async as clipboardHelpText" class="clipboard-help-text"
+          [innerHTML]="clipboardHelpText | markdown"></small>
       </div>
-    </div>
-    <div *ngIf="showClipboard">
+
+      <div *ngIf="consoleSupportsFeatures?.autoCopyVmSelection" class="form-control form-check tools-text">
+        <input #inputEnableAutoCopy type="checkbox" class="form-check-input auto-copy" id="input-auto-copy"
+          [checked]="enableAutoCopyVmSelection" (change)="handleAutoCopyVmEnableToggle(inputEnableAutoCopy.checked)">
+
+        <label class="form-check-label" for="input-auto-copy" class="auto-copy">
+          Auto-copy selections to my local clipboard
+        </label>
+      </div>
+
       <div class="btn-group">
-        <button (click)="clip()">
+        <button *ngIf="!consoleSupportsFeatures?.autoCopyVmSelection || !enableAutoCopyVmSelection" (click)="clip()">
           <span *ngIf="!justClipped" class="fa fa-long-arrow-down">&#x21e7;</span>
           <i *ngIf="justClipped" class="text-success">&#x2713;</i>
           Copy
@@ -148,9 +140,7 @@
         </button>
       </div>
 
-      <textarea *ngIf="showClipboard" class="form-control" placeholder="Clipboard" rows="20"
-        [(ngModel)]="cliptext"></textarea>
+      <textarea class="form-control" placeholder="Clipboard" rows="20" [(ngModel)]="cliptext"></textarea>
     </div>
-
   </div>
 </div>
