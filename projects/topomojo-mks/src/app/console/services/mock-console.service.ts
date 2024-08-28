@@ -3,6 +3,7 @@
 
 import { Injectable } from '@angular/core';
 import { ConsoleService } from './console.service';
+import { ConsoleSupportsFeatures } from '../console.models';
 
 @Injectable()
 export class MockConsoleService implements ConsoleService {
@@ -32,15 +33,26 @@ export class MockConsoleService implements ConsoleService {
   disconnect(): void {
     this.stateChanged('disconnected');
   }
-  sendCAD(): void {}
-  refresh(): void {}
-  resolve(): void {}
-  toggleScale(): void {}
-  fullscreen(): void {}
-  showKeyboard(): void {}
-  showExtKeypad(): void {}
-  showTrackpad(): void {}
-  copy(): void {}
-  paste(): void {}
-  dispose(): void {}
+
+  getClipboardHelpMarkdown(): string {
+    return "This is a mock console for debugging, so clipboard functionality is disabled.";
+  }
+
+  getSupportedFeatures(): ConsoleSupportsFeatures {
+    return {
+      syncResolution: true,
+      virtualKeyboard: true
+    }
+  }
+
+  sendCAD(): void { }
+  refresh(): void { }
+  toggleScale(): void { }
+  fullscreen(): void { }
+  showKeyboard(): void { }
+  showExtKeypad(): void { }
+  showTrackpad(): void { }
+  copy(): void { }
+  paste(): void { }
+  dispose(): void { }
 }

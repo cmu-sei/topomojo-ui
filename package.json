@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "npx ng serve topomojo-work --host 0.0.0.0 --disable-host-check --serve-path /topo/",
+    "start-mks": "npx ng serve topomojo-mks --host 0.0.0.0 --port 4201 --disable-host-check --serve-path /mks/",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

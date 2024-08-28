@@ -1,27 +1,20 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Injectable } from '@angular/core';
+import { ElementRef, Injectable } from '@angular/core';
 import { ConsoleService } from './console.service';
 import NoVncClient from '@novnc/novnc/core/rfb';
+import { ConsoleOptions, ConsoleSupportsFeatures } from '../console.models';
 
 @Injectable()
 export class NoVNCConsoleService implements ConsoleService {
   private client!: NoVncClient;
-  options: any = {
-    rescale: true,
-    changeResolution: false,
-    useVNCHandshake: false,
-    position: 0, // WMKS.CONST.Position.CENTER,
-  };
-  stateChanged!: (state: string) => void;
-
-  constructor() {}
+  private options?: ConsoleOptions;
 
   connect(
     url: string,
     stateCallback: (state: string) => void,
-    options: any = {}
+    options: ConsoleOptions
   ): void {
     if (stateCallback) {
       this.stateChanged = stateCallback;
@@ -56,40 +49,57 @@ export class NoVNCConsoleService implements ConsoleService {
     });
   }
 
-  disconnect(): void {}
+  disconnect(): void { }
+
+  getClipboardHelpMarkdown(): string {
+    return `
+      COPY transfers the vm clip to _your_ clipboard. Select/Copy text in the vm using **CTRL-C** or context menu
+      before clicking COPY here. (Clicking COPY shows text below _AND_ adds to your clipboard.)
+
+PASTE copies the text below to the console's clipboard.
+    `.trim()
+  }
+
+  getSupportedFeatures(): ConsoleSupportsFeatures {
+    return {
+      syncResolution: false,
+      virtualKeyboard: false
+    }
+  }
 
   sendCAD(): void {
     this.client.sendCtrlAltDel();
   }
 
-  copy(): void {}
+  copy(): void { }
 
   async paste(text: string): Promise<void> {
     console.log(text);
     this.client.clipboardPasteFrom(text);
   }
 
-  refresh(): void {}
+  refresh(): void { }
 
   toggleScale(): void {
-    // if (this.wmks) {
-    //   this.options.rescale = !this.options.rescale;
-    //   this.wmks.setOption('rescale', this.options.rescale);
-    // }
+    this.client.scaleViewport = !this.client.scaleViewport;
   }
 
-  // NOTE: can't seem to set `changeResolution` dynamically
-  // Tried to set up a button to go fullbleed, but doesn't
-  // work if changeResolution is false initially
-  resolve(): void {}
+  async fullscreen(consoleHostRef?: ElementRef): Promise<void> {
+    const typedHost = consoleHostRef?.nativeElement as HTMLElement;
+    if (!typedHost) {
+      throw new Error("Couldn't resolve the canvas element to enable fullscreen support.");
+    }
 
-  fullscreen(): void {}
+    await typedHost.requestFullscreen({ navigationUI: 'hide' });
+  }
 
-  showKeyboard(): void {}
+  showKeyboard(): void {
 
-  showExtKeypad(): void {}
+  }
 
-  showTrackpad(): void {}
+  showExtKeypad(): void { }
+  showTrackpad(): void { }
+  stateChanged!: (state: string) => void;
 
-  dispose(): void {}
+  dispose(): void { }
 }

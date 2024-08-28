@@ -3,10 +3,10 @@
 
 import {
   Component, OnInit, ViewChild, AfterViewInit,
-  ElementRef, Input, Injector, HostListener, OnDestroy, Renderer2
+  ElementRef, Input, Injector, HostListener, OnDestroy, Renderer2,
 } from '@angular/core';
 import { catchError, debounceTime, map, distinctUntilChanged, tap, finalize, switchMap } from 'rxjs/operators';
-import { throwError as ObservableThrower, fromEvent, Subscription, timer, Observable, of, Subject } from 'rxjs';
+import { fromEvent, Subscription, timer, Observable, of, Subject } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { MockConsoleService } from './services/mock-console.service';
 import { WmksConsoleService } from './services/wmks-console.service';
@@ -29,7 +29,6 @@ import { NoVNCConsoleService } from './services/novnc-console.service';
   ]
 })
 export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
-
   @Input() index = 0;
   @Input() viewOnly = false;
   @Input() request!: ConsoleRequest;
@@ -58,9 +57,9 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   refreshNets$ = new Subject<boolean>();
   subs: Array<Subscription> = [];
   audience: Observable<ConsolePresence[]>;
+  protected clipboardHelpMarkdown = "";
+
   private audiencePos!: MouseEvent | null;
-  private audienceEl: any;
-  private hotspot = { x: 0, y: 0, w: 8, h: 8 };
 
   constructor(
     private injector: Injector,
@@ -79,6 +78,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     );
+
     this.nets$ = this.refreshNets$.pipe(
       debounceTime(500),
       switchMap(() => api.nets(this.request.sessionId || '')),
@@ -86,12 +86,9 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void { }
 
   ngAfterViewInit(): void {
-
     this.initHotspot();
 
     const el = this.consoleCanvas.nativeElement;
@@ -168,10 +165,9 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   reload(): void {
-
     this.changeState('loading');
     this.api.ticket(this.request).pipe(
-      catchError((err: HttpErrorResponse) => of({error: err.statusText.toLowerCase()} as unknown as ConsoleSummary))
+      catchError((err: HttpErrorResponse) => of({ error: err.statusText.toLowerCase() } as unknown as ConsoleSummary))
     ).subscribe(
       (info: ConsoleSummary) => this.create(info),
       (err) => this.changeState('failed')
@@ -188,7 +184,6 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     //   (info: ConsoleSummary) => this.create(info),
     //   (err) => this.changeState('failed')
     // );
-
   }
 
   create(info: ConsoleSummary): void {
@@ -209,7 +204,6 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.vmId = info.id;
-
     this.isMock = !!(info.url.match(/mock/i));
 
     if (this.isMock) {
@@ -226,6 +220,8 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
       changeResolution: !!this.request.fullbleed,
       ticket: info.ticket,
     });
+
+    this.clipboardHelpMarkdown = this.console.getClipboardHelpMarkdown();
   }
 
   start(): void {
@@ -251,7 +247,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   enterFullscreen(): void {
     if (!!this.console) {
-      this.console.fullscreen();
+      this.console.fullscreen(this.consoleCanvas);
       this.showTools = false;
     }
   }
@@ -276,7 +272,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setNet(net: string): void {
     this.changedNet = '';
-    this.api.update(this.vmId, { key: 'net', value: net + this.netIndex}).subscribe(
+    this.api.update(this.vmId, { key: 'net', value: net + this.netIndex }).subscribe(
       () => {
         this.changedNet = net;
       }
@@ -340,9 +336,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('document:mousemove', ['$event'])
   dragging(e: MouseEvent): void {
-
     if (!!this.audiencePos) {
-
       e.preventDefault();
 
       const deltaX = this.audiencePos.clientX - e.clientX;

@@ -15,8 +15,7 @@
       <!-- <div class="audience-item">t1-player3</div> -->
     </div>
 
-    <div *ngIf="state==='stopped'||state==='disconnected'" class="align-mm"
-      [class.hidden]="isConnected">
+    <div *ngIf="state==='stopped'||state==='disconnected'" class="align-mm" [class.hidden]="isConnected">
       <h1>{{shadowstate}}</h1>
       <button class="btn btn-lg" (click)="stateButtonClicked()">{{stateIcon}}</button>
     </div>
@@ -35,7 +34,6 @@
   </div>
 
   <div *ngIf="isConnected && showTools" class="tools">
-
     <div class="">
       <button class="btn cog" (click)="showUtilities()">&#x2699;</button>
     </div>
@@ -104,31 +102,10 @@
       </button>
     </div>
 
-      <!-- <div class="flex-h">
-      <span>[Clipboard] </span>
-      <button class="btn" (click)="showClipboard=!showClipboard">
-        <i class="fa fa-clipboard fa-2x"></i> Show
-      </button>
-    </div> -->
-
     <div *ngIf="showClipboard">
       <div class="tools-text">
         <h3>Clipboard</h3>
-        <p>
-          <small>
-            COPY transfers the vm clip to <em>your</em> clipboard.
-            Select/Copy text in the vm using crtl-c or context menu
-            before clicking COPY here. (Clicking COPY shows text
-            below *AND* adds to your clipboard.)
-          </small>
-        </p>
-        <p>
-          <small>
-            PASTE sends the text below to the vm.
-            Ensure the vm cursor is focused in a window that
-            accepts keyboard input before clicking PASTE here.
-          </small>
-        </p>
+        <small class="clipboard-help-text" [innerHTML]="clipboardHelpMarkdown | markdown"></small>
       </div>
     </div>
     <div *ngIf="showClipboard">
@@ -151,6 +128,5 @@
       <textarea *ngIf="showClipboard" class="form-control" placeholder="Clipboard" rows="20"
         [(ngModel)]="cliptext"></textarea>
     </div>
-
   </div>
 </div>
