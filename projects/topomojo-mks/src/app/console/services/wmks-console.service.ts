@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
-import { timer } from 'rxjs';
+import { of, timer } from 'rxjs';
 import { ConsoleService } from './console.service';
 import { ConsoleOptions, ConsoleSupportsFeatures } from '../console.models';
 declare var WMKS: any;
@@ -17,6 +17,14 @@ export class WmksConsoleService implements ConsoleService {
     position: 0, // WMKS.CONST.Position.CENTER,
   };
   stateChanged!: (state: string) => void;
+  clipboardHelpText$ = of(`
+      COPY transfers the vm clip to _your_ clipboard. Select/Copy text in the vm using **CTRL-C** or context menu
+      before clicking COPY here. (Clicking COPY shows text below _AND_ adds to your clipboard.)
+
+PASTE sends the text below to the vm. Ensure the vm cursor is focused in a window that
+accepts keyboard input before clicking PASTE here.
+    `.trim()
+  );
 
   constructor() { }
 
@@ -96,7 +104,7 @@ accepts keyboard input before clicking PASTE here.
 
   getSupportedFeatures(): ConsoleSupportsFeatures {
     return {
-      syncResolution: true,
+      autoCopyVmSelection: false,
       virtualKeyboard: true
     }
   }
@@ -105,6 +113,10 @@ accepts keyboard input before clicking PASTE here.
     if (this.wmks) {
       this.wmks.sendCAD();
     }
+  }
+
+  setAutoCopyVmSelection(enabled: boolean): void {
+    // unsupported over wmks
   }
 
   copy(): void {

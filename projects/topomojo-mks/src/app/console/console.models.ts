@@ -1,11 +1,11 @@
 export interface ConsoleSupportsFeatures {
-    syncResolution: boolean;
+    autoCopyVmSelection: boolean;
     virtualKeyboard: boolean;
 }
 
 export interface ConsoleOptions {
     canvasId: string;
-    changeResolution?: boolean;
+    changeResolution: boolean;
     ticket: string;
     viewOnly: boolean;
 }

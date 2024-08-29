@@ -30,7 +30,6 @@
       <h1 class="text-danger">{{stateIcon}}</h1>
       <button class="btn" (click)="stateButtonClicked()">Retry</button>
     </div>
-
   </div>
 
   <div *ngIf="isConnected && showTools" class="tools">
@@ -72,7 +71,7 @@
       <button class="btn" (click)="enterFullscreen()">
         <i class="fa fa-arrows-alt fa-2x"></i> Enter Fullscreen
       </button>
-      <button class="btn" (click)="console.showKeyboard()">
+      <button class="btn" *ngIf="consoleSupportsFeatures?.virtualKeyboard" (click)="console.showKeyboard()">
         <i class="fa fa-keyboard-o fa-2x"></i> Show Device Keyboard
       </button>
     </div>
@@ -105,12 +104,28 @@
     <div *ngIf="showClipboard">
       <div class="tools-text">
         <h3>Clipboard</h3>
-        <small class="clipboard-help-text" [innerHTML]="clipboardHelpMarkdown | markdown"></small>
+        <p *ngIf="consoleSupportsFeatures?.autoCopyVmSelection && enableAutoCopyVmSelection">
+          <small>
+            This virtual console automatically copies any selections you make in the virtualized
+            machine to your <strong>your local machine's clipboard</strong>. You can use the
+            checkbox below to disable this behavior.
+          </small>
+        </p>
+        <small *ngIf="console?.clipboardHelpText$ | async as clipboardHelpText" class="clipboard-help-text"
+          [innerHTML]="clipboardHelpText | markdown"></small>
       </div>
-    </div>
-    <div *ngIf="showClipboard">
+
+      <div *ngIf="consoleSupportsFeatures?.autoCopyVmSelection" class="form-control form-check tools-text">
+        <input #inputEnableAutoCopy type="checkbox" class="form-check-input auto-copy" id="input-auto-copy"
+          [checked]="enableAutoCopyVmSelection" (change)="handleAutoCopyVmEnableToggle(inputEnableAutoCopy.checked)">
+
+        <label class="form-check-label" for="input-auto-copy" class="auto-copy">
+          Auto-copy selections to my local clipboard
+        </label>
+      </div>
+
       <div class="btn-group">
-        <button (click)="clip()">
+        <button *ngIf="!consoleSupportsFeatures?.autoCopyVmSelection || !enableAutoCopyVmSelection" (click)="clip()">
           <span *ngIf="!justClipped" class="fa fa-long-arrow-down">&#x21e7;</span>
           <i *ngIf="justClipped" class="text-success">&#x2713;</i>
           Copy
@@ -125,8 +140,7 @@
         </button>
       </div>
 
-      <textarea *ngIf="showClipboard" class="form-control" placeholder="Clipboard" rows="20"
-        [(ngModel)]="cliptext"></textarea>
+      <textarea class="form-control" placeholder="Clipboard" rows="20" [(ngModel)]="cliptext"></textarea>
     </div>
   </div>
 </div>

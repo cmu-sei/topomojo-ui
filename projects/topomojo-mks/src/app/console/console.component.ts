@@ -17,6 +17,7 @@ import { ClipboardService } from '../clipboard.service';
 import { HubService } from '../hub.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NoVNCConsoleService } from './services/novnc-console.service';
+import { ConsoleSupportsFeatures } from './console.models';
 
 @Component({
   selector: 'app-console',
@@ -57,7 +58,10 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   refreshNets$ = new Subject<boolean>();
   subs: Array<Subscription> = [];
   audience: Observable<ConsolePresence[]>;
-  protected clipboardHelpMarkdown = "";
+
+  protected clipboardHelpMarkdown$ = of("");
+  protected enableAutoCopyVmSelection = false;
+  protected consoleSupportsFeatures?: ConsoleSupportsFeatures;
 
   private audiencePos!: MouseEvent | null;
 
@@ -115,7 +119,6 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   changeState(state: string): void {
-
     if (state.startsWith('clip:')) {
       this.cliptext = state.substring(5);
       this.clipSvc.copyToClipboard(this.cliptext);
@@ -187,7 +190,6 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   create(info: ConsoleSummary): void {
-
     if (!!info.error) {
       this.changeState(info.error);
       return;
@@ -221,7 +223,12 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
       ticket: info.ticket,
     });
 
-    this.clipboardHelpMarkdown = this.console.getClipboardHelpMarkdown();
+    this.clipboardHelpMarkdown$ = this.console.clipboardHelpText$;
+    this.consoleSupportsFeatures = this.console.getSupportedFeatures();
+
+    if (this.consoleSupportsFeatures.autoCopyVmSelection) {
+      this.handleAutoCopyVmEnableToggle(true);
+    }
   }
 
   start(): void {
@@ -311,6 +318,11 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       })
     );
+  }
+
+  protected handleAutoCopyVmEnableToggle(isEnabled: boolean) {
+    this.enableAutoCopyVmSelection = isEnabled;
+    this.console.setAutoCopyVmSelection(isEnabled);
   }
 
   @HostListener('window:resize', ['$event'])

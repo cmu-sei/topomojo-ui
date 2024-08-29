@@ -2,11 +2,13 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 import { ConsoleService } from './console.service';
 import { ConsoleSupportsFeatures } from '../console.models';
 
 @Injectable()
 export class MockConsoleService implements ConsoleService {
+  clipboardHelpText$ = of("This is a mock console for debugging, so clipboard functionality is disabled.");
   counter = 0;
   stateChanged!: (state: string) => void;
 
@@ -34,18 +36,15 @@ export class MockConsoleService implements ConsoleService {
     this.stateChanged('disconnected');
   }
 
-  getClipboardHelpMarkdown(): string {
-    return "This is a mock console for debugging, so clipboard functionality is disabled.";
-  }
-
   getSupportedFeatures(): ConsoleSupportsFeatures {
     return {
-      syncResolution: true,
-      virtualKeyboard: true
+      autoCopyVmSelection: false,
+      virtualKeyboard: false
     }
   }
 
   sendCAD(): void { }
+  setAutoCopyVmSelection(enabled: boolean): void { }
   refresh(): void { }
   toggleScale(): void { }
   fullscreen(): void { }
