@@ -1,9 +1,20 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
-<h4>Workspaces</h4>
+<h4 *ngIf="readyToExport"></h4>
+<h4 *ngIf="readyToExport">
+  Export Workspaces?
+  <button class="btn btn-outline-info btn-sm mx-1" (click)="export()" [disabled]="selected.length === 0">
+    <fa-icon [icon]="faExport"></fa-icon>
+    <span>Export ({{ selected.length }}) Workspaces</span>
+  </button>
+  <button class="btn btn-outline-info btn-sm mx-1" (click)="resetExport()">
+    <fa-icon [icon]="faTimes"></fa-icon>
+    <span>Cancel</span>
+  </button>
+</h4>
 
-<div>
+<div *ngIf="!readyToExport">
   <div class="input-group input-group-sm">
     <div class="input-group-prepend">
       <span class="input-group-text">
@@ -13,9 +24,18 @@
     </div>
     <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="termed()">
   </div>
+  <input type="checkbox" [checked]="areAllSelected()" (change)="selectAll($event)" class="select-all">
   <button class="btn btn-sm btn-link text-primary" (click)="showCreatePanel=!showCreatePanel">
     <fa-icon [icon]="faPlus"/>
     <span>Create</span>
+  </button>
+  <button class="btn btn-sm btn-link text-primary" (click)="import()">
+    <fa-icon [icon]="faImport" />
+    <span>Import</span>
+  </button>
+  <button class="btn btn-sm btn-link text-primary" (click)="setReadyToExport()" *ngIf="selected.length > 0">
+    <fa-icon [icon]="faExport" />
+    <span>Export Selected ({{ selected.length }})</span>
   </button>
 </div>
 
@@ -23,11 +43,16 @@
   <app-workspace-creator></app-workspace-creator>
 </div>
 
-<app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
+<app-pager [skip]="skip" [take]="take" [count]="count"
+  (changed)="readyToExport ? pageExports($event) : paged($event)"></app-pager>
 <hr  class="mt-0 mb-2"/>
 
-<div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
-  <div class="col-8">
+<div *ngFor="let g of readyToExport ? (selected$ | async) : (source$ | async); trackBy:trackById" class="row mb-1">
+  <div class="col-1">
+    <input type="checkbox" [checked]="isSelected(g.id)" (change)="select($event, g)" [disabled]="readyToExport"
+      style="margin-left: 30px;">
+  </div>
+  <div class="col-7">
     <a [routerLink]="['/topo', g.id]" class="text-secondary">{{g.name}}</a>
     <br/>
     <small class="text-muted ml-4">
@@ -42,10 +67,15 @@
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
-    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(g)">
+    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(g)" *ngIf="!readyToExport">
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Delete</span>
     </app-confirm-button>
+    <button class="btn btn-outline-danger btn-sm mx-1" (click)="select({target: {checked: false}}, g)"
+      *ngIf="readyToExport">
+      <fa-icon [icon]="faMinus"></fa-icon>
+      <span>Remove</span>
+    </button>
   </div>
   <div *ngIf="viewed === g" class="col-12">
     <ng-container *ngIf="detail$ | async as detail">
@@ -80,4 +110,5 @@
 </div>
 
 <hr class="my-0"/>
-<app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
+<app-pager [skip]="skip" [take]="take" [count]="count"
+  (changed)="readyToExport ? pageExports($event) : paged($event)"></app-pager>
