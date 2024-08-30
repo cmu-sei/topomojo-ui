@@ -1,27 +1,32 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Injectable } from '@angular/core';
+import { ElementRef, Injectable, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { ConsoleService } from './console.service';
 import NoVncClient from '@novnc/novnc/core/rfb';
+import { ConsoleOptions, ConsoleSupportsFeatures } from '../console.models';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class NoVNCConsoleService implements ConsoleService {
   private client!: NoVncClient;
-  options: any = {
-    rescale: true,
-    changeResolution: false,
-    useVNCHandshake: false,
-    position: 0, // WMKS.CONST.Position.CENTER,
-  };
-  stateChanged!: (state: string) => void;
+  private clipboardHelpTextSubject$ = new BehaviorSubject<string>("");
+  private consoleClipboardText = "";
+  private enableAutoCopy = true;
+  private options?: ConsoleOptions;
 
-  constructor() {}
+  clipboardHelpText$ = this.clipboardHelpTextSubject$.asObservable();
+
+  constructor(@Inject(DOCUMENT) private document: Document) {
+    // enable auto-copy by default
+    this.setAutoCopyVmSelection(true);
+  }
 
   connect(
     url: string,
     stateCallback: (state: string) => void,
-    options: any = {}
+    options: ConsoleOptions
   ): void {
     if (stateCallback) {
       this.stateChanged = stateCallback;
@@ -40,8 +45,17 @@ export class NoVNCConsoleService implements ConsoleService {
       }
     );
 
-    this.client.viewOnly = this.options.viewOnly;
+    this.client.resizeSession = this.options.changeResolution;
     this.client.scaleViewport = true;
+    this.client.viewOnly = this.options.viewOnly;
+
+    this.client.addEventListener("clipboard", clipboardEv => {
+      this.consoleClipboardText = clipboardEv.detail.text;
+
+      if (this.stateChanged && this.enableAutoCopy) {
+        this.stateChanged('clip:' + this.consoleClipboardText);
+      }
+    });
 
     this.client.addEventListener('connect', () => {
       stateCallback('connected');
@@ -50,46 +64,74 @@ export class NoVNCConsoleService implements ConsoleService {
     this.client.addEventListener('disconnect', () => {
       stateCallback('disconnected');
     });
-
-    this.client.addEventListener('clipboard', (e) => {
-      stateCallback('clip:' + e.detail.text);
-    });
   }
 
-  disconnect(): void {}
+  disconnect(): void { }
+
+  getSupportedFeatures(): ConsoleSupportsFeatures {
+    return {
+      autoCopyVmSelection: true,
+      virtualKeyboard: false
+    }
+  }
 
   sendCAD(): void {
     this.client.sendCtrlAltDel();
   }
 
-  copy(): void {}
+  setAutoCopyVmSelection(enabled: boolean): void {
+    this.enableAutoCopy = enabled;
+
+    let clipboardHelp = "**PASTE** copies the text below to the virtual console's clipboard.";
+
+    if (!this.enableAutoCopy) {
+      clipboardHelp = `**Copy** places the text content of the virtual console's clipboard to your local clipboard.\n\n${clipboardHelp}`
+    }
+
+    this.clipboardHelpTextSubject$.next(clipboardHelp);
+  }
+
+  copy(): void {
+    if (!this.document.defaultView?.navigator) {
+      throw new Error("Can't access the navigator for clipboard access.");
+    }
+
+    this
+      .document
+      .defaultView
+      .navigator
+      .clipboard
+      .writeText(this.consoleClipboardText);
+
+    this.stateChanged(`clip:${this.consoleClipboardText}`);
+  }
 
   async paste(text: string): Promise<void> {
-    console.log(text);
     this.client.clipboardPasteFrom(text);
   }
 
-  refresh(): void {}
+  refresh(): void { }
 
   toggleScale(): void {
-    // if (this.wmks) {
-    //   this.options.rescale = !this.options.rescale;
-    //   this.wmks.setOption('rescale', this.options.rescale);
-    // }
+    this.client.scaleViewport = !this.client.scaleViewport;
   }
 
-  // NOTE: can't seem to set `changeResolution` dynamically
-  // Tried to set up a button to go fullbleed, but doesn't
-  // work if changeResolution is false initially
-  resolve(): void {}
+  async fullscreen(consoleHostRef?: ElementRef): Promise<void> {
+    const typedHost = consoleHostRef?.nativeElement as HTMLElement;
+    if (!typedHost) {
+      throw new Error("Couldn't resolve the canvas element to enable fullscreen support.");
+    }
 
-  fullscreen(): void {}
+    await typedHost.requestFullscreen({ navigationUI: 'hide' });
+  }
 
-  showKeyboard(): void {}
+  showKeyboard(): void {
+    // no-op (not supported on novnc)
+  }
 
-  showExtKeypad(): void {}
+  showExtKeypad(): void { }
+  showTrackpad(): void { }
+  stateChanged!: (state: string) => void;
 
-  showTrackpad(): void {}
-
-  dispose(): void {}
+  dispose(): void { }
 }

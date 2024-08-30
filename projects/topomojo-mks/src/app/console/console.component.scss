@@ -3,7 +3,7 @@
 }
 
 .tools {
-  opacity: .9;
+  opacity: 0.9;
   width: 400px;
   position: absolute;
   top: 0;
@@ -21,42 +21,42 @@
   }
 }
 .tools-text {
-  padding:  1em;
+  padding: 1em;
   margin: 1em 0 2em;
   border-radius: 4px;
 }
 .embedded {
-    position: relative;
-    text-align: center;
-    width: 1280px;
-    height: 1024px;
-    border-radius: 4px;
-    z-index: 190;
+  position: relative;
+  text-align: center;
+  width: 1280px;
+  height: 1024px;
+  border-radius: 4px;
+  z-index: 190;
 }
 
 .canvas {
-    position: fixed;
-    text-align: center;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    height: 100%;
-    z-index: 190;
+  position: fixed;
+  text-align: center;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  height: 100%;
+  z-index: 190;
 }
 .overlay {
-    position: absolute;
-    z-index: 200;
-    // text-shadow: 1px 0 16px lightgray;
-    opacity: .8;
+  position: absolute;
+  z-index: 200;
+  // text-shadow: 1px 0 16px lightgray;
+  opacity: 0.8;
 }
 .overlay-tr {
-    top: 24px;
-    right: 24px;
+  top: 24px;
+  right: 24px;
 }
 .overlay-tl {
-    top: 24px;
-    left: 24px;
+  top: 24px;
+  left: 24px;
 }
 
 .align-mm {
@@ -69,17 +69,17 @@
 
 .overlay-box {
   padding: 8px 16px;
-  background-color: rgb(black, .55);
+  background-color: rgb(black, 0.55);
   border-radius: 4px;
 }
 
 .mock-console-connected {
-    background-color: #48f;
+  background-color: #48f;
 }
 
 .cog {
-    font-size: 2em;
-  }
+  font-size: 2em;
+}
 .mb-2 {
   margin-bottom: 2em;
 }
@@ -98,11 +98,18 @@ input.form-check-input {
 }
 .audience {
   width: 224px;
-  opacity: .8;
+  opacity: 0.8;
   border-radius: 4px;
   cursor: move;
 }
 div.audience-item {
   margin: 6px;
   font-weight: 600;
+}
+
+label.auto-copy {
+  font-size: smaller;
+  line-height: 0.9rem;
+  vertical-align: text-top;
+  margin-bottom: 18px;
 }
