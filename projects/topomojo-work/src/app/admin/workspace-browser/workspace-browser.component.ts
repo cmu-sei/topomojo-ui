@@ -1,7 +1,7 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import {
   faUpload,
   faDownload,
@@ -45,6 +45,7 @@ export class WorkspaceBrowserComponent implements OnInit {
   faExport = faDownload;
   faTimes = faTimes;
   readyToExport = false;
+  @ViewChild('jsonInput') jsonInput!: ElementRef<HTMLInputElement>;
 
   constructor(private api: WorkspaceService) {
     this.source$ = merge(this.refresh$, interval(60000)).pipe(
@@ -147,12 +148,6 @@ export class WorkspaceBrowserComponent implements OnInit {
     return this.selected.length === this.source.length;
   }
 
-  import(): void {
-    this.api.importWorkspaces().subscribe((result) => {
-      alert('The following workspaces were imported ' + result.join(', '));
-    });
-  }
-
   setReadyToExport() {
     this.readyToExport = true;
     this.pageExports(0);
@@ -179,10 +174,23 @@ export class WorkspaceBrowserComponent implements OnInit {
 
   export(): void {
     const workspaceIds = this.selected.map((w) => w.id);
-    alert(workspaceIds);
-    this.api.exportWorkspaces(workspaceIds).subscribe(() => {
-      this.resetExport();
-    });
+    this.api.downloadWorkspaces(workspaceIds).subscribe(
+      (data) => {
+        const blob = new Blob([data], {
+          type: 'application/zip',
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.download = this.getCurrentDateTime() + '-workspaces.zip';
+        link.click();
+      },
+      (err) => {
+        window.alert('Error downloading file:  ' + err.message);
+      },
+      () => {}
+    );
   }
 
   resetExport(): void {
@@ -191,5 +199,42 @@ export class WorkspaceBrowserComponent implements OnInit {
     this.count = 0;
     this.skip = 0;
     this.refresh$.next(true);
+  }
+
+  /**
+   * Selects the file(s) to be uploaded. Called when file selection is changed
+   */
+  import(e: any) {
+    if (!e.target.files) {
+      // this.areButtonsDisabled = false;
+      return;
+    }
+    // this.uploadProgress = 0;
+    this.api.uploadWorkspaces(e.target.files).subscribe(
+      (result) => {
+        alert(
+          'The following ' +
+            result.length +
+            ' workspaces were uploaded ' +
+            result.join(', ')
+        );
+      },
+      (err) => {
+        window.alert('Error uploading file:  ' + err.message);
+      },
+      () => {}
+    );
+    this.jsonInput.nativeElement.value = '';
+  }
+
+  getCurrentDateTime(): string {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const hours = currentDate.getHours().toString().padStart(2, '0');
+    const minutes = currentDate.getMinutes().toString().padStart(2, '0');
+    const seconds = currentDate.getSeconds().toString().padStart(2, '0');
+    return `${year}${month}${day}${hours}${minutes}${seconds}`;
   }
 }

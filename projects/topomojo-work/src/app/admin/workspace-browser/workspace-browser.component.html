@@ -29,13 +29,13 @@
     <fa-icon [icon]="faPlus"/>
     <span>Create</span>
   </button>
-  <button class="btn btn-sm btn-link text-primary" (click)="import()">
+  <button class="btn btn-sm btn-link text-primary" (click)="jsonInput.click()">
     <fa-icon [icon]="faImport" />
-    <span>Import</span>
+    <span>Upload</span>
   </button>
   <button class="btn btn-sm btn-link text-primary" (click)="setReadyToExport()" *ngIf="selected.length > 0">
     <fa-icon [icon]="faExport" />
-    <span>Export Selected ({{ selected.length }})</span>
+    <span>Download Selected ({{ selected.length }})</span>
   </button>
 </div>
 
@@ -112,3 +112,5 @@
 <hr class="my-0"/>
 <app-pager [skip]="skip" [take]="take" [count]="count"
   (changed)="readyToExport ? pageExports($event) : paged($event)"></app-pager>
+
+<input hidden (change)="import($event)" #jsonInput type="file" accept=".json" webkitdirectory multiple />

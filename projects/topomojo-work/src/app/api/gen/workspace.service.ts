@@ -2,12 +2,26 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { iif, Observable, of } from 'rxjs';
 import { ApiSettings } from '../api-settings';
 import { GeneratedService } from './_service';
 // tslint:disable-next-line:max-line-length
-import { ChangedWorkspace, NewWorkspace, Search, Workspace, JoinCode, WorkspaceSummary, VmOptions, ChallengeSpec, IsoFile, IsoDataFilter, WorkspaceStats, TemplateSummary, Worker } from './models';
+import {
+  ChangedWorkspace,
+  NewWorkspace,
+  Search,
+  Workspace,
+  JoinCode,
+  WorkspaceSummary,
+  VmOptions,
+  ChallengeSpec,
+  IsoFile,
+  IsoDataFilter,
+  WorkspaceStats,
+  TemplateSummary,
+  Worker,
+} from './models';
 import { map, tap } from 'rxjs/operators';
 
 @Injectable()
@@ -139,5 +153,26 @@ export class GeneratedWorkspaceService extends GeneratedService {
   }
   public importWorkspaces(): Observable<string[]> {
     return this.http.get<any>(this.conf.api + '/admin/import');
+  }
+  public downloadWorkspaces(ids: string[]): Observable<any> {
+    const headers = { responseType: 'blob' as 'json' };
+    return this.http.post<Blob>(
+      this.conf.api + '/admin/download',
+      ids,
+      headers
+    );
+  }
+  public uploadWorkspaces(files: any[]): Observable<string[]> {
+    const formData = new FormData();
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+      formData.append('file', file);
+    }
+
+    return this.http.post<string[]>(this.conf.api + '/admin/upload', formData, {
+      headers: new HttpHeaders({
+        Accept: '*/*',
+      }),
+    });
   }
 }
