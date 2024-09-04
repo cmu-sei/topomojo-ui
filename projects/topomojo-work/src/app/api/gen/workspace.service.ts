@@ -162,17 +162,13 @@ export class GeneratedWorkspaceService extends GeneratedService {
       headers
     );
   }
-  public uploadWorkspaces(files: any[]): Observable<string[]> {
+  public uploadWorkspaces(files: File[]): Observable<string[]> {
     const formData = new FormData();
     for (let index = 0; index < files.length; index++) {
       const file = files[index];
-      formData.append('file', file);
+      formData.append('files', file, file.name);
     }
 
-    return this.http.post<string[]>(this.conf.api + '/admin/upload', formData, {
-      headers: new HttpHeaders({
-        Accept: '*/*',
-      }),
-    });
+    return this.http.post<string[]>(this.conf.api + '/admin/upload', formData);
   }
 }
