@@ -184,6 +184,7 @@ export class WorkspaceBrowserComponent implements OnInit {
         link.href = url;
         link.target = '_blank';
         link.download = this.getCurrentDateTime() + '-workspaces.zip';
+        this.resetExport();
         link.click();
       },
       (err) => {
