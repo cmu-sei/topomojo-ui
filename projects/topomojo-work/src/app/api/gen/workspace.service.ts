@@ -166,7 +166,10 @@ export class GeneratedWorkspaceService extends GeneratedService {
     const formData = new FormData();
     for (let index = 0; index < files.length; index++) {
       const file = files[index];
-      formData.append('files', file, file.webkitRelativePath);
+      const filename = file.webkitRelativePath
+        ? file.webkitRelativePath
+        : file.name;
+      formData.append('files', file, filename);
     }
 
     return this.http.post<string[]>(this.conf.api + '/admin/upload', formData);

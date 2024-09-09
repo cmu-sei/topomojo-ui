@@ -11,6 +11,8 @@ import {
   faPlus,
   faMinus,
   faTimes,
+  faFile,
+  faFolder,
 } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
 import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
@@ -41,11 +43,18 @@ export class WorkspaceBrowserComponent implements OnInit {
   faTrash = faTrash;
   faList = faList;
   faSearch = faSearch;
-  faImport = faUpload;
-  faExport = faDownload;
+  faUpload = faUpload;
+  faDownload = faDownload;
   faTimes = faTimes;
-  readyToExport = false;
+  faFile = faFile;
+  faFolder = faFolder;
+  readyToDownload = false;
+  isDownloading = false;
+  showUpload = false;
+  showDownload = false;
+  selectDownloads = false;
   @ViewChild('jsonInput') jsonInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('zipInput') zipInput!: ElementRef<HTMLInputElement>;
 
   constructor(private api: WorkspaceService) {
     this.source$ = merge(this.refresh$, interval(60000)).pipe(
@@ -120,8 +129,8 @@ export class WorkspaceBrowserComponent implements OnInit {
       }
     }
     // have to refresh the BehaviorSubject to refresh the display
-    if (this.readyToExport) {
-      this.pageExports(this.skip);
+    if (this.readyToDownload) {
+      this.pageDownloads(this.skip);
     }
   }
 
@@ -148,13 +157,13 @@ export class WorkspaceBrowserComponent implements OnInit {
     return this.selected.length === this.source.length;
   }
 
-  setReadyToExport() {
-    this.readyToExport = true;
-    this.pageExports(0);
+  setReadyToDownload() {
+    this.readyToDownload = true;
+    this.pageDownloads(0);
   }
 
-  pageExports(s: number): void {
-    console.log('pageExports ' + s + '/' + this.selected.length);
+  pageDownloads(s: number): void {
+    console.log('pageDownloads ' + s + '/' + this.selected.length);
     if (s === this.selected.length) {
       s = s - this.take;
       console.log('adjusted to ' + s + '/' + this.selected.length);
@@ -172,8 +181,10 @@ export class WorkspaceBrowserComponent implements OnInit {
     this.search.take = this.take;
   }
 
-  export(): void {
-    const workspaceIds = this.selected.map((w) => w.id);
+  download(): void {
+    this.isDownloading = true;
+    const workspaceIds =
+      this.selected.length == 0 ? ['all'] : this.selected.map((w) => w.id);
     this.api.downloadWorkspaces(workspaceIds).subscribe(
       (data) => {
         const blob = new Blob([data], {
@@ -184,19 +195,25 @@ export class WorkspaceBrowserComponent implements OnInit {
         link.href = url;
         link.target = '_blank';
         link.download = this.getCurrentDateTime() + '-workspaces.zip';
-        this.resetExport();
+        this.resetDownload();
         link.click();
       },
       (err) => {
         window.alert('Error downloading file:  ' + err.message);
+        this.resetDownload();
       },
-      () => {}
+      () => {
+        this.resetDownload();
+      }
     );
   }
 
-  resetExport(): void {
+  resetDownload(): void {
     this.selected.length = 0;
-    this.readyToExport = false;
+    this.isDownloading = false;
+    this.readyToDownload = false;
+    this.selectDownloads = false;
+    this.showDownload = false;
     this.count = 0;
     this.skip = 0;
     this.refresh$.next(true);
@@ -205,7 +222,7 @@ export class WorkspaceBrowserComponent implements OnInit {
   /**
    * Selects the file(s) to be uploaded. Called when file selection is changed
    */
-  import(e: any) {
+  upload(e: any) {
     if (!e.target.files) {
       // this.areButtonsDisabled = false;
       return;
@@ -219,6 +236,7 @@ export class WorkspaceBrowserComponent implements OnInit {
             ' workspaces were uploaded ' +
             result.join(', ')
         );
+        this.showUpload = false;
       },
       (err) => {
         window.alert('Error uploading file:  ' + err.message);
@@ -226,6 +244,7 @@ export class WorkspaceBrowserComponent implements OnInit {
       () => {}
     );
     this.jsonInput.nativeElement.value = '';
+    this.zipInput.nativeElement.value = '';
   }
 
   getCurrentDateTime(): string {
@@ -237,5 +256,13 @@ export class WorkspaceBrowserComponent implements OnInit {
     const minutes = currentDate.getMinutes().toString().padStart(2, '0');
     const seconds = currentDate.getSeconds().toString().padStart(2, '0');
     return `${year}${month}${day}${hours}${minutes}${seconds}`;
+  }
+
+  getDownloadButtonClass() {
+    const buttonClass =
+      this.selected.length == 0
+        ? 'btn btn-outline-info btn-sm mx-1'
+        : 'btn btn-outline-info btn-sm mx-1 text-warn';
+    return buttonClass;
   }
 }
