@@ -1,9 +1,8 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
-<h4>Workspaces</h4>
-
-<div>
+<!-- Show standard header -->
+<div *ngIf="!readyToDownload">
   <div class="input-group input-group-sm">
     <div class="input-group-prepend">
       <span class="input-group-text">
@@ -13,21 +12,89 @@
     </div>
     <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="termed()">
   </div>
-  <button class="btn btn-sm btn-link text-primary" (click)="showCreatePanel=!showCreatePanel">
+  <input type="checkbox" [checked]="areAllSelected()" (change)="selectAll($event)" class="select-all"
+    *ngIf="selectDownloads">
+  <!-- Create -->
+  <button class="btn btn-sm btn-link text-primary" (click)="showCreatePanel=!showCreatePanel"
+    *ngIf="!showUpload && !showDownload">
     <fa-icon [icon]="faPlus"/>
     <span>Create</span>
   </button>
+  <!-- Upload -->
+  <button class="btn btn-sm btn-link text-primary" (click)="showUpload = true" *ngIf="!showDownload"
+    [disabled]="showUpload">
+    <fa-icon [icon]="faUpload" />
+    <span>Upload</span>
+  </button>
+  <button class="btn btn-sm btn-link text-primary" (click)="jsonInput.click()" *ngIf="showUpload">
+    <fa-icon [icon]="faFolder" />
+    <span>Folder</span>
+  </button>
+  <button class="btn btn-sm btn-link text-primary" (click)="zipInput.click()" *ngIf="showUpload">
+    <fa-icon [icon]="faFile" />
+    <span>ZipFile</span>
+  </button>
+  <!-- Download -->
+  <button class="btn btn-sm btn-link text-primary" (click)="showDownload = true" *ngIf="!showUpload"
+    [disabled]="showDownload">
+    <fa-icon [icon]="faDownload" />
+    <span>Download</span>
+  </button>
+  <button class="btn btn-sm btn-link text-primary" (click)="setReadyToDownload()"
+    *ngIf="showDownload && !selectDownloads">
+    <fa-icon [icon]="faFolder" />
+    <span>All</span>
+  </button>
+  <button class="btn btn-sm btn-link text-primary" (click)="selectDownloads = true"
+    *ngIf="showDownload && !selectDownloads">
+    <fa-icon [icon]="faFile" />
+    <span>Select</span>
+  </button>
+  <button class="btn btn-sm btn-link text-primary" (click)="setReadyToDownload()" *ngIf="showDownload && selectDownloads"
+    [disabled]="selected.length < 1">
+    <fa-icon [icon]="faFile" />
+    <span>Done Selecting ({{ selected.length }})</span>
+  </button>
+  <!-- Cancel -->
+  <button class="btn btn-sm btn-link text-primary"
+    (click)="showUpload = false; showDownload = false; selectDownloads = false;" *ngIf="showUpload || showDownload">
+    <fa-icon [icon]="faTimes" />
+    <span>Cancel</span>
+  </button>
 </div>
 
+<!-- Show download header -->
+<h4 *ngIf="readyToDownload"></h4>
+<h4 *ngIf="readyToDownload && !isDownloading">
+  Download <span class="text-primary" style="font-weight: 600;" *ngIf="selected.length === 0">ALL</span> Workspaces?
+  <button class="btn btn-outline-info btn-sm mx-1" (click)="download()">
+    <fa-icon [icon]="faDownload"></fa-icon>
+    <span>Download ({{ selected.length > 0 ? selected.length : 'ALL' }})</span>
+  </button>
+  <button class="btn btn-outline-info btn-sm mx-1" (click)="resetDownload()">
+    <fa-icon [icon]="faTimes"></fa-icon>
+    <span>Cancel</span>
+  </button>
+</h4>
+<h4 *ngIf="readyToDownload && isDownloading">Downloading workspaces ... <br />Please wait ...</h4>
+
+<!-- show create workspace panel -->
 <div *ngIf="showCreatePanel" class="my-2">
   <app-workspace-creator></app-workspace-creator>
 </div>
 
-<app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
-<hr  class="mt-0 mb-2"/>
+<!-- top pager for workspaces -->
+<app-pager [skip]="skip" [take]="take" [count]="count"
+  (changed)="readyToDownload ? pageDownloads($event) : paged($event)"></app-pager>
+<hr  class="mt-0 mb-2" *ngIf="selected.length > 0" />
 
-<div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
-  <div class="col-8">
+<!-- paged workspace list (all or selected) -->
+<div *ngFor="let g of readyToDownload ? (selected$ | async) : (source$ | async); trackBy:trackById" class="row mb-1">
+  <div class="col-1" *ngIf="selectDownloads">
+    <input type="checkbox" [checked]="isSelected(g.id)" (change)="select($event, g)" [disabled]="readyToDownload"
+      style="margin-left: 30px;">
+  </div>
+  <div class="col-7">
     <a [routerLink]="['/topo', g.id]" class="text-secondary">{{g.name}}</a>
     <br/>
     <small class="text-muted ml-4">
@@ -42,10 +109,15 @@
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
-    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(g)">
+    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(g)" *ngIf="!readyToDownload">
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Delete</span>
     </app-confirm-button>
+    <button class="btn btn-outline-danger btn-sm mx-1" (click)="select({target: {checked: false}}, g)"
+      *ngIf="readyToDownload">
+      <fa-icon [icon]="faMinus"></fa-icon>
+      <span>Remove</span>
+    </button>
   </div>
   <div *ngIf="viewed === g" class="col-12">
     <ng-container *ngIf="detail$ | async as detail">
@@ -79,5 +151,11 @@
   </div>
 </div>
 
-<hr class="my-0"/>
-<app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
+<!-- bottom workspace pager -->
+<hr class="my-0" *ngIf="selected.length > 0" />
+<app-pager [skip]="skip" [take]="take" [count]="count"
+  (changed)="readyToDownload ? pageDownloads($event) : paged($event)"></app-pager>
+
+<!-- Folder and File selectors -->
+<input hidden (change)="upload($event)" #jsonInput type="file" webkitdirectory multiple />
+<input hidden (change)="upload($event)" #zipInput type="file" accept=".zip" />
