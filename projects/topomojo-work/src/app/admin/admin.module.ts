@@ -22,6 +22,7 @@ import { ObserveComponent } from './observe/observe.component';
 import { GamespaceDetailComponent } from './gamespace-detail/gamespace-detail.component';
 import { GamespaceInteractComponent } from './gamespace-interact/gamespace-interact.component';
 import { WorkspaceCreatorComponent } from './workspace-creator/workspace-creator.component';
+import { AlertModule } from 'ngx-bootstrap/alert';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { WorkspaceCreatorComponent } from './workspace-creator/workspace-creator
     ]),
     UtilityModule,
     FontAwesomeModule,
-    ButtonsModule.forRoot()
+    ButtonsModule.forRoot(),
+    AlertModule.forRoot()
   ]
 })
 export class AdminModule { }
