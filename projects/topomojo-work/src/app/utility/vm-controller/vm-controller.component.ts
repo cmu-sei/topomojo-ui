@@ -3,7 +3,7 @@
 
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Template, TemplateSummary, Vm, VmOperationTypeEnum } from '../../api/gen/models';
-import { faCircleNotch, faSyncAlt, faCog, faBolt, faTv, faPlay, faStop, faSave, faStepBackward, faUndoAlt, faTrash, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faSyncAlt, faCog, faBolt, faTv, faPlay, faStop, faSave, faStepBackward, faUndoAlt, faTrash, faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { Observable, of, Subject, Subscription, timer } from 'rxjs';
 import { VmService } from '../../api/vm.service';
 import { catchError, debounceTime, finalize, map, switchMap, tap } from 'rxjs/operators';
@@ -26,6 +26,7 @@ export class VmControllerComponent implements OnInit, OnDestroy {
   task$ = new Subject<string>();
   errors: Error[] = [];
   hubsub: Subscription;
+  confirmation_task = "";
 
   faCircleNotch = faCircleNotch;
   faSyncAlt = faSyncAlt;
@@ -39,6 +40,7 @@ export class VmControllerComponent implements OnInit, OnDestroy {
   faUndoAlt = faUndoAlt;
   faTrash = faTrash;
   faTimes = faTimes;
+  faCheck = faCheck;
 
   constructor(
     private api: VmService,
@@ -143,4 +145,8 @@ export class VmControllerComponent implements OnInit, OnDestroy {
     this.conf.openConsole(`?f=${f}&s=${p[1]}&v=${p[0]}`);
   }
 
+  confirm(t: string): void {
+    this.confirmation_task = t;
+    this.confirming = true;
+  }
 }

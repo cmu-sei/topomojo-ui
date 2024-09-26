@@ -53,13 +53,13 @@
         <fa-icon [icon]="faSave"></fa-icon>
       </button>
 
-      <button class="btn btn-outline-dark" (click)="do('revert')"
+      <button class="btn btn-outline-dark" (click)="confirm('revert')"
       aria-label="revert" tooltip="revert"
       *ngIf="vm.id && vm.hypervisorType === 'vsphere'">
         <fa-icon [icon]="faStepBackward"></fa-icon>
       </button>
 
-      <button *ngIf="!hideDelete" class="btn btn-outline-dark" (click)="confirming=true"
+      <button *ngIf="!hideDelete" class="btn btn-outline-dark" (click)="confirm('delete')"
       aria-label="delete" tooltip="delete">
         <fa-icon [icon]="faTrash"></fa-icon>
       </button>
@@ -68,9 +68,10 @@
   </div>
 
   <div *ngIf="confirming" class="btn-group" role="group" aria-label="confirm buttons">
-    <button class="btn btn-outline-dark btn-sm" (click)="do('delete');confirming=false"
-    aria-label="confirm delete" tooltip="confirm delete">
-      <fa-icon [icon]="faTrash"></fa-icon>
+    <span class="mr-2">{{confirmation_task}}?</span>
+    <button class="btn btn-outline-dark btn-sm" (click)="do(confirmation_task);confirming=false"
+    aria-label="confirm action" [tooltip]="'confirm '+confirmation_task">
+      <fa-icon [icon]="faCheck"></fa-icon>
     </button>
     <button class="btn btn-outline-dark btn-sm" (click)="confirming=false"
       aria-label="cancel delete" tooltip="cancel">
