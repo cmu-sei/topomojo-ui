@@ -14,8 +14,8 @@ import {
   faFile,
   faFolder,
 } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
-import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, interval, merge, Observable, of, Subject } from 'rxjs';
+import { catchError, debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { Search, Workspace, WorkspaceSummary } from '../../api/gen/models';
 import { WorkspaceService } from '../../api/workspace.service';
 
@@ -32,11 +32,14 @@ export class WorkspaceBrowserComponent implements OnInit {
   selected: WorkspaceSummary[] = [];
   viewed: WorkspaceSummary | undefined = undefined;
   viewChange$ = new BehaviorSubject<WorkspaceSummary | undefined>(this.viewed);
+  uploaded$: Observable<string[]>;
+  upload$ = new Subject<File[]>();
   detail$: Observable<Workspace>;
   search: Search = { term: '', skip: 0, take: 100 };
   skip = 0;
   take = 100;
   count = 0;
+  error_msg = "";
   showCreatePanel = false;
   faPlus = faPlus;
   faMinus = faMinus;
@@ -48,10 +51,7 @@ export class WorkspaceBrowserComponent implements OnInit {
   faTimes = faTimes;
   faFile = faFile;
   faFolder = faFolder;
-  readyToDownload = false;
   isDownloading = false;
-  showUpload = false;
-  showDownload = false;
   selectDownloads = false;
   @ViewChild('jsonInput') jsonInput!: ElementRef<HTMLInputElement>;
   @ViewChild('zipInput') zipInput!: ElementRef<HTMLInputElement>;
@@ -64,6 +64,12 @@ export class WorkspaceBrowserComponent implements OnInit {
       tap((r) => (this.source = r)),
       tap((r) => (this.count = r.length)),
       tap(() => this.review())
+    );
+
+    this.uploaded$ = this.upload$.pipe(
+      switchMap(f => api.uploadWorkspaces(f as File[]).pipe(
+        catchError(e => of(e))
+      ))
     );
 
     this.detail$ = this.viewChange$.pipe(
@@ -128,10 +134,6 @@ export class WorkspaceBrowserComponent implements OnInit {
         this.selected.splice(index, 1);
       }
     }
-    // have to refresh the BehaviorSubject to refresh the display
-    if (this.readyToDownload) {
-      this.pageDownloads(this.skip);
-    }
   }
 
   isSelected(workspaceId: string): boolean {
@@ -157,63 +159,35 @@ export class WorkspaceBrowserComponent implements OnInit {
     return this.selected.length === this.source.length;
   }
 
-  setReadyToDownload() {
-    this.readyToDownload = true;
-    this.pageDownloads(0);
-  }
-
-  pageDownloads(s: number): void {
-    console.log('pageDownloads ' + s + '/' + this.selected.length);
-    if (s === this.selected.length) {
-      s = s - this.take;
-      console.log('adjusted to ' + s + '/' + this.selected.length);
-    }
-    this.skip = s;
-    const endIndex =
-      this.selected.length > this.skip + this.take
-        ? this.skip + this.take
-        : this.selected.length;
-    console.log('start/end ' + s + '/' + endIndex);
-    const workspaces = this.selected.slice(s, endIndex);
-    this.selected$.next(workspaces);
-    this.count = endIndex - this.skip;
-    this.search.skip = this.skip;
-    this.search.take = this.take;
-  }
-
   download(): void {
+    this.error_msg = "";
     this.isDownloading = true;
-    const workspaceIds =
-      this.selected.length == 0 ? ['all'] : this.selected.map((w) => w.id);
-    this.api.downloadWorkspaces(workspaceIds).subscribe(
-      (data) => {
-        const blob = new Blob([data], {
-          type: 'application/zip',
-        });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.target = '_blank';
-        link.download = this.getCurrentDateTime() + '-workspaces.zip';
-        this.resetDownload();
-        link.click();
-      },
-      (err) => {
-        window.alert('Error downloading file:  ' + err.message);
-        this.resetDownload();
-      },
-      () => {
-        this.resetDownload();
-      }
-    );
+    const workspaceIds = this.selected.map((w) => w.id);
+    this.api.downloadWorkspaces(workspaceIds).pipe(
+      catchError(e => of(e))
+    ).subscribe(data => this.local_download(data));
+  }
+
+  local_download(data: any, type: string = "application/zip"): void {
+    this.isDownloading = false;
+    if (data.statusText) {
+      this.error_msg = data.statusText;
+      return;
+    }
+    const blob = new Blob([data], {type});
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.download = this.getCurrentDateTime() + '-workspaces.zip';
+    this.resetDownload();
+    link.click();
   }
 
   resetDownload(): void {
     this.selected.length = 0;
     this.isDownloading = false;
-    this.readyToDownload = false;
     this.selectDownloads = false;
-    this.showDownload = false;
     this.count = 0;
     this.skip = 0;
     this.refresh$.next(true);
@@ -223,28 +197,7 @@ export class WorkspaceBrowserComponent implements OnInit {
    * Selects the file(s) to be uploaded. Called when file selection is changed
    */
   upload(e: any) {
-    if (!e.target.files) {
-      // this.areButtonsDisabled = false;
-      return;
-    }
-    // this.uploadProgress = 0;
-    this.api.uploadWorkspaces(e.target.files).subscribe(
-      (result) => {
-        alert(
-          'The following ' +
-            result.length +
-            ' workspaces were uploaded ' +
-            result.join(', ')
-        );
-        this.showUpload = false;
-      },
-      (err) => {
-        window.alert('Error uploading file:  ' + err.message);
-      },
-      () => {}
-    );
-    this.jsonInput.nativeElement.value = '';
-    this.zipInput.nativeElement.value = '';
+    this.upload$.next(e.target.files);
   }
 
   getCurrentDateTime(): string {
@@ -258,11 +211,4 @@ export class WorkspaceBrowserComponent implements OnInit {
     return `${year}${month}${day}${hours}${minutes}${seconds}`;
   }
 
-  getDownloadButtonClass() {
-    const buttonClass =
-      this.selected.length == 0
-        ? 'btn btn-outline-info btn-sm mx-1'
-        : 'btn btn-outline-info btn-sm mx-1 text-warn';
-    return buttonClass;
-  }
 }
