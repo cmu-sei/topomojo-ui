@@ -53,7 +53,6 @@ export class WorkspaceBrowserComponent implements OnInit {
   faFolder = faFolder;
   isDownloading = false;
   selectDownloads = false;
-  @ViewChild('jsonInput') jsonInput!: ElementRef<HTMLInputElement>;
   @ViewChild('zipInput') zipInput!: ElementRef<HTMLInputElement>;
 
   constructor(private api: WorkspaceService) {
@@ -69,7 +68,8 @@ export class WorkspaceBrowserComponent implements OnInit {
     this.uploaded$ = this.upload$.pipe(
       switchMap(f => api.uploadWorkspaces(f as File[]).pipe(
         catchError(e => of(e))
-      ))
+      )),
+      tap(r => this.refresh$.next(true))
     );
 
     this.detail$ = this.viewChange$.pipe(
@@ -198,6 +198,7 @@ export class WorkspaceBrowserComponent implements OnInit {
    */
   upload(e: any) {
     this.upload$.next(e.target.files);
+    this.zipInput.nativeElement.value = ""
   }
 
   getCurrentDateTime(): string {
