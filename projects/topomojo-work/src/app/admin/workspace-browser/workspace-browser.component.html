@@ -23,6 +23,7 @@
     <button class="btn btn-sm btn-link text-primary" (click)="zipInput.click()">
       <fa-icon [icon]="faFile" />
       <span>UploadZip</span>
+      <input class="invisible" (change)="upload($event)" #zipInput type="file" accept=".zip,.json" />
     </button>
     <!-- Download -->
     <button class="btn btn-sm btn-link text-primary" (click)="selectDownloads = true" *ngIf="!selectDownloads">
@@ -130,7 +131,3 @@
 <!-- bottom workspace pager -->
 <hr class="my-0" *ngIf="selected.length > 0" />
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
-
-<!-- Folder and File selectors -->
-<input hidden (change)="upload($event)" #jsonInput type="file" webkitdirectory multiple />
-<input hidden (change)="upload($event)" #zipInput type="file" accept=".zip" />
