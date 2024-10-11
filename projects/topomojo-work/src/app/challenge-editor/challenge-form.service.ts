@@ -16,7 +16,7 @@ export class ChallengeFormService {
 
   mapToForm(c?: ChallengeSpec): UntypedFormGroup {
     if (!c || c.variants?.length === 0) {
-      c = { variants: [{sections: [{questions: [{}]}]}]};
+      c = { variants: [{ sections: [{ questions: [{}] }] }] };
     }
     return this.fb.group({
       // id: [ch.id, Validators.required],
@@ -41,7 +41,7 @@ export class ChallengeFormService {
 
   mapVariant(v?: VariantSpec): UntypedFormGroup {
     if (!v) {
-      v = {sections: [{questions: [{}]}]};
+      v = { sections: [{ questions: [{}] }] };
     }
     return this.fb.group({
       text: [v?.text],
@@ -58,11 +58,13 @@ export class ChallengeFormService {
 
   mapQuestionSet(s?: SectionSpec): UntypedFormGroup {
     if (!s) {
-      s = {questions: [{}]};
+      s = { questions: [{}] };
     }
+
     return this.fb.group({
+      name: s?.name,
       text: [s?.text],
-      prerequisite: [s?.prerequisite || 0, Validators.pattern(/\d*/)],
+      preReqTotal: [s?.preReqTotal || 0, Validators.pattern(/\d*/)],
       questions: this.fb.array(
         s?.questions?.map(q => this.mapQuestion(q)) || []
       )
