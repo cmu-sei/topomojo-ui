@@ -1,34 +1,48 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
+<app-error-div *ngIf="errors.length" class="my-3" [errors]="errors"></app-error-div>
+
 <ng-container *ngIf="state.challenge">
+  <markdown *ngIf="state.challenge.text" [data]="state.challenge.text"></markdown>
 
-  <markdown [data]="state.challenge.sectionText"></markdown>
+  <div *ngFor="let section of state.challenge.variant.sections; index as sectionIndex" class="my-4">
+    <h2 *ngIf="state.challenge.variant.totalSectionCount > 1">{{ section.name || "Question Set " + (sectionIndex + 1) }}
+    </h2>
+    <markdown *ngIf="section.text" [data]="section.text"></markdown>
 
-  <div *ngFor="let q of state.challenge.questions; let i=index" class="form-group p-2 mt-2"
-  [class.pop-info]="!q.isGraded"
-  [class.pop-success]="q.isGraded && q.isCorrect"
-  [class.pop-warning]="q.isGraded && !q.isCorrect"
-  >
-    <label>{{i+1}}. ({{q.weight}}) {{q.text}}</label>
-    <input class="form-control" [readonly]="q.isCorrect" [(ngModel)]="q.answer">
-    <small [hidden]="!q.example">Example answer: {{q.example}}</small>
+    <div *ngFor="let q of section.questions; let i=index" class="form-group p-2 my-3" [class.pop-info]="!q.isGraded"
+      [class.pop-success]="q.isGraded && q.isCorrect" [class.pop-warning]="q.isGraded && !q.isCorrect">
+      <label>{{i+1}}. ({{q.weight}}) {{q.text}}</label>
+      <input class="form-control" [readonly]="q.isCorrect" [(ngModel)]="q.answer">
+      <small [hidden]="!q.example">Example answer: {{q.example}}</small>
+    </div>
+
+    <app-confirm-button *ngIf="!state.gameOver && state.session.isDuring && completedSections.indexOf(sectionIndex) < 0"
+      class="my-3" btnClass="btn btn-sm btn-secondary" (confirm)="submit(sectionIndex)">
+      <fa-icon [icon]="faSubmit"></fa-icon>
+      <span>Submit</span>
+    </app-confirm-button>
   </div>
-
-  <app-error-div [errors]="errors"></app-error-div>
 
   <div class="d-flex align-items-center">
-    <ng-container *ngIf="!state.gameOver && state.session.isDuring && state.challenge!.questions.length > 0">
-      <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()">
-        <fa-icon [icon]="faSubmit"></fa-icon>
-        <span>Submit</span>
-      </app-confirm-button>
-      <label class="pop-warning px-1 ml-2">
+    <ng-container *ngIf="!state.gameOver && state.session.isDuring">
+      <div class="pop-warning px-1 ml-2">
         {{state.challenge.attempts + 1}} of {{state.challenge.maxAttempts}}
-      </label>
+      </div>
     </ng-container>
-    <div class="spacer"></div>
-    <div>Score: {{state.challenge.score}} of {{state.challenge.maxPoints}}</div>
+    <div class="spacer text-center">
+      <span *ngIf="state.challenge.variant.totalSectionCount > 1">
+        <strong>Question Set: </strong>
+        {{ completedSections.length + 1 }}
+        of {{ state.challenge.variant.totalSectionCount }}
+      </span>
+    </div>
+    <div>
+      <strong>
+        Score:
+      </strong>
+      {{state.challenge.score}} of {{state.challenge.maxPoints}}
+    </div>
   </div>
-
 </ng-container>

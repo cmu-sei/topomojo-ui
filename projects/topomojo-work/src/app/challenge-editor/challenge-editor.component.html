@@ -16,7 +16,8 @@
       <small>
         Add randomization key/values. At deploy-time, the values will replace
         the keys in template guest settings, challenge text, questions, and answers.
-        Enter the plain key here, but use a <i>double-pounder-key</i> (<code>##key##</code>) anywhere it should be replaced.
+        Enter the plain key here, but use a <i>double-pounder-key</i> (<code>##key##</code>) anywhere it should be
+        replaced.
       </small>
     </div>
 
@@ -31,7 +32,8 @@
     <div *ngIf="transforms.controls.length">
       <small>
         Value format is <code>type:range</code> where type is <em>hex, b64, int, uid, list</em> and range is optional.
-        <button class="btn btn-sm btn-link-warning" [(ngModel)]="showTransformExamples" [ngModelOptions]="{standalone: true}" btnCheckbox>
+        <button class="btn btn-sm btn-link-warning" [(ngModel)]="showTransformExamples"
+          [ngModelOptions]="{standalone: true}" btnCheckbox>
           <fa-icon [icon]="faHelp"></fa-icon>
           <span></span>
         </button>
@@ -64,7 +66,8 @@
 
   <div class="form-group bg-light">
     <label class="col-form-label-sm">Markdown</label>
-    <ngx-monaco-editor id="challenge-text-editor" formControlName="text" [options]="editorOptions" aria-label="challenge text"></ngx-monaco-editor>
+    <ngx-monaco-editor id="challenge-text-editor" formControlName="text" [options]="editorOptions"
+      aria-label="challenge text"></ngx-monaco-editor>
     <small>This markdown gets appended to the gamespace document.</small>
   </div>
 
@@ -77,12 +80,12 @@
           At deploy-time, one challenge variant is selected randomly.
           A variant is comprised of an iso-attachment instruction and one or more question sets.
           Question sets are for progressive challenges in which a question set is only presented
-          if a prerequisite score was earned in the prior question set. (Progressive challenges
-          are not yet supported.)
+          if a prerequisite percentage of the overall challenge weight has been scored correctly.
         </small>
       </p>
       <p>
-        <button class="btn btn-sm btn-outline-dark mr-1" btnCheckbox [(ngModel)]="showDetail" [ngModelOptions]="{standalone: true}" (click)="updateDetail()">
+        <button class="btn btn-sm btn-outline-dark mr-1" btnCheckbox [(ngModel)]="showDetail"
+          [ngModelOptions]="{standalone: true}" (click)="updateDetail()">
           <fa-icon [icon]="showDetail ? faCheck : faUnchecked"></fa-icon>
           <span>Show Variant Detail</span>
         </button>
@@ -93,7 +96,8 @@
       <div class="d-flex align-items-center">
         <label class="label pop-info">Variant.{{i+1}}</label>
         <div class="spacer"></div>
-        <button class="btn btn-sm btn-outline-dark mr-1" btnCheckbox [(ngModel)]="detail[i]" [ngModelOptions]="{standalone: true}">
+        <button class="btn btn-sm btn-outline-dark mr-1" btnCheckbox [(ngModel)]="detail[i]"
+          [ngModelOptions]="{standalone: true}">
           <fa-icon [icon]="faMore"></fa-icon>
           <span>Detail</span>
         </button>
@@ -107,8 +111,8 @@
         </app-confirm-button>
       </div>
 
-      <app-variant-form [form]="$any(v)" [index]="i" [detail]="showDetail || detail[i]" [guid]="summary.id"></app-variant-form>
-
+      <app-variant-form [form]="$any(v)" [index]="i" [detail]="showDetail || detail[i]"
+        [guid]="summary.id"></app-variant-form>
     </div>
   </div>
 

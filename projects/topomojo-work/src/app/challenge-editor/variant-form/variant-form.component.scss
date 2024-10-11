@@ -1,10 +1,19 @@
 .indent {
-  margin-top: .5rem;
+  margin-top: 0.5rem;
   margin-left: 2rem;
   label {
     margin: 0;
   }
 }
+
 ngx-monaco-editor {
   height: 128px;
+}
+
+.question-set-name-input {
+  width: unset;
+}
+
+.variant-control-buttons {
+  min-width: 32px;
 }
