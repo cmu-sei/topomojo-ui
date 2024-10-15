@@ -2,20 +2,25 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <div [formGroup]="form">
-
-  <div class="form-row my-4" [hidden]="!more">
-    <div class="form-group col-3 py-0">
-      <label for="prereq-input-{{vindex}}.{{this.index}}" class="mb-0">Prerequisite Weight</label>
+  <div class="form-row my-4" [hidden]="!more || this.index === 0">
+    <div class="form-group col-6 py-0">
+      <label for="prereq-input-{{vindex}}.{{this.index}}" class="mb-0">Prerequisite Total Weight</label>
       <input id="prereq-input-{{vindex}}.{{this.index}}" type="number" class="form-control"
         formControlName="preReqTotal" placeholder="prereq">
-    </div>
-    <div class="col-9"></div>
-    <small>
-      If set, this section will only be presented to the player if their total score across all answered questions is
-      greater than or equal to this percentage of the total challenge score.
 
-      <em>If unset or zero, this section will always be presented.</em>
-    </small>
+      <small class="text-muted">
+        Required scored weight across all challenge questions
+      </small>
+    </div>
+    <div class="form-group col-6 py-0">
+      <label for="prereq-input-{{vindex}}.{{this.index}}" class="mb-0">Prerequisite Prev. Section Weight</label>
+      <input id="prereq-input-{{vindex}}.{{this.index}}" type="number" class="form-control"
+        formControlName="preReqPrevSection" placeholder="prereq">
+
+      <small class="text-muted">
+        Required scored weight in the prev. section
+      </small>
+    </div>
   </div>
 
   <ng-container formArrayName="questions">
