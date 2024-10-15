@@ -87,7 +87,7 @@
         </div>
       </div>
 
-      <div class="" [hidden]="!detail && !more[i]">
+      <div [hidden]="!detail && !more[i]">
         <label class="col-form-label-sm">Markdown</label>
         <ngx-monaco-editor id="section-{{this.index}}.{{i}}-editor" formControlName="text" [options]="editorOptions"
           aria-label="section text"></ngx-monaco-editor>

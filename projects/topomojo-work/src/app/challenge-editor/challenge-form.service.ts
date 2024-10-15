@@ -65,6 +65,7 @@ export class ChallengeFormService {
       name: s?.name,
       text: [s?.text],
       preReqTotal: [s?.preReqTotal || 0, Validators.pattern(/\d*/)],
+      preReqPrevSection: [s?.prereqPrevSection || 0, Validators.pattern(/d*/)],
       questions: this.fb.array(
         s?.questions?.map(q => this.mapQuestion(q)) || []
       )

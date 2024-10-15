@@ -94,7 +94,7 @@
 
     <div *ngFor="let v of variants.controls; let i = index" [formGroupName]="i" class="form-group bg-light mt-2">
       <div class="d-flex align-items-center">
-        <label class="label pop-info">Variant.{{i+1}}</label>
+        <label class="label pop-info">Variant {{i+1}}</label>
         <div class="spacer"></div>
         <button class="btn btn-sm btn-outline-dark mr-1" btnCheckbox [(ngModel)]="detail[i]"
           [ngModelOptions]="{standalone: true}">
