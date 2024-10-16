@@ -490,6 +490,8 @@ export interface ChallengeProgressView {
   maxAttempts: number;
   maxPoints: number;
   lastScoreTime?: Date;
+  nextSectionPreReqThisSection?: number;
+  nextSectionPreReqTotal?: number;
   score: number;
   variant: VariantView;
   text: string;

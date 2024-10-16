@@ -26,22 +26,40 @@
     </app-confirm-button>
   </div>
 
-  <div class="d-flex align-items-center">
-    <ng-container *ngIf="!state.gameOver && state.session.isDuring">
+  <ng-container *ngIf="!state.gameOver && state.session.isDuring">
+    <alert type="info" class="d-block my-3"
+      *ngIf="challengeProgress.nextSectionPreReqThisSection || challengeProgress.nextSectionPreReqTotal">
+      <strong>NOTE: </strong> There are additional sections for this challenge. You'll unlock the next one when you meet
+      the following requirements:
+
+      <ul class="my-2">
+        <li *ngIf="challengeProgress.nextSectionPreReqThisSection">
+          You score a weight of <strong>{{ challengeProgress.nextSectionPreReqThisSection }}</strong> on the current
+          section.
+        </li>
+        <li *ngIf="challengeProgress.nextSectionPreReqTotal">
+          You score a <em>total</em> weight of <strong>{{ challengeProgress.nextSectionPreReqTotal }}</strong> on all
+          available questions.
+        </li>
+      </ul>
+    </alert>
+
+    <div class="d-flex align-items-center">
       <div class="pop-warning px-1 ml-2">
         {{state.challenge.attempts + 1}} of {{state.challenge.maxAttempts}}
       </div>
-    </ng-container>
-    <div class="spacer text-center">
-      <span *ngIf="challengeProgress.variant.totalSectionCount > 1">
-        <strong>Question Set: </strong>
-        {{ challengeProgress.variant.sections.length }} of {{ challengeProgress.variant.totalSectionCount }} </span>
+
+      <div class="spacer text-center">
+        <span *ngIf="challengeProgress.variant.totalSectionCount > 1">
+          <strong>Question Set: </strong>
+          {{ challengeProgress.variant.sections.length }} of {{ challengeProgress.variant.totalSectionCount }} </span>
+      </div>
+      <div>
+        <strong>
+          Score:
+        </strong>
+        {{state.challenge.score}} of {{state.challenge.maxPoints}}
+      </div>
     </div>
-    <div>
-      <strong>
-        Score:
-      </strong>
-      {{state.challenge.score}} of {{state.challenge.maxPoints}}
-    </div>
-  </div>
+  </ng-container>
 </ng-container>
