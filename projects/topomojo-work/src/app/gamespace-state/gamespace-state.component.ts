@@ -19,6 +19,7 @@ export class GamespaceStateComponent implements OnInit {
   faBolt = faBolt;
   faTrash = faTrash;
   faTv = faTv;
+  protected hasQuestions = false;
 
   constructor(
     private api: GamespaceService,
@@ -34,7 +35,7 @@ export class GamespaceStateComponent implements OnInit {
     this.api.start(this.game.id).pipe(
       finalize(() => this.deploying = false)
     ).subscribe(
-      gs => this.game = gs
+      gs => this.updateGame(gs)
     );
   }
 
@@ -44,12 +45,17 @@ export class GamespaceStateComponent implements OnInit {
     this.api.stop(this.game.id).pipe(
       finalize(() => this.deploying = false)
     ).subscribe(
-      gs => this.game = gs
+      gs => this.updateGame(gs)
     );
   }
 
   console(vm: VmState): void {
     this.conf.openConsole(`?f=1&s=${this.game.id}&v=${vm.name?.split('#')[0]}`);
+  }
+
+  private updateGame(gs: GameState) {
+    this.game = gs;
+    this.hasQuestions = !!gs.challenge?.questions?.length;
   }
 
 }

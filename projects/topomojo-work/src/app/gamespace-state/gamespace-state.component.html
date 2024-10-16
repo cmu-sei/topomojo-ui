@@ -26,5 +26,5 @@
   </div>
 </ng-container>
 
-<h3 *ngIf="game.challenge?.questions?.length">Challenge Questions</h3>
+<h3 *ngIf="hasQuestions">Challenge Questions</h3>
 <app-gamespace-quiz [state]="game"></app-gamespace-quiz>

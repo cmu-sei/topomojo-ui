@@ -2,18 +2,30 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <div [formGroup]="form">
+  <div class="form-row my-4" [hidden]="!more || this.index === 0">
+    <div class="form-group col-6 py-0">
+      <label for="prereq-input-{{vindex}}.{{this.index}}" class="mb-0">Prerequisite Total Weight</label>
+      <input id="prereq-input-{{vindex}}.{{this.index}}" type="number" class="form-control"
+        formControlName="preReqTotal" placeholder="prereq">
 
-  <div class="form-row" [hidden]="!more">
-    <div class="form-group col-3 py-0">
-      <label for="prereq-input-{{vindex}}.{{this.index}}" class="mb-0">Prerequisite Score</label>
-      <input id="prereq-input-{{vindex}}.{{this.index}}" type="number" class="form-control" formControlName="prerequisite" placeholder="prereq">
+      <small class="text-muted">
+        Required scored weight across all challenge questions
+      </small>
     </div>
-    <div class="col-9"></div>
-    <small class="col">This question set is only accessible if this score was achieved on the previous question set.</small>
+    <div class="form-group col-6 py-0">
+      <label for="prereq-input-{{vindex}}.{{this.index}}" class="mb-0">Prerequisite Prev. Section Weight</label>
+      <input id="prereq-input-{{vindex}}.{{this.index}}" type="number" class="form-control"
+        formControlName="preReqPrevSection" placeholder="prereq">
+
+      <small class="text-muted">
+        Required scored weight in the prev. section
+      </small>
+    </div>
   </div>
 
   <ng-container formArrayName="questions">
-    <div *ngFor="let q of questions.controls; let i = index" [formGroupName]="i" class="question-div shadow-sm pop-warning" (mouseenter)="hoveritem=i">
+    <div *ngFor="let q of questions.controls; let i = index" [formGroupName]="i"
+      class="question-div shadow-sm pop-warning" (mouseenter)="hoveritem=i">
 
       <div class="d-flex align-items-center">
         <label for="">Q.{{i+1}}</label>
@@ -35,11 +47,13 @@
       <div class="form-row">
         <div class="form-group col-8 py-0">
           <label for="text-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Question</label>
-          <textarea id="text-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="text" placeholder="question" rows="2"></textarea>
+          <textarea id="text-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="text"
+            placeholder="question" rows="2"></textarea>
         </div>
         <div class="form-group col-4 py-0">
           <label for="answer-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Answer</label>
-          <input id="answer-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="answer" placeholder="answer">
+          <input id="answer-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="answer"
+            placeholder="answer">
         </div>
       </div>
 
@@ -58,15 +72,20 @@
       <div class="form-row" [hidden]="!more">
         <div class="form-group col-12 py-0">
           <label for="hidden-input{{vindex}}.{{this.index}}.{{i}}" class="mr-2">Hidden</label>
-          <input id="hidden-input{{vindex}}.{{this.index}}.{{i}}" type="checkbox" class="form-control-checkbox" formControlName="hidden">
+          <input id="hidden-input{{vindex}}.{{this.index}}.{{i}}" type="checkbox" class="form-control-checkbox"
+            formControlName="hidden">
         </div>
         <div class="form-group col-6 py-0">
           <label for="grader-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Grader</label>
-          <div id="grader-input{{vindex}}.{{this.index}}.{{i}}" class="btn-group" btnRadioGroup formControlName="grader" (mouseleave)="infotip=0">
+          <div id="grader-input{{vindex}}.{{this.index}}.{{i}}" class="btn-group" btnRadioGroup formControlName="grader"
+            (mouseleave)="infotip=0">
             <label class="btn btn-sm btn-outline-secondary" btnRadio="match" (mouseenter)="infotip=1">Match</label>
-            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAny" (mouseenter)="infotip=2">MatchAny</label>
-            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAll" (mouseenter)="infotip=3">MatchAll</label>
-            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAlpha" (mouseenter)="infotip=4">MatchAlpha</label>
+            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAny"
+              (mouseenter)="infotip=2">MatchAny</label>
+            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAll"
+              (mouseenter)="infotip=3">MatchAll</label>
+            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAlpha"
+              (mouseenter)="infotip=4">MatchAlpha</label>
           </div>
         </div>
         <div class="form-group col-2 py-0">
@@ -75,18 +94,22 @@
               <fa-icon [icon]="faHelp" (mouseenter)="infotip=5" (mouseleave)="infotip=0"></fa-icon>
             </small>
           </label>
-          <input id="weight-input{{vindex}}.{{this.index}}.{{i}}" type="number" class="form-control" formControlName="weight" placeholder="">
+          <input id="weight-input{{vindex}}.{{this.index}}.{{i}}" type="number" class="form-control"
+            formControlName="weight" placeholder="">
         </div>
         <div class="form-group col-4 py-0">
           <label for="example-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Example</label>
-          <input id="example-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="example" placeholder="example">
+          <input id="example-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="example"
+            placeholder="example">
         </div>
         <div class="form-group col py-0" *ngIf="hoveritem===i">
           <small *ngIf="infotip===1">Match &mdash; match answer exactly</small>
           <small *ngIf="infotip===2">MatchAny &mdash; match one of the pipe-delimited answers</small>
-          <small *ngIf="infotip===3">MatchAll &mdash; match all of the pipe-delimited answers, regardless of order</small>
+          <small *ngIf="infotip===3">MatchAll &mdash; match all of the pipe-delimited answers, regardless of
+            order</small>
           <small *ngIf="infotip===4">MatchAlpha &mdash; match answer exactly after stripping any symbols</small>
-          <small *ngIf="infotip===5">Percentage of total for this question.  Value should be between <code>0 and 1</code>, or <code>0 and 100</code>, inclusive.  0 values are calculated evenly.</small>
+          <small *ngIf="infotip===5">Percentage of total for this question. Value should be between
+            <code>0 and 1</code>, or <code>0 and 100</code>, inclusive. 0 values are calculated evenly.</small>
         </div>
       </div>
     </div>
@@ -96,5 +119,5 @@
     <fa-icon [icon]="faPlus"></fa-icon>
     <span>Add Question</span>
   </button>
-  <hr/>
+  <hr />
 </div>

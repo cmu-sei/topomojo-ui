@@ -453,8 +453,10 @@ export interface IsoSpec {
 }
 
 export interface SectionSpec {
+  name?: string;
   text?: string;
-  prerequisite?: number;
+  prereqPrevSection?: number;
+  preReqTotal?: number;
   questions?: QuestionSpec[];
 }
 
@@ -470,17 +472,29 @@ export interface QuestionSpec {
 }
 
 export interface ChallengeView {
-  isActive: boolean;
-  text: string;
-  maxPoints: number;
-  maxAttempts: number;
   attempts: number;
+  maxAttempts: number;
+  maxPoints: number;
+  lastScoreTime: Date;
+  questions: QuestionView[];
   score: number;
-  sectionText: string;
   sectionCount: number;
   sectionIndex: number;
   sectionScore: number;
-  questions: QuestionView[];
+  sectionText: number;
+  text: string;
+}
+
+export interface ChallengeProgressView {
+  attempts: number;
+  maxAttempts: number;
+  maxPoints: number;
+  lastScoreTime?: Date;
+  nextSectionPreReqThisSection?: number;
+  nextSectionPreReqTotal?: number;
+  score: number;
+  variant: VariantView;
+  text: string;
 }
 
 export interface QuestionView {
@@ -492,6 +506,21 @@ export interface QuestionView {
   penalty: number;
   isCorrect: boolean;
   isGraded: boolean;
+}
+
+export interface SectionView {
+  name?: string;
+  prereqTotalWeight: number;
+  prereqPrevSection: number;
+  score: number;
+  text: string;
+  questions: QuestionView[];
+}
+
+export interface VariantView {
+  text: string;
+  sections: SectionView[];
+  totalSectionCount: number;
 }
 
 export interface SectionSubmission {
@@ -544,7 +573,7 @@ export class TimeWindow {
       : this.isDuring && end > 0
         ? end - ts
         : 0
-    ;
+      ;
   }
 }
 
