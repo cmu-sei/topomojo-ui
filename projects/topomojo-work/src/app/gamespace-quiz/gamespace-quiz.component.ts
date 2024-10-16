@@ -2,8 +2,9 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { GamespaceService } from '../api/gamespace.service';
-import { GameState } from '../api/gen/models';
+import { ChallengeProgressView, GameState } from '../api/gen/models';
 import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -17,6 +18,7 @@ export class GamespaceQuizComponent implements OnInit, OnChanges {
   faSubmit = faCloudUploadAlt;
 
   protected completedSections: number[] = [];
+  protected challengeProgress?: ChallengeProgressView;
   protected questionSetCount = 0;
 
   constructor(private api: GamespaceService) { }
@@ -31,31 +33,40 @@ export class GamespaceQuizComponent implements OnInit, OnChanges {
   }
 
   submit(sectionIndex: number): void {
+    if (!this.challengeProgress)
+      throw new Error("Challenge progress unresolved");
+
     const submission = {
       sectionIndex,
-      questions: this.state.challenge!.variant.sections[sectionIndex].questions.map(q => ({ answer: q.answer }))
+      questions: this.challengeProgress?.variant.sections[sectionIndex].questions.map(q => ({ answer: q.answer }))
     };
+
     this.api.grade({ ...submission, id: this.state.id }).subscribe(
       (c: GameState) => this.bindState(c),
       (err: any) => { console.log(err); this.errors.push(err.error); }
     );
   }
 
-  private bindState(state: GameState) {
+  private async bindState(state: GameState) {
     this.state = state;
-    this.completedSections = [];
-    this.questionSetCount = 0;
 
-    if (!state.challenge?.variant?.sections?.length) {
+    if (!state?.id) {
       return;
     }
 
-    for (let i = 0; i < state.challenge.variant.sections.length; i++) {
-      if (state.challenge.variant.sections[i].questions.every(q => q.isCorrect)) {
+    this.completedSections = [];
+    this.questionSetCount = 0;
+    this.challengeProgress = await firstValueFrom(this.api.getChallengeProgress(state.id));
+
+    if (!this.challengeProgress.variant.sections.length)
+      return;
+
+    for (let i = 0; i < this.challengeProgress.variant.sections.length; i++) {
+      if (this.challengeProgress.variant.sections[i].questions.every(q => q.isCorrect)) {
         this.completedSections.push(i);
       }
     }
 
-    this.questionSetCount = state.challenge.variant.sections.length;
+    this.questionSetCount = this.challengeProgress.variant.totalSectionCount;
   }
 }
