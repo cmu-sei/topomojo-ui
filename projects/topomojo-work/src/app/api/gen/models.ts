@@ -473,12 +473,26 @@ export interface QuestionSpec {
 
 export interface ChallengeView {
   attempts: number;
-  lastScoreTime: Date;
   maxAttempts: number;
   maxPoints: number;
+  lastScoreTime: Date;
+  questions: QuestionView[];
   score: number;
+  sectionCount: number;
+  sectionIndex: number;
+  sectionScore: number;
+  sectionText: number;
   text: string;
+}
+
+export interface ChallengeProgressView {
+  attempts: number;
+  maxAttempts: number;
+  maxPoints: number;
+  lastScoreTime?: Date;
+  score: number;
   variant: VariantView;
+  text: string;
 }
 
 export interface QuestionView {

@@ -55,7 +55,7 @@ export class GamespaceStateComponent implements OnInit {
 
   private updateGame(gs: GameState) {
     this.game = gs;
-    this.hasQuestions = gs.challenge?.variant?.sections?.some(s => s.questions?.length) || false;
+    this.hasQuestions = !!gs.challenge?.questions?.length;
   }
 
 }

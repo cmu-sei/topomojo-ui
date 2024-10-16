@@ -3,11 +3,12 @@
 
 <app-error-div *ngIf="errors.length" class="my-3" [errors]="errors"></app-error-div>
 
-<ng-container *ngIf="state.challenge">
+<ng-container *ngIf="state.challenge && challengeProgress">
   <markdown *ngIf="state.challenge.text" [data]="state.challenge.text"></markdown>
 
-  <div *ngFor="let section of state.challenge.variant.sections; index as sectionIndex" class="my-4">
-    <h2 *ngIf="state.challenge.variant.totalSectionCount > 1">{{ section.name || "Question Set " + (sectionIndex + 1) }}
+  <div *ngFor="let section of challengeProgress.variant.sections; index as sectionIndex" class="my-4">
+    <h2 *ngIf="challengeProgress.variant.totalSectionCount > 1">{{ section.name || "Question Set " + (sectionIndex + 1)
+      }}
     </h2>
     <markdown *ngIf="section.text" [data]="section.text"></markdown>
 
@@ -32,11 +33,9 @@
       </div>
     </ng-container>
     <div class="spacer text-center">
-      <span *ngIf="state.challenge.variant.totalSectionCount > 1">
+      <span *ngIf="challengeProgress.variant.totalSectionCount > 1">
         <strong>Question Set: </strong>
-        {{ completedSections.length + 1 }}
-        of {{ state.challenge.variant.totalSectionCount }}
-      </span>
+        {{ challengeProgress.variant.sections.length }} of {{ challengeProgress.variant.totalSectionCount }} </span>
     </div>
     <div>
       <strong>
