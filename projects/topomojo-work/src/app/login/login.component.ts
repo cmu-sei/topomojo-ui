@@ -22,11 +22,14 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.auth.autoLogin()) {
+      this.working = true;
+    }
   }
 
   login(): void {
     this.working = true;
-    this.auth.externalLogin(this.auth.redirectUrl);
+    this.auth.externalLogin();
   }
 
 }
