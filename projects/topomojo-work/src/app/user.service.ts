@@ -52,8 +52,9 @@ export class UserService {
       switchMap(() => api.logout()),
       // tap(() => console.log('token expired'))
     ).subscribe(() => {
+      auth.expireToken();
       this.user$.next(null);
-      router.navigate(['/login']);
+      router.navigate(['/']);
     });
   }
 
