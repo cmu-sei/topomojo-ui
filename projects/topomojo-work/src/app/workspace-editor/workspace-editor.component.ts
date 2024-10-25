@@ -22,6 +22,7 @@ export class WorkspaceEditorComponent implements OnInit, OnDestroy {
   guid = '';
   errors: any[] = [];
   err: any;
+  upload_enabled: boolean;
 
   constructor(
     config: ConfigService,
@@ -30,6 +31,8 @@ export class WorkspaceEditorComponent implements OnInit, OnDestroy {
     private router: Router,
     private hub: NotificationService
   ) {
+
+    this.upload_enabled = !!config.settings.enable_upload;
 
     const query$ = (id: string) => zip(
       api.load(id).pipe(

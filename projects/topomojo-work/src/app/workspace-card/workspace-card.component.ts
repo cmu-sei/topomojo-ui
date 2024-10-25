@@ -4,6 +4,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterLinkActive } from '@angular/router';
 import { WorkspaceSummary } from '../api/gen/models';
+import { ConfigService } from '../config.service';
 
 @Component({
   selector: 'app-workspace-card',
@@ -14,10 +15,13 @@ export class WorkspaceCardComponent implements OnInit {
   @Input() workspace!: WorkspaceSummary;
   @ViewChild('rla') rla!: RouterLinkActive;
   hovering = false;
+  upload_enabled: boolean;
 
   constructor(
     private router: Router,
+    config: ConfigService
   ) {
+    this.upload_enabled = !!config.settings.enable_upload;
   }
 
   ngOnInit(): void {

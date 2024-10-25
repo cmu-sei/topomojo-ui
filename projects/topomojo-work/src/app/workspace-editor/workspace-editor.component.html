@@ -10,7 +10,7 @@
     <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../templates']">Templates</a>
     <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../document']">Document</a>
     <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../challenge']">Challenge</a>
-    <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../files']">Files</a>
+    <a *ngIf="upload_enabled" class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../files']">Files</a>
     <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../play']">Play</a>
   </div>
   <div [ngSwitch]="section" class="reader">
