@@ -17,7 +17,8 @@ export const environment = {
       scope: 'openid profile dev-api',
       loadUserInfo: true,
       useLocalStorage: true,
-      debug: false
+      debug: false,
+      autoInitialLogin: false
     }
   }
 };

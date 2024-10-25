@@ -23,6 +23,8 @@ export class AuthService {
   redirectUrl = '';
   lastCall = 0;
   renewIfActiveSeconds = 0;
+  tryAutoLogin = false;
+  triedAutoLogin = false;
   oidcUser!: (User | null);
   public tokenState$: BehaviorSubject<AuthTokenState> = new BehaviorSubject<AuthTokenState>(AuthTokenState.unknown);
 
@@ -44,6 +46,7 @@ export class AuthService {
         replace(/https?:\/\//, '').split('/').reverse().pop() || 'Identity Provider';
 
       this.renewIfActiveSeconds = s.oidc?.silentRenewIfActiveSeconds || 0;
+      this.tryAutoLogin = s.oidc?.autoLogin || false;
 
       if (s.oidc.useLocalStorage) {
         (s.oidc.userStore as any) = new WebStorageStateStore({});
@@ -115,8 +118,16 @@ export class AuthService {
     this.expireToken();
   }
 
-  externalLogin(url: string): void {
-    this.mgr.signinRedirect({ state: url })
+  autoLogin(): boolean {
+    if (this.tryAutoLogin && !this.triedAutoLogin) {
+      this.externalLogin();
+      return true;
+    }
+    return false;
+  }
+
+  externalLogin(url?: string): void {
+    this.mgr.signinRedirect({ state: url || this.redirectUrl })
       .then(() => { })
       .catch(err => {
         console.log(err);
@@ -124,6 +135,7 @@ export class AuthService {
   }
 
   externalLoginCallback(url?: string): Promise<User> {
+    this.triedAutoLogin = true;
     return this.mgr.signinRedirectCallback(url);
   }
 
