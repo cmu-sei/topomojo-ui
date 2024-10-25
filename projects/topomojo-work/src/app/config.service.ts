@@ -150,6 +150,7 @@ export interface Settings {
   appname?: string;
   apphost?: string;
   mkshost?: string;
+  enable_upload?: boolean;
   oidc: AppUserManagerSettings;
 }
 
