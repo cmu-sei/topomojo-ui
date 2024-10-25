@@ -8,6 +8,7 @@ export const environment = {
     appname: 'TopoMojo',
     apphost: 'http://localhost:5004',
     mkshost: 'http://localhost:4201',
+    enable_upload: true,
     oidc: {
       client_id: 'dev-code',
       authority: 'http://localhost:5000',
@@ -18,7 +19,8 @@ export const environment = {
       loadUserInfo: true,
       useLocalStorage: true,
       debug: false,
-      autoInitialLogin: false
+      autoLogin: false,
+      autoLogout: false
     }
   }
 };

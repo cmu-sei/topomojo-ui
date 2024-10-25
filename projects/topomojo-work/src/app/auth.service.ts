@@ -25,6 +25,7 @@ export class AuthService {
   renewIfActiveSeconds = 0;
   tryAutoLogin = false;
   triedAutoLogin = false;
+  oidcLogout = false;
   oidcUser!: (User | null);
   public tokenState$: BehaviorSubject<AuthTokenState> = new BehaviorSubject<AuthTokenState>(AuthTokenState.unknown);
 
@@ -47,6 +48,7 @@ export class AuthService {
 
       this.renewIfActiveSeconds = s.oidc?.silentRenewIfActiveSeconds || 0;
       this.tryAutoLogin = s.oidc?.autoLogin || false;
+      this.oidcLogout = s.oidc?.autoLogout || false;
 
       if (s.oidc.useLocalStorage) {
         (s.oidc.userStore as any) = new WebStorageStateStore({});
@@ -141,11 +143,15 @@ export class AuthService {
 
   logout(): void {
     if (this.oidcUser) {
-      this.mgr.signoutRedirect()
+      if (this.oidcLogout) {
+        this.mgr.signoutRedirect()
         .then(() => { })
         .catch(err => {
           console.log(err.text());
         });
+      } else {
+        this.onTokenExpired();
+      }
     }
   }
 

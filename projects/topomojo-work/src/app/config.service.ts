@@ -155,6 +155,7 @@ export interface Settings {
 
 export interface AppUserManagerSettings extends UserManagerSettings {
   autoLogin?: boolean;
+  autoLogout?: boolean;
   useLocalStorage?: boolean;
   silentRenewIfActiveSeconds?: number;
   debug?: boolean;

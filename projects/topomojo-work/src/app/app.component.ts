@@ -2,11 +2,11 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, HostListener } from '@angular/core';
-import { debounceTime, filter, tap } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import { ApiUser } from './api/gen/models';
 import { ConfigService } from './config.service';
 import { UserService } from './user.service';
-import { AuthService, AuthTokenState } from './auth.service';
+import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
 import { HubState, NotificationService } from './notification.service';
 import { Observable } from 'rxjs';
@@ -46,13 +46,7 @@ export class AppComponent {
     );
 
     userSvc.user$.pipe(
-      // tap(u => console.log('app user ' + u?.id))
-      // tap(u => console.log(u))
     ).subscribe(u => this.user = u);
-
-    auth.tokenState$.pipe(
-      filter(t => t === AuthTokenState.expired)
-    ).subscribe(t => router.navigate(['/']));
   }
 
   logout(): void {
