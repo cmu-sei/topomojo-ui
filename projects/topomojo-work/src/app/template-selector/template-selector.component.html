@@ -23,7 +23,7 @@
     <li class="d-flex align-items-center mb-1" *ngFor="let s of templateSets">
       <button *ngIf="active !== s" class="btn btn-sm btn-light mr-2" (click)="addSet(s.id)">
         <fa-icon [icon]="faPlus"></fa-icon>
-        <span>Add</span>
+        <span>Add ({{s.count}})</span>
       </button>
       <label *ngIf="active === s" class="text-success mr-2">
         <fa-icon [icon]="faCheck"></fa-icon>

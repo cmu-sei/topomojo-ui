@@ -2,8 +2,8 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { BehaviorSubject, concat, merge, Observable, of, Subject, Subscription, timer, zip } from 'rxjs';
-import { catchError, concatAll, concatMap, debounceTime, distinctUntilChanged, filter, finalize, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subject, Subscription, timer, zip } from 'rxjs';
+import { catchError, concatMap, debounceTime, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { Template, TemplateLink, TemplateSearch, TemplateSummary } from '../api/gen/models';
 import { TemplateService } from '../api/template.service';
 import { faPlus, faCheck, faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -47,19 +47,12 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
       i.name < j.name ? -1 : i.name > j.name ? 1 : 0
     );
 
-    const distinctFilter = (v: TemplateSummary, i: number, s: TemplateSummary[]) => {
-      return v.workspaceId
-        ? s.indexOf(s.find(t => t.workspaceId === v.workspaceId)!) === i
-        : false
-      ;
-    }
-
     // refresh view
     this.templates$ = this.refresh$.pipe(
       debounceTime(250),
       switchMap(() => of(this.templates)),
       map(a => tfilter(a)),
-      tap(a => this.templateSets = a.filter(distinctFilter).map(t => ({id: t.workspaceId, name: t.workspaceName})))
+      tap(a => this.templateSets = this.mapToSets(a))
     );
 
     // link action
@@ -112,5 +105,14 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
       .filter(t => t.workspaceId === id)
       .forEach(t => this.target.next(t))
     ;
+  }
+
+  mapToSets(v: TemplateSummary[]): any[] {
+    const ws = new Set(v.filter(t => !!t.workspaceId).map(t => t.workspaceId));
+    const groups = [...ws].map(id => {
+      const items = v.filter(t => t.workspaceId === id)
+      return {id, name: items[0].workspaceName, count: items.length}
+    });
+    return groups.filter(g => g.count > 1);
   }
 }
