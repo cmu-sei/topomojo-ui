@@ -32,7 +32,7 @@
     </div>
   </div>
 
-  <div *ngIf="isConnected && showTools" class="tools">
+  <div *ngIf="isConnected && showTools" class="tools" (mouseleave)="onToolsLeave($event)">
     <div class="">
       <button class="btn cog" (click)="showUtilities()">&#x2699;</button>
     </div>
