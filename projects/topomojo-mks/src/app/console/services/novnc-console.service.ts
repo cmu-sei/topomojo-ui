@@ -71,7 +71,8 @@ export class NoVNCConsoleService implements ConsoleService {
   getSupportedFeatures(): ConsoleSupportsFeatures {
     return {
       autoCopyVmSelection: true,
-      virtualKeyboard: false
+      virtualKeyboard: false,
+      pasteToClipboard: true
     }
   }
 

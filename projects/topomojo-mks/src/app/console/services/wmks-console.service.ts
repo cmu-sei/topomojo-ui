@@ -105,7 +105,8 @@ accepts keyboard input before clicking PASTE here.
   getSupportedFeatures(): ConsoleSupportsFeatures {
     return {
       autoCopyVmSelection: false,
-      virtualKeyboard: true
+      virtualKeyboard: true,
+      pasteToClipboard: false
     }
   }
 

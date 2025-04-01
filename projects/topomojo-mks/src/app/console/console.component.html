@@ -140,6 +140,10 @@
         </button>
       </div>
 
+      <div *ngIf="consoleSupportsFeatures?.pasteToClipboard && justPasted">
+        <p class="text-success text-center">Text copied to virtual machine's clipboard.</p>
+      </div>
+
       <textarea class="form-control" placeholder="Clipboard" rows="20" [(ngModel)]="cliptext"></textarea>
     </div>
   </div>
