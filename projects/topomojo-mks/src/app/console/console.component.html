@@ -38,15 +38,23 @@
     </div>
 
     <div class="tools-text">
-      <p>
-        <small>
-          If the "Tools" button is in the way, hide it here. If hidden, you can
-          open the tools panel by moving the mouse to the left edge of the console.
-        </small>
-      </p>
-      <div class="form-group form-check">
-        <label class="form-check-label" for="showCog">Show tools button: </label>
-        <input type="checkbox" class="form-check-input" id="showCog" [(ngModel)]="showCog">
+      <div>
+        <p>
+          <small>
+            If the "Tools" button is in the way, hide it here. If hidden, you can
+            open the tools panel by moving the mouse to the left edge of the console.
+          </small>
+        </p>
+        <div class="form-group form-check">
+          <label class="form-check-label" for="showCog">Show tools button: </label>
+          <input type="checkbox" class="form-check-input" id="showCog" [(ngModel)]="showCog">
+        </div>
+      </div>
+      <div>
+        <div class="form-group form-check">
+          <label class="form-check-label" for="stickyTools" title="Keep tools menu open until manually closed">Sticky tools menu: </label>
+          <input type="checkbox" class="form-check-input" id="stickyTools" [(ngModel)]="stickyTools">
+        </div>
       </div>
     </div>
 

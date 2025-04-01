@@ -50,6 +50,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   showTools = false;
   showClipboard = true;
   showCog = true;
+  stickyTools = false;
   justClipped = false;
   justPasted = false;
   nets$: Observable<string[]>;
@@ -354,7 +355,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onToolsLeave(e: MouseEvent) {
-    if (this.showTools && e.clientX >= 400) {
+    if (!this.stickyTools && this.showTools && e.clientX >= 400) {
       this.showTools = false;
     }
   }
