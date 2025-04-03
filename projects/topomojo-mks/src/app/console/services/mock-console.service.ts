@@ -39,7 +39,8 @@ export class MockConsoleService implements ConsoleService {
   getSupportedFeatures(): ConsoleSupportsFeatures {
     return {
       autoCopyVmSelection: false,
-      virtualKeyboard: false
+      virtualKeyboard: false,
+      pasteToClipboard: false
     }
   }
 
