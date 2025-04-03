@@ -50,6 +50,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   showTools = false;
   showClipboard = true;
   showCog = true;
+  stickyTools = false;
   justClipped = false;
   justPasted = false;
   nets$: Observable<string[]>;
@@ -93,8 +94,6 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void { }
 
   ngAfterViewInit(): void {
-    this.initHotspot();
-
     const el = this.consoleCanvas.nativeElement;
     this.canvasId = el.id + this.index;
     el.id += this.index;
@@ -298,28 +297,6 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     timer(2000).subscribe(i => this.justPasted = false);
   }
 
-  initHotspot(): void {
-    // this.hotspot.x = window.innerWidth - this.hotspot.w;
-    this.subs.push(
-      fromEvent<MouseEvent>(document, 'mousemove').pipe(
-        tap((e: MouseEvent) => {
-          if (this.showTools && e.clientX > 400) {
-            this.showTools = false;
-          }
-        }),
-        map((e: MouseEvent) => {
-          return this.isConnected && !this.showCog && e.clientX < 4;
-        }),
-        debounceTime(100),
-        distinctUntilChanged()
-      ).subscribe(hot => {
-        if (hot) {
-          this.showTools = true;
-        }
-      })
-    );
-  }
-
   protected handleAutoCopyVmEnableToggle(isEnabled: boolean) {
     this.enableAutoCopyVmSelection = isEnabled;
     this.console.setAutoCopyVmSelection(isEnabled);
@@ -367,6 +344,19 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
       );
 
       this.audiencePos = e;
+    }
+  }
+
+  @HostListener('document:mouseleave', ['$event'])
+  onLeave(e: MouseEvent) {
+    if (this.isConnected && !this.showCog && e.clientX < 4) {
+      this.showTools = true;
+    }
+  }
+
+  onToolsLeave(e: MouseEvent) {
+    if (!this.stickyTools && this.showTools && e.clientX >= 400) {
+      this.showTools = false;
     }
   }
 }
