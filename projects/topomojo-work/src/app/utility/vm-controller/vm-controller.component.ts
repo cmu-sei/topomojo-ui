@@ -49,13 +49,16 @@ export class VmControllerComponent implements OnInit, OnDestroy {
   ) {
     this.vm$ = this.task$.pipe(
       debounceTime(300),
-      tap(t => this.task = !!t ? t : this.task),
-      switchMap(t => this.taskQuery(t)),
-      catchError((err: Error) => {
-        this.errors.push(err);
-        return of({});
-      }),
-      tap(vm => this.taskResolve(vm))
+      tap((t) => (this.task = !!t ? t : this.task)),
+      switchMap((t) =>
+        this.taskQuery(t).pipe(
+          catchError((err: Error) => {
+            this.errors.push(err);
+            return of({});
+          })
+        )
+      ),
+      tap((vm) => this.taskResolve(vm))
     );
 
     this.hubsub = hub.vmEvents.subscribe(
