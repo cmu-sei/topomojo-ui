@@ -15,32 +15,44 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/topomojo-work",
+            "outputPath": {
+              "base": "dist/topomojo-work"
+            },
             "index": "projects/topomojo-work/src/index.html",
-            "main": "projects/topomojo-work/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/topomojo-work/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "projects/topomojo-work/src/favicon.ico",
               "projects/topomojo-work/src/assets",
-              { "glob": "min/**/*", "input": "node_modules/monaco-editor", "output": "assets/monaco" }
+              {
+                "glob": "min/**/*",
+                "input": "node_modules/monaco-editor",
+                "output": "assets/monaco"
+              }
             ],
-            "styles": [
-              "projects/topomojo-work/src/styles.scss"
-            ],
+            "styles": ["projects/topomojo-work/src/styles.scss"],
             "scripts": [
               "node_modules/marked/marked.min.js",
               "node_modules/emoji-toolkit/lib/js/joypixels.min.js"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "sass": {
+                "silenceDeprecations": [
+                  "mixed-decls",
+                  "color-functions",
+                  "global-builtin",
+                  "import",
+                  "abs-percent"
+                ]
+              }
+            },
+            "browser": "projects/topomojo-work/src/main.ts"
           },
           "configurations": {
             "production": {
-
               "budgets": [
                 {
                   "type": "initial",
@@ -62,9 +74,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -76,10 +86,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "topomojo-work:build:production"
+              "buildTarget": "topomojo-work:build:production"
             },
             "development": {
-              "browserTarget": "topomojo-work:build:development"
+              "buildTarget": "topomojo-work:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -87,26 +97,21 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "topomojo-work:build"
+            "buildTarget": "topomojo-work:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "projects/topomojo-work/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/topomojo-work/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "projects/topomojo-work/src/favicon.ico",
               "projects/topomojo-work/src/assets"
             ],
-            "styles": [
-              "projects/topomojo-work/src/styles.scss"
-            ],
+            "styles": ["projects/topomojo-work/src/styles.scss"],
             "scripts": []
           }
         }
@@ -127,14 +132,13 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/topomojo-mks",
+            "outputPath": {
+              "base": "dist/topomojo-mks"
+            },
             "index": "projects/topomojo-mks/src/index.html",
-            "main": "projects/topomojo-mks/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/topomojo-mks/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -145,11 +149,23 @@
               "node_modules/vmware-wmks/wmks-all.css",
               "projects/topomojo-mks/src/styles.scss"
             ],
+            "stylePreprocessorOptions": {
+              "sass": {
+                "silenceDeprecations": [
+                  "mixed-decls",
+                  "color-functions",
+                  "global-builtin",
+                  "import",
+                  "abs-percent"
+                ]
+              }
+            },
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
               "node_modules/jquery-ui-dist/jquery-ui.js",
               "node_modules/vmware-wmks/wmks.min.js"
-            ]
+            ],
+            "browser": "projects/topomojo-mks/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -174,9 +190,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -188,11 +202,11 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "topomojo-mks:build:production"
+              "buildTarget": "topomojo-mks:build:production"
             },
             "development": {
-              "browserTarget": "topomojo-mks:build:development",
-              "port": 4201
+              "port": 4201,
+              "buildTarget": "topomojo-mks:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -200,26 +214,21 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "topomojo-mks:build"
+            "buildTarget": "topomojo-mks:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "projects/topomojo-mks/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/topomojo-mks/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "projects/topomojo-mks/src/favicon.ico",
               "projects/topomojo-mks/src/assets"
             ],
-            "styles": [
-              "projects/topomojo-mks/src/styles.scss"
-            ],
+            "styles": ["projects/topomojo-mks/src/styles.scss"],
             "scripts": []
           }
         }
@@ -240,24 +249,22 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/topomojo-launchpoint",
+            "outputPath": {
+              "base": "dist/topomojo-launchpoint"
+            },
             "index": "projects/topomojo-launchpoint/src/index.html",
-            "main": "projects/topomojo-launchpoint/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/topomojo-launchpoint/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "projects/topomojo-launchpoint/src/favicon.ico",
               "projects/topomojo-launchpoint/src/assets"
             ],
-            "styles": [
-              "projects/topomojo-launchpoint/src/styles.scss"
-            ],
-            "scripts": []
+            "styles": ["projects/topomojo-launchpoint/src/styles.scss"],
+            "scripts": [],
+            "browser": "projects/topomojo-launchpoint/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -282,9 +289,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -296,10 +301,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "topomojo-launchpoint:build:production"
+              "buildTarget": "topomojo-launchpoint:build:production"
             },
             "development": {
-              "browserTarget": "topomojo-launchpoint:build:development"
+              "buildTarget": "topomojo-launchpoint:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -307,26 +312,21 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "topomojo-launchpoint:build"
+            "buildTarget": "topomojo-launchpoint:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "projects/topomojo-launchpoint/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/topomojo-launchpoint/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "projects/topomojo-launchpoint/src/favicon.ico",
               "projects/topomojo-launchpoint/src/assets"
             ],
-            "styles": [
-              "projects/topomojo-launchpoint/src/styles.scss"
-            ],
+            "styles": ["projects/topomojo-launchpoint/src/styles.scss"],
             "scripts": []
           }
         }

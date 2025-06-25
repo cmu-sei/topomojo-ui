@@ -8,9 +8,10 @@ import { AdminService } from '../../api/admin.service';
 import { AppVersionInfo } from '../../api/gen/models';
 
 @Component({
-  selector: 'app-admin',
-  templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
+    selector: 'app-admin',
+    templateUrl: './admin.component.html',
+    styleUrls: ['./admin.component.scss'],
+    standalone: false
 })
 export class AdminComponent implements OnInit {
 

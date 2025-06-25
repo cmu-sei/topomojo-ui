@@ -11,9 +11,10 @@ import { NotificationService } from '../../notification.service';
 import { ConfigService } from '../../config.service';
 
 @Component({
-  selector: 'app-vm-controller',
-  templateUrl: './vm-controller.component.html',
-  styleUrls: ['./vm-controller.component.scss']
+    selector: 'app-vm-controller',
+    templateUrl: './vm-controller.component.html',
+    styleUrls: ['./vm-controller.component.scss'],
+    standalone: false
 })
 export class VmControllerComponent implements OnInit, OnDestroy {
   @Input() template: (Template | TemplateSummary) = { id: '', name: '', workspaceId: ''};

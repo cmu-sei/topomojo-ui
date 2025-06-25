@@ -8,9 +8,10 @@ import { debounceTime } from 'rxjs/operators';
 import { faBolt, faKeyboard, faUser, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-presence-bar',
-  templateUrl: './presence-bar.component.html',
-  styleUrls: ['./presence-bar.component.scss']
+    selector: 'app-presence-bar',
+    templateUrl: './presence-bar.component.html',
+    styleUrls: ['./presence-bar.component.scss'],
+    standalone: false
 })
 export class PresenceBarComponent implements OnInit {
   state$: Observable<HubState>;

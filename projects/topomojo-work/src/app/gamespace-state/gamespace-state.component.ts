@@ -9,9 +9,10 @@ import { GameState, VmState } from '../api/gen/models';
 import { ConfigService } from '../config.service';
 
 @Component({
-  selector: 'app-gamespace-state',
-  templateUrl: './gamespace-state.component.html',
-  styleUrls: ['./gamespace-state.component.scss']
+    selector: 'app-gamespace-state',
+    templateUrl: './gamespace-state.component.html',
+    styleUrls: ['./gamespace-state.component.scss'],
+    standalone: false
 })
 export class GamespaceStateComponent implements OnInit {
   @Input() game!: GameState;

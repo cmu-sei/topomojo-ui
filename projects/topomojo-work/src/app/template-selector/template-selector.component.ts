@@ -10,9 +10,10 @@ import { faPlus, faCheck, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { WorkspaceService } from '../api/workspace.service';
 
 @Component({
-  selector: 'app-template-selector',
-  templateUrl: './template-selector.component.html',
-  styleUrls: ['./template-selector.component.scss']
+    selector: 'app-template-selector',
+    templateUrl: './template-selector.component.html',
+    styleUrls: ['./template-selector.component.scss'],
+    standalone: false
 })
 export class TemplateSelectorComponent implements OnInit, OnDestroy {
   @Input() workspaceId = '';

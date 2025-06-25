@@ -10,9 +10,10 @@ import { Gamespace, Search, Vm } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
 
 @Component({
-  selector: 'app-gamespace-browser',
-  templateUrl: './gamespace-browser.component.html',
-  styleUrls: ['./gamespace-browser.component.scss']
+    selector: 'app-gamespace-browser',
+    templateUrl: './gamespace-browser.component.html',
+    styleUrls: ['./gamespace-browser.component.scss'],
+    standalone: false
 })
 export class GamespaceBrowserComponent implements OnInit {
   @Input() fullAdminView = false;

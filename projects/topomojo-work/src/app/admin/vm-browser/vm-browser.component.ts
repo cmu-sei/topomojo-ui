@@ -9,9 +9,10 @@ import { Search, Vm } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
 
 @Component({
-  selector: 'app-vm-browser',
-  templateUrl: './vm-browser.component.html',
-  styleUrls: ['./vm-browser.component.scss']
+    selector: 'app-vm-browser',
+    templateUrl: './vm-browser.component.html',
+    styleUrls: ['./vm-browser.component.scss'],
+    standalone: false
 })
 export class VmBrowserComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);

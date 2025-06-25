@@ -10,9 +10,10 @@ import { Dispatch, DispatchSearch, NewDispatch, Vm } from '../../api/gen/models'
 import { HubEvent, NotificationService } from '../../notification.service';
 
 @Component({
-  selector: 'app-gamespace-interact',
-  templateUrl: './gamespace-interact.component.html',
-  styleUrls: ['./gamespace-interact.component.scss']
+    selector: 'app-gamespace-interact',
+    templateUrl: './gamespace-interact.component.html',
+    styleUrls: ['./gamespace-interact.component.scss'],
+    standalone: false
 })
 export class GamespaceInteractComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   @Input() id = '';

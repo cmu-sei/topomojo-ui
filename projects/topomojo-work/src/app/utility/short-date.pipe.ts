@@ -3,7 +3,10 @@
 
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({name: 'shortdate'})
+@Pipe({
+    name: 'shortdate',
+    standalone: false
+})
 export class ShortDatePipe implements PipeTransform {
     transform(date: any): string {
         const t = new Date(date);

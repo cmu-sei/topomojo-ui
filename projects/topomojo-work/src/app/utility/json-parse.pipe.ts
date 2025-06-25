@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'jsonParse'
+    name: 'jsonParse',
+    standalone: false
 })
 export class JsonParsePipe implements PipeTransform {
 

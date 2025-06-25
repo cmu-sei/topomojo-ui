@@ -8,9 +8,10 @@ import { ChallengeProgressView, GameState } from '../api/gen/models';
 import { faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-gamespace-quiz',
-  templateUrl: './gamespace-quiz.component.html',
-  styleUrls: ['./gamespace-quiz.component.scss']
+    selector: 'app-gamespace-quiz',
+    templateUrl: './gamespace-quiz.component.html',
+    styleUrls: ['./gamespace-quiz.component.scss'],
+    standalone: false
 })
 export class GamespaceQuizComponent implements OnInit, OnChanges {
   @Input() state!: GameState;

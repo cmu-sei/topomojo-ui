@@ -4,7 +4,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'spaces'
+    name: 'spaces',
+    standalone: false
 })
 export class SpacesPipe implements PipeTransform {
 

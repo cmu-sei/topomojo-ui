@@ -1,7 +1,7 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -18,35 +18,29 @@ import { HttpInterceptorService } from './http-interceptor.service';
 import { SpacesPipe } from './spaces.pipe';
 import { ConfirmButtonComponent } from './utility/confirm-button/confirm-button.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    SpinnerComponent,
-    SpacesPipe,
-    CountdownPipe,
-    ConfirmButtonComponent
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    RouterModule.forRoot([]),
-    MarkdownModule.forRoot({
-      markedOptions: {
-        provide: MarkedOptions,
-        useFactory: markedOptionsFactory,
-      },
-    }),
-    FontAwesomeModule
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpInterceptorService,
-      multi: true,
-    },
-    ClipboardService
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        SpinnerComponent,
+        SpacesPipe,
+        CountdownPipe,
+        ConfirmButtonComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        FormsModule,
+        RouterModule.forRoot([]),
+        MarkdownModule.forRoot({
+            markedOptions: {
+                provide: MarkedOptions,
+                useFactory: markedOptionsFactory,
+            },
+        }),
+        FontAwesomeModule], providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpInterceptorService,
+            multi: true,
+        },
+        ClipboardService,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }

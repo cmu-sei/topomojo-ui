@@ -10,9 +10,10 @@ import { GamespaceRegistration, GameState, Workspace } from '../api/gen/models';
 import { ConfigService } from '../config.service';
 
 @Component({
-  selector: 'app-workspace-player',
-  templateUrl: './workspace-player.component.html',
-  styleUrls: ['./workspace-player.component.scss']
+    selector: 'app-workspace-player',
+    templateUrl: './workspace-player.component.html',
+    styleUrls: ['./workspace-player.component.scss'],
+    standalone: false
 })
 export class WorkspacePlayerComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() summary!: Workspace;

@@ -8,9 +8,10 @@ import { map, takeWhile } from 'rxjs/operators';
 import { Gamespace } from '../api/gen/models';
 
 @Component({
-  selector: 'app-gamespace-card',
-  templateUrl: './gamespace-card.component.html',
-  styleUrls: ['./gamespace-card.component.scss']
+    selector: 'app-gamespace-card',
+    templateUrl: './gamespace-card.component.html',
+    styleUrls: ['./gamespace-card.component.scss'],
+    standalone: false
 })
 export class GamespaceCardComponent implements OnInit {
   @Input() gamespace!: Gamespace;

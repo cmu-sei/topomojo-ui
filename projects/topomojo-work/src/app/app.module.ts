@@ -1,8 +1,8 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { NgModule, inject, provideAppInitializer } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,7 +13,7 @@ import { UtilityModule } from './utility/utility.module';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
-import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
+import { MarkdownModule, MARKED_OPTIONS, MarkedOptions } from 'ngx-markdown';
 
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
@@ -95,55 +95,47 @@ import { GamespaceJoinComponent } from './gamespace-join/gamespace-join.componen
     GamespaceStateComponent,
     GamespaceJoinComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    UtilityModule,
-    ApiModule,
-    MonacoEditorModule.forRoot(),
-    MarkdownModule.forRoot({
-      loader: HttpClient,
-      markedOptions: {
-        provide: MarkedOptions,
-        useFactory: markedOptionsFactory,
-      },
-    }),
-    FontAwesomeModule,
-    ButtonsModule.forRoot(),
-    TooltipModule.forRoot(),
-    AlertModule.forRoot(),
-    ProgressbarModule.forRoot()
-  ],
   exports: [
     ApiModule,
     BrowserModule,
     UtilityModule,
     FontAwesomeModule
   ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: loadSettings,
-      deps: [ConfigService],
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: register,
-      deps: [UserService],
-      multi: true
-    }
-  ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent], imports: [BrowserModule,
+    AppRoutingModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    UtilityModule,
+    ApiModule,
+    MonacoEditorModule.forRoot(),
+    MarkdownModule.forRoot({
+      loader: HttpClient,
+      markedOptions: {
+        provide: MARKED_OPTIONS,
+        useFactory: markedOptionsFactory,
+      }
+    }),
+    FontAwesomeModule,
+    ButtonsModule.forRoot(),
+    TooltipModule.forRoot(),
+    AlertModule.forRoot(),
+    ProgressbarModule.forRoot()], providers: [
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: AuthInterceptor,
+        multi: true,
+      },
+      provideAppInitializer(() => {
+        const initializerFn = (loadSettings)(inject(ConfigService));
+        return initializerFn();
+      }),
+      provideAppInitializer(() => {
+        const initializerFn = (register)(inject(UserService));
+        return initializerFn();
+      }),
+      provideHttpClient(withInterceptorsFromDi())
+    ]
 })
 export class AppModule { }
 

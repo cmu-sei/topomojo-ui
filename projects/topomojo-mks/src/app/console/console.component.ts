@@ -20,14 +20,15 @@ import { NoVNCConsoleService } from './services/novnc-console.service';
 import { ConsoleSupportsFeatures } from './console.models';
 
 @Component({
-  selector: 'app-console',
-  templateUrl: './console.component.html',
-  styleUrls: ['./console.component.scss'],
-  providers: [
-    MockConsoleService,
-    WmksConsoleService,
-    NoVNCConsoleService
-  ]
+    selector: 'app-console',
+    templateUrl: './console.component.html',
+    styleUrls: ['./console.component.scss'],
+    providers: [
+        MockConsoleService,
+        WmksConsoleService,
+        NoVNCConsoleService
+    ],
+    standalone: false
 })
 export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() index = 0;

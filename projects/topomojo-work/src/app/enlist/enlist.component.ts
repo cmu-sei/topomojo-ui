@@ -7,9 +7,10 @@ import { switchMap } from 'rxjs/operators';
 import { WorkspaceService } from '../api/workspace.service';
 
 @Component({
-  selector: 'app-enlist',
-  templateUrl: './enlist.component.html',
-  styleUrls: ['./enlist.component.scss']
+    selector: 'app-enlist',
+    templateUrl: './enlist.component.html',
+    styleUrls: ['./enlist.component.scss'],
+    standalone: false
 })
 export class EnlistComponent implements OnInit {
   message = '';

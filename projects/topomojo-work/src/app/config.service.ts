@@ -9,9 +9,11 @@ import { catchError, tap } from 'rxjs/operators';
 import { environment } from 'projects/topomojo-work/src/environments/environment';
 import { Location } from '@angular/common';
 import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
+import { markedSmartypants } from 'marked-smartypants';
+import { marked } from 'marked';
 // import { MarkedRenderer, MarkedOptions } from 'ngx-markdown';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class ConfigService {
 
   private restorationComplete = false;
@@ -62,7 +64,7 @@ export class ConfigService {
     const v = this.settings.apphost
       ? this.location.normalize(this.settings.apphost) + '/'
       : ''
-    ;
+      ;
     return v;
   }
 
@@ -70,8 +72,8 @@ export class ConfigService {
   get mkshost(): string {
     return this.settings.mkshost
       ? this.location.normalize(this.settings.mkshost)
-      :  'mks'
-    ;
+      : 'mks'
+      ;
   }
 
   load(): Observable<any> {
@@ -81,8 +83,8 @@ export class ConfigService {
           return of({} as Settings);
         }),
         tap(s => {
-          this.settings = {...this.settings, ...s};
-          this.settings.oidc = {...this.settings.oidc, ...s.oidc};
+          this.settings = { ...this.settings, ...s };
+          this.settings.oidc = { ...this.settings.oidc, ...s.oidc };
           this.settings$.next(this.settings);
           // console.log(this.settings);
         })
@@ -101,19 +103,19 @@ export class ConfigService {
     let item = this.tabs.find(t => t.url === url);
 
     if (!item) {
-      item = {url, window: null};
+      item = { url, window: null };
       this.tabs.push(item);
     }
 
     if (!item.window || item.window.closed) {
-        item.window = window.open(url);
+      item.window = window.open(url);
     } else {
-        item.window.focus();
+      item.window.focus();
     }
   }
 
   updateLocal(model: LocalAppSettings): void {
-    this.local = {...this.local, ...model};
+    this.local = { ...this.local, ...model };
     this.storeLocal(this.local);
     this.restorationComplete = true;
   }
@@ -126,14 +128,14 @@ export class ConfigService {
   }
   getLocal(): LocalAppSettings {
     try {
-        return JSON.parse(window.localStorage[this.storageKey] || {});
+      return JSON.parse(window.localStorage[this.storageKey] || {});
     } catch (e) {
-        return {};
+      return {};
     }
   }
   clearStorage(): void {
     try {
-        window.localStorage.removeItem(this.storageKey);
+      window.localStorage.removeItem(this.storageKey);
     } catch (e) { }
   }
 }
@@ -168,24 +170,26 @@ export interface TabRef {
 }
 
 export function markedOptionsFactory(): MarkedOptions {
+  // apply plugins like smartypants
+  marked.use(markedSmartypants());
+
+  // configure renderer
   const renderer = new MarkedRenderer();
 
-  renderer.image = (href, title, text) => {
+  renderer.image = ({ href, title, text }) => {
     return `<div class="text-center"><img class="img-fluid rounded" src=${href} alt="${text}" /></div>`;
   };
-  renderer.blockquote = (quote) => {
+  renderer.blockquote = quote => {
     return `<blockquote class="blockquote">${quote}</blockquote>`;
   };
-  renderer.table = (header, body) => {
-    return `<table class="table table-striped"><thead>${header}</thead><tbody>${body}</tbody></table>`;
+  renderer.table = tableTokens => {
+    return `<table class="table table-striped"><thead>${tableTokens.header}</thead><tbody>${tableTokens.rows.join()}</tbody></table>`;
   };
 
   return {
     renderer,
     gfm: true,
     breaks: false,
-    pedantic: false,
-    smartLists: true,
-    smartypants: false
+    pedantic: false
   };
 }

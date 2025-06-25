@@ -9,9 +9,10 @@ import { WorkspaceService } from '../api/workspace.service';
 import { NotificationService } from '../notification.service';
 
 @Component({
-  selector: 'app-templates-editor',
-  templateUrl: './templates-editor.component.html',
-  styleUrls: ['./templates-editor.component.scss']
+    selector: 'app-templates-editor',
+    templateUrl: './templates-editor.component.html',
+    styleUrls: ['./templates-editor.component.scss'],
+    standalone: false
 })
 export class TemplatesEditorComponent implements OnInit, OnDestroy {
   @Input() workspace!: Workspace;

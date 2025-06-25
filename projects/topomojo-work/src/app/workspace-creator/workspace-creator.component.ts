@@ -9,9 +9,10 @@ import { Workspace } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 
 @Component({
-  selector: 'app-workspace-creator',
-  templateUrl: './workspace-creator.component.html',
-  styleUrls: ['./workspace-creator.component.scss']
+    selector: 'app-workspace-creator',
+    templateUrl: './workspace-creator.component.html',
+    styleUrls: ['./workspace-creator.component.scss'],
+    standalone: false
 })
 export class WorkspaceCreatorComponent implements OnInit {
   errors: Error[] = [];

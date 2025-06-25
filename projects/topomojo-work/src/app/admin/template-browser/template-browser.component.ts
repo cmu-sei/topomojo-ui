@@ -10,9 +10,10 @@ import { TemplateDetail, TemplateSearch, TemplateSummary } from '../../api/gen/m
 import { TemplateService } from '../../api/template.service';
 
 @Component({
-  selector: 'app-template-browser',
-  templateUrl: './template-browser.component.html',
-  styleUrls: ['./template-browser.component.scss']
+    selector: 'app-template-browser',
+    templateUrl: './template-browser.component.html',
+    styleUrls: ['./template-browser.component.scss'],
+    standalone: false
 })
 export class TemplateBrowserComponent {
   refresh$ = new BehaviorSubject<boolean>(true);

@@ -13,9 +13,10 @@ import { WorkspaceService } from '../api/workspace.service';
 import { ClipboardService } from '../clipboard.service';
 
 @Component({
-  selector: 'app-iso-selector',
-  templateUrl: './iso-selector.component.html',
-  styleUrls: ['./iso-selector.component.scss']
+    selector: 'app-iso-selector',
+    templateUrl: './iso-selector.component.html',
+    styleUrls: ['./iso-selector.component.scss'],
+    standalone: false
 })
 export class IsoSelectorComponent implements OnInit, OnChanges {
   @Input() guid = '';

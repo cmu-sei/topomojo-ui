@@ -7,9 +7,10 @@ import { switchMap, tap } from 'rxjs/operators';
 import { GamespaceService } from '../api/gamespace.service';
 
 @Component({
-  selector: 'app-gamespace-join',
-  templateUrl: './gamespace-join.component.html',
-  styleUrls: ['./gamespace-join.component.scss']
+    selector: 'app-gamespace-join',
+    templateUrl: './gamespace-join.component.html',
+    styleUrls: ['./gamespace-join.component.scss'],
+    standalone: false
 })
 export class GamespaceJoinComponent implements OnInit {
 

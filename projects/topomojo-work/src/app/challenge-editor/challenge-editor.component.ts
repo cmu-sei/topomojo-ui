@@ -12,9 +12,10 @@ import { faTrash, faPlus, faCopy, faEllipsisV, faCloudUploadAlt, faInfoCircle, f
 import { ConfigService, LocalAppSettings } from '../config.service';
 
 @Component({
-  selector: 'app-challenge-editor',
-  templateUrl: './challenge-editor.component.html',
-  styleUrls: ['./challenge-editor.component.scss']
+    selector: 'app-challenge-editor',
+    templateUrl: './challenge-editor.component.html',
+    styleUrls: ['./challenge-editor.component.scss'],
+    standalone: false
 })
 export class ChallengeEditorComponent implements OnInit, OnChanges, OnDestroy {
   @Input() summary!: Workspace;

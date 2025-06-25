@@ -5,9 +5,10 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-confirm-button',
-  templateUrl: './confirm-button.component.html',
-  styleUrls: ['./confirm-button.component.scss']
+    selector: 'app-confirm-button',
+    templateUrl: './confirm-button.component.html',
+    styleUrls: ['./confirm-button.component.scss'],
+    standalone: false
 })
 export class ConfirmButtonComponent implements OnInit {
   @Input() btnClass = 'btn';

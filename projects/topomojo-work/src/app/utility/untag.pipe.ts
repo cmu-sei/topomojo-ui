@@ -4,7 +4,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'untag'
+    name: 'untag',
+    standalone: false
 })
 export class UntagPipe implements PipeTransform {
 

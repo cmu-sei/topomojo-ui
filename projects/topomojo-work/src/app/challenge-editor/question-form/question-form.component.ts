@@ -8,9 +8,10 @@ import { ChallengeFormService } from '../challenge-form.service';
 import { faTrash, faPlus, faInfoCircle, faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-question-form',
-  templateUrl: './question-form.component.html',
-  styleUrls: ['./question-form.component.scss']
+    selector: 'app-question-form',
+    templateUrl: './question-form.component.html',
+    styleUrls: ['./question-form.component.scss'],
+    standalone: false
 })
 export class QuestionFormComponent implements OnInit {
   @Input() form!: UntypedFormGroup;

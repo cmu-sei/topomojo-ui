@@ -9,9 +9,10 @@ import { faArrowUp, faArrowDown, faTrash, faPlus, faCopy, faEllipsisV, faTimes, 
 import { ConfigService } from 'projects/topomojo-work/src/app/config.service';
 
 @Component({
-  selector: 'app-variant-form',
-  templateUrl: './variant-form.component.html',
-  styleUrls: ['./variant-form.component.scss']
+    selector: 'app-variant-form',
+    templateUrl: './variant-form.component.html',
+    styleUrls: ['./variant-form.component.scss'],
+    standalone: false
 })
 export class VariantFormComponent {
   @Input() form!: UntypedFormGroup;

@@ -9,9 +9,10 @@ import { AdminService } from '../../api/admin.service';
 import { CachedConnection, JanitorReport } from '../../api/gen/models';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+    selector: 'app-dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.scss'],
+    standalone: false
 })
 export class DashboardComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);

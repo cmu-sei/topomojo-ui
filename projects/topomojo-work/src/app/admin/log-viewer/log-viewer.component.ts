@@ -8,9 +8,10 @@ import { switchMap, tap } from 'rxjs/operators';
 import { AdminService } from '../../api/admin.service';
 
 @Component({
-  selector: 'app-log-viewer',
-  templateUrl: './log-viewer.component.html',
-  styleUrls: ['./log-viewer.component.scss']
+    selector: 'app-log-viewer',
+    templateUrl: './log-viewer.component.html',
+    styleUrls: ['./log-viewer.component.scss'],
+    standalone: false
 })
 export class LogViewerComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);

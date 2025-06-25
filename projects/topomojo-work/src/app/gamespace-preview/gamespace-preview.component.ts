@@ -10,9 +10,10 @@ import { Gamespace } from '../api/gen/models';
 import { ConfigService } from '../config.service';
 
 @Component({
-  selector: 'app-gamespace-preview',
-  templateUrl: './gamespace-preview.component.html',
-  styleUrls: ['./gamespace-preview.component.scss']
+    selector: 'app-gamespace-preview',
+    templateUrl: './gamespace-preview.component.html',
+    styleUrls: ['./gamespace-preview.component.scss'],
+    standalone: false
 })
 export class GamespacePreviewComponent implements OnInit {
   gamestate: Observable<Gamespace>;
