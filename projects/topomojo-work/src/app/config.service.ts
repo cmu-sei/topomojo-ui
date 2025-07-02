@@ -1,20 +1,22 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { UserManagerSettings } from 'oidc-client-ts';
 import { catchError, tap } from 'rxjs/operators';
+import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 import { environment } from 'projects/topomojo-work/src/environments/environment';
 import { Location } from '@angular/common';
-import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 import { markedSmartypants } from 'marked-smartypants';
 import { marked } from 'marked';
-// import { MarkedRenderer, MarkedOptions } from 'ngx-markdown';
+import { ConsoleRequest } from './consoles-api.models';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class ConfigService {
+  private readonly router = inject(Router);
 
   private restorationComplete = false;
   storageKey = 'topomojo';
@@ -68,14 +70,6 @@ export class ConfigService {
     return v;
   }
 
-  // use setting or assume sibling app 'mks'
-  get mkshost(): string {
-    return this.settings.mkshost
-      ? this.location.normalize(this.settings.mkshost)
-      : 'mks'
-      ;
-  }
-
   load(): Observable<any> {
     return this.http.get<Settings>('assets/settings.json')
       .pipe(
@@ -95,8 +89,9 @@ export class ConfigService {
     return `${window.location.protocol}//${window.location.host}${this.location.prepareExternalUrl(path)}`;
   }
 
-  openConsole(qs: string): void {
-    this.showTab(this.mkshost + '/' + qs);
+  openConsole(request: ConsoleRequest) {
+    const url = this.router.createUrlTree(["c"], { queryParams: request });
+    this.showTab(url.toString());
   }
 
   showTab(url: string): void {
@@ -151,7 +146,6 @@ export interface LocalAppSettings {
 export interface Settings {
   appname?: string;
   apphost?: string;
-  mkshost?: string;
   enable_upload?: boolean;
   oidc: AppUserManagerSettings;
 }

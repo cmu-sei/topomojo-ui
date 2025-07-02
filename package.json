@@ -7,10 +7,7 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "start-topo": "npx ng serve topomojo-work --host 0.0.0.0 --disable-host-check --serve-path /topo/",
-    "start-mks": "npx ng serve topomojo-mks --host 0.0.0.0 --port 4201 --disable-host-check --serve-path /mks/",
-    "dev": "npx concurrently \"npm run start-topo\" \"npm run start-mks\""
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
@@ -22,6 +19,7 @@
     "@angular/platform-browser": "^19.2.14",
     "@angular/platform-browser-dynamic": "^19.2.14",
     "@angular/router": "^19.2.14",
+    "@cmusei/console-forge": "^0.20.1",
     "@fortawesome/angular-fontawesome": "^1.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-brands-svg-icons": "^6.2.1",

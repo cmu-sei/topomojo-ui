@@ -7,13 +7,14 @@ import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { ConsoleComponent, LogLevel, provideConsoleForge } from '@cmusei/console-forge';
 import { AppRoutingModule } from './app-routing.module';
 import { ApiModule } from './api/gen/api.module';
 import { UtilityModule } from './utility/utility.module';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
-import { MarkdownModule, MARKED_OPTIONS, MarkedOptions } from 'ngx-markdown';
+import { MarkdownModule, MARKED_OPTIONS } from 'ngx-markdown';
 
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
@@ -57,11 +58,15 @@ import { ApikeysComponent } from './apikeys/apikeys.component';
 import { GamespaceCardComponent } from './gamespace-card/gamespace-card.component';
 import { GamespaceStateComponent } from './gamespace-state/gamespace-state.component';
 import { GamespaceJoinComponent } from './gamespace-join/gamespace-join.component';
+import { AppLayoutComponent } from './app-layout/app-layout.component';
+import { ConsoleLayoutComponent } from './console-layout/console-layout.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    AppLayoutComponent,
     AboutComponent,
+    ConsoleLayoutComponent,
     HomeComponent,
     LoginComponent,
     OidcComponent,
@@ -101,7 +106,8 @@ import { GamespaceJoinComponent } from './gamespace-join/gamespace-join.componen
     UtilityModule,
     FontAwesomeModule
   ],
-  bootstrap: [AppComponent], imports: [BrowserModule,
+  bootstrap: [AppComponent],
+  imports: [BrowserModule,
     AppRoutingModule,
     CommonModule,
     FormsModule,
@@ -120,22 +126,29 @@ import { GamespaceJoinComponent } from './gamespace-join/gamespace-join.componen
     ButtonsModule.forRoot(),
     TooltipModule.forRoot(),
     AlertModule.forRoot(),
-    ProgressbarModule.forRoot()], providers: [
-      {
-        provide: HTTP_INTERCEPTORS,
-        useClass: AuthInterceptor,
-        multi: true,
-      },
-      provideAppInitializer(() => {
-        const initializerFn = (loadSettings)(inject(ConfigService));
-        return initializerFn();
-      }),
-      provideAppInitializer(() => {
-        const initializerFn = (register)(inject(UserService));
-        return initializerFn();
-      }),
-      provideHttpClient(withInterceptorsFromDi())
-    ]
+    ProgressbarModule.forRoot(),
+    ConsoleComponent,
+  ],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+    provideAppInitializer(() => {
+      const initializerFn = (loadSettings)(inject(ConfigService));
+      return initializerFn();
+    }),
+    provideAppInitializer(() => {
+      const initializerFn = (register)(inject(UserService));
+      return initializerFn();
+    }),
+    provideHttpClient(withInterceptorsFromDi()),
+    provideConsoleForge({
+      consoleBackgroundStyle: "rgb(40, 40, 40)",
+      disabledFeatures: { networkDisconnection: true }
+    })
+  ]
 })
 export class AppModule { }
 

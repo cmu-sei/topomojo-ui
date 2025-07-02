@@ -11,13 +11,13 @@ import { NotificationService } from '../../notification.service';
 import { ConfigService } from '../../config.service';
 
 @Component({
-    selector: 'app-vm-controller',
-    templateUrl: './vm-controller.component.html',
-    styleUrls: ['./vm-controller.component.scss'],
-    standalone: false
+  selector: 'app-vm-controller',
+  templateUrl: './vm-controller.component.html',
+  styleUrls: ['./vm-controller.component.scss'],
+  standalone: false
 })
 export class VmControllerComponent implements OnInit, OnDestroy {
-  @Input() template: (Template | TemplateSummary) = { id: '', name: '', workspaceId: ''};
+  @Input() template: (Template | TemplateSummary) = { id: '', name: '', workspaceId: '' };
   @Input() vm: Vm = {};
   @Input() hideDelete = false;
   @Input() fullbleed = true;
@@ -93,7 +93,7 @@ export class VmControllerComponent implements OnInit, OnDestroy {
 
       case 'initialize':
         q = this.api.initializeTemplate(this.template.id).pipe(
-          map(i => ({...this.vm, task: {progress: i}} as Vm) )
+          map(i => ({ ...this.vm, task: { progress: i } } as Vm))
         );
         break;
 
@@ -104,8 +104,8 @@ export class VmControllerComponent implements OnInit, OnDestroy {
       case 'refresh':
       case '':
         q = (this.vm && this.vm.id)
-        ? this.api.load(this.vm.id)
-        : this.api.getTemplateVm(this.template.id);
+          ? this.api.load(this.vm.id)
+          : this.api.getTemplateVm(this.template.id);
         break;
 
       default: // start stop save revert delete
@@ -145,8 +145,11 @@ export class VmControllerComponent implements OnInit, OnDestroy {
 
   console(): void {
     const p = this.vm.name?.split('#') || ['', ''];
-    const f = this.fullbleed ? 1 : 0;
-    this.conf.openConsole(`?f=${f}&s=${p[1]}&v=${p[0]}`);
+
+    this.conf.openConsole({
+      name: p[0],
+      sessionId: p[1]
+    })
   }
 
   confirm(t: string): void {

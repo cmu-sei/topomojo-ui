@@ -9,10 +9,10 @@ import { GameState, VmState } from '../api/gen/models';
 import { ConfigService } from '../config.service';
 
 @Component({
-    selector: 'app-gamespace-state',
-    templateUrl: './gamespace-state.component.html',
-    styleUrls: ['./gamespace-state.component.scss'],
-    standalone: false
+  selector: 'app-gamespace-state',
+  templateUrl: './gamespace-state.component.html',
+  styleUrls: ['./gamespace-state.component.scss'],
+  standalone: false
 })
 export class GamespaceStateComponent implements OnInit {
   @Input() game!: GameState;
@@ -51,12 +51,14 @@ export class GamespaceStateComponent implements OnInit {
   }
 
   console(vm: VmState): void {
-    this.conf.openConsole(`?f=1&s=${this.game.id}&v=${vm.name?.split('#')[0]}`);
+    this.conf.openConsole({
+      name: vm.name?.split("#")[0],
+      sessionId: this.game.id
+    });
   }
 
   private updateGame(gs: GameState) {
     this.game = gs;
     this.hasQuestions = !!gs.challenge?.questions?.length;
   }
-
 }
