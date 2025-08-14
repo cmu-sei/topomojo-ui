@@ -10,7 +10,7 @@ import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 import { environment } from 'projects/topomojo-work/src/environments/environment';
 import { Location } from '@angular/common';
 import { markedSmartypants } from 'marked-smartypants';
-import { marked } from 'marked';
+import { marked, Parser, Tokens } from 'marked';
 import { ConsoleRequest } from './consoles-api.models';
 import { Router } from '@angular/router';
 
@@ -173,11 +173,30 @@ export function markedOptionsFactory(): MarkedOptions {
   renderer.image = ({ href, title, text }) => {
     return `<div class="text-center"><img class="img-fluid rounded" src=${href} alt="${text}" /></div>`;
   };
-  renderer.blockquote = quote => {
-    return `<blockquote class="blockquote">${quote}</blockquote>`;
+
+  renderer.blockquote = ({ tokens }) => {
+    return '<blockquote class="blockquote"><p>' + Parser.parse(tokens) + '</p></blockquote>';
   };
-  renderer.table = tableTokens => {
-    return `<table class="table table-striped"><thead>${tableTokens.header}</thead><tbody>${tableTokens.rows.join()}</tbody></table>`;
+
+  renderer.table = (tableTokens: Tokens.Table) => {
+    // Build header row
+    const headerRendered = tableTokens.header.map((cell, i) => {
+      const align = tableTokens.align[i];
+      const style = align ? ` style="text-align:${align}"` : '';
+      return `<th${style}>${cell.text}</th>`;
+    }).join('');
+
+    // Build body rows
+    const bodyRendered = tableTokens.rows.map(row => {
+      const cells = row.map((cell, j) => {
+        const align = tableTokens.align[j];
+        const style = align ? ` style="text-align:${align}"` : '';
+        return `<td${style}>${cell.text}</td>`;
+      }).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('');
+
+    return `<table class="table table-striped"><thead>${headerRendered}</thead><tbody>${bodyRendered}</tbody></table>`;
   };
 
   return {
