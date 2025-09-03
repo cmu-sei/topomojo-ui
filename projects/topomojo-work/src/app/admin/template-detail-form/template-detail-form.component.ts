@@ -8,9 +8,10 @@ import { ChangedTemplateDetail, TemplateDetail } from '../../api/gen/models';
 import { TemplateService } from '../../api/template.service';
 
 @Component({
-  selector: 'app-template-detail-form',
-  templateUrl: './template-detail-form.component.html',
-  styleUrls: ['./template-detail-form.component.scss']
+    selector: 'app-template-detail-form',
+    templateUrl: './template-detail-form.component.html',
+    styleUrls: ['./template-detail-form.component.scss'],
+    standalone: false
 })
 export class TemplateDetailFormComponent implements OnInit {
   @Input() template!: TemplateDetail;

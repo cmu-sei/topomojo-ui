@@ -6,9 +6,10 @@ import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
 @Component({
-  selector: 'app-oidc',
-  templateUrl: './oidc.component.html',
-  styleUrls: ['./oidc.component.scss']
+    selector: 'app-oidc',
+    templateUrl: './oidc.component.html',
+    styleUrls: ['./oidc.component.scss'],
+    standalone: false
 })
 export class OidcComponent implements OnInit {
   message = '';

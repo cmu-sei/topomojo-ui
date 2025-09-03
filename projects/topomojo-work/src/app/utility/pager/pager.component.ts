@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-pager',
-  templateUrl: './pager.component.html',
-  styleUrls: ['./pager.component.scss']
+    selector: 'app-pager',
+    templateUrl: './pager.component.html',
+    styleUrls: ['./pager.component.scss'],
+    standalone: false
 })
 export class PagerComponent implements OnInit {
   @Input() skip = 0;

@@ -20,9 +20,10 @@ import { Search, Workspace, WorkspaceSummary } from '../../api/gen/models';
 import { WorkspaceService } from '../../api/workspace.service';
 
 @Component({
-  selector: 'app-workspace-browser',
-  templateUrl: './workspace-browser.component.html',
-  styleUrls: ['./workspace-browser.component.scss'],
+    selector: 'app-workspace-browser',
+    templateUrl: './workspace-browser.component.html',
+    styleUrls: ['./workspace-browser.component.scss'],
+    standalone: false
 })
 export class WorkspaceBrowserComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);

@@ -10,9 +10,10 @@ import { ImageFile } from '../api/gen/models';
 import { faTrash, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-image-manager',
-  templateUrl: './image-manager.component.html',
-  styleUrls: ['./image-manager.component.scss']
+    selector: 'app-image-manager',
+    templateUrl: './image-manager.component.html',
+    styleUrls: ['./image-manager.component.scss'],
+    standalone: false
 })
 export class ImageManagerComponent implements OnInit, OnChanges {
   @Input() guid = '';

@@ -1,0 +1,16 @@
+<app-error-div [errors]="errors"></app-error-div>
+
+@if (consoleConfig())
+{
+<cf-console [autoConnect]="false" [config]="consoleConfig()!" [networkConfig]="consoleNetworkConfig()"
+    (networkDisconnectRequested)="handleNetworkDisconnectRequest($event)"
+    (networkConnectionRequested)="handleNetworkConnectRequest($event)"
+    (reconnectRequest)="handleReconnectRequest()"></cf-console>
+}
+@else
+{
+<div class="text-center">
+    <app-spinner></app-spinner>
+    <div>Loading your console...</div>
+</div>
+}

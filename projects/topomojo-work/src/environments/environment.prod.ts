@@ -3,7 +3,6 @@ export const environment = {
   settings: {
     appname: 'TopoMojo',
     apphost: '',
-    mkshost: '',
     oidc: {}
   }
 };

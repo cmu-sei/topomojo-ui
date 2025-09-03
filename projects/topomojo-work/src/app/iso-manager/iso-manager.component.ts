@@ -10,9 +10,10 @@ import { FileService } from '../api/file.service';
 import { IsoSelectorComponent } from '../iso-selector/iso-selector.component';
 
 @Component({
-  selector: 'app-iso-manager',
-  templateUrl: './iso-manager.component.html',
-  styleUrls: ['./iso-manager.component.scss']
+    selector: 'app-iso-manager',
+    templateUrl: './iso-manager.component.html',
+    styleUrls: ['./iso-manager.component.scss'],
+    standalone: false
 })
 export class IsoManagerComponent implements OnInit, OnChanges {
   @Input() guid = '';

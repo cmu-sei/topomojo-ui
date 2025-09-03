@@ -9,9 +9,10 @@ import { ApiKey } from '../../api/gen/models';
 import { ProfileService } from '../../api/profile.service';
 
 @Component({
-  selector: 'app-apikeys',
-  templateUrl: './apikeys.component.html',
-  styleUrls: ['./apikeys.component.scss']
+    selector: 'app-apikeys',
+    templateUrl: './apikeys.component.html',
+    styleUrls: ['./apikeys.component.scss'],
+    standalone: false
 })
 export class ApikeysComponent implements OnInit {
   @Input() id = '';

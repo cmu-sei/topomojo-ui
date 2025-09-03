@@ -7,9 +7,10 @@ import { WorkspaceSummary } from '../api/gen/models';
 import { ConfigService } from '../config.service';
 
 @Component({
-  selector: 'app-workspace-card',
-  templateUrl: './workspace-card.component.html',
-  styleUrls: ['./workspace-card.component.scss']
+    selector: 'app-workspace-card',
+    templateUrl: './workspace-card.component.html',
+    styleUrls: ['./workspace-card.component.scss'],
+    standalone: false
 })
 export class WorkspaceCardComponent implements OnInit {
   @Input() workspace!: WorkspaceSummary;

@@ -10,9 +10,10 @@ import { ProfileService } from '../../api/profile.service';
 import { UserService } from '../../user.service';
 
 @Component({
-  selector: 'app-user-browser',
-  templateUrl: './user-browser.component.html',
-  styleUrls: ['./user-browser.component.scss']
+    selector: 'app-user-browser',
+    templateUrl: './user-browser.component.html',
+    styleUrls: ['./user-browser.component.scss'],
+    standalone: false
 })
 export class UserBrowserComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);

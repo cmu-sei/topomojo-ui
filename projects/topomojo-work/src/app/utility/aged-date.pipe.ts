@@ -3,7 +3,10 @@
 
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({name: 'ago'})
+@Pipe({
+    name: 'ago',
+    standalone: false
+})
 export class AgedDatePipe implements PipeTransform {
     transform(date: any): string {
         let r = '';

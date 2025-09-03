@@ -4,7 +4,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'camelspace'
+    name: 'camelspace',
+    standalone: false
 })
 export class CamelspacePipe implements PipeTransform {
 

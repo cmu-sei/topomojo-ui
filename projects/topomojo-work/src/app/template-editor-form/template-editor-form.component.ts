@@ -11,9 +11,10 @@ import { faUnlink, faToggleOff, faToggleOn, faTimes, faLink } from '@fortawesome
 import { ClipboardService } from '../clipboard.service';
 
 @Component({
-  selector: 'app-template-editor-form',
-  templateUrl: './template-editor-form.component.html',
-  styleUrls: ['./template-editor-form.component.scss']
+    selector: 'app-template-editor-form',
+    templateUrl: './template-editor-form.component.html',
+    styleUrls: ['./template-editor-form.component.scss'],
+    standalone: false
 })
 export class TemplateEditorFormComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() template!: Template;

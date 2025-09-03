@@ -6,9 +6,10 @@ import { faCode, faKeyboard, faList } from '@fortawesome/free-solid-svg-icons';
 import { Gamespace } from '../../api/gen/models';
 
 @Component({
-  selector: 'app-gamespace-detail',
-  templateUrl: './gamespace-detail.component.html',
-  styleUrls: ['./gamespace-detail.component.scss']
+    selector: 'app-gamespace-detail',
+    templateUrl: './gamespace-detail.component.html',
+    styleUrls: ['./gamespace-detail.component.scss'],
+    standalone: false
 })
 export class GamespaceDetailComponent implements OnInit {
   @Input() detail: any;

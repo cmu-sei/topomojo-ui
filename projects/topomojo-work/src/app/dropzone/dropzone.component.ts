@@ -4,9 +4,10 @@
 import { Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-dropzone',
-  templateUrl: './dropzone.component.html',
-  styleUrls: ['./dropzone.component.scss']
+    selector: 'app-dropzone',
+    templateUrl: './dropzone.component.html',
+    styleUrls: ['./dropzone.component.scss'],
+    standalone: false
 })
 export class DropzoneComponent implements OnInit {
   @Output() dropped = new EventEmitter<File[]>();

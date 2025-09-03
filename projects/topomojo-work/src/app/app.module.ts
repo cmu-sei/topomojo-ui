@@ -1,19 +1,20 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { NgModule, inject, provideAppInitializer } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { ConsoleComponent, LogLevel, provideConsoleForge } from '@cmusei/console-forge';
 import { AppRoutingModule } from './app-routing.module';
 import { ApiModule } from './api/gen/api.module';
 import { UtilityModule } from './utility/utility.module';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
-import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
+import { MarkdownModule, MARKED_OPTIONS } from 'ngx-markdown';
 
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
@@ -57,11 +58,15 @@ import { ApikeysComponent } from './apikeys/apikeys.component';
 import { GamespaceCardComponent } from './gamespace-card/gamespace-card.component';
 import { GamespaceStateComponent } from './gamespace-state/gamespace-state.component';
 import { GamespaceJoinComponent } from './gamespace-join/gamespace-join.component';
+import { AppLayoutComponent } from './app-layout/app-layout.component';
+import { ConsoleLayoutComponent } from './console-layout/console-layout.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    AppLayoutComponent,
     AboutComponent,
+    ConsoleLayoutComponent,
     HomeComponent,
     LoginComponent,
     OidcComponent,
@@ -95,34 +100,34 @@ import { GamespaceJoinComponent } from './gamespace-join/gamespace-join.componen
     GamespaceStateComponent,
     GamespaceJoinComponent
   ],
-  imports: [
+  exports: [
+    ApiModule,
     BrowserModule,
+    UtilityModule,
+    FontAwesomeModule
+  ],
+  bootstrap: [AppComponent],
+  imports: [BrowserModule,
     AppRoutingModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
     UtilityModule,
     ApiModule,
     MonacoEditorModule.forRoot(),
     MarkdownModule.forRoot({
       loader: HttpClient,
       markedOptions: {
-        provide: MarkedOptions,
+        provide: MARKED_OPTIONS,
         useFactory: markedOptionsFactory,
-      },
+      }
     }),
     FontAwesomeModule,
     ButtonsModule.forRoot(),
     TooltipModule.forRoot(),
     AlertModule.forRoot(),
-    ProgressbarModule.forRoot()
-  ],
-  exports: [
-    ApiModule,
-    BrowserModule,
-    UtilityModule,
-    FontAwesomeModule
+    ProgressbarModule.forRoot(),
+    ConsoleComponent,
   ],
   providers: [
     {
@@ -130,20 +135,20 @@ import { GamespaceJoinComponent } from './gamespace-join/gamespace-join.componen
       useClass: AuthInterceptor,
       multi: true,
     },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: loadSettings,
-      deps: [ConfigService],
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: register,
-      deps: [UserService],
-      multi: true
-    }
-  ],
-  bootstrap: [AppComponent]
+    provideAppInitializer(() => {
+      const initializerFn = (loadSettings)(inject(ConfigService));
+      return initializerFn();
+    }),
+    provideAppInitializer(() => {
+      const initializerFn = (register)(inject(UserService));
+      return initializerFn();
+    }),
+    provideHttpClient(withInterceptorsFromDi()),
+    provideConsoleForge({
+      consoleBackgroundStyle: "rgb(40, 40, 40)",
+      disabledFeatures: { networkDisconnection: true }
+    })
+  ]
 })
 export class AppModule { }
 

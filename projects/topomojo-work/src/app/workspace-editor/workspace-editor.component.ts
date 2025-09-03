@@ -11,9 +11,10 @@ import { ConfigService } from '../config.service';
 import { NotificationService } from '../notification.service';
 
 @Component({
-  selector: 'app-workspace-editor',
-  templateUrl: './workspace-editor.component.html',
-  styleUrls: ['./workspace-editor.component.scss']
+    selector: 'app-workspace-editor',
+    templateUrl: './workspace-editor.component.html',
+    styleUrls: ['./workspace-editor.component.scss'],
+    standalone: false
 })
 export class WorkspaceEditorComponent implements OnInit, OnDestroy {
 

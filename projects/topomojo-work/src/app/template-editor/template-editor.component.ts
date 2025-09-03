@@ -10,9 +10,10 @@ import { filter, finalize, first, map, switchMap } from 'rxjs/operators';
 import { BehaviorSubject, Subscription, Subject, Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-template-editor',
-  templateUrl: './template-editor.component.html',
-  styleUrls: ['./template-editor.component.scss']
+    selector: 'app-template-editor',
+    templateUrl: './template-editor.component.html',
+    styleUrls: ['./template-editor.component.scss'],
+    standalone: false
 })
 export class TemplateEditorComponent implements OnInit, AfterViewInit {
   @Input() template!: Template;

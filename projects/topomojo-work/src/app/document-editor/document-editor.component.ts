@@ -14,9 +14,10 @@ import { CollaborationService, MonacoEditor, Position, Range, Selection,
   DocumentChange,  UserTimeMap, RemoteUserData } from '../collaboration.service';
 
 @Component({
-  selector: 'app-document-editor',
-  templateUrl: './document-editor.component.html',
-  styleUrls: ['./document-editor.component.scss']
+    selector: 'app-document-editor',
+    templateUrl: './document-editor.component.html',
+    styleUrls: ['./document-editor.component.scss'],
+    standalone: false
 })
 export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   @Input() summary!: Workspace;

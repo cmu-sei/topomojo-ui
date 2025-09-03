@@ -1,18 +1,22 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { UserManagerSettings } from 'oidc-client-ts';
 import { catchError, tap } from 'rxjs/operators';
+import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 import { environment } from 'projects/topomojo-work/src/environments/environment';
 import { Location } from '@angular/common';
-import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
-// import { MarkedRenderer, MarkedOptions } from 'ngx-markdown';
+import { markedSmartypants } from 'marked-smartypants';
+import { marked, Parser, Tokens } from 'marked';
+import { ConsoleRequest } from './consoles-api.models';
+import { Router } from '@angular/router';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class ConfigService {
+  private readonly router = inject(Router);
 
   private restorationComplete = false;
   storageKey = 'topomojo';
@@ -62,16 +66,8 @@ export class ConfigService {
     const v = this.settings.apphost
       ? this.location.normalize(this.settings.apphost) + '/'
       : ''
-    ;
+      ;
     return v;
-  }
-
-  // use setting or assume sibling app 'mks'
-  get mkshost(): string {
-    return this.settings.mkshost
-      ? this.location.normalize(this.settings.mkshost)
-      :  'mks'
-    ;
   }
 
   load(): Observable<any> {
@@ -81,8 +77,8 @@ export class ConfigService {
           return of({} as Settings);
         }),
         tap(s => {
-          this.settings = {...this.settings, ...s};
-          this.settings.oidc = {...this.settings.oidc, ...s.oidc};
+          this.settings = { ...this.settings, ...s };
+          this.settings.oidc = { ...this.settings.oidc, ...s.oidc };
           this.settings$.next(this.settings);
           // console.log(this.settings);
         })
@@ -93,27 +89,28 @@ export class ConfigService {
     return `${window.location.protocol}//${window.location.host}${this.location.prepareExternalUrl(path)}`;
   }
 
-  openConsole(qs: string): void {
-    this.showTab(this.mkshost + '/' + qs);
+  openConsole(request: ConsoleRequest) {
+    const url = this.router.createUrlTree(["c"], { queryParams: request });
+    this.showTab(url.toString());
   }
 
   showTab(url: string): void {
     let item = this.tabs.find(t => t.url === url);
 
     if (!item) {
-      item = {url, window: null};
+      item = { url, window: null };
       this.tabs.push(item);
     }
 
     if (!item.window || item.window.closed) {
-        item.window = window.open(url);
+      item.window = window.open(url);
     } else {
-        item.window.focus();
+      item.window.focus();
     }
   }
 
   updateLocal(model: LocalAppSettings): void {
-    this.local = {...this.local, ...model};
+    this.local = { ...this.local, ...model };
     this.storeLocal(this.local);
     this.restorationComplete = true;
   }
@@ -126,14 +123,14 @@ export class ConfigService {
   }
   getLocal(): LocalAppSettings {
     try {
-        return JSON.parse(window.localStorage[this.storageKey] || {});
+      return JSON.parse(window.localStorage[this.storageKey] || {});
     } catch (e) {
-        return {};
+      return {};
     }
   }
   clearStorage(): void {
     try {
-        window.localStorage.removeItem(this.storageKey);
+      window.localStorage.removeItem(this.storageKey);
     } catch (e) { }
   }
 }
@@ -149,7 +146,6 @@ export interface LocalAppSettings {
 export interface Settings {
   appname?: string;
   apphost?: string;
-  mkshost?: string;
   enable_upload?: boolean;
   oidc: AppUserManagerSettings;
 }
@@ -168,24 +164,45 @@ export interface TabRef {
 }
 
 export function markedOptionsFactory(): MarkedOptions {
+  // apply plugins like smartypants
+  marked.use(markedSmartypants());
+
+  // configure renderer
   const renderer = new MarkedRenderer();
 
-  renderer.image = (href, title, text) => {
+  renderer.image = ({ href, title, text }) => {
     return `<div class="text-center"><img class="img-fluid rounded" src=${href} alt="${text}" /></div>`;
   };
-  renderer.blockquote = (quote) => {
-    return `<blockquote class="blockquote">${quote}</blockquote>`;
+
+  renderer.blockquote = ({ tokens }) => {
+    return '<blockquote class="blockquote"><p>' + Parser.parse(tokens) + '</p></blockquote>';
   };
-  renderer.table = (header, body) => {
-    return `<table class="table table-striped"><thead>${header}</thead><tbody>${body}</tbody></table>`;
+
+  renderer.table = (tableTokens: Tokens.Table) => {
+    // Build header row
+    const headerRendered = tableTokens.header.map((cell, i) => {
+      const align = tableTokens.align[i];
+      const style = align ? ` style="text-align:${align}"` : '';
+      return `<th${style}>${cell.text}</th>`;
+    }).join('');
+
+    // Build body rows
+    const bodyRendered = tableTokens.rows.map(row => {
+      const cells = row.map((cell, j) => {
+        const align = tableTokens.align[j];
+        const style = align ? ` style="text-align:${align}"` : '';
+        return `<td${style}>${cell.text}</td>`;
+      }).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('');
+
+    return `<table class="table table-striped"><thead>${headerRendered}</thead><tbody>${bodyRendered}</tbody></table>`;
   };
 
   return {
     renderer,
     gfm: true,
     breaks: false,
-    pedantic: false,
-    smartLists: true,
-    smartypants: false
+    pedantic: false
   };
 }

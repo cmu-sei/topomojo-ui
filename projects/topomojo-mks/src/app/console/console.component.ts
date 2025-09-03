@@ -5,8 +5,8 @@ import {
   Component, OnInit, ViewChild, AfterViewInit,
   ElementRef, Input, Injector, HostListener, OnDestroy, Renderer2,
 } from '@angular/core';
-import { catchError, debounceTime, map, distinctUntilChanged, tap, finalize, switchMap } from 'rxjs/operators';
-import { fromEvent, Subscription, timer, Observable, of, Subject } from 'rxjs';
+import { catchError, debounceTime, map, finalize, switchMap } from 'rxjs/operators';
+import { Subscription, timer, Observable, of, Subject } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { MockConsoleService } from './services/mock-console.service';
 import { WmksConsoleService } from './services/wmks-console.service';
@@ -27,7 +27,8 @@ import { ConsoleSupportsFeatures } from './console.models';
     MockConsoleService,
     WmksConsoleService,
     NoVNCConsoleService
-  ]
+  ],
+  standalone: false
 })
 export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() index = 0;

@@ -13,12 +13,10 @@ import { VmService } from '../vm.service';
 import { DispatchService } from '../dispatch.service';
 
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ApiSettings } from '../api-settings';
 
-@NgModule({
-    imports: [ HttpClientModule ],
-    providers: [
+@NgModule({ imports: [], providers: [
         ApiSettings,
         AdminService,
         ConsoleService,
@@ -29,7 +27,7 @@ import { ApiSettings } from '../api-settings';
         TemplateService,
         WorkspaceService,
         VmService,
-        DispatchService
-    ]
-})
+        DispatchService,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class ApiModule { }

@@ -71,7 +71,6 @@ export class HubService {
       this.connection.on('ConsoleAcked',
         (console: ConsolePresence) => this.setPresence(console, false)
       );
-
     });
   }
 
@@ -99,15 +98,15 @@ export class HubService {
       console.sessionId === this.console.sessionId &&
       console.name === this.console.name
     ) {
-        // add if not present
-        if (found < 0) {
-          this.peers.push(console);
-        }
+      // add if not present
+      if (found < 0) {
+        this.peers.push(console);
+      }
 
-        // acknowledge new party member
-        if (joined) {
-          this.connection.invoke('ackConsole', console);
-        }
+      // acknowledge new party member
+      if (joined) {
+        this.connection.invoke('ackConsole', console);
+      }
 
     } else {
 

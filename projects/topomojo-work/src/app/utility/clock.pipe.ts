@@ -4,7 +4,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'clock'
+    name: 'clock',
+    standalone: false
 })
 export class ClockPipe implements PipeTransform {
 

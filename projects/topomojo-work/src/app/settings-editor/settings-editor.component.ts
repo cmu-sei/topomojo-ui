@@ -13,9 +13,10 @@ import { ConfigService } from '../config.service';
 import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-settings-editor',
-  templateUrl: './settings-editor.component.html',
-  styleUrls: ['./settings-editor.component.scss']
+    selector: 'app-settings-editor',
+    templateUrl: './settings-editor.component.html',
+    styleUrls: ['./settings-editor.component.scss'],
+    standalone: false
 })
 export class SettingsEditorComponent implements OnInit, OnChanges {
   @Input() workspace!: Workspace;

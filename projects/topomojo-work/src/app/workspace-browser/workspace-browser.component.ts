@@ -13,9 +13,10 @@ import { AuthService } from '../auth.service';
 import { ConfigService } from '../config.service';
 
 @Component({
-  selector: 'app-workspace-browser',
-  templateUrl: './workspace-browser.component.html',
-  styleUrls: ['./workspace-browser.component.scss']
+    selector: 'app-workspace-browser',
+    templateUrl: './workspace-browser.component.html',
+    styleUrls: ['./workspace-browser.component.scss'],
+    standalone: false
 })
 export class WorkspaceBrowserComponent implements OnInit {
   @ViewChild('search') searchterm!: ElementRef;

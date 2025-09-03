@@ -4,9 +4,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-error-div',
-  templateUrl: './error-div.component.html',
-  styleUrls: ['./error-div.component.scss']
+    selector: 'app-error-div',
+    templateUrl: './error-div.component.html',
+    styleUrls: ['./error-div.component.scss'],
+    standalone: false
 })
 export class ErrorDivComponent implements OnInit {
   @Input() errors!: any[];

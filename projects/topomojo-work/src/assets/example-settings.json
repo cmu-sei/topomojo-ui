@@ -1,7 +1,6 @@
 {
   "appname": "TopoMojo",
   "apphost": "",
-  "mkshost": "",
   "oidc": {
     "authority": "https://devid.cmusei.dev",
     "client_id": "client-with-code-grant",

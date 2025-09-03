@@ -4,7 +4,6 @@
 export interface ConsoleRequest {
   name?: string;
   sessionId?: string;
-  fullbleed?: boolean;
 }
 
 export interface ConsolePresence {

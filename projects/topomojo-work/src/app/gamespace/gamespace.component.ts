@@ -13,9 +13,10 @@ import { ClipboardService } from '../clipboard.service';
 import { NotificationService } from '../notification.service';
 
 @Component({
-  selector: 'app-gamespace',
-  templateUrl: './gamespace.component.html',
-  styleUrls: ['./gamespace.component.scss']
+    selector: 'app-gamespace',
+    templateUrl: './gamespace.component.html',
+    styleUrls: ['./gamespace.component.scss'],
+    standalone: false
 })
 export class GamespaceComponent implements OnInit, OnDestroy {
   gamespace$: Observable<GameState>;
