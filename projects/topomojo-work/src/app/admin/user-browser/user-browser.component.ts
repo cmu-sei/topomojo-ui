@@ -10,10 +10,10 @@ import { ProfileService } from '../../api/profile.service';
 import { UserService } from '../../user.service';
 
 @Component({
-    selector: 'app-user-browser',
-    templateUrl: './user-browser.component.html',
-    styleUrls: ['./user-browser.component.scss'],
-    standalone: false
+  selector: 'app-user-browser',
+  templateUrl: './user-browser.component.html',
+  styleUrls: ['./user-browser.component.scss'],
+  standalone: false
 })
 export class UserBrowserComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);
@@ -22,7 +22,7 @@ export class UserBrowserComponent implements OnInit {
   selected: ApiUser[] = [];
   viewed: ApiUser | undefined = undefined;
   viewChange$ = new BehaviorSubject<ApiUser | undefined>(this.viewed);
-  search: UserSearch = { term: '', scope: '', take: 100};
+  search: UserSearch = { term: '', scope: '', take: 100 };
   skip = 0;
   take = 100;
   count = 0;
@@ -35,9 +35,7 @@ export class UserBrowserComponent implements OnInit {
   faSearch = faSearch;
   faFilter = faFilter;
 
-  constructor(
-    private api: ProfileService,
-  ) {
+  constructor(private api: ProfileService) {
     this.source$ = merge(
       this.refresh$,
       interval(60000)
@@ -83,6 +81,18 @@ export class UserBrowserComponent implements OnInit {
   toggleScope(scope: string): void {
     this.scope = this.scope !== scope ? scope : '';
     this.search.scope = this.scope;
+    this.skip = 0;
+    this.refresh();
+  }
+
+  toggleServiceAccountFilter() {
+    if (this.search.isServiceAccount) {
+      delete this.search.isServiceAccount;
+    }
+    else {
+      this.search.isServiceAccount = true;
+    }
+
     this.skip = 0;
     this.refresh();
   }

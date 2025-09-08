@@ -13,7 +13,7 @@ $theme-colors: (
   "warning": #fdb515,
   "danger": #fa8304,
   "light": $gray-100,
-  "dark": $gray-800
+  "dark": $gray-800,
 );
 
 @import "../../../node_modules/bootstrap/scss/root";
@@ -35,7 +35,7 @@ $theme-colors: (
 @import "../../../node_modules/bootstrap/scss/card";
 // @import "../../../node_modules/bootstrap/scss/breadcrumb";
 // @import "../../../node_modules/bootstrap/scss/pagination";
-// @import "../../../node_modules/bootstrap/scss/badge";
+@import "../../../node_modules/bootstrap/scss/badge";
 // @import "../../../node_modules/bootstrap/scss/jumbotron";
 @import "../../../node_modules/bootstrap/scss/alert";
 @import "../../../node_modules/bootstrap/scss/progress";
@@ -55,7 +55,7 @@ $theme-colors: (
   .pop-#{$color} {
     background-color: theme-color-level($color, -11);
     border: $value solid 1px;
-    border-radius: .25rem;
+    border-radius: 0.25rem;
   }
 }
 
@@ -80,7 +80,11 @@ $theme-colors: (
 fa-icon + span {
   margin-left: 4px;
 }
-h1,h2,h3,h4,h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
   font-weight: 300;
 }
 .spacer {
@@ -91,21 +95,21 @@ h1,h2,h3,h4,h5 {
   max-width: 600px;
 }
 .label {
-  padding: .375rem .25rem !important;
+  padding: 0.375rem 0.25rem !important;
   min-width: 240px;
   margin: 0;
 }
 .form-group {
   padding: 1.5rem;
-  margin-bottom: .5rem;
-  border-radius: .25rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.25rem;
 }
 .form-group > .form-control {
-  font-size: .875rem!important;
-  padding: .25rem .5rem !important;
+  font-size: 0.875rem !important;
+  padding: 0.25rem 0.5rem !important;
 }
 .form-group > label {
-  font-size: .875rem !important;
+  font-size: 0.875rem !important;
 }
 .untack > svg {
   transform: rotate(45deg);
@@ -114,15 +118,18 @@ h1,h2,h3,h4,h5 {
   margin: 6rem auto;
 }
 .alert {
-  margin-bottom: .25rem !important;
+  margin-bottom: 0.25rem !important;
 }
 app-spinner svg {
-  rect,path {
+  rect,
+  path {
     fill: theme-color("primary");
   }
 }
 
-.editor-cursor { min-width: 2px; }
+.editor-cursor {
+  min-width: 2px;
+}
 .editor-selection {
   min-width: 8px;
   opacity: 0.3;
@@ -133,8 +140,12 @@ app-spinner svg {
   top: -3px;
   margin-left: -3px;
 }
-.editor-cursor-between { margin-left: -1px; }
-.editor-online { color: white; }
+.editor-cursor-between {
+  margin-left: -1px;
+}
+.editor-online {
+  color: white;
+}
 .editor-offline {
   color: black;
   opacity: 0.6;
@@ -144,8 +155,8 @@ app-spinner svg {
   color: lightgray;
   font-size: 1.2rem;
   font-family: monospace;
-  padding: .25rem;
-  border-radius: .25rem;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
   border: lightgray 2px solid;
   width: 100px;
 }
