@@ -33,8 +33,12 @@
       <span>builders</span>
     </button>
     |
-    <button *ngFor="let s of scopes"
-      class="mr-1 btn btn-link text-dark btn-sm" (click)="toggleScope(s)">
+    <button class="mx-1 btn btn-link text-primary btn-sm" (click)="toggleServiceAccountFilter()">
+      <fa-icon [hidden]="!search.isServiceAccount" [icon]="faFilter"></fa-icon>
+      <span>service accounts</span>
+    </button>
+    |
+    <button *ngFor="let s of scopes" class="mr-1 btn btn-link text-dark btn-sm" (click)="toggleScope(s)">
       <fa-icon [hidden]="scope!==s" [icon]="faFilter"></fa-icon>
       <span>{{s}}</span>
     </button>
@@ -42,21 +46,23 @@
 </div>
 
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
-<hr class="mt-0 mb-2"/>
+<hr class="mt-0 mb-2" />
 
-<div *ngFor="let user of source$ | async; trackBy:trackById"
-  class="row mb-1"
-  [class.pop-success]="user.role==='administrator'"
-  [class.pop-secondary]="user.role==='creator'"
-  [class.pop-warning]="user.role==='builder'"
-  [class.pop-pink]="user.role==='observer'"
-  >
+<div *ngFor="let user of source$ | async; trackBy:trackById" class="row mb-1"
+  [class.pop-success]="user.role==='administrator'" [class.pop-secondary]="user.role==='creator'"
+  [class.pop-warning]="user.role==='builder'" [class.pop-pink]="user.role==='observer'">
   <div class="col-8">
     <span class="text-secondary">{{user.name}}</span>
-    <br/>
-    <small class="text-muted ml-4">
-      <app-clipspan>{{user.id}}</app-clipspan>
-    </small>
+    <br />
+    <div class="d-flex align-items-center my-1">
+      @if (user.serviceAccountClientId)
+      {
+      <div class="badge badge-sm badge-secondary mr-2">Service Account</div>
+      }
+      <small class="d-block text-muted">
+        <app-clipspan>{{user.id}}</app-clipspan>
+      </small>
+    </div>
   </div>
   <div class="col-4 align-self-center text-right">
     <small class="mr-2">{{user.whenCreated | shortdate}}</small>
@@ -73,67 +79,90 @@
   </div>
 
   <div *ngIf="viewed === user" class="col-12">
-
-      <div class="form-group bg-light">
-        <label for="role-input">Role</label><br/>
-        <div id="role-input" class="btn-group" btnRadioGroup [(ngModel)]="user.role" (click)="update(user)">
-          <label class="btn btn-outline-info btn-sm" btnRadio="user">User</label>
-          <label class="btn btn-outline-info btn-sm" btnRadio="builder">Builder</label>
-          <label class="btn btn-outline-info btn-sm" btnRadio="creator">Creator</label>
-          <label class="btn btn-outline-info btn-sm" btnRadio="observer">Observer</label>
-          <label class="btn btn-outline-info btn-sm" btnRadio="administrator">Admin</label>
-          <label class="btn btn-outline-info btn-sm" btnRadio="disabled">Disabled</label>
-        </div>
-        <small><pre>
+    @if (user.role === 'administrator' && user.serviceAccountClientId)
+    {
+    <alert type="danger" [dismissible]="true">
+      <strong>NOTE:</strong>
+      <div>
+        This user is currently configured as an administrator and has a service account client ID. For security reasons,
+        this is generally <strong>not advisable</strong>. We recommend that service account users have the
+        <strong>Observer</strong> role at maximum.
+      </div>
+    </alert>
+    }
+    <div class="form-group bg-light">
+      <label for="role-input">Role</label><br />
+      <div id="role-input" class="btn-group" btnRadioGroup [(ngModel)]="user.role" (click)="update(user)">
+        <label class="btn btn-outline-info btn-sm" btnRadio="user">User</label>
+        <label class="btn btn-outline-info btn-sm" btnRadio="builder">Builder</label>
+        <label class="btn btn-outline-info btn-sm" btnRadio="creator">Creator</label>
+        <label class="btn btn-outline-info btn-sm" btnRadio="observer">Observer</label>
+        <label class="btn btn-outline-info btn-sm" btnRadio="administrator">Admin</label>
+        <label class="btn btn-outline-info btn-sm" btnRadio="disabled">Disabled</label>
+      </div>
+      <small>
+        <pre>
           - Builder: bypasses some checks, like blocking bridge-net
           - Creator: bypasses workspace and template limits
-        </pre></small>
-      </div>
+        </pre>
+      </small>
+    </div>
 
-      <div class="form-group bg-light">
-        <label class="mb-0" for="name-input">Name</label>
-        <input id="name-input" class="form-control" type="text" [(ngModel)]="user.name" (change)="update(user)">
-        <small>for client "user" (regular users names' update from auth token)</small>
-      </div>
+    <div class="form-group bg-light">
+      <label class="mb-0" for="name-input">Name</label>
+      <input id="name-input" class="form-control" type="text" [(ngModel)]="user.name" (change)="update(user)">
+      <small>for client "user" (regular users names' update from auth token)</small>
+    </div>
 
-      <div class="form-group bg-light">
-        <label class="mb-0" for="scope-input">Scope</label>
-        <input id="scope-input" class="form-control" type="text" [(ngModel)]="user.scope" (change)="update(user)">
-        <small>allowed gamespace audience list (space-delimited)</small><br/>
-        <small>users can only "play" workspaces with a matching audience tag</small>
-      </div>
+    <div class="form-group bg-light">
+      <label class="mb-0" for="scope-input">Scope</label>
+      <input id="scope-input" class="form-control" type="text" [(ngModel)]="user.scope" (change)="update(user)">
+      <small>allowed gamespace audience list (space-delimited)</small><br />
+      <small>users can only "play" workspaces with a matching audience tag</small>
+    </div>
 
-      <div class="form-group bg-light">
-        <label class="mb-0" for="input-wslimit">Workspace Limit</label>
-        <input id="input-wslimit" class="form-control" type="number" [(ngModel)]="user.workspaceLimit" (change)="update(user)">
-        <small>max workspaces this user can manage</small>
-      </div>
+    <div class="form-group bg-light">
+      <label class="mb-0" for="input-wslimit">Workspace Limit</label>
+      <input id="input-wslimit" class="form-control" type="number" [(ngModel)]="user.workspaceLimit"
+        (change)="update(user)">
+      <small>max workspaces this user can manage</small>
+    </div>
 
-      <div class="form-group bg-light">
-        <label class="mb-0" for="input-gslimit">Gamespace Limit</label>
-        <input id="input-gslimit" class="form-control" type="number" [(ngModel)]="user.gamespaceLimit" (change)="update(user)">
-        <small>max concurrent gamespaces allowed</small>
-      </div>
+    <div class="form-group bg-light">
+      <label class="mb-0" for="input-gslimit">Gamespace Limit</label>
+      <input id="input-gslimit" class="form-control" type="number" [(ngModel)]="user.gamespaceLimit"
+        (change)="update(user)">
+      <small>max concurrent gamespaces allowed</small>
+    </div>
 
-      <div class="form-group bg-light">
-        <label class="mb-0" for="input-gsduration">Gamespace Max Duration</label>
-        <input id="input-gsduration" class="form-control" type="number" [(ngModel)]="user.gamespaceMaxMinutes" (change)="update(user)">
-        <small>max minutes allowed for a gamespace</small>
-      </div>
+    <div class="form-group bg-light">
+      <label class="mb-0" for="input-gsduration">Gamespace Max Duration</label>
+      <input id="input-gsduration" class="form-control" type="number" [(ngModel)]="user.gamespaceMaxMinutes"
+        (change)="update(user)">
+      <small>max minutes allowed for a gamespace</small>
+    </div>
 
-      <div class="form-group bg-light">
-        <label class="mb-0" for="input-gscleanup">Gamespace Cleanup Grace time</label>
-        <input id="input-gscleanup" class="form-control" type="number" [(ngModel)]="user.gamespaceCleanupGraceMinutes" (change)="update(user)">
-        <small>grace minutes between expiration and teardown</small>
-      </div>
+    <div class="form-group bg-light">
+      <label class="mb-0" for="input-gscleanup">Gamespace Cleanup Grace time</label>
+      <input id="input-gscleanup" class="form-control" type="number" [(ngModel)]="user.gamespaceCleanupGraceMinutes"
+        (change)="update(user)">
+      <small>grace minutes between expiration and teardown</small>
+    </div>
 
-      <div class="form-group bg-light">
-        <label class="mb-0" for="">ApiKeys</label>
-        <app-apikeys [id]="user.id"></app-apikeys>
-      </div>
+    <div class="form-group bg-light">
+      <label class="mb-0" for="input-serviceAccountClientId">Service Account Client Id</label>
+      <input id="input-serviceAccountClientId" class="form-control" [(ngModel)]="user.serviceAccountClientId"
+        (change)="update(user)">
+      <div><small>makes this a service account user; allows client credentials authorization</small></div>
+    </div>
+
+    <div class="form-group bg-light">
+      <label class="mb-0" for="">ApiKeys</label>
+      <app-apikeys [id]="user.id"></app-apikeys>
+    </div>
 
   </div>
 </div>
 
-<hr class="my-0"/>
+<hr class="my-0" />
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>

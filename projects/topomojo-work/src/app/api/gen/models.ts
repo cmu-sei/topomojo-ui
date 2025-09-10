@@ -98,6 +98,7 @@ export interface ApiUser {
   gamespaceLimit: number;
   gamespaceMaxMinutes: number;
   gamespaceCleanupGraceMinutes: number;
+  serviceAccountClientId?: string;
   whenCreated: string;
   apiKeys: ApiKey[];
 }
@@ -116,6 +117,7 @@ export interface ChangedUser {
   gamespaceLimit?: number;
   gamespaceMaxMinutes?: number;
   gamespaceCleanupGraceMinutes?: number;
+  serviceAccountClientId?: string;
 }
 
 export interface ApiKeyResult {
@@ -129,6 +131,7 @@ export interface ApiKey {
 }
 
 export interface UserSearch extends Search {
+  isServiceAccount?: boolean;
   scope: string;
 }
 
