@@ -8,6 +8,8 @@ import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Enlistee, Enlistment, GameState, JoinCode, TabRef } from './api.models';
+import { marked, Parser, Tokens } from 'marked';
+import { markedSmartypants } from 'marked-smartypants';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +30,7 @@ export class ApiService {
   }
 
   login(ticket: string): Observable<any> {
-    return this.http.post(this.url + `/user/login`, {}, { headers: { authorization: `ticket ${ticket}`} });
+    return this.http.post(this.url + `/user/login`, {}, { headers: { authorization: `ticket ${ticket}` } });
   }
   launch(id: string): Observable<GameState> {
     return this.http.get<GameState>(this.url + `/gamespace/${id}`);
@@ -59,37 +61,58 @@ export class ApiService {
     let item = this.tabs.find(t => t.url === url);
 
     if (!item) {
-      item = {url, window: null};
+      item = { url, window: null };
       this.tabs.push(item);
     }
 
     if (!item.window || item.window.closed) {
-        item.window = window.open(url);
+      item.window = window.open(url);
     } else {
-        item.window.focus();
+      item.window.focus();
     }
   }
 }
 
 export function markedOptionsFactory(): MarkedOptions {
+  // apply plugins like smartypants
+  marked.use(markedSmartypants());
+
+  // configure renderer
   const renderer = new MarkedRenderer();
 
-  renderer.image = (href, title, text) => {
+  renderer.image = ({ href, title, text }) => {
     return `<div class="text-center"><img class="img-fluid rounded" src=${href} alt="${text}" /></div>`;
   };
-  renderer.blockquote = (quote) => {
-    return `<blockquote class="blockquote">${quote}</blockquote>`;
+
+  renderer.blockquote = ({ tokens }) => {
+    return '<blockquote class="blockquote"><p>' + Parser.parse(tokens) + '</p></blockquote>';
   };
-  renderer.table = (header, body) => {
-    return `<table class="table table-striped"><thead>${header}</thead><tbody>${body}</tbody></table>`;
+
+  renderer.table = (tableTokens: Tokens.Table) => {
+    // Build header row
+    const headerRendered = tableTokens.header.map((cell, i) => {
+      const align = tableTokens.align[i];
+      const style = align ? ` style="text-align:${align}"` : '';
+      return `<th${style}>${cell.text}</th>`;
+    }).join('');
+
+    // Build body rows
+    const bodyRendered = tableTokens.rows.map(row => {
+      const cells = row.map((cell, j) => {
+        const align = tableTokens.align[j];
+        const style = align ? ` style="text-align:${align}"` : '';
+        return `<td${style}>${cell.text}</td>`;
+      }).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('');
+
+    return `<table class="table table-striped"><thead>${headerRendered}</thead><tbody>${bodyRendered}</tbody></table>`;
   };
 
   return {
     renderer,
     gfm: true,
     breaks: false,
-    pedantic: false,
-    smartLists: true,
-    smartypants: false
+    pedantic: false
   };
 }
