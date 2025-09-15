@@ -1,7 +1,7 @@
 #
 #multi-stage target: dev
 #
-FROM node:18-alpine as dev
+FROM node:18-alpine AS dev
 ARG commit
 WORKDIR /app
 COPY package.json package-lock.json tools/ ./
@@ -18,11 +18,10 @@ CMD ["npm", "start"]
 #
 FROM nginx:alpine
 WORKDIR /var/www
-ENV COMMIT=$commit
 COPY --from=dev /app/dist .
-COPY --from=dev /app/dist/assets/oidc-silent.html .
+COPY --from=dev /app/dist/browser/assets/oidc-silent.html .
 COPY --from=dev /app/LICENSE.md ./LICENSE.md
-COPY --from=dev /app/nginx-static.conf /etc/nginx/conf.d/default.conf
-COPY --from=dev /app/nginx-basehref.sh /docker-entrypoint.d/90-basehref.sh
+COPY --from=dev /app/tools/nginx-static.conf /etc/nginx/conf.d/default.conf
+COPY --from=dev /app/tools/nginx-basehref.sh /docker-entrypoint.d/90-basehref.sh
 RUN chmod +x /docker-entrypoint.d/90-basehref.sh
 EXPOSE 80
