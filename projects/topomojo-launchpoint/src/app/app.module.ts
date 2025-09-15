@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
+import { MarkdownModule, MARKED_OPTIONS } from 'ngx-markdown';
 import { ClipboardService } from 'projects/topomojo-work/src/app/clipboard.service';
 import { CountdownPipe } from 'projects/topomojo-work/src/app/utility/countdown.pipe';
 import { SpinnerComponent } from 'projects/topomojo-work/src/app/utility/spinner/spinner.component';
@@ -18,7 +18,8 @@ import { HttpInterceptorService } from './http-interceptor.service';
 import { SpacesPipe } from './spaces.pipe';
 import { ConfirmButtonComponent } from './utility/confirm-button/confirm-button.component';
 
-@NgModule({ declarations: [
+@NgModule({
+    declarations: [
         AppComponent,
         SpinnerComponent,
         SpacesPipe,
@@ -30,17 +31,18 @@ import { ConfirmButtonComponent } from './utility/confirm-button/confirm-button.
         RouterModule.forRoot([]),
         MarkdownModule.forRoot({
             markedOptions: {
-                provide: MarkedOptions,
+                provide: MARKED_OPTIONS,
                 useFactory: markedOptionsFactory,
             },
         }),
         FontAwesomeModule], providers: [
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: HttpInterceptorService,
-            multi: true,
-        },
-        ClipboardService,
-        provideHttpClient(withInterceptorsFromDi())
-    ] })
+            {
+                provide: HTTP_INTERCEPTORS,
+                useClass: HttpInterceptorService,
+                multi: true,
+            },
+            ClipboardService,
+            provideHttpClient(withInterceptorsFromDi())
+        ]
+})
 export class AppModule { }
