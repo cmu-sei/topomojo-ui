@@ -60,6 +60,7 @@ import { GamespaceStateComponent } from './gamespace-state/gamespace-state.compo
 import { GamespaceJoinComponent } from './gamespace-join/gamespace-join.component';
 import { AppLayoutComponent } from './app-layout/app-layout.component';
 import { ConsoleLayoutComponent } from './console-layout/console-layout.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
@@ -126,6 +127,7 @@ import { ConsoleLayoutComponent } from './console-layout/console-layout.componen
     ButtonsModule.forRoot(),
     TooltipModule.forRoot(),
     AlertModule.forRoot(),
+    ModalModule.forRoot(),
     ProgressbarModule.forRoot(),
     ConsoleComponent,
   ],

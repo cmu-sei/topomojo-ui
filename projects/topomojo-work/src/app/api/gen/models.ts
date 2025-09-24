@@ -89,6 +89,8 @@ export interface ApiUser {
   id: string;
   name: string;
   scope: string;
+  appRole: string;
+  lastIdpAssignedRole?: string;
   role: string;
   isAdmin: boolean;
   isObserver: boolean;
