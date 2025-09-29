@@ -53,7 +53,7 @@
   [class.pop-warning]="user.role==='builder'" [class.pop-pink]="user.role==='observer'">
   <div class="col-8">
     <span class="text-secondary">{{user.name}}</span>
-    @if(user.lastIdpAssignedRole && user.lastIdpAssignedRole !== user.role)
+    @if(user.lastIdpAssignedRole && user.lastIdpAssignedRole !== user.appRole)
     {
     <span class="badge badge-sm badge-warning ml-2 cursor-pointer" (click)="handleIdentityConflictClick(user)">
       Identity Role Conflict
