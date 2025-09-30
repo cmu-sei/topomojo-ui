@@ -1,6 +1,5 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
-
 <h4>Users</h4>
 
 <div>
@@ -53,12 +52,6 @@
   [class.pop-warning]="user.role==='builder'" [class.pop-pink]="user.role==='observer'">
   <div class="col-8">
     <span class="text-secondary">{{user.name}}</span>
-    @if(user.lastIdpAssignedRole && user.lastIdpAssignedRole !== user.appRole)
-    {
-    <span class="badge badge-sm badge-warning ml-2 cursor-pointer" (click)="handleIdentityConflictClick(user)">
-      Identity Role Conflict
-    </span>
-    }
     <br />
     <div class="d-flex align-items-center my-1">
       @if (user.serviceAccountClientId)
@@ -99,20 +92,13 @@
     <div class="form-group bg-light">
       <label for="role-input" class="d-block">Role</label>
 
-      <div id="role-input" class="my-2 btn-group" btnRadioGroup [(ngModel)]="user.role"
-        (click)="updateRole(user, user.role)">
-        <label class="btn btn-outline-info btn-sm"
-          [class.btn-warning]="(user.lastIdpAssignedRole !== user.appRole) && user.lastIdpAssignedRole == 'user' || user.appRole == 'user'"
-          btnRadio="user">User</label>
-        <label class="btn btn-outline-info btn-sm"
-          [class.btn-warning]="(user.lastIdpAssignedRole !== user.appRole) && user.lastIdpAssignedRole == 'builder' || user.appRole == 'builder'"
-          btnRadio="builder">Builder</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="creator"
-          [class.btn-warning]="(user.lastIdpAssignedRole !== user.appRole) && user.lastIdpAssignedRole == 'creator' || user.appRole == 'creator'">Creator</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="observer"
-          [class.btn-warning]="(user.lastIdpAssignedRole !== user.appRole) && user.lastIdpAssignedRole == 'observer' || user.appRole == 'observer'">Observer</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="administrator"
-          [class.btn-warning]="(user.lastIdpAssignedRole !== user.appRole) && user.lastIdpAssignedRole == 'administrator' || user.appRole == 'administrator'">Admin</label>
+      <div id="role-input" class="my-2 btn-group" btnRadioGroup [(ngModel)]="user.appRole"
+        (click)="updateRole(user, user.appRole)">
+        <label class="btn btn-outline-info btn-sm" btnRadio="user">User</label>
+        <label class="btn btn-outline-info btn-sm" btnRadio="builder">Builder</label>
+        <label class="btn btn-outline-info btn-sm" btnRadio="creator">Creator</label>
+        <label class="btn btn-outline-info btn-sm" btnRadio="observer">Observer</label>
+        <label class="btn btn-outline-info btn-sm" btnRadio="administrator">Admin</label>
         <label class="btn btn-outline-info btn-sm" btnRadio="disabled">Disabled</label>
       </div>
       <small>
@@ -121,6 +107,8 @@
           - Creator: bypasses workspace and template limits
         </pre>
       </small>
+
+      <app-user-role-badge class="mx-2 mb-2" [user]="user"></app-user-role-badge>
     </div>
 
     <div class="form-group bg-light">
@@ -180,31 +168,3 @@
 
 <hr class="my-0" />
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
-
-<ng-template #identityRoleConflictModal>
-  @if (identityRoleConflictModalUser())
-  {
-  <app-modal title="Identity Role Conflict" [subtitle]="identityRoleConflictModalUser()!.name"
-    (closed)="handleModalClosed()">
-    <strong>{{ identityRoleConflictModalUser()!.name }}</strong> has conflicting roles assigned. This can
-    happen when TopoMojo is configured to allow role assignment by the identity provider.
-
-    <ul class="my-2">
-      <li><strong>TopoMojo role:</strong> {{ identityRoleConflictModalUser()!.appRole | titlecase }}</li>
-      <li><strong>Identity Provider role:</strong>
-        {{ (identityRoleConflictModalUser()!.lastIdpAssignedRole || "unassigned") | titlecase}}</li>
-    </ul>
-
-    <div>
-      Their effective role is currently <strong>{{ identityRoleConflictModalUser()!.role | titlecase }}</strong> - the
-      greatest set of permissions among assigned roles. To resolve this issue, either:
-
-      <ul class="my-2">
-        <li>Update their TopoMojo role to match their Identity Provider Role</li>
-        <li>Update their Identity Provider role to match their TopoMojo role</li>
-        <li>Remove any Identity Provider role assignments associated with TopoMojo</li>
-      </ul>
-    </div>
-  </app-modal>
-  }
-</ng-template>

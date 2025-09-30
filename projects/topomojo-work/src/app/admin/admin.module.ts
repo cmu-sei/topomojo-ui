@@ -23,6 +23,7 @@ import { GamespaceDetailComponent } from './gamespace-detail/gamespace-detail.co
 import { GamespaceInteractComponent } from './gamespace-interact/gamespace-interact.component';
 import { WorkspaceCreatorComponent } from './workspace-creator/workspace-creator.component';
 import { AlertModule } from 'ngx-bootstrap/alert';
+import { UserRoleBadgeComponent } from "./user-role-badge/user-role-badge.component";
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { AlertModule } from 'ngx-bootstrap/alert';
     UtilityModule,
     FontAwesomeModule,
     ButtonsModule.forRoot(),
-    AlertModule.forRoot()
+    AlertModule.forRoot(),
+    UserRoleBadgeComponent
   ]
 })
 export class AdminModule { }
