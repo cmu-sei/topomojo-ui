@@ -1,0 +1,46 @@
+<!--This only pops if the user has an idp role-->
+@if (user() && user().lastIdpAssignedRole)
+{
+<div>
+    <strong>Identity Role:</strong> {{ user().lastIdpAssignedRole | titlecase }}
+</div>
+<div>
+    <strong>Effective Role:</strong>
+
+    @if (user().lastIdpAssignedRole != user().appRole)
+    {
+    <span role="button" class="effective-role-button cursor-pointer text-primary ml-1" (click)="handleBadgeClick()">
+        {{ user().role | titlecase }}
+    </span>
+    }
+    @else
+    {
+    {{ user().role | titlecase }}
+    }
+</div>
+}
+
+<ng-template #roleElevationModal>
+    @if (user())
+    {
+    <app-modal title="Roles Assigned" [subtitle]="user().name" (closed)="handleModalClosed()">
+        <strong>{{ user().name }}</strong> has two roles assigned - one from the identity provider, and another from
+        TopoMojo itself.
+
+        <ul class="my-1">
+            <li>
+                <strong>TopoMojo role:</strong> {{ user().appRole | titlecase }}
+            </li>
+            <li>
+                <strong>Identity Provider role:</strong>
+                {{ (user().lastIdpAssignedRole || "unassigned") | titlecase}}
+            </li>
+        </ul>
+
+        <div class="mt-2">
+            Their effective role is currently <strong>{{ user().role | titlecase }}</strong> -
+            the greatest set of permissions among assigned roles.
+        </div>
+    </app-modal>
+    }
+</ng-template>

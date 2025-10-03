@@ -19,8 +19,7 @@ import { CountdownPipe } from './countdown.pipe';
 import { ClockPipe } from './clock.pipe';
 import { PagerComponent } from './pager/pager.component';
 import { JsonParsePipe } from './json-parse.pipe';
-
-
+import { ModalComponent } from '../modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -36,13 +35,14 @@ import { JsonParsePipe } from './json-parse.pipe';
     CountdownPipe,
     ClockPipe,
     PagerComponent,
-    JsonParsePipe
+    JsonParsePipe,
   ],
   imports: [
     CommonModule,
     FontAwesomeModule,
     AlertModule.forRoot(),
-    TooltipModule.forRoot()
+    TooltipModule.forRoot(),
+    ModalComponent
   ],
   exports: [
     AgedDatePipe,
@@ -57,7 +57,8 @@ import { JsonParsePipe } from './json-parse.pipe';
     CountdownPipe,
     ClockPipe,
     PagerComponent,
-    JsonParsePipe
+    JsonParsePipe,
+    ModalComponent
   ]
 })
 export class UtilityModule { }

@@ -18,7 +18,7 @@
   </div>
 
   <div [ngSwitch]="section" class="mb-4">
-    <app-dashboard *ngSwitchCase="'dashboard' || ''"></app-dashboard>
+    <app-dashboard *ngSwitchCase="'dashboard'"></app-dashboard>
     <app-gamespace-browser *ngSwitchCase="'gamespaces'" [fullAdminView]="true"></app-gamespace-browser>
     <app-workspace-browser *ngSwitchCase="'workspaces'"></app-workspace-browser>
     <app-template-browser *ngSwitchCase="'templates'"></app-template-browser>
@@ -27,9 +27,3 @@
     <app-log-viewer *ngSwitchCase="'log'"></app-log-viewer>
   </div>
 </div>
-
-<!-- <ng-template #loading>
-  <div class="reader-slim text-center my-4">
-    <app-spinner></app-spinner>
-  </div>
-</ng-template> -->

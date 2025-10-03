@@ -3,11 +3,10 @@
 
 import { Component, OnInit } from '@angular/core';
 import { faFilter, faList, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
-import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
-import { Search, ApiUser, UserSearch } from '../../api/gen/models';
+import { BehaviorSubject, firstValueFrom, interval, merge, Observable } from 'rxjs';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ApiUser, UserSearch } from '../../api/gen/models';
 import { ProfileService } from '../../api/profile.service';
-import { UserService } from '../../user.service';
 
 @Component({
   selector: 'app-user-browser',
@@ -129,11 +128,18 @@ export class UserBrowserComponent implements OnInit {
         );
       }
     });
-
   }
 
-  update(model: ApiUser): void {
-    this.api.update(model).subscribe();
+  async update(model: ApiUser): Promise<void> {
+    await firstValueFrom(this.api.update(model));
+    this.refresh$.next(true);
+  }
+
+  async updateRole(model: ApiUser, newRole: string) {
+    this.update({
+      ...model,
+      role: newRole
+    });
   }
 
   trackById(index: number, model: ApiUser): string {

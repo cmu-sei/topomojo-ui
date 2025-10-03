@@ -1,6 +1,5 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
-
 <h4>Users</h4>
 
 <div>
@@ -91,8 +90,10 @@
     </alert>
     }
     <div class="form-group bg-light">
-      <label for="role-input">Role</label><br />
-      <div id="role-input" class="btn-group" btnRadioGroup [(ngModel)]="user.role" (click)="update(user)">
+      <label for="role-input" class="d-block">Role</label>
+
+      <div id="role-input" class="my-2 btn-group" btnRadioGroup [(ngModel)]="user.appRole"
+        (click)="updateRole(user, user.appRole)">
         <label class="btn btn-outline-info btn-sm" btnRadio="user">User</label>
         <label class="btn btn-outline-info btn-sm" btnRadio="builder">Builder</label>
         <label class="btn btn-outline-info btn-sm" btnRadio="creator">Creator</label>
@@ -106,6 +107,8 @@
           - Creator: bypasses workspace and template limits
         </pre>
       </small>
+
+      <app-user-role-badge class="mx-2 mb-2" [user]="user"></app-user-role-badge>
     </div>
 
     <div class="form-group bg-light">
@@ -160,7 +163,6 @@
       <label class="mb-0" for="">ApiKeys</label>
       <app-apikeys [id]="user.id"></app-apikeys>
     </div>
-
   </div>
 </div>
 

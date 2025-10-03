@@ -1,0 +1,18 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <div class="modal-title">
+            @if (subtitle())
+            {
+            <div class="modal-subtitle">{{ subtitle() }}</div>
+            }
+            {{ title() }}
+        </div>
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="closed.emit()">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <ng-content></ng-content>
+    </div>
+
+</div>

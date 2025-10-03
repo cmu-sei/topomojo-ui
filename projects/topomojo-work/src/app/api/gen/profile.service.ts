@@ -12,8 +12,8 @@ import { ApiKey, ApiKeyResult, ApiUser, ChangedUser, Search, UserRegistration, U
 export class GeneratedProfileService extends GeneratedService {
 
     constructor(
-       protected http: HttpClient,
-       protected conf: ApiSettings
+        protected http: HttpClient,
+        protected conf: ApiSettings
     ) { super(http, conf); }
 
     public list(search: UserSearch): Observable<ApiUser[]> {
@@ -25,8 +25,8 @@ export class GeneratedProfileService extends GeneratedService {
     public load(): Observable<ApiUser> {
         return this.http.get<ApiUser>(this.conf.api + '/user');
     }
-    public update(profile: ChangedUser): Observable<any> {
-        return this.http.post<any>(this.conf.api + '/user', profile);
+    public update(profile: ChangedUser): Observable<ApiUser> {
+        return this.http.post<ApiUser>(this.conf.api + '/user', profile);
     }
     public delete(id: string): Observable<any> {
         return this.http.delete<any>(this.conf.api + '/user/' + id);
@@ -53,7 +53,7 @@ export class GeneratedProfileService extends GeneratedService {
 
     // pass auth header since this is called as an initializer
     public register(model: UserRegistration, auth: string): Observable<ApiUser> {
-      return this.http.post<ApiUser>(`${this.conf.api}/user/register`, model, { headers: { Authorization: auth}});
+        return this.http.post<ApiUser>(`${this.conf.api}/user/register`, model, { headers: { Authorization: auth } });
     }
 
 }
