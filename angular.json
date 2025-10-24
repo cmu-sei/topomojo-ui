@@ -38,10 +38,16 @@
                 "output": "assets"
               }
             ],
-            "styles": ["projects/topomojo-work/src/styles.scss"],
+            "styles": [
+              "projects/topomojo-work/src/styles.scss",
+              "node_modules/vmware-wmks/wmks-all.css"
+            ],
             "scripts": [
               "node_modules/marked/marked.min.js",
-              "node_modules/emoji-toolkit/lib/js/joypixels.min.js"
+              "node_modules/emoji-toolkit/lib/js/joypixels.min.js",
+              "node_modules/jquery/dist/jquery.js",
+              "node_modules/jquery-ui-dist/jquery-ui.js",
+              "node_modules/vmware-wmks/wmks.min.js"
             ],
             "stylePreprocessorOptions": {
               "sass": {

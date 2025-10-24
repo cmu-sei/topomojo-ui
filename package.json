@@ -19,7 +19,7 @@
     "@angular/platform-browser": "^19.2.14",
     "@angular/platform-browser-dynamic": "^19.2.14",
     "@angular/router": "^19.2.14",
-    "@cmusei/console-forge": "^0.20.1",
+    "@cmusei/console-forge": "^0.20.6",
     "@fortawesome/angular-fontawesome": "^1.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
