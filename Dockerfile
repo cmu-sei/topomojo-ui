@@ -19,6 +19,7 @@ CMD ["npm", "start"]
 FROM nginx:alpine
 WORKDIR /var/www
 COPY --from=dev /app/dist/browser .
+COPY --from=dev /app/dist/lp/browser ./lp
 COPY --from=dev /app/dist/browser/assets/oidc-silent.html .
 COPY --from=dev /app/LICENSE.md ./LICENSE.md
 COPY --from=dev /app/nginx-static.conf /etc/nginx/conf.d/default.conf
