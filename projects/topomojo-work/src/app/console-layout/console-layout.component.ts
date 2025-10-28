@@ -108,7 +108,7 @@ export class ConsoleLayoutComponent {
     try {
       // ensure logged in
       // TODO: does this token even matter? previous implementation was looking for this in the querystring and not finding it, I don't think
-      await firstValueFrom(this.api.redeem(""));
+      await firstValueFrom(this.api.redeem(this.consoleRequest()?.token));
 
       forkJoin([
         this.api.nets(request.sessionId || ""),

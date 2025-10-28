@@ -23,8 +23,6 @@ const routes: Routes = [
   {
     path: 'c',
     component: ConsoleLayoutComponent,
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard]
   },
   {
     path: '',
