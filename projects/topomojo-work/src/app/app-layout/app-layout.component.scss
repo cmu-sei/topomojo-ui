@@ -1,7 +1,8 @@
 $banner-height: 24px;
 $nav-height: 64px;
-$sidebar-width-in: 48px;
+$sidebar-collapsed-width: 48px;
 $sidebar-width-out: 400px;
+$sidebar-footer-height: 72px;
 $footer-height: 16px;
 nav {
   height: $nav-height;
@@ -10,34 +11,37 @@ nav {
   position: absolute;
   left: 0;
   width: 0;
-  overflow: scroll;
+  overflow: hidden;
   z-index: 10;
 }
 .sidebar-out {
   width: $sidebar-width-out !important;
 }
 .sidebar-in {
-  width: $sidebar-width-in !important;
+  width: $sidebar-collapsed-width !important;
 }
 .sidebar-offset-out {
   left: $sidebar-width-out;
 }
 .sidebar-offset-in {
-  left: $sidebar-width-in;
+  left: $sidebar-collapsed-width;
 }
 .sidebar-header {
   top: $nav-height;
-  height: $sidebar-width-in;
+  height: $sidebar-collapsed-width;
   cursor: pointer;
 }
 .sidebar-body {
   top: $nav-height;
-  bottom: $sidebar-width-in + $footer-height;
+  bottom: $sidebar-footer-height + $footer-height;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .sidebar-footer {
   bottom: $footer-height;
-  height: $sidebar-width-in;
+  height: $sidebar-footer-height;
   cursor: pointer;
+  overflow: visible;
 }
 .banner {
   position: absolute;
@@ -61,4 +65,11 @@ footer {
   right: 0;
   bottom: 0;
   height: $footer-height;
+}
+.crucible-logo {
+  height: 60px;
+  display: block;
+}
+.sidebar-footer-inner {
+  padding: 0.5rem 0.75rem;
 }

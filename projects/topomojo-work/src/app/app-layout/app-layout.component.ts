@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { ConfigService } from '../config.service';
 import { UserService } from '../user.service';
 import { HubState, NotificationService } from '../notification.service';
@@ -6,7 +6,7 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { debounceTime, Observable } from 'rxjs';
 import { ApiUser } from '../api/gen/models';
-import { faChevronLeft, faChevronRight, faExclamationTriangle, faSearch, faThumbtack } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faExclamationTriangle, faBars, faThumbtack, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-app-layout',
@@ -24,8 +24,11 @@ export class AppLayoutComponent {
   faOpen = faChevronLeft;
   faClosed = faChevronRight;
   faThumbtack = faThumbtack;
-  faSearch = faSearch;
+  faBars = faBars;
   faExclamationTriangle = faExclamationTriangle;
+  faClose = faTimes;
+
+  @ViewChild('sidebarContainer') sidebarRef!: ElementRef<HTMLElement>;
 
   constructor(
     config: ConfigService,
@@ -62,18 +65,13 @@ export class AppLayoutComponent {
     return true;
   }
 
-  mouseenter(ev: MouseEvent): boolean {
-    if (!this.open) {
-      this.open = true;
-    }
-    return false;
+  toggleSidebar(): void {
+    this.open = !this.open;
   }
 
-  mouseleave(ev: MouseEvent): boolean {
-    if (!this.pinned) {
-      this.open = false;
-    }
-    return false;
+  closeSidebar(): void {
+    this.open = false;
+    this.pinned = false;
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -95,5 +93,24 @@ export class AppLayoutComponent {
     }
 
     return true;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.open || this.pinned) {
+      return;
+    }
+
+    if (!this.sidebarRef?.nativeElement) {
+      return;
+    }
+
+    const sidebarEl = this.sidebarRef.nativeElement;
+
+    if (sidebarEl.contains(event.target as Node)) {
+      return;
+    }
+
+    this.closeSidebar();
   }
 }
