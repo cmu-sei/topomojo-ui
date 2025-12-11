@@ -180,3 +180,12 @@ th[align="center"] {
   height: 0;
   opacity: 0;
 }
+
+body {
+  background-image: url('/assets/img/background.jpeg');
+  margin: 0;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
+}
