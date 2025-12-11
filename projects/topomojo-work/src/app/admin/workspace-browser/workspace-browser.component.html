@@ -2,6 +2,7 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <!-- Show standard header -->
+<h4>Workspaces</h4>
 <div>
   <div class="input-group input-group-sm">
     <div class="input-group-prepend">
@@ -70,28 +71,76 @@
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
 <hr  class="mt-0 mb-2" *ngIf="selected.length > 0" />
 
-<!-- paged workspace list (all or selected) -->
-<div *ngFor="let g of (source$ | async); trackBy:trackById" class="row mb-1">
+<div class="row mb-2 workspace-header align-items-center">
   <div class="col-1" *ngIf="selectDownloads">
-    <input type="checkbox" [checked]="isSelected(g.id)" (change)="select($event, g)"
-      style="margin-left: 30px;">
   </div>
+
   <div class="col-7">
-    <a [routerLink]="['/topo', g.id]" class="text-secondary">{{g.name}}</a>
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary"
+      (click)="sortBy('name')"
+    >
+      Workspace Name
+      <fa-icon
+        *ngIf="sortField === 'name'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div class="col-1">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary"
+      (click)="sortBy('created')"
+    >
+      Created Date
+      <fa-icon
+        *ngIf="sortField === 'created'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div [ngClass]="(selectDownloads ? 'col-3' : 'col-4') + ' d-flex justify-content-end'">
+    <span class="header-label text-primary">
+      Actions
+    </span>
+  </div>
+</div>
+
+<!-- paged workspace list (all or selected) -->
+<div *ngFor="let g of (source$ | async); trackBy:trackById"
+     class="row mb-1 workspace-row">
+
+  <div class="col-1" *ngIf="selectDownloads">
+    <input type="checkbox"
+           [checked]="isSelected(g.id)"
+           (change)="select($event, g)"
+           style="margin-left: 30px;">
+  </div>
+
+  <div class="col-7">
+    <a [routerLink]="['/topo', g.id]" class="text-secondary">{{ g.name }}</a>
     <br/>
     <small class="text-muted ml-4">
-      <app-clipspan>{{g.id}}</app-clipspan> &mdash; {{g.author}}
+      <app-clipspan>{{ g.id }}</app-clipspan> &mdash; {{ g.author }}
     </small>
   </div>
+
   <div class="col-1">
-    <small>{{g.whenCreated | shortdate}}</small>
+    <small>{{ g.whenCreated | shortdate }}</small>
   </div>
-  <div class="col-3">
+
+  <div [ngClass]="(selectDownloads ? 'col-3' : 'col-4') + ' d-flex justify-content-end'">
     <button class="btn btn-outline-info btn-sm mx-1" (click)="view(g)">
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
-    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(g)">
+    <app-confirm-button
+      btnClass="btn btn-outline-danger btn-sm"
+      (confirm)="delete(g)">
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Delete</span>
     </app-confirm-button>

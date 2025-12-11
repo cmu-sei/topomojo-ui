@@ -2,3 +2,25 @@
   margin-left: 30px;
   margin-right: 20px;
 }
+.workspace-header {
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 0.25rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+
+  .header-label {
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  fa-icon {
+    margin-left: 0.25rem;
+    font-size: 0.7rem;
+  }
+}
+
+.workspace-row {
+  font-size: 0.95rem;
+  padding-top: 0.25rem;
+}

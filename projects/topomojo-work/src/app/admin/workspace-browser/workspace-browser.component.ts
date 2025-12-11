@@ -13,6 +13,8 @@ import {
   faTimes,
   faFile,
   faFolder,
+  faSortUp,
+  faSortDown,
 } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable, of, Subject } from 'rxjs';
 import { catchError, debounceTime, filter, switchMap, tap } from 'rxjs/operators';
@@ -52,8 +54,12 @@ export class WorkspaceBrowserComponent implements OnInit {
   faTimes = faTimes;
   faFile = faFile;
   faFolder = faFolder;
+  faSortUp = faSortUp;
+  faSortDown = faSortDown;
   isDownloading = false;
   selectDownloads = false;
+  sortAscending = false;
+  sortField: 'name' | 'created' = 'created';
   @ViewChild('zipInput') zipInput!: ElementRef<HTMLInputElement>;
 
   constructor(private api: WorkspaceService) {
@@ -63,6 +69,7 @@ export class WorkspaceBrowserComponent implements OnInit {
       // tap(r => r.forEach(g => g.checked = !!this.selected.find(s => s.id === g.id))),
       tap((r) => (this.source = r)),
       tap((r) => (this.count = r.length)),
+      tap(() => this.applySort()),
       tap(() => this.review())
     );
 
@@ -211,6 +218,37 @@ export class WorkspaceBrowserComponent implements OnInit {
     const minutes = currentDate.getMinutes().toString().padStart(2, '0');
     const seconds = currentDate.getSeconds().toString().padStart(2, '0');
     return `${year}${month}${day}${hours}${minutes}${seconds}`;
+  }
+
+  sortBy(field: 'name' | 'created'): void {
+    if (this.sortField === field) {
+      this.sortAscending = !this.sortAscending;
+    } else {
+      this.sortField = field;
+      this.sortAscending = field === 'name';
+    }
+    this.applySort();
+  }
+
+  private applySort(): void {
+    const dir = this.sortAscending ? 1 : -1;
+
+    this.source.sort((a, b) => {
+      let av: any;
+      let bv: any;
+
+      if (this.sortField === 'name') {
+        av = (a.name || '').toLowerCase();
+        bv = (b.name || '').toLowerCase();
+      } else {
+        av = new Date(a.whenCreated as any).getTime();
+        bv = new Date(b.whenCreated as any).getTime();
+      }
+
+      if (av < bv) return -1 * dir;
+      if (av > bv) return 1 * dir;
+      return 0;
+    });
   }
 
 }
