@@ -34,10 +34,9 @@
   overflow: visible;
 }
 
-/* 2 columns: fixed View width + flexible Delete/Confirm/Cancel area */
 .tm-actions-grid {
   display: grid;
-  grid-template-columns: 88px 1fr; /* adjust 88px if you want */
+  grid-template-columns: 88px 1fr;
   gap: 0.5rem;
   align-items: center;
   width: 100%;
@@ -45,11 +44,10 @@
 }
 
 .tm-view-btn {
-  width: 88px;          /* must match grid col 1 */
+  width: 88px;
   justify-content: center;
 }
 
-/* keep the confirm button's internal controls on one line */
 .tm-action-host {
   justify-self: end;
   white-space: nowrap;

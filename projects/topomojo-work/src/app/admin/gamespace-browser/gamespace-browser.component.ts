@@ -167,7 +167,6 @@ export class GamespaceBrowserComponent implements OnInit {
   }
 
   canFavorite(g: Gamespace): boolean {
-    // only allow favoriting while viewing active list AND gamespace is actually running
     return this.filter === 'active' && !!(g as any).startTime;
   }
 
@@ -184,7 +183,6 @@ export class GamespaceBrowserComponent implements OnInit {
     const id = g.id;
     const currentlyFav = this.gamespaceFavorites.has(id);
 
-    // optimistic
     currentlyFav ? this.gamespaceFavorites.delete(id) : this.gamespaceFavorites.add(id);
     this.applySort();
 
@@ -194,14 +192,12 @@ export class GamespaceBrowserComponent implements OnInit {
 
     req$.pipe(
       catchError(err => {
-        // revert
         currentlyFav ? this.gamespaceFavorites.add(id) : this.gamespaceFavorites.delete(id);
         this.applySort();
         throw err;
       })
     ).subscribe({
       next: () => {
-        // re-sync so it doesn't “snap back”
         this.api
           .listGamespaceFavorites()
           .pipe(catchError(() => of([] as string[])))
@@ -227,7 +223,6 @@ export class GamespaceBrowserComponent implements OnInit {
     const dir = this.sortAscending ? 1 : -1;
 
     this.source.sort((a, b) => {
-      // ⭐ favorites-first only for the ACTIVE list
       if (this.filter === 'active') {
         const aFav = this.canFavorite(a) && this.gamespaceFavorites.has(a.id) ? 1 : 0;
         const bFav = this.canFavorite(b) && this.gamespaceFavorites.has(b.id) ? 1 : 0;

@@ -26,7 +26,6 @@ export class AdminService extends GeneratedAdminService {
         return this.http.get<ThemeInfo>(this.conf.api + '/theme');
     }
 
-    // NEW: upload background (admin-only)
     public uploadBackground(file: File): Observable<ThemeInfo> {
         const fd = new FormData();
         fd.append('file', file, file.name);

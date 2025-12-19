@@ -109,9 +109,8 @@ export class WorkspaceBrowserComponent implements OnInit {
   toggleFavorite(id: string): void {
     const currentlyFav = this.isFavorite(id);
 
-    // optimistic UI update
     currentlyFav ? this.favorites.delete(id) : this.favorites.add(id);
-    this.applySort(); // optional
+    this.applySort();
 
     const req$ = currentlyFav
       ? this.api.unfavoriteWorkspace(id)
@@ -119,7 +118,6 @@ export class WorkspaceBrowserComponent implements OnInit {
 
     req$.subscribe({
       error: () => {
-        // revert on error
         currentlyFav ? this.favorites.add(id) : this.favorites.delete(id);
         this.applySort();
       }
