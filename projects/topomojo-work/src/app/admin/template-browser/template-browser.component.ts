@@ -3,7 +3,7 @@
 
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faCopy, faEye, faFilter, faGlobe, faLink, faList, faSearch, faTrash, faUnlink } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faEye, faFilter, faGlobe, faLink, faList, faSearch, faTrash, faUnlink, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
 import { debounceTime, filter, first, switchMap, tap } from 'rxjs/operators';
 import { TemplateDetail, TemplateSearch, TemplateSummary } from '../../api/gen/models';
@@ -39,6 +39,11 @@ export class TemplateBrowserComponent {
   faEye = faEye;
   faFilter = faFilter;
   faCopy = faCopy;
+  faSortUp = faSortUp;
+  faSortDown = faSortDown;
+
+  sortAscending = true;
+  sortField: 'name' | 'created' = 'created';
 
   constructor(
     route: ActivatedRoute,
@@ -54,6 +59,7 @@ export class TemplateBrowserComponent {
       switchMap(() => this.api.list(this.search)),
       tap(r => this.source = r),
       tap(() => this.review()),
+      tap(() => this.applySort()),
       tap(() => this.count = this.source.length)
     );
 
@@ -154,5 +160,36 @@ export class TemplateBrowserComponent {
     this.api.clone({id: m.id}).pipe(
       first()
     ).subscribe(_ => this.refresh())
+  }
+
+  sortBy(field: 'name' | 'created'): void {
+    if (this.sortField === field) {
+      this.sortAscending = !this.sortAscending;
+    } else {
+      this.sortField = field;
+      this.sortAscending = field === 'name';
+    }
+    this.applySort();
+  }
+
+  private applySort(): void {
+    const dir = this.sortAscending ? 1 : -1;
+
+    this.source.sort((a, b) => {
+      let av: any;
+      let bv: any;
+
+      if (this.sortField === 'name') {
+        av = (a.name || '').toLowerCase();
+        bv = (b.name || '').toLowerCase();
+      } else {
+        av = new Date((a as any).whenCreated).getTime();
+        bv = new Date((b as any).whenCreated).getTime();
+      }
+
+      if (av < bv) return -1 * dir;
+      if (av > bv) return 1 * dir;
+      return 0;
+    });
   }
 }

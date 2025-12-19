@@ -1,11 +1,13 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, EventEmitter, Output } from '@angular/core';
 import { RouterLinkActive, Router } from '@angular/router';
 import { interval, Observable } from 'rxjs';
 import { map, takeWhile } from 'rxjs/operators';
 import { Gamespace } from '../api/gen/models';
+import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
     selector: 'app-gamespace-card',
@@ -16,21 +18,26 @@ import { Gamespace } from '../api/gen/models';
 export class GamespaceCardComponent implements OnInit {
   @Input() gamespace!: Gamespace;
   @ViewChild('rla') rla!: RouterLinkActive;
+  @Input() isFavorite = false;
+  @Input() canFavorite = true;
+  @Output() favoriteToggle = new EventEmitter<void>();
+  faStarSolid = faStarSolid;
+  faStarRegular = faStarRegular;
   hovering = false;
-  countdown$: Observable<number>;
+  countdown$!: Observable<number>;
 
-  constructor(
-    private router: Router,
-  ) {
-    this.countdown$ = interval(1000).pipe(
-      map(() => (!!this.gamespace?.expirationTime
-        ? new Date(this.gamespace?.expirationTime).valueOf()
-        : 0) - Date.now()),
-        takeWhile(i => i > 0)
-    );
-  }
+  constructor( private router: Router) {}
 
   ngOnInit(): void {
+    this.countdown$ = interval(1000).pipe(
+      map(() => {
+        const exp = this.gamespace?.expirationTime
+          ? new Date(this.gamespace.expirationTime).valueOf()
+          : 0;
+        return exp - Date.now();
+      }),
+      takeWhile(i => i > 0)
+    );
   }
 
   go(): void {
@@ -48,6 +55,12 @@ export class GamespaceCardComponent implements OnInit {
     }
 
     return true;
+  }
+
+  onToggleFavorite(ev: MouseEvent) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    this.favoriteToggle.emit();
   }
 
 }

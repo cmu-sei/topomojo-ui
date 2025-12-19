@@ -31,8 +31,44 @@
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
 <hr class="mt-0 mb-2"/>
 
-<div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
-  <div class="col-8">
+<div class="row mb-2 workspace-header align-items-center">
+  <div class="col-6">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+      (click)="sortBy('name')"
+    >
+      <span>Template Name</span>
+      <fa-icon
+        class="ml-1"
+        *ngIf="sortField === 'name'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div class="col-2">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center text-nowrap"
+      (click)="sortBy('created')"
+    >
+      <span class="text-nowrap">Created Date</span>
+      <fa-icon
+        class="ml-1"
+        *ngIf="sortField === 'created'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div class="col-4 d-flex justify-content-end align-items-center">
+    <span class="header-label text-primary">Actions</span>
+  </div>
+</div>
+
+<div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1 workspace-row">
+  <div class="col-6">
     <span class="m-1">{{g.name}}</span>
     <!-- <button *ngIf="g.sourceId===g.parentId" class="btn btn-sm pop-info px-2 mx-1" (click)="filterSource(g)">
       <fa-icon [icon]="faLink"></fa-icon>
@@ -61,16 +97,21 @@
       <span *ngIf="!g.workspaceId">Stock Template</span>
     </small>
   </div>
-  <div class="col-4">
+  <div class="col-2 text-left">
+    <small>{{ g.whenCreated | shortdate }}</small>
+  </div>
+  <div class="col-4 text-right tm-actions">
     <button class="btn btn-outline-info btn-sm mx-1" (click)="view(g)">
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
+
     <button class="btn btn-outline-info btn-sm mx-1" (click)="clone(g)">
       <fa-icon [icon]="faCopy"></fa-icon>
       <span>Clone</span>
     </button>
-    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(g)">
+
+    <app-confirm-button btnClass="btn btn-outline-danger btn-sm mx-1" (confirm)="delete(g)">
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Delete</span>
     </app-confirm-button>

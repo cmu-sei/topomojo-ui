@@ -1,0 +1,30 @@
+.preview {
+  height: 180px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  display: grid;
+  place-items: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.file-drop {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 48px;
+  cursor: pointer;
+}
+
+.file-drop input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-drop-text {
+  color: #6c757d;
+}
+

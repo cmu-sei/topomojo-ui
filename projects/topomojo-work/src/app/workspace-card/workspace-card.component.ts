@@ -1,10 +1,12 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterLinkActive } from '@angular/router';
 import { WorkspaceSummary } from '../api/gen/models';
 import { ConfigService } from '../config.service';
+import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
     selector: 'app-workspace-card',
@@ -14,9 +16,14 @@ import { ConfigService } from '../config.service';
 })
 export class WorkspaceCardComponent implements OnInit {
   @Input() workspace!: WorkspaceSummary;
+  @Input() isFavorite = false;
+  @Output() favoriteToggle = new EventEmitter<void>();
   @ViewChild('rla') rla!: RouterLinkActive;
   hovering = false;
   upload_enabled: boolean;
+
+  faStarSolid = faStarSolid;
+  faStarRegular = faStarRegular;
 
   constructor(
     private router: Router,
@@ -43,5 +50,11 @@ export class WorkspaceCardComponent implements OnInit {
     }
 
     return true;
+  }
+
+  onToggleFavorite(ev: MouseEvent) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    this.favoriteToggle.emit();
   }
 }

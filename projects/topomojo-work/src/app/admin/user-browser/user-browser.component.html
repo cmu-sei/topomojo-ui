@@ -47,10 +47,44 @@
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
 <hr class="mt-0 mb-2" />
 
+<div class="row mb-2 workspace-header align-items-center">
+  <div class="col-6">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary"
+      (click)="sortBy('name')"
+    >
+      User Name
+      <fa-icon
+        *ngIf="sortField === 'name'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div class="col-2">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+      (click)="sortBy('created')"
+    >
+      Created Date
+      <fa-icon
+        *ngIf="sortField === 'created'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div class="col-4 align-self-center text-right">
+    <span class="header-label text-primary">Actions</span>
+  </div>
+</div>
+
 <div *ngFor="let user of source$ | async; trackBy:trackById" class="row mb-1"
   [class.pop-success]="user.role==='administrator'" [class.pop-secondary]="user.role==='creator'"
   [class.pop-warning]="user.role==='builder'" [class.pop-pink]="user.role==='observer'">
-  <div class="col-8">
+  <div class="col-6">
     <span class="text-secondary">{{user.name}}</span>
     <br />
     <div class="d-flex align-items-center my-1">
@@ -63,19 +97,25 @@
       </small>
     </div>
   </div>
+  <div class="col-2 align-self-center">
+    <small>{{user.whenCreated | shortdate}}</small>
+  </div>
+
   <div class="col-4 align-self-center text-right">
-    <small class="mr-2">{{user.whenCreated | shortdate}}</small>
-    <button class="btn btn-outline-info btn-sm mx-1" (click)="view(user)">
+    <button class="btn btn-outline-info btn-sm tm-action-btn" (click)="view(user)">
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
 
-    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(user)">
+    <app-confirm-button
+      class="tm-action-host"
+      btnClass="btn btn-outline-danger btn-sm tm-action-btn"
+      (confirm)="delete(user)">
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Delete</span>
     </app-confirm-button>
-
   </div>
+
 
   <div *ngIf="viewed === user" class="col-12">
     @if (user.role === 'administrator' && user.serviceAccountClientId)

@@ -9,3 +9,19 @@
 .text-pink {
     color: #5b0094;
 }
+
+.tm-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-header {
+  white-space: nowrap;
+  gap: 0.25rem;
+}
+
+.sort-header fa-icon {
+  display: inline-flex;
+}

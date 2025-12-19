@@ -152,6 +152,7 @@ export interface TemplateSummary {
   parentName?: string;
   isPublished?: boolean;
   isLinked?: boolean;
+  whenCreated?: string;
 }
 
 export interface Template {

@@ -1,0 +1,31 @@
+<div class="card p-3">
+  <h3 class="mb-3">Background Image</h3>
+
+  <div class="mb-2">
+    <label class="form-label">Upload an image</label>
+
+    <label class="file-drop form-control">
+      <span class="file-drop-text">Choose file</span>
+      <input
+        type="file"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+      />
+    </label>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Preview</label>
+    <div class="preview" [style.backgroundImage]="previewUrl ? 'url(' + previewUrl + ')' : 'none'">
+      <span *ngIf="!previewUrl" class="text-muted">No background selected</span>
+    </div>
+  </div>
+
+  <button class="btn btn-outline-danger" type="button" (click)="clearBackground()">
+    Clear background
+  </button>
+</div>

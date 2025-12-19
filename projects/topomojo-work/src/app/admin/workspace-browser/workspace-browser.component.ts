@@ -20,6 +20,8 @@ import { BehaviorSubject, interval, merge, Observable, of, Subject } from 'rxjs'
 import { catchError, debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { Search, Workspace, WorkspaceSummary } from '../../api/gen/models';
 import { WorkspaceService } from '../../api/workspace.service';
+import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
     selector: 'app-workspace-browser',
@@ -61,6 +63,10 @@ export class WorkspaceBrowserComponent implements OnInit {
   sortAscending = false;
   sortField: 'name' | 'created' = 'created';
   @ViewChild('zipInput') zipInput!: ElementRef<HTMLInputElement>;
+  faStarSolid = faStarSolid;
+  faStarRegular = faStarRegular;
+
+  favorites = new Set<string>();
 
   constructor(private api: WorkspaceService) {
     this.source$ = merge(this.refresh$, interval(60000)).pipe(
@@ -86,7 +92,40 @@ export class WorkspaceBrowserComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.api.syncWorkspaceFavorites().subscribe();
+
+    this.api.workspaceFavorites$.subscribe(set => {
+      this.favorites = set;
+      this.applySort();
+      this.refresh$.next(true);
+    });
+  }
+
+  isFavorite(id: string): boolean {
+    return this.favorites.has(id);
+  }
+
+  toggleFavorite(id: string): void {
+    const currentlyFav = this.isFavorite(id);
+
+    // optimistic UI update
+    currentlyFav ? this.favorites.delete(id) : this.favorites.add(id);
+    this.applySort(); // optional
+
+    const req$ = currentlyFav
+      ? this.api.unfavoriteWorkspace(id)
+      : this.api.favoriteWorkspace(id);
+
+    req$.subscribe({
+      error: () => {
+        // revert on error
+        currentlyFav ? this.favorites.add(id) : this.favorites.delete(id);
+        this.applySort();
+      }
+    });
+  }
+
 
   refresh(): void {
     this.search.skip = this.skip;
@@ -234,6 +273,10 @@ export class WorkspaceBrowserComponent implements OnInit {
     const dir = this.sortAscending ? 1 : -1;
 
     this.source.sort((a, b) => {
+      const af = this.isFavorite(a.id) ? 1 : 0;
+      const bf = this.isFavorite(b.id) ? 1 : 0;
+      if (af !== bf) return bf - af;
+
       let av: any;
       let bv: any;
 
@@ -247,8 +290,10 @@ export class WorkspaceBrowserComponent implements OnInit {
 
       if (av < bv) return -1 * dir;
       if (av > bv) return 1 * dir;
-      return 0;
+
+      return (a.id < b.id ? -1 : 1);
     });
   }
+
 
 }

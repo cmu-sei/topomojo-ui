@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { TemplateDetailFormComponent } from './template-detail-form/template-detail-form.component';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { UserBrowserComponent } from './user-browser/user-browser.component';
+import { SettingBrowserComponent } from './setting-browser/setting-browser.component';
 import { ApikeysComponent } from './apikeys/apikeys.component';
 import { LogViewerComponent } from './log-viewer/log-viewer.component';
 import { ObserveComponent } from './observe/observe.component';
@@ -37,6 +38,7 @@ import { UserRoleBadgeComponent } from "./user-role-badge/user-role-badge.compon
     UserBrowserComponent,
     ApikeysComponent,
     LogViewerComponent,
+    SettingBrowserComponent,
     ObserveComponent,
     GamespaceDetailComponent,
     GamespaceInteractComponent,

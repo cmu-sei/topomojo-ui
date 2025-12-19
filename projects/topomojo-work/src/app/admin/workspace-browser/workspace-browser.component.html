@@ -75,7 +75,7 @@
   <div class="col-1" *ngIf="selectDownloads">
   </div>
 
-  <div class="col-7">
+  <div [ngClass]="selectDownloads ? 'col-5' : 'col-6'">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary"
@@ -89,7 +89,7 @@
     </button>
   </div>
 
-  <div class="col-1">
+  <div class="col-2">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary"
@@ -103,7 +103,7 @@
     </button>
   </div>
 
-  <div [ngClass]="(selectDownloads ? 'col-3' : 'col-4') + ' d-flex justify-content-end'">
+  <div class="col-4 d-flex justify-content-end flex-wrap tm-actions">
     <span class="header-label text-primary">
       Actions
     </span>
@@ -121,30 +121,46 @@
            style="margin-left: 30px;">
   </div>
 
-  <div class="col-7">
+  <div [ngClass]="selectDownloads ? 'col-5' : 'col-6'">
+    <button
+      type="button"
+      class="btn btn-link p-0 mr-2 favorite-btn"
+      (click)="toggleFavorite(g.id); $event.preventDefault(); $event.stopPropagation();"
+      [attr.aria-label]="isFavorite(g.id) ? 'Unfavorite workspace' : 'Favorite workspace'"
+      [attr.title]="isFavorite(g.id) ? 'Unfavorite' : 'Favorite'"
+    >
+      <fa-icon
+        [icon]="isFavorite(g.id) ? faStarSolid : faStarRegular"
+        [ngClass]="isFavorite(g.id) ? 'favorite-on' : 'favorite-off'">
+      </fa-icon>
+    </button>
     <a [routerLink]="['/topo', g.id]" class="text-secondary">{{ g.name }}</a>
+
     <br/>
     <small class="text-muted ml-4">
       <app-clipspan>{{ g.id }}</app-clipspan> &mdash; {{ g.author }}
     </small>
   </div>
 
-  <div class="col-1">
+  <div class="col-2">
     <small>{{ g.whenCreated | shortdate }}</small>
   </div>
 
-  <div [ngClass]="(selectDownloads ? 'col-3' : 'col-4') + ' d-flex justify-content-end'">
-    <button class="btn btn-outline-info btn-sm mx-1" (click)="view(g)">
+  <div class="col-4 d-flex justify-content-end align-items-center tm-actions">
+    <button class="btn btn-outline-info btn-sm tm-action-btn" (click)="view(g)">
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
+
     <app-confirm-button
-      btnClass="btn btn-outline-danger btn-sm"
+      class="tm-action-host"
+      btnClass="btn btn-outline-danger btn-sm tm-action-btn"
       (confirm)="delete(g)">
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Delete</span>
     </app-confirm-button>
   </div>
+
   <div *ngIf="viewed === g" class="col-12">
     <ng-container *ngIf="detail$ | async as detail">
 

@@ -22,11 +22,9 @@ export class AdminComponent implements OnInit {
     route: ActivatedRoute,
     api: AdminService
   ) {
-    route.params.pipe(
-      debounceTime(500),
-      tap(p => this.section = p.section)
-    ).subscribe();
-
+    route.paramMap.subscribe(pm => {
+      this.section = pm.get('section') ?? 'dashboard';
+    });
     api.loadVersion().subscribe(
       info => this.info = info
     );

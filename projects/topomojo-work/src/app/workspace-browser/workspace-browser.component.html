@@ -35,16 +35,26 @@
   <!-- display workspace cards -->
   <ng-container *ngIf="mode === 'workspace'">
     <ng-container *ngFor="let ws of workspaces | async">
-      <app-workspace-card [workspace]="ws"></app-workspace-card>
+      <app-workspace-card
+        [workspace]="ws"
+        [isFavorite]="isFavorite(ws.id)"
+        (favoriteToggle)="toggleFavorite(ws.id)">
+      </app-workspace-card>
     </ng-container>
   </ng-container>
 
   <!-- display gamespace cards -->
   <ng-container *ngIf="mode === 'gamespace'">
     <ng-container *ngFor="let g of gamespaces | async">
-      <app-gamespace-card [gamespace]="g"></app-gamespace-card>
+      <app-gamespace-card
+        [gamespace]="g"
+        [canFavorite]="isPlayableGamespace(g)"
+        [isFavorite]="isPlayableGamespace(g) && isFavorite(g.id)"
+        (favoriteToggle)="toggleGamespaceFavorite(g)">
+      </app-gamespace-card>
     </ng-container>
   </ng-container>
+
 
   <hr class="my-0"/>
   <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
