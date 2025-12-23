@@ -1,9 +1,10 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faCopy, faEye, faFilter, faGlobe, faLink, faList, faSearch, faTrash, faUnlink, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faEye, faFilter, faGlobe, faLink, faList, faSearch, faTrash, faUnlink, faSortUp, faSortDown, faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
 import { debounceTime, filter, first, switchMap, tap } from 'rxjs/operators';
 import { TemplateDetail, TemplateSearch, TemplateSummary } from '../../api/gen/models';
@@ -15,7 +16,7 @@ import { TemplateService } from '../../api/template.service';
     styleUrls: ['./template-browser.component.scss'],
     standalone: false
 })
-export class TemplateBrowserComponent {
+export class TemplateBrowserComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);
   source$: Observable<TemplateSummary[]>;
   source: TemplateSummary[] = [];
@@ -41,7 +42,10 @@ export class TemplateBrowserComponent {
   faCopy = faCopy;
   faSortUp = faSortUp;
   faSortDown = faSortDown;
+  faStarSolid = faStarSolid;
+  faStarRegular = faStarRegular;
 
+  favorites = new Set<string>();
   sortAscending = true;
   sortField: 'name' | 'created' = 'created';
 
@@ -67,6 +71,16 @@ export class TemplateBrowserComponent {
       filter(t => !!t),
       switchMap(t => api.loadDetail(t?.id || ''))
     );
+  }
+
+  ngOnInit(): void {
+    this.api.listTemplateFavorites().subscribe({
+      next: (ids) => {
+        this.favorites = new Set(ids || []);
+        this.applySort();
+        this.refresh$.next(true);
+      }
+    });
   }
 
   refresh(): void {
@@ -176,6 +190,10 @@ export class TemplateBrowserComponent {
     const dir = this.sortAscending ? 1 : -1;
 
     this.source.sort((a, b) => {
+      const af = this.isFavorite(a.id) ? 1 : 0;
+      const bf = this.isFavorite(b.id) ? 1 : 0;
+      if (af !== bf) return bf - af;
+
       let av: any;
       let bv: any;
 
@@ -189,7 +207,30 @@ export class TemplateBrowserComponent {
 
       if (av < bv) return -1 * dir;
       if (av > bv) return 1 * dir;
-      return 0;
+
+      return (a.id < b.id ? -1 : 1);
+    });
+  }
+
+  isFavorite(id: string): boolean {
+    return this.favorites.has(id);
+  }
+
+  toggleFavorite(id: string): void {
+    const currentlyFav = this.isFavorite(id);
+
+    currentlyFav ? this.favorites.delete(id) : this.favorites.add(id);
+    this.applySort();
+
+    const req$ = currentlyFav
+      ? this.api.unfavoriteTemplate(id)
+      : this.api.favoriteTemplate(id);
+
+    req$.subscribe({
+      error: () => {
+        currentlyFav ? this.favorites.add(id) : this.favorites.delete(id);
+        this.applySort();
+      }
     });
   }
 }

@@ -69,7 +69,21 @@
 
 <div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1 workspace-row">
   <div class="col-6">
-    <span class="m-1">{{g.name}}</span>
+    <button
+      type="button"
+      class="btn btn-link p-0 mr-2 favorite-btn"
+      (click)="toggleFavorite(g.id); $event.preventDefault(); $event.stopPropagation();"
+      [attr.aria-label]="isFavorite(g.id) ? 'Unfavorite template' : 'Favorite template'"
+      [attr.title]="isFavorite(g.id) ? 'Unfavorite' : 'Favorite'"
+    >
+      <fa-icon
+        [icon]="isFavorite(g.id) ? faStarSolid : faStarRegular"
+        [ngClass]="isFavorite(g.id) ? 'favorite-on' : 'favorite-off'">
+      </fa-icon>
+    </button>
+
+    <span class="m-1">{{ g.name }}</span>
+
     <!-- <button *ngIf="g.sourceId===g.parentId" class="btn btn-sm pop-info px-2 mx-1" (click)="filterSource(g)">
       <fa-icon [icon]="faLink"></fa-icon>
       <span>{{g.sourceName}}</span>

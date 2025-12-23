@@ -1,3 +1,15 @@
 a {
   color: gray;
 }
+.workspace-id-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .2rem .6rem;
+  border-radius: 9999px;
+  background: #e6f4ea;
+  border: 1px solid #28a745;
+  color: #1e7e34;
+  font-size: 0.875rem;
+  font-weight: 600;
+}

@@ -18,10 +18,66 @@
 
 <hr/>
 
-<div *ngFor="let vm of source$ | async; trackBy:trackById" class="row mb-1">
-  <div class="col-12">
-    <span>{{vm.name}} </span><br/>
-    <small class="ml-4"> {{vm.groupName}} </small><br/>
-    <small class="ml-4"> ({{vm.host ? vm.host.split('.').shift() : 'unknown'}}) </small>
+<div class="row mb-2 vm-header align-items-center">
+  <div class="col-5 px-4">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+      (click)="sortBy('name')"
+    >
+      <span>Machine Name</span>
+      <fa-icon
+        class="ml-1"
+        *ngIf="sortField === 'name'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div class="col-5 px-4">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+      (click)="sortBy('group')"
+    >
+      <span>Gamespace / Group</span>
+      <fa-icon
+        class="ml-1"
+        *ngIf="sortField === 'group'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div class="col-2 px-4">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+      (click)="sortBy('host')"
+    >
+      <span>Host</span>
+      <fa-icon
+        class="ml-1"
+        *ngIf="sortField === 'host'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+</div>
+
+<div *ngFor="let vm of source$ | async; trackBy:trackById"
+     class="row mb-1 align-items-center">
+  <div class="col-5 px-4">
+    <span class="text-break">{{ vm.name }}</span>
+  </div>
+
+  <div class="col-5 px-4">
+    <small class="text-muted text-break">{{ vm.groupName }}</small>
+  </div>
+
+  <div class="col-2 px-4">
+    <small class="text-muted">
+      {{ vm.host ? vm.host.split('.').shift() : 'unknown' }}
+    </small>
   </div>
 </div>

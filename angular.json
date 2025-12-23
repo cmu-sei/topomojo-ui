@@ -158,7 +158,7 @@
               "projects/topomojo-mks/src/assets"
             ],
             "styles": [
-              "node_modules/vmware-wmks/wmks-all.css",
+              "node_modules/vmware-wmks/css/css/wmks-all.css",
               "projects/topomojo-mks/src/styles.scss"
             ],
             "stylePreprocessorOptions": {

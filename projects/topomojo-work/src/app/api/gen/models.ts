@@ -258,6 +258,7 @@ export interface WorkspaceSummary {
   author: string;
   audience: string;
   whenCreated: string;
+  lastActivity: string;
 }
 
 export interface PlayableWorkspace {

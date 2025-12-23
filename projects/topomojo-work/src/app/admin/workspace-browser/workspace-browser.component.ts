@@ -61,7 +61,7 @@ export class WorkspaceBrowserComponent implements OnInit {
   isDownloading = false;
   selectDownloads = false;
   sortAscending = false;
-  sortField: 'name' | 'created' = 'created';
+  sortField: 'name' | 'created' | 'activity' = 'created';
   @ViewChild('zipInput') zipInput!: ElementRef<HTMLInputElement>;
   faStarSolid = faStarSolid;
   faStarRegular = faStarRegular;
@@ -257,7 +257,7 @@ export class WorkspaceBrowserComponent implements OnInit {
     return `${year}${month}${day}${hours}${minutes}${seconds}`;
   }
 
-  sortBy(field: 'name' | 'created'): void {
+  sortBy(field: 'name' | 'created' | 'activity'): void {
     if (this.sortField === field) {
       this.sortAscending = !this.sortAscending;
     } else {
@@ -281,6 +281,9 @@ export class WorkspaceBrowserComponent implements OnInit {
       if (this.sortField === 'name') {
         av = (a.name || '').toLowerCase();
         bv = (b.name || '').toLowerCase();
+      } else if (this.sortField === 'activity') {
+        av = new Date((a as any).lastActivity).getTime();
+        bv = new Date((b as any).lastActivity).getTime();
       } else {
         av = new Date(a.whenCreated as any).getTime();
         bv = new Date(b.whenCreated as any).getTime();
@@ -292,6 +295,4 @@ export class WorkspaceBrowserComponent implements OnInit {
       return (a.id < b.id ? -1 : 1);
     });
   }
-
-
 }

@@ -75,7 +75,7 @@
   <div class="col-1" *ngIf="selectDownloads">
   </div>
 
-  <div [ngClass]="selectDownloads ? 'col-5' : 'col-6'">
+  <div [ngClass]="selectDownloads ? 'col-4' : 'col-5'">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary"
@@ -103,16 +103,28 @@
     </button>
   </div>
 
-  <div class="col-4 d-flex justify-content-end flex-wrap tm-actions">
-    <span class="header-label text-primary">
-      Actions
-    </span>
+  <div class="col-2">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary"
+      (click)="sortBy('activity')"
+    >
+      Last Activity
+      <fa-icon
+        *ngIf="sortField === 'activity'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div class="col-3 d-flex justify-content-end flex-wrap tm-actions">
+    <span class="header-label text-primary">Actions</span>
   </div>
 </div>
 
 <!-- paged workspace list (all or selected) -->
 <div *ngFor="let g of (source$ | async); trackBy:trackById"
-     class="row mb-1 workspace-row">
+     class="row mb-1 workspace-row align-items-center">
 
   <div class="col-1" *ngIf="selectDownloads">
     <input type="checkbox"
@@ -121,7 +133,7 @@
            style="margin-left: 30px;">
   </div>
 
-  <div [ngClass]="selectDownloads ? 'col-5' : 'col-6'">
+  <div [ngClass]="selectDownloads ? 'col-4' : 'col-5'">
     <button
       type="button"
       class="btn btn-link p-0 mr-2 favorite-btn"
@@ -137,17 +149,21 @@
     <a [routerLink]="['/topo', g.id]" class="text-secondary">{{ g.name }}</a>
 
     <br/>
-    <small class="text-muted ml-4">
+    <small class="text-muted ml-4 d-block text-break">
       <app-clipspan>{{ g.id }}</app-clipspan> &mdash; {{ g.author }}
     </small>
   </div>
 
-  <div class="col-2">
+  <div class="col-2 d-flex align-items-center">
     <small>{{ g.whenCreated | shortdate }}</small>
   </div>
 
-  <div class="col-4 d-flex justify-content-end align-items-center tm-actions">
-    <button class="btn btn-outline-info btn-sm tm-action-btn" (click)="view(g)">
+  <div class="col-2 d-flex align-items-center">
+    <small>{{ g.lastActivity | shortdate }}</small>
+  </div>
+
+  <div class="col-3 d-flex justify-content-end align-items-center tm-actions">
+    <button class="btn btn-outline-info btn-sm tm-action-btn mr-2" (click)="view(g)">
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>

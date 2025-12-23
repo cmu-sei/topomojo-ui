@@ -3,7 +3,7 @@
 
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { faFilter, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faSyncAlt, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable, of, zip, combineLatest } from 'rxjs';
 import { catchError, debounceTime, map, switchMap, tap, shareReplay, startWith } from 'rxjs/operators';
 import { GamespaceService } from '../api/gamespace.service';
@@ -34,6 +34,7 @@ export class WorkspaceBrowserComponent implements OnInit {
 
   faFilter = faFilter;
   faSync = faSyncAlt;
+  faInfoCircle = faInfoCircle;
 
   private workspaceFavorites = new Set<string>();
 

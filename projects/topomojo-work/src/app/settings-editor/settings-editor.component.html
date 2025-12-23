@@ -6,50 +6,172 @@
   <small>Inactive: "unpublished and idle" or "published and unused"</small>
 </alert>
 
-<pre>
-  Launch Count: {{workspace.stats.launchCount}}
-  Last Activity: {{workspace.stats.lastActivity}}
-</pre>
+<div class="workspace-stats border rounded p-2 mb-3">
+  <div class="d-flex flex-wrap align-items-center">
+    <span class="mr-3">
+      <span class="text-muted">Launch Count:</span>
+      <strong class="ml-1">{{ workspace.stats.launchCount }}</strong>
+    </span>
+
+    <span>
+      <span class="text-muted">Last Activity:</span>
+      <strong class="ml-1">{{ workspace.stats.lastActivity }}</strong>
+    </span>
+  </div>
+</div>
+
+<div>
+  <div class="font-weight-bold">Workspace Settings</div>
+  <div class="text-muted">
+    Use this tab to manage the workspace metadata: how it’s labeled, described, who it’s attributed to, who can
+    launch it, and how long it’s expected to take.
+  </div>
+</div>
 
 <form [formGroup]="form">
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="name-input">Title</label>
+    <label class="mb-0 d-flex align-items-center" for="name-input">
+      Title
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        data-toggle="tooltip"
+        data-placement="right"
+        title="The title of your workspace; remember that the title should be unique."
+        aria-label="The title of your workspace; remember that the title should be unique."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
     <input id="name-input" type="text" class="form-control" formControlName="name">
+    <small>
+      The name shown when browsing workspaces. Keep it unique and descriptive (e.g., “Web Exploits Lab 1”).
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="description-input">Description</label>
+    <label class="mb-0 d-flex align-items-center" for="description-input">
+      Description
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        data-toggle="tooltip"
+        data-placement="right"
+        title="A brief description of your workspace to display when browsing titles. The Description is viewable to everyone, and when used with Gameboard, visible there too."
+        aria-label="A brief description of your workspace to display when browsing titles. The Description is viewable to everyone, and when used with Gameboard, visible there too."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
     <textarea id="description-input" type="text" rows="3" class="form-control" formControlName="description"></textarea>
-    <small>Short description to display when browsing titles</small>
+    <small>
+      What this lab is about. This text appears in workspace browsing and may be visible broadly.
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="tags-input">Tags</label>
+    <label class="mb-0 d-flex align-items-center" for="tags-input">
+      Tags
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        data-toggle="tooltip"
+        data-placement="right"
+        title="Internal metadata to add data about the lab (e.g., for a competition: cyber-cup c01). You can search by tags later."
+        aria-label="Internal metadata to add data about the lab (e.g., for a competition: cyber-cup c01). You can search by tags later."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
     <input id="tags-input" type="text" class="form-control" formControlName="tags">
-    <small>internal tags</small>
+    <small>
+      Internal labels to help organize and search (e.g., “competition”, “web”, “c01”). Space-delimited.
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="author-input">Authorship</label>
+    <label class="mb-0 d-flex align-items-center" for="author-input">
+      Authorship
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        data-toggle="tooltip"
+        data-placement="right"
+        title="Your name and the names of others who may have assisted you."
+        aria-label="Your name and the names of others who may have assisted you."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
     <input id="author-input" type="text" class="form-control" formControlName="author">
-    <small>text to indicate authorship of this resource</small>
+    <small>
+      Credit the lab creators and contributors (shown as the workspace author text).
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="audience-input">Audience</label>
+    <label class="mb-0 d-flex align-items-center" for="audience-input">
+      Audience
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        data-toggle="tooltip"
+        data-placement="right"
+        title="A space-delimited list of administrator-defined groups that can launch a gamespace from this workspace. Users can launch only if their scope matches one of these audiences. 'everyone' is the global audience."
+        aria-label="A space-delimited list of administrator-defined groups that can launch a gamespace from this workspace. Users can launch only if their scope matches one of these audiences. 'everyone' is the global audience."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
     <input id="audience-input" type="text" class="form-control" formControlName="audience">
-    <small>space-delimited list of clients that can launch this as a gamespace; '<code>everyone</code>' is the global audience</small>
+    <small>
+      Who can launch/play this as a gamespace. Enter one or more groups (space-delimited). Use
+      '<code>everyone</code>' to allow all users.
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="audience-input">Duration</label>
+    <label class="mb-0 d-flex align-items-center" for="durationMinutes-input">
+      Duration
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        data-toggle="tooltip"
+        data-placement="right"
+        title="Recommended length of time (in minutes) it takes to play through a gamespace launched from this workspace."
+        aria-label="Recommended length of time (in minutes) it takes to play through a gamespace launched from this workspace."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
     <input id="durationMinutes-input" type="number" class="form-control" formControlName="durationMinutes">
-    <small>recommended duration in minutes</small>
+    <small>
+      Estimated time (minutes) to complete the lab. This helps set expectations for players.
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0">Collaboration</label>
+    <label class="mb-0 d-flex align-items-center">
+      Collaboration
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        data-toggle="tooltip"
+        data-placement="right"
+        title="Invite collaborators by sharing an invitation URL. Collaborators can help edit the workspace. Generating a new invitation invalidates the existing one."
+        aria-label="Invite collaborators by sharing an invitation URL. Collaborators can help edit the workspace. Generating a new invitation invalidates the existing one."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
 
     <div *ngIf="!workspace.workers?.length">&mdash; none</div>
 
@@ -67,7 +189,9 @@
         <span>Generate invitation</span>
       </button>
     </div>
-    <small>Invite collaborators by sharing an invitation url. (Invalidates existing invitation)</small>
+    <small>
+      Share an invitation link to add collaborators. Generating a new link invalidates the previous one.
+    </small>
 
   </div>
 

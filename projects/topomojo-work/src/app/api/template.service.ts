@@ -14,4 +14,16 @@ export class TemplateService extends GeneratedTemplateService {
        protected http: HttpClient,
        protected conf: ApiSettings
     ) { super(http, conf); }
+
+    public listTemplateFavorites(): Observable<string[]> {
+        return this.http.get<string[]>(this.conf.api + '/template-favorites');
+    }
+
+    public favoriteTemplate(templateId: string): Observable<void> {
+        return this.http.put<void>(this.conf.api + `/template-favorite/${encodeURIComponent(templateId)}`, null);
+    }
+
+    public unfavoriteTemplate(templateId: string): Observable<void> {
+        return this.http.delete<void>(this.conf.api + `/template-favorite/${encodeURIComponent(templateId)}`);
+    }
 }
