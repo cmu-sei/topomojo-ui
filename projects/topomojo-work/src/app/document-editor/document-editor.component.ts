@@ -7,7 +7,7 @@ import { BehaviorSubject, interval, merge, Observable, of, Subject, Subscription
 import { DocumentService } from '../api/document.service';
 import { auditTime, buffer, catchError, debounceTime, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { NgxEditorModel } from 'ngx-monaco-editor-v2';
-import { faCloudUploadAlt, faImages, faFileImage, faSpinner, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faCloudUploadAlt, faImages, faFileImage, faSpinner, faLock, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { NotificationService, HubEvent, Actor } from '../notification.service';
 import { CollaborationService, MonacoEditor, Position, Range, Selection,
   Editor, EditorOptions, EditorViewState, EditorChange,
@@ -35,6 +35,7 @@ export class DocumentEditorComponent implements OnInit, OnChanges, AfterViewInit
   faFile = faFileImage;
   faSpinner = faSpinner;
   faLock = faLock;
+  faInfoCircle = faInfoCircle;
 
   readOnly = true; // Initially locked until loaded
 

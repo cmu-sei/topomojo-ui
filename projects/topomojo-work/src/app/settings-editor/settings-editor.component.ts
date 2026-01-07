@@ -1,7 +1,7 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { timer } from 'rxjs';
@@ -12,15 +12,13 @@ import { ClipboardService } from '../clipboard.service';
 import { ConfigService } from '../config.service';
 import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
-declare const $: any;
-
 @Component({
   selector: 'app-settings-editor',
   templateUrl: './settings-editor.component.html',
   styleUrls: ['./settings-editor.component.scss'],
   standalone: false
 })
-export class SettingsEditorComponent implements OnInit, OnChanges, AfterViewInit {
+export class SettingsEditorComponent implements OnInit, OnChanges {
   @Input() workspace!: Workspace;
   form: UntypedFormGroup;
   inviteUrl = '';
@@ -49,37 +47,39 @@ export class SettingsEditorComponent implements OnInit, OnChanges, AfterViewInit
         tags: [''],
         audience: [''],
         author: [''],
-        durationMinutes: ['']
+        durationMinutes: [0, [Validators.min(0)]]
       },
       { updateOn: 'blur' }
     );
 
     this.form.valueChanges
       .pipe(
-        filter(f => !this.form.pristine && this.form.valid),
-        switchMap(f => api.update(f as ChangedWorkspace))
+        filter(() => this.form.dirty && this.form.valid),
+        switchMap(raw => {
+          const payload: ChangedWorkspace = {
+            ...(raw as any),
+            durationMinutes: Number(raw.durationMinutes) || 0
+          };
+          return this.api.update(payload);
+        })
       )
-      .subscribe(() => this.mapToWorkspace(this.form.value));
+      .subscribe({
+        next: () =>
+          this.mapToWorkspace({
+            ...(this.form.value as any),
+            durationMinutes: Number(this.form.value.durationMinutes) || 0
+          }),
+        error: err => this.errors.push(err)
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!!changes.workspace) {
       this.form.reset(this.mapToSettings(changes.workspace.currentValue));
-      setTimeout(() => this.initTooltips());
     }
   }
 
   ngOnInit(): void {}
-
-  ngAfterViewInit(): void {
-    this.initTooltips();
-  }
-
-  private initTooltips(): void {
-    if ($ && $.fn && $.fn.tooltip) {
-      $('[data-toggle="tooltip"]').tooltip('dispose').tooltip();
-    }
-  }
 
   mapToSettings(ws: Workspace): WorkspaceSettings {
     return {

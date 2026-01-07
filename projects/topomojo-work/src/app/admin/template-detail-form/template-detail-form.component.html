@@ -2,90 +2,326 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <form #form="ngForm" [ngFormOptions]="{updateOn: 'change'}" (ngSubmit)="update()">
-  <div class="text-center">
-    <button class="btn btn-secondary btn-sm" type="submit" [disabled]="!form.dirty || !form.valid">Save Settings</button>
+  <div class="mb-2">
+    <div class="font-weight-bold">Template Settings</div>
+    <div class="text-muted">
+      Edit template metadata and deployment settings. Linked templates reference a parent and can’t save disk changes when
+      deployed; unlink a template when you need to customize it. Published templates appear in “Add Templates” on Workspace creation settings.
+    </div>
+  </div>
+
+  <div class="text-center mb-2">
+    <button
+      class="btn btn-secondary btn-sm"
+      type="submit"
+      [disabled]="!form.dirty || !form.valid"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Save changes to this template’s settings.'"
+      aria-label="Save changes to this template’s settings."
+    >
+      Save Settings
+    </button>
   </div>
 
   <input type="hidden" name="id" [ngModel]="template.id">
 
   <div class="form-group bg-light">
-    <label for="name-input">Name</label>
-    <input id="name-input" class="form-control" name="name" type="text" placeholder="Name" [(ngModel)]="template.name" maxlength="64">
+    <label class="mb-0 d-flex align-items-center" for="name-input">
+      Name
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Template name (no spaces). TopoMojo replaces spaces with `-` and the name should be unique.'"
+        aria-label="Template name (no spaces). TopoMojo replaces spaces with '-' and the name should be unique."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
+
+    <input
+      id="name-input"
+      class="form-control"
+      name="name"
+      type="text"
+      placeholder="Name"
+      [(ngModel)]="template.name"
+      maxlength="64"
+    >
+
     <div class="d-flex">
-      <small></small>
+      <small class="text-muted">
+        A short, unique identifier for this VM template.
+      </small>
       <div class="spacer"></div>
-      <small class="text-right">{{(''+template.name).length}} / 64</small>
+      <small class="text-right text-muted">{{(''+template.name).length}} / 64</small>
     </div>
   </div>
 
   <div *ngIf="!linked" class="form-group bg-light">
-    <label class="mb-0" for="hidden-toggle">Published</label>
+    <label class="mb-0 d-flex align-items-center" for="published-toggle">
+      Published
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Published templates appear in the “Add Templates” list on Workspace creation settings. Hide to keep it out of the selector.'"
+        aria-label="Published templates appear in the “Add Templates” list on Workspace creation settings. Hide to keep it out of the selector."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
+
     <div class="form-control auto-h d-flex align-items-center">
       <label>Hidden</label>
-      <label class="btn text-info" btnCheckbox [ngModelOptions]="{updateOn: 'change'}" [(ngModel)]="template.isPublished" name="isPublished">
+      <label
+        id="published-toggle"
+        class="btn text-info"
+        btnCheckbox
+        [ngModelOptions]="{updateOn: 'change'}"
+        [(ngModel)]="template.isPublished"
+        name="isPublished"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="template.isPublished ? 'Published (visible in Add Templates).' : 'Hidden (not shown in Add Templates).'"
+        [attr.aria-label]="template.isPublished ? 'Published (visible in Add Templates).' : 'Hidden (not shown in Add Templates).'"
+      >
         <fa-icon *ngIf="!template.isPublished" [icon]="faToggleOff" size="lg"></fa-icon>
         <fa-icon *ngIf="template.isPublished" [icon]="faToggleOn" size="lg"></fa-icon>
       </label>
       <label>Visible</label>
     </div>
-    <small>Published templates show in the "Add Template" list.</small>
+
+    <small class="text-muted">
+      Published templates show up in the workspace template selector “Add Templates".
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label for="description-input">Description</label>
-    <textarea id="description-input" class="form-control" name="description" [(ngModel)]="template.description"
-    placeholder="Description" maxlength="255"></textarea>
+    <label class="mb-0 d-flex align-items-center" for="description-input">
+      Description
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Internal notes only (not shown to players). Commonly used for VM purpose and credentials.'"
+        aria-label="Internal notes only (not shown to players). Commonly used for VM purpose and credentials."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
+
+    <textarea
+      id="description-input"
+      class="form-control"
+      name="description"
+      [(ngModel)]="template.description"
+      placeholder="Description"
+      maxlength="255"
+      rows="3"
+    ></textarea>
+
     <div class="d-flex">
+      <small class="text-muted">
+        Suggested: include login credentials and what this VM is for.
+      </small>
       <div class="spacer"></div>
-      <small class="text-right">{{(''+template.description).length}} / 255</small>
+      <small class="text-right text-muted">{{(''+template.description).length}} / 255</small>
     </div>
   </div>
 
   <div class="form-group bg-light">
-    <label for="audience-input">Audience</label>
-    <input id="audience-input" class="form-control" name="audience" type="text" placeholder="Audience" [(ngModel)]="template.audience" maxlength="64">
+    <label class="mb-0 d-flex align-items-center" for="audience-input">
+      Audience
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Space-delimited audience scopes that can view/link this template. Leave blank for default behavior.'"
+        aria-label="Space-delimited audience scopes that can view/link this template. Leave blank for default behavior."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
+
+    <input
+      id="audience-input"
+      class="form-control"
+      name="audience"
+      type="text"
+      placeholder="Audience"
+      [(ngModel)]="template.audience"
+      maxlength="64"
+    >
+
     <div class="d-flex">
-      <small>audience controls which workspaces can view/link this template</small>
+      <small class="text-muted">
+        Controls which workspaces can view/link this template (space-delimited).
+      </small>
       <div class="spacer"></div>
-      <small class="text-right">{{(''+template.audience).length}} / 64</small>
+      <small class="text-right text-muted">{{(''+template.audience).length}} / 64</small>
     </div>
   </div>
 
   <div class="form-group bg-light">
-    <label for="networks-input">Networks</label>
-    <input id="networks-input" class="form-control" name="networks" type="text" placeholder="Networks" [(ngModel)]="template.networks" maxlength="64">
+    <label class="mb-0 d-flex align-items-center" for="networks-input">
+      Networks
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Space-delimited network names. The VM gets one NIC per network. Names should match across VMs that must communicate.'"
+        aria-label="Space-delimited network names. The VM gets one NIC per network. Names should match across VMs that must communicate."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
+
+    <input
+      id="networks-input"
+      class="form-control"
+      name="networks"
+      type="text"
+      placeholder="Networks"
+      [(ngModel)]="template.networks"
+      maxlength="64"
+    >
+
     <div class="d-flex">
-      <small>Space-delimited network names</small>
+      <small class="text-muted">
+        Space-delimited network names (e.g., <code>lan wan</code>).
+      </small>
       <div class="spacer"></div>
-      <small class="text-right">{{(''+template.networks).length}} / 64</small>
+      <small class="text-right text-muted">{{(''+template.networks).length}} / 64</small>
     </div>
   </div>
 
   <div class="form-group bg-light">
-    <label for="guestinfo-input">Guest Settings</label>
-    <textarea id="guestinfo-input" class="form-control" name="guestinfo"
-      placeholder="Custom Settings" autocomplete="false" spellcheck="false"
-      [(ngModel)]="template.guestinfo" maxlength="1024"></textarea>
+    <label class="mb-0 d-flex align-items-center" for="guestinfo-input">
+      Guest Settings
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Key/value pairs (key=value) injected into the VM via guestinfo variables. Lines starting with # are ignored.'"
+        aria-label="Key/value pairs (key=value) injected into the VM via guestinfo variables. Lines starting with # are ignored."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
+
+    <textarea
+      id="guestinfo-input"
+      class="form-control"
+      name="guestinfo"
+      placeholder="key=value"
+      autocomplete="false"
+      spellcheck="false"
+      [(ngModel)]="template.guestinfo"
+      maxlength="1024"
+      rows="5"
+    ></textarea>
+
     <div class="d-flex">
-      <small>key = value (lines commented with # are ignored)</small>
+      <small class="text-muted">
+        One per line: <code>key=value</code>. Lines commented with <code>#</code> are ignored.
+      </small>
       <div class="spacer"></div>
-      <small class="text-right">{{(''+template.guestinfo).length}} / 1024</small>
+      <small class="text-right text-muted">{{(''+template.guestinfo).length}} / 1024</small>
     </div>
   </div>
 
   <div *ngIf="!template.isLinked" class="form-group bg-light">
-    <label for="detail-input">Detail</label>
-    <textarea id="detail-input" name="detail" class="form-control json" spellcheck="false" rows="20" placeholder="Detail" [(ngModel)]="template.detail"></textarea>
-  </div>
-  <div *ngIf="template.isLinked" class="form-group bg-light">
-    <label for="">Parent Detail</label>
-    <pre>{{template.parent!.detail! | jsonParse | json}}</pre>
+    <label class="mb-0 d-flex align-items-center" for="detail-input">
+      Detail
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Advanced template detail (JSON). This is typically used for low-level configuration and troubleshooting.'"
+        aria-label="Advanced template detail (JSON). This is typically used for low-level configuration and troubleshooting."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
+
+    <textarea
+      id="detail-input"
+      name="detail"
+      class="form-control json"
+      spellcheck="false"
+      rows="20"
+      placeholder="Detail"
+      [(ngModel)]="template.detail"
+    ></textarea>
+
+    <small class="text-muted">
+      Advanced configuration. Keep valid JSON to avoid errors.
+    </small>
   </div>
 
-  <div class="text-center">
-    <button class="btn btn-secondary btn-sm" type="submit" [disabled]="!form.dirty || !form.valid">Save Settings</button>
+  <div *ngIf="template.isLinked" class="form-group bg-light">
+    <label class="mb-0 d-flex align-items-center">
+      Parent Detail
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'This template is linked. Parent detail is read-only here.'"
+        aria-label="This template is linked. Parent detail is read-only here."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
+
+    <pre>{{template.parent!.detail! | jsonParse | json}}</pre>
+
+    <small class="text-muted">
+      Linked templates inherit disk content from the parent. Unlink to create a new copy you can customize and save.
+    </small>
+  </div>
+
+  <div class="text-center mt-2">
+    <button
+      class="btn btn-secondary btn-sm"
+      type="submit"
+      [disabled]="!form.dirty || !form.valid"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Save changes to this template’s settings.'"
+      aria-label="Save changes to this template’s settings."
+    >
+      Save Settings
+    </button>
   </div>
 
   <app-error-div [errors]="errors"></app-error-div>
-
 </form>

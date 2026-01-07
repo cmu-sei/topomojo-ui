@@ -23,8 +23,8 @@
 <div>
   <div class="font-weight-bold">Workspace Settings</div>
   <div class="text-muted">
-    Use this tab to manage the workspace metadata: how it’s labeled, described, who it’s attributed to, who can
-    launch it, and how long it’s expected to take.
+    Use this tab to manage the workspace metadata: how it's labeled, described, who it's attributed to, who can
+    launch it, and how long it's expected to take.
   </div>
 </div>
 
@@ -37,9 +37,10 @@
         class="ml-2 text-muted"
         role="button"
         tabindex="0"
-        data-toggle="tooltip"
-        data-placement="right"
-        title="The title of your workspace; remember that the title should be unique."
+        [tooltip]="'The title of your workspace; remember that the title should be unique.'"
+        placement="right"
+        container="body"
+        triggers="hover focus"
         aria-label="The title of your workspace; remember that the title should be unique."
       >
         <fa-icon [icon]="faInfoCircle"></fa-icon>
@@ -58,9 +59,10 @@
         class="ml-2 text-muted"
         role="button"
         tabindex="0"
-        data-toggle="tooltip"
-        data-placement="right"
-        title="A brief description of your workspace to display when browsing titles. The Description is viewable to everyone, and when used with Gameboard, visible there too."
+        [tooltip]="'A brief description of your workspace to display when browsing titles. The Description is viewable to everyone, and when used with Gameboard, visible there too.'"
+        placement="right"
+        container="body"
+        triggers="hover focus"
         aria-label="A brief description of your workspace to display when browsing titles. The Description is viewable to everyone, and when used with Gameboard, visible there too."
       >
         <fa-icon [icon]="faInfoCircle"></fa-icon>
@@ -79,9 +81,10 @@
         class="ml-2 text-muted"
         role="button"
         tabindex="0"
-        data-toggle="tooltip"
-        data-placement="right"
-        title="Internal metadata to add data about the lab (e.g., for a competition: cyber-cup c01). You can search by tags later."
+        [tooltip]="'Internal metadata to add data about the lab (e.g., for a competition: cyber-cup c01). You can search by tags later.'"
+        placement="right"
+        container="body"
+        triggers="hover focus"
         aria-label="Internal metadata to add data about the lab (e.g., for a competition: cyber-cup c01). You can search by tags later."
       >
         <fa-icon [icon]="faInfoCircle"></fa-icon>
@@ -100,9 +103,10 @@
         class="ml-2 text-muted"
         role="button"
         tabindex="0"
-        data-toggle="tooltip"
-        data-placement="right"
-        title="Your name and the names of others who may have assisted you."
+        [tooltip]="'Your name and the names of others who may have assisted you.'"
+        placement="right"
+        container="body"
+        triggers="hover focus"
         aria-label="Your name and the names of others who may have assisted you."
       >
         <fa-icon [icon]="faInfoCircle"></fa-icon>
@@ -121,9 +125,10 @@
         class="ml-2 text-muted"
         role="button"
         tabindex="0"
-        data-toggle="tooltip"
-        data-placement="right"
-        title="A space-delimited list of administrator-defined groups that can launch a gamespace from this workspace. Users can launch only if their scope matches one of these audiences. 'everyone' is the global audience."
+        [tooltip]="'A space-delimited list of administrator-defined groups that can launch a gamespace from this workspace. Users can launch only if their scope matches one of these audiences. `everyone` is the global audience.'"
+        placement="right"
+        container="body"
+        triggers="hover focus"
         aria-label="A space-delimited list of administrator-defined groups that can launch a gamespace from this workspace. Users can launch only if their scope matches one of these audiences. 'everyone' is the global audience."
       >
         <fa-icon [icon]="faInfoCircle"></fa-icon>
@@ -143,9 +148,10 @@
         class="ml-2 text-muted"
         role="button"
         tabindex="0"
-        data-toggle="tooltip"
-        data-placement="right"
-        title="Recommended length of time (in minutes) it takes to play through a gamespace launched from this workspace."
+        [tooltip]="'Recommended length of time (in minutes) it takes to play through a gamespace launched from this workspace.'"
+        placement="right"
+        container="body"
+        triggers="hover focus"
         aria-label="Recommended length of time (in minutes) it takes to play through a gamespace launched from this workspace."
       >
         <fa-icon [icon]="faInfoCircle"></fa-icon>
@@ -164,9 +170,10 @@
         class="ml-2 text-muted"
         role="button"
         tabindex="0"
-        data-toggle="tooltip"
-        data-placement="right"
-        title="Invite collaborators by sharing an invitation URL. Collaborators can help edit the workspace. Generating a new invitation invalidates the existing one."
+        [tooltip]="'Invite collaborators by sharing an invitation URL. Collaborators can help edit the workspace. Generating a new invitation invalidates the existing one.'"
+        placement="right"
+        container="body"
+        triggers="hover focus"
         aria-label="Invite collaborators by sharing an invitation URL. Collaborators can help edit the workspace. Generating a new invitation invalidates the existing one."
       >
         <fa-icon [icon]="faInfoCircle"></fa-icon>

@@ -1,6 +1,10 @@
+// Copyright 2021 Carnegie Mellon University.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { AdminService, ThemeInfo } from '../../api/admin.service';
+import { faSearch, faSortUp, faSortDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-setting-browser',
@@ -12,6 +16,7 @@ export class SettingBrowserComponent implements OnInit {
   previewUrl: string | null = null;
   error = '';
   uploading = false;
+  faInfoCircle = faInfoCircle;
 
   constructor(
     private admin: AdminService,

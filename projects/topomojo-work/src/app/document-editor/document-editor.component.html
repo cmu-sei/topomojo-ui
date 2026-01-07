@@ -3,33 +3,114 @@
 
 <ng-container *ngIf="(editorModel$ | async) as editorModel">
   <div class="form-group bg-light">
-    <div><small>Use this <em>Markdown</em> editor to provide instructions, guidance, or information to your players.</small></div>
 
-    <div class="d-flex">
-      <label for="markdown-editor">Document</label>
+    <div class="mb-2">
+      <div class="font-weight-bold">Lab Document</div>
+      <div class="text-muted">
+        Use this tab to write the instructions for your lab in <em>Markdown</em>. This editor supports formatted text,
+        images, and a live preview so you can see what players will see.
+      </div>
+    </div>
+
+    <div class="mb-2">
+      <small class="text-muted">
+        This is a collaborative editor, changes can be saved while multiple authors work.
+        Author in Markdown to format text without writing HTML.
+      </small>
+    </div>
+
+    <div class="d-flex align-items-center mb-2">
+      <label class="mb-0 d-flex align-items-center" for="markdown-editor">
+        Document
+        <span
+          class="ml-2 text-muted"
+          role="button"
+          tabindex="0"
+          placement="right"
+          container="body"
+          triggers="hover focus"
+          [tooltip]="'Write your lab instructions in Markdown. Use Preview to see what players will see.'"
+          aria-label="Write your lab instructions in Markdown. Use Preview to see what players will see."
+        >
+          <fa-icon [icon]="faInfoCircle"></fa-icon>
+        </span>
+      </label>
+
       <div class="spacer"></div>
+
       <span *ngIf="(saved$ | async) as saved" class="mr-2">
-        <fa-icon [hidden]="!saved" [icon]="faSave"></fa-icon>
+        <fa-icon
+          [hidden]="!saved"
+          [icon]="faSave"
+          placement="right"
+          container="body"
+          triggers="hover focus"
+          [tooltip]="'Saved'"
+          aria-label="Saved"
+        ></fa-icon>
       </span>
+
       <span *ngIf="readOnly" class="mr-2">
-        <fa-icon [icon]="faLock"></fa-icon>
+        <fa-icon
+          [icon]="faLock"
+          placement="right"
+          container="body"
+          triggers="hover focus"
+          [tooltip]="'Read-only: you do not have permission to edit this document.'"
+          aria-label="Read-only: you do not have permission to edit this document."
+        ></fa-icon>
       </span>
-      <button class="btn btn-sm btn-outline-secondary mr-2" [hidden]="readOnly" (click)="save()">
+
+      <button
+        class="btn btn-sm btn-outline-secondary mr-2"
+        [hidden]="readOnly"
+        (click)="save()"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Save your document changes.'"
+        aria-label="Save your document changes."
+      >
         <fa-icon [icon]="faSave"></fa-icon>
         <span>Save</span>
       </button>
-      <button class="btn btn-sm btn-outline-secondary mr-2" [hidden]="showPreview" btnCheckbox [(ngModel)]="showImageManager">
+
+      <button
+        class="btn btn-sm btn-outline-secondary mr-2"
+        [hidden]="showPreview"
+        btnCheckbox
+        [(ngModel)]="showImageManager"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Upload and insert images into your Markdown document.'"
+        aria-label="Upload and insert images into your Markdown document."
+      >
         <fa-icon [icon]="faImage"></fa-icon>
         <span>Images</span>
       </button>
-      <button class="btn btn-sm btn-outline-secondary" btnCheckbox [(ngModel)]="showPreview">
+
+      <button
+        class="btn btn-sm btn-outline-secondary"
+        btnCheckbox
+        [(ngModel)]="showPreview"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Toggle preview mode to see how the document will look to players.'"
+        aria-label="Toggle preview mode to see how the document will look to players."
+      >
         <fa-icon [icon]="faFile"></fa-icon>
         <span>Preview</span>
       </button>
     </div>
 
     <div [hidden]="showPreview">
-      <app-image-manager [hidden]="!showImageManager" [guid]="summary.id" (added)="insertImage($event)"></app-image-manager>
+      <app-image-manager
+        [hidden]="!showImageManager"
+        [guid]="summary.id"
+        (added)="insertImage($event)"
+      ></app-image-manager>
 
       <ngx-monaco-editor
         id="markdown-editor"
@@ -39,14 +120,16 @@
         (onInit)="editorInit($event)">
       </ngx-monaco-editor>
 
-      <small>Monaco Editor (vscode). Use <em>F1</em> for the command palette.</small>
+      <small class="text-muted">
+        Monaco Editor (VS Code). Use <em>F1</em> for the command palette.
+      </small>
     </div>
 
     <div *ngIf="showPreview">
       <div class="form-control preview">
         <markdown [data]="doctext" emoji></markdown>
       </div>
-      <small>Markdown preview.</small>
+      <small class="text-muted">Markdown preview (as players will see it).</small>
     </div>
 
   </div>

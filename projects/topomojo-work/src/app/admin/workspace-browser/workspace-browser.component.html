@@ -1,51 +1,129 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
-
-<!-- Show standard header -->
 <h4>Workspaces</h4>
-<div>
+<div class="mb-2">
+  <div class="text-muted">
+    Browse and manage workspaces. Search by name or identifier, open a workspace to edit it, and use View to inspect
+    limits, scope, audience, and deployed VM controls.
+  </div>
+</div>
+
+<div class="mb-2">
   <div class="input-group input-group-sm">
     <div class="input-group-prepend">
-      <span class="input-group-text">
+      <span
+        class="input-group-text"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Search for a workspace by name or identifier.'"
+        aria-label="Search for a workspace by name or identifier."
+      >
         <fa-icon [icon]="faSearch"></fa-icon>
         <span>Search</span>
       </span>
     </div>
-    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="termed()">
+    <input
+      type="search"
+      [(ngModel)]="search.term"
+      placeholder="term"
+      class="form-control"
+      (input)="termed()"
+      aria-label="search workspaces"
+    >
   </div>
-  <input type="checkbox" [checked]="areAllSelected()" (change)="selectAll($event)" class="select-all"
-    *ngIf="selectDownloads">
+
+  <input
+    type="checkbox"
+    [checked]="areAllSelected()"
+    (change)="selectAll($event)"
+    class="select-all"
+    *ngIf="selectDownloads"
+    [tooltip]="'Select or deselect all workspaces on this page for download.'"
+    placement="right"
+    container="body"
+    triggers="hover focus"
+    aria-label="Select or deselect all workspaces on this page for download."
+  >
+
   <ng-container *ngIf="!selectDownloads">
-    <!-- Create -->
-    <button class="btn btn-sm btn-link text-primary" (click)="showCreatePanel=!showCreatePanel">
-      <fa-icon [icon]="faPlus"/>
+    <button
+      class="btn btn-sm btn-link text-primary"
+      (click)="showCreatePanel=!showCreatePanel"
+      placement="right"
+      [tooltip]="'Create a new workspace.'"
+      aria-label="Create a new workspace."
+      container="body"
+      triggers="hover focus"
+    >
+      <fa-icon [icon]="faPlus"></fa-icon>
       <span>Create</span>
     </button>
-    <button class="btn btn-sm btn-link text-primary" (click)="zipInput.click()">
-      <fa-icon [icon]="faFile" />
+
+    <button
+      class="btn btn-sm btn-link text-primary"
+      (click)="zipInput.click()"
+      placement="right"
+      [tooltip]="'Upload a workspace export (.zip) or JSON to import a workspace.'"
+      container="body"
+      triggers="hover focus"
+      aria-label="Upload a workspace export (.zip) or JSON to import a workspace."
+    >
+      <fa-icon [icon]="faFile"></fa-icon>
       <span>UploadZip</span>
       <input class="invisible" (change)="upload($event)" #zipInput type="file" accept=".zip,.json" />
     </button>
-    <!-- Download -->
-    <button class="btn btn-sm btn-link text-primary" (click)="selectDownloads = true" *ngIf="!selectDownloads">
-      <fa-icon [icon]="faDownload" />
+
+    <button
+      class="btn btn-sm btn-link text-primary"
+      (click)="selectDownloads = true"
+      *ngIf="!selectDownloads"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Select one or more workspaces to download as an export.'"
+      aria-label="Select one or more workspaces to download as an export."
+    >
+      <fa-icon [icon]="faDownload"></fa-icon>
       <span>Download</span>
     </button>
   </ng-container>
+
   <ng-container *ngIf="selectDownloads">
-    <button class="btn btn-sm btn-link text-primary" (click)="download()" *ngIf="selectDownloads" [disabled]="selected.length < 1">
-      <fa-icon [icon]="faDownload" />
+    <button
+      class="btn btn-sm btn-link text-primary"
+      (click)="download()"
+      *ngIf="selectDownloads"
+      [disabled]="selected.length < 1"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="selected.length < 1 ? 'Select at least one workspace to download.' : 'Download the selected workspace exports.'"
+      [attr.aria-label]="selected.length < 1 ? 'Select at least one workspace to download.' : 'Download the selected workspace exports.'"
+    >
+      <fa-icon [icon]="faDownload"></fa-icon>
       <span>Download ({{ selected.length }})</span>
     </button>
-    <!-- Cancel -->
-    <button class="btn btn-sm btn-link text-primary" (click)="selectDownloads = false;">
-      <fa-icon [icon]="faTimes" />
+
+    <button
+      class="btn btn-sm btn-link text-primary"
+      (click)="selectDownloads = false;"
+      placement="right"
+      [tooltip]="'Cancel download selection mode.'"
+      container="body"
+      triggers="hover focus"
+      aria-label="Cancel download selection mode."
+    >
+      <fa-icon [icon]="faTimes"></fa-icon>
       <span>Cancel</span>
     </button>
   </ng-container>
+
+  <small class="text-muted d-block">
+    Tip: Clicking a workspace opens its Settings tab. Use the workspace ID when locating files on disk or for support.
+  </small>
 </div>
 
-<!-- show create workspace panel -->
 <div *ngIf="showCreatePanel" class="my-2">
   <app-workspace-creator></app-workspace-creator>
 </div>
@@ -67,25 +145,25 @@
   <alert type="danger" [dismissible]="true">{{error_msg}}</alert>
 </div>
 
-<!-- top pager for workspaces -->
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
-<hr  class="mt-0 mb-2" *ngIf="selected.length > 0" />
+<hr class="mt-0 mb-2" *ngIf="selected.length > 0" />
 
 <div class="row mb-2 workspace-header align-items-center">
-  <div class="col-1" *ngIf="selectDownloads">
-  </div>
+  <div class="col-1" *ngIf="selectDownloads"></div>
 
   <div [ngClass]="selectDownloads ? 'col-4' : 'col-5'">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary"
       (click)="sortBy('name')"
+      placement="right"
+      [tooltip]="'Sort by workspace name.'"
+      container="body"
+      triggers="hover focus"
+      aria-label="Sort by workspace name."
     >
       Workspace Name
-      <fa-icon
-        *ngIf="sortField === 'name'"
-        [icon]="sortAscending ? faSortUp : faSortDown">
-      </fa-icon>
+      <fa-icon *ngIf="sortField === 'name'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
     </button>
   </div>
 
@@ -94,12 +172,14 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary"
       (click)="sortBy('created')"
+      placement="right"
+      [tooltip]="'Sort by created date.'"
+      container="body"
+      triggers="hover focus"
+      aria-label="Sort by created date."
     >
       Created Date
-      <fa-icon
-        *ngIf="sortField === 'created'"
-        [icon]="sortAscending ? faSortUp : faSortDown">
-      </fa-icon>
+      <fa-icon *ngIf="sortField === 'created'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
     </button>
   </div>
 
@@ -108,29 +188,46 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary"
       (click)="sortBy('activity')"
+      placement="right"
+      [tooltip]="'Sort by last activity date.'"
+      container="body"
+      triggers="hover focus"
+      aria-label="Sort by last activity date."
     >
       Last Activity
-      <fa-icon
-        *ngIf="sortField === 'activity'"
-        [icon]="sortAscending ? faSortUp : faSortDown">
-      </fa-icon>
+      <fa-icon *ngIf="sortField === 'activity'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
     </button>
   </div>
 
   <div class="col-3 d-flex justify-content-end flex-wrap tm-actions">
-    <span class="header-label text-primary">Actions</span>
+    <span
+      class="header-label text-primary"
+      placement="right"
+      [tooltip]="'View details or delete the workspace.'"
+      container="body"
+      triggers="hover focus"
+      aria-label="View details or delete the workspace."
+    >
+      Actions
+    </span>
   </div>
 </div>
 
-<!-- paged workspace list (all or selected) -->
 <div *ngFor="let g of (source$ | async); trackBy:trackById"
      class="row mb-1 workspace-row align-items-center">
 
   <div class="col-1" *ngIf="selectDownloads">
-    <input type="checkbox"
-           [checked]="isSelected(g.id)"
-           (change)="select($event, g)"
-           style="margin-left: 30px;">
+    <input
+      type="checkbox"
+      [checked]="isSelected(g.id)"
+      (change)="select($event, g)"
+      style="margin-left: 30px;"
+      placement="right"
+      [tooltip]="'Select this workspace for download.'"
+      container="body"
+      triggers="hover focus"
+      aria-label="Select this workspace for download."
+    >
   </div>
 
   <div [ngClass]="selectDownloads ? 'col-4' : 'col-5'">
@@ -139,14 +236,28 @@
       class="btn btn-link p-0 mr-2 favorite-btn"
       (click)="toggleFavorite(g.id); $event.preventDefault(); $event.stopPropagation();"
       [attr.aria-label]="isFavorite(g.id) ? 'Unfavorite workspace' : 'Favorite workspace'"
-      [attr.title]="isFavorite(g.id) ? 'Unfavorite' : 'Favorite'"
+      [tooltip]="isFavorite(g.id) ? 'Unfavorite (pin to top)' : 'Favorite (pin to top)'"
+      placement="right"
+      container="body"
+      triggers="hover focus"
     >
       <fa-icon
         [icon]="isFavorite(g.id) ? faStarSolid : faStarRegular"
-        [ngClass]="isFavorite(g.id) ? 'favorite-on' : 'favorite-off'">
-      </fa-icon>
+        [ngClass]="isFavorite(g.id) ? 'favorite-on' : 'favorite-off'"
+      ></fa-icon>
     </button>
-    <a [routerLink]="['/topo', g.id]" class="text-secondary">{{ g.name }}</a>
+
+    <a
+      [routerLink]="['/topo', g.id]"
+      class="text-secondary"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Open this workspace (Settings tab).'"
+      aria-label="Open this workspace (Settings tab)."
+    >
+      {{ g.name }}
+    </a>
 
     <br/>
     <small class="text-muted ml-4 d-block text-break">
@@ -163,7 +274,15 @@
   </div>
 
   <div class="col-3 d-flex justify-content-end align-items-center tm-actions">
-    <button class="btn btn-outline-info btn-sm tm-action-btn mr-2" (click)="view(g)">
+    <button
+      class="btn btn-outline-info btn-sm tm-action-btn mr-2"
+      (click)="view(g)"
+      placement="right"
+      [tooltip]="'Expand to view workspace details and template VM controls.'"
+      aria-label="Expand to view workspace details and template VM controls."
+      container="body"
+      triggers="hover focus"
+    >
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
@@ -171,9 +290,20 @@
     <app-confirm-button
       class="tm-action-host"
       btnClass="btn btn-outline-danger btn-sm tm-action-btn"
-      (confirm)="delete(g)">
-      <fa-icon [icon]="faTrash"></fa-icon>
-      <span>Delete</span>
+      (confirm)="delete(g)"
+      aria-label="delete workspace"
+    >
+      <span
+        class="d-inline-flex align-items-center"
+        placement="right"
+        [tooltip]="'Delete this workspace.'"
+        container="body"
+        triggers="hover focus"
+        aria-label="Delete this workspace."
+      >
+        <fa-icon [icon]="faTrash"></fa-icon>
+        <span>Delete</span>
+      </span>
     </app-confirm-button>
   </div>
 
@@ -181,20 +311,81 @@
     <ng-container *ngIf="detail$ | async as detail">
 
       <div class="form-group bg-light">
-        <label class="mb-0" for="detail-template-limit">Template Limit</label>
-        <input id="detail-template-limit" class="form-control" type="number" [(ngModel)]="detail.templateLimit" (change)="update(detail)">
+        <label class="mb-0 d-flex align-items-center" for="detail-template-limit">
+          Template Limit
+          <span
+            class="ml-2 text-muted"
+            role="button"
+            tabindex="0"
+            placement="right"
+            [tooltip]="'Defines the maximum number of VM templates allowed in this workspace.'"
+            container="body"
+            triggers="hover focus"
+            aria-label="Defines the maximum number of VM templates allowed in this workspace."
+          >
+            <fa-icon [icon]="faInfoCircle"></fa-icon>
+          </span>
+        </label>
+        <input
+          id="detail-template-limit"
+          class="form-control"
+          type="number"
+          [(ngModel)]="detail.templateLimit"
+          (change)="update(detail)"
+        >
+        <small class="text-muted">Maximum number of VMs/templates allowed in the workspace.</small>
       </div>
 
       <div class="form-group bg-light">
-        <label class="mb-0" for="input-scope">Template Scope</label>
-        <input id="input-scope" class="form-control" type="text" [(ngModel)]="detail.templateScope" (change)="update(detail)">
-        <small>template scopes this workspace can link</small>
+        <label class="mb-0 d-flex align-items-center" for="input-scope">
+          Template Scope
+          <span
+            class="ml-2 text-muted"
+            role="button"
+            tabindex="0"
+            container="body"
+            triggers="hover focus"
+            placement="right"
+            [tooltip]="'Limits which published templates this workspace can link to by scope.'"
+            aria-label="Limits which published templates this workspace can link to by scope."
+          >
+            <fa-icon [icon]="faInfoCircle"></fa-icon>
+          </span>
+        </label>
+        <input
+          id="input-scope"
+          class="form-control"
+          type="text"
+          [(ngModel)]="detail.templateScope"
+          (change)="update(detail)"
+        >
+        <small class="text-muted">Template scopes this workspace can link (space-delimited).</small>
       </div>
 
       <div class="form-group bg-light">
-        <label class="mb-0" for="input-audience">Audience</label>
-        <input id="input-audience" class="form-control" type="text" [(ngModel)]="detail.audience" (change)="update(detail)">
-        <small>audience(s) that can deploy workspace as gamespace</small>
+        <label class="mb-0 d-flex align-items-center" for="input-audience">
+          Audience
+          <span
+            class="ml-2 text-muted"
+            role="button"
+            tabindex="0"
+            placement="right"
+            [tooltip]="'Limits which users/groups can deploy this workspace as a gamespace.'"
+            container="body"
+            triggers="hover focus"
+            aria-label="Limits which users/groups can deploy this workspace as a gamespace."
+          >
+            <fa-icon [icon]="faInfoCircle"></fa-icon>
+          </span>
+        </label>
+        <input
+          id="input-audience"
+          class="form-control"
+          type="text"
+          [(ngModel)]="detail.audience"
+          (change)="update(detail)"
+        >
+        <small class="text-muted">Audience(s) that can deploy this workspace as a gamespace.</small>
       </div>
 
       <div *ngFor="let t of detail.templates" class="row mb-1 align-items-center">
@@ -205,6 +396,7 @@
           <app-vm-controller [template]="t" [fullbleed]="false"></app-vm-controller>
         </div>
       </div>
+
     </ng-container>
   </div>
 </div>

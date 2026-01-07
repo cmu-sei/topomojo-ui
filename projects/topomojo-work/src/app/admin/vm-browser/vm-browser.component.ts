@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, OnInit } from '@angular/core';
-import { faSearch, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faSortUp, faSortDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { debounceTime, switchMap, tap, map } from 'rxjs/operators';
 import { Search, Vm } from '../../api/gen/models';
@@ -23,6 +23,7 @@ export class VmBrowserComponent implements OnInit {
   faSearch = faSearch;
   faSortUp = faSortUp;
   faSortDown = faSortDown;
+  faInfoCircle = faInfoCircle;
 
   sortAscending = true;
   sortField: 'name' | 'group' | 'host' = 'name';

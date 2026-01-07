@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable, of, Subject, Subscription, timer, zip } fr
 import { catchError, concatMap, debounceTime, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { Template, TemplateLink, TemplateSearch, TemplateSummary } from '../api/gen/models';
 import { TemplateService } from '../api/template.service';
-import { faPlus, faCheck, faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faCheck, faFilter, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { WorkspaceService } from '../api/workspace.service';
 
 @Component({
@@ -34,6 +34,7 @@ export class TemplateSelectorComponent implements OnInit, OnDestroy {
   faFilter = faFilter;
   errors: any[] = [];
   templateSets: any[] = [];
+  faInfoCircle = faInfoCircle;
 
   constructor(
     private api: TemplateService,

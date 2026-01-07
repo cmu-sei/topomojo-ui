@@ -1,31 +1,89 @@
-<div class="card p-3">
-  <h3 class="mb-3">Background Image</h3>
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<div class="card border-0 shadow-none p-3">
+  <div class="mb-2">
+    <h3 class="mb-1">Background Image</h3>
+    <div class="text-muted">
+      Upload a custom background image for this TopoMojo instance. You can preview it below or clear it to return to the
+      default.
+    </div>
+  </div>
 
   <div class="mb-2">
-    <label class="form-label">Upload an image</label>
+    <label class="form-label mb-0 d-flex align-items-center" for="background-upload">
+      Upload an image
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Choose an image file (PNG/JPG/etc.). After selecting, you’ll see a preview below.'"
+        aria-label="Choose an image file (PNG/JPG/etc.). After selecting, you’ll see a preview below."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
 
-    <label class="file-drop form-control">
+    <small class="text-muted d-block mb-1">
+      Tip: wide images usually work best as a background.
+    </small>
+
+    <label class="file-drop form-control" for="background-upload">
       <span class="file-drop-text">Choose file</span>
       <input
+        id="background-upload"
         type="file"
         accept="image/*"
         (change)="onFileSelected($event)"
+        aria-label="Upload background image"
       />
     </label>
   </div>
 
-  <div *ngIf="error" class="alert alert-danger">
+  <div *ngIf="error" class="alert alert-danger" role="alert" aria-live="polite">
     {{ error }}
   </div>
 
   <div class="mb-3">
-    <label class="form-label">Preview</label>
-    <div class="preview" [style.backgroundImage]="previewUrl ? 'url(' + previewUrl + ')' : 'none'">
+    <label class="form-label mb-0 d-flex align-items-center">
+      Preview
+      <span
+        class="ml-2 text-muted"
+        role="button"
+        tabindex="0"
+        placement="right"
+        [tooltip]="'Preview of the currently selected background image.'"
+        container="body"
+        triggers="hover focus"
+        aria-label="Preview of the currently selected background image."
+      >
+        <fa-icon [icon]="faInfoCircle"></fa-icon>
+      </span>
+    </label>
+
+    <div
+      class="preview"
+      [style.backgroundImage]="previewUrl ? 'url(' + previewUrl + ')' : 'none'"
+      role="img"
+      [attr.aria-label]="previewUrl ? 'Selected background preview' : 'No background selected'"
+    >
       <span *ngIf="!previewUrl" class="text-muted">No background selected</span>
     </div>
   </div>
 
-  <button class="btn btn-outline-danger" type="button" (click)="clearBackground()">
+  <button
+    class="btn btn-outline-danger"
+    type="button"
+    (click)="clearBackground()"
+    placement="right"
+    [tooltip]="'Remove the custom background and return to the default.'"
+    container="body"
+    triggers="hover focus"
+    aria-label="Remove the custom background and return to the default."
+  >
     Clear background
   </button>
 </div>

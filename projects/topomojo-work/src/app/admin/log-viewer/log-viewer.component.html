@@ -1,16 +1,46 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
+<h4>Log</h4>
+<div class="text-muted mb-2">
+  View recent error entries to help troubleshoot issues. This tab shows <strong>errors only</strong>, not every log line.
+  Expand an entry to see its stack trace.
+</div>
+
 <ng-container *ngIf="log$ | async as log; else loading">
-  <div *ngFor="let ex of log; let i = index">
-    <span class="muted">{{ex.timestamp}}</span><br/>
-    <button class="btn btn-sm btn-light" (click)="select(i)">
-      <fa-icon [icon]="trace===i ? faCaretDown : faCaretRight"></fa-icon>
-    </button>
-    <span>{{ex.message}}</span>
-    <pre *ngIf="trace===i">
-      {{ex.stackTrace}}
-    </pre>
+  <div *ngIf="!log?.length" class="text-muted">
+    No errors to display.
+  </div>
+
+  <div *ngFor="let ex of log; let i = index" class="mb-3">
+    <div class="d-flex align-items-start">
+      <button
+        type="button"
+        class="btn btn-sm btn-light mr-2"
+        (click)="select(i)"
+        [attr.aria-label]="trace===i ? 'Collapse stack trace' : 'Expand stack trace'"
+      >
+        <fa-icon [icon]="trace===i ? faCaretDown : faCaretRight"></fa-icon>
+      </button>
+
+      <div class="flex-grow-1">
+        <div class="d-flex align-items-center flex-wrap">
+          <small class="text-muted mr-2">{{ ex.timestamp }}</small>
+
+          <span
+            class="ml-1 text-muted"
+            aria-label="This tab shows error entries only. Expand an entry to see the stack trace."
+          >
+          </span>
+        </div>
+
+        <div class="mt-1">
+          <span>{{ ex.message }}</span>
+        </div>
+      </div>
+    </div>
+
+    <pre *ngIf="trace===i" class="mt-2 mb-0">{{ ex.stackTrace }}</pre>
   </div>
 </ng-container>
 

@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, OnInit } from '@angular/core';
-import { faFilter, faList, faSearch, faTrash, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faList, faSearch, faTrash, faSortUp, faSortDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, firstValueFrom, interval, merge, Observable } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { ApiUser, UserSearch } from '../../api/gen/models';
@@ -35,6 +35,7 @@ export class UserBrowserComponent implements OnInit {
   faFilter = faFilter;
   faSortUp = faSortUp;
   faSortDown = faSortDown;
+  faInfoCircle = faInfoCircle;
 
   sortAscending = false;
   sortField: 'name' | 'created' = 'created';

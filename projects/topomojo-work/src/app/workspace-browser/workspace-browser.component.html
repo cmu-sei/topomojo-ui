@@ -26,7 +26,10 @@
       <fa-icon
         class="ml-2 info-icon"
         [icon]="faInfoCircle"
-        title="Workspaces you can access (active, invited to, or permitted). Build and manage lab content here."
+        [tooltip]="'Workspaces you can access (active, invited to, or permitted). Build and manage lab content here.'"
+        placement="right"
+        container="body"
+        triggers="hover focus"
         aria-label="Info: Workspaces you can access (active, invited to, or permitted). Build and manage lab content here."
         (click)="$event.stopPropagation()"
       ></fa-icon>
@@ -39,11 +42,13 @@
       <fa-icon [hidden]="mode!=='gamespace'" [icon]="faFilter"></fa-icon>
       <span class="ml-1">gamespace</span>
 
-      <!-- info icon (hover for tooltip) -->
       <fa-icon
         class="ml-2 info-icon"
         [icon]="faInfoCircle"
-        title="Gamespaces you can play. Read-only copies of workspaces you can launch or join to complete labs."
+        [tooltip]="'Gamespaces you can play. Read-only copies of workspaces you can launch or join to complete labs.'"
+        container="body"
+        triggers="hover focus"
+        placement="right"
         aria-label="Info: Gamespaces you can play. Read-only copies of workspaces you can launch or join to complete labs."
         (click)="$event.stopPropagation()"
       ></fa-icon>

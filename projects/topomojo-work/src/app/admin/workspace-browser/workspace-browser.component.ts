@@ -15,6 +15,7 @@ import {
   faFolder,
   faSortUp,
   faSortDown,
+  faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable, of, Subject } from 'rxjs';
 import { catchError, debounceTime, filter, switchMap, tap } from 'rxjs/operators';
@@ -58,6 +59,7 @@ export class WorkspaceBrowserComponent implements OnInit {
   faFolder = faFolder;
   faSortUp = faSortUp;
   faSortDown = faSortDown;
+  faInfoCircle = faInfoCircle;
   isDownloading = false;
   selectDownloads = false;
   sortAscending = false;

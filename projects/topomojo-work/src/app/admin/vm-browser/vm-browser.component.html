@@ -2,18 +2,34 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <h4>Machines</h4>
+<div class="text-muted mb-2">
+  View all VMs TopoMojo is tracking and the gamespaces they belong to. This is a read-only listing (you can’t control
+  VMs from here). Use Search to find VMs by name, group, host, or paste a gamespace GUID.
+</div>
 
 <div>
   <div class="input-group input-group-sm">
     <div class="input-group-prepend">
-      <span class="input-group-text">
+      <span class="input-group-text" id="vm-search-label">
         <fa-icon [icon]="faSearch"></fa-icon>
         <span>Search</span>
       </span>
     </div>
-    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
+
+    <input
+      type="search"
+      [(ngModel)]="search.term"
+      placeholder="term"
+      class="form-control"
+      (input)="refresh$.next(true)"
+      aria-label="Search machines"
+      aria-describedby="vm-search-label"
+    />
   </div>
-  <small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
+
+  <small *ngIf="source.length === 100" class="text-warning">
+    Results limited to 100. Refine your search term to narrow the list.
+  </small>
 </div>
 
 <hr/>
@@ -24,6 +40,11 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('name')"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Sort by the VM’s name.'"
+      aria-label="Sort by the VM’s name."
     >
       <span>Machine Name</span>
       <fa-icon
@@ -39,6 +60,11 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('group')"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Sort by the gamespace or group this VM belongs to.'"
+      aria-label="Sort by the gamespace or group this VM belongs to."
     >
       <span>Gamespace / Group</span>
       <fa-icon
@@ -54,6 +80,11 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('host')"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Sort by the hypervisor host currently running this VM.'"
+      aria-label="Sort by the hypervisor host currently running this VM."
     >
       <span>Host</span>
       <fa-icon
@@ -65,8 +96,7 @@
   </div>
 </div>
 
-<div *ngFor="let vm of source$ | async; trackBy:trackById"
-     class="row mb-1 align-items-center">
+<div *ngFor="let vm of source$ | async; trackBy:trackById" class="row mb-1 align-items-center">
   <div class="col-5 px-4">
     <span class="text-break">{{ vm.name }}</span>
   </div>

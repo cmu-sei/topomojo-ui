@@ -1,42 +1,114 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
-
 <h4>Gamespaces</h4>
+<div class="mb-2">
+  <div class="text-muted">
+    Search and manage active and inactive gamespaces. Green indicates active gamespaces; gray indicates inactive.
+    Use View to expand details and VM state, and select and delete gamespaces when needed.
+  </div>
+</div>
 
-<div>
+<div class="mb-2">
   <div class="input-group input-group-sm">
     <div class="input-group-prepend">
-      <span class="input-group-text">
+      <span
+        class="input-group-text"
+        [tooltip]="'Search by gamespace ID, manager name, or workspace title.'"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        aria-label="Search by gamespace ID, manager name, or workspace title."
+      >
         <fa-icon [icon]="faSearch"></fa-icon>
         <span>Search</span>
       </span>
     </div>
-    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="termed()">
+    <input
+      type="search"
+      [(ngModel)]="search.term"
+      placeholder="term"
+      class="form-control"
+      (input)="termed()"
+      aria-label="search gamespaces"
+    >
   </div>
+  <small class="text-muted">
+    Tip: by default you’re viewing active gamespaces. Use the filters below to switch.
+  </small>
 </div>
 
-<div class="d-flex">
-  <button class="mr-1 btn btn-link text-success btn-sm" (click)="toggleFilter('active')">
+<div class="d-flex align-items-center">
+  <button
+    class="mr-1 btn btn-link text-success btn-sm"
+    (click)="toggleFilter('active')"
+    [tooltip]="'Show active gamespaces (currently running).'"
+    placement="right"
+    container="body"
+    triggers="hover focus"
+    aria-label="Show active gamespaces (currently running)."
+  >
     <fa-icon [hidden]="filter!=='active'" [icon]="faFilter"></fa-icon>
     <span>active</span>
   </button>
-  <button class="mr-1 btn btn-link text-success btn-sm" (click)="toggleFilter('inactive')">
+
+  <button
+    class="mr-1 btn btn-link text-success btn-sm"
+    (click)="toggleFilter('inactive')"
+    [tooltip]="'Show inactive gamespaces (completed or expired).'"
+    placement="right"
+    container="body"
+    triggers="hover focus"
+    aria-label="Show inactive gamespaces (completed or expired)."
+  >
     <fa-icon [hidden]="filter!=='inactive'" [icon]="faFilter"></fa-icon>
     <span>inactive</span>
   </button>
+
   <div class="spacer"></div>
-  <button class="btn btn-outline-info btn-sm mx-1" (click)="refresh()">
+
+  <button
+    class="btn btn-outline-info btn-sm mx-1"
+    (click)="refresh()"
+    [tooltip]="'Refresh the current search results.'"
+    placement="right"
+    container="body"
+    triggers="hover focus"
+    aria-label="Refresh the current search results."
+  >
     <fa-icon [icon]="faSync"></fa-icon>
     <span>Refresh</span>
   </button>
-  <app-confirm-button *ngIf="fullAdminView" btnClass="btn btn-outline-danger btn-sm" (confirm)="deleteSelected()">
-    <fa-icon [icon]="faTrash"></fa-icon>
-    <span>Delete Selected</span>
+
+  <app-confirm-button
+    *ngIf="fullAdminView"
+    btnClass="btn btn-outline-danger btn-sm"
+    (confirm)="deleteSelected()"
+    aria-label="delete selected gamespaces"
+  >
+    <span
+      class="d-inline-flex align-items-center"
+      [tooltip]="'Delete all selected gamespaces and their associated VMs.'"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      aria-label="Delete all selected gamespaces and their associated VMs."
+    >
+      <fa-icon [icon]="faTrash"></fa-icon>
+      <span>Delete Selected</span>
+    </span>
   </app-confirm-button>
 </div>
 
-<div *ngIf="fullAdminView">
-  <button class="btn btn-light btn-sm mr-1" (click)="toggleAll()" aria-label="toggle selection for list">
+<div *ngIf="fullAdminView" class="mt-1">
+  <button
+    class="btn btn-light btn-sm mr-1"
+    (click)="toggleAll()"
+    aria-label="Select or deselect all gamespaces in the current list."
+    [tooltip]="'Select or deselect all gamespaces in the current list.'"
+    placement="right"
+    container="body"
+    triggers="hover focus"
+  >
     <fa-icon [icon]="selectAllValue ? faChecked : faUnChecked"></fa-icon>
   </button>
   <span><small>All</small></span>
@@ -53,12 +125,14 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('id')"
+      [tooltip]="'Sort by gamespace ID.'"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      aria-label="Sort by gamespace ID."
     >
       ID
-      <fa-icon
-        *ngIf="sortField === 'id'"
-        [icon]="sortAscending ? faSortUp : faSortDown">
-      </fa-icon>
+      <fa-icon *ngIf="sortField === 'id'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
     </button>
   </div>
 
@@ -67,12 +141,14 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('session')"
+      [tooltip]="'Sort by remaining time (active gamespaces).'"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      aria-label="Sort by remaining time (active gamespaces)."
     >
       Time Left
-      <fa-icon
-        *ngIf="sortField === 'session'"
-        [icon]="sortAscending ? faSortUp : faSortDown">
-      </fa-icon>
+      <fa-icon *ngIf="sortField === 'session'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
     </button>
   </div>
 
@@ -81,47 +157,88 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('managerWorkspace')"
+      [tooltip]="'Sort by manager name and workspace title.'"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      aria-label="Sort by manager name and workspace title."
     >
       Manager / Workspace
-      <fa-icon
-        *ngIf="sortField === 'managerWorkspace'"
-        [icon]="sortAscending ? faSortUp : faSortDown">
-      </fa-icon>
+      <fa-icon *ngIf="sortField === 'managerWorkspace'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
     </button>
   </div>
 
   <div class="col-3 d-flex justify-content-end">
-    <span class="header-label text-primary">Actions</span>
+    <span
+      class="header-label text-primary"
+      [tooltip]="'View details or delete gamespaces.'"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      aria-label="View details or delete gamespaces."
+    >
+      Actions
+    </span>
   </div>
 </div>
 
 <div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1 workspace-row">
   <div class="col-1 d-flex align-items-center tm-select-col" *ngIf="fullAdminView">
-    <button class="btn btn-light btn-sm" (click)="toggle(g)">
+    <button
+      class="btn btn-light btn-sm"
+      (click)="toggle(g)"
+      [tooltip]="g.checked ? 'Deselect gamespace' : 'Select gamespace'"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [attr.aria-label]="g.checked ? 'Deselect gamespace' : 'Select gamespace'"
+    >
       <fa-icon [icon]="g.checked ? faChecked : faUnChecked"></fa-icon>
     </button>
+
     <button
       *ngIf="filter === 'active' && canFavorite(g)"
       type="button"
       class="btn btn-link btn-sm p-0 tm-action-btn"
       (click)="toggleGamespaceFavorite(g, $event)"
       [attr.aria-label]="isGamespaceFavorite(g.id) ? 'Unfavorite gamespace' : 'Favorite gamespace'"
-      [attr.title]="isGamespaceFavorite(g.id) ? 'Unfavorite' : 'Favorite'">
+      [tooltip]="isGamespaceFavorite(g.id) ? 'Unfavorite (pin to top)' : 'Favorite (pin to top)'"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+    >
       <fa-icon
         [icon]="isGamespaceFavorite(g.id) ? faStarSolid : faStarRegular"
-        [ngClass]="isGamespaceFavorite(g.id) ? 'favorite-on' : 'favorite-off'">
-      </fa-icon>
+        [ngClass]="isGamespaceFavorite(g.id) ? 'favorite-on' : 'favorite-off'"
+      ></fa-icon>
     </button>
   </div>
 
   <div class="col-2">
-    <small class="px-1" [class.pop-success]="!g.gameOver" [class.pop-dark]="g.gameOver">
+    <small
+      class="px-1"
+      [class.pop-success]="!g.gameOver"
+      [class.pop-dark]="g.gameOver"
+      [tooltip]="'Gamespace ID (short form).'"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      aria-label="Gamespace ID (short form)."
+    >
       {{ g.id | slice:0:8 }}
     </small>
   </div>
 
   <div class="col-2">
-    <small>{{ g.session.countdown | countdown }}</small>
+    <small
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Time remaining (active gamespaces).'"
+      aria-label="Time remaining (active gamespaces)."
+    >
+      {{ g.session.countdown | countdown }}
+    </small>
   </div>
 
   <div [ngClass]="fullAdminView ? 'col-4' : 'col-5'">
@@ -130,22 +247,41 @@
   </div>
 
   <div class="col-3 tm-actions-col">
-  <div class="tm-actions-grid">
-    <button class="btn btn-outline-info btn-sm tm-action-btn tm-action-fixed" (click)="view(g)">
-      <fa-icon [icon]="faList"></fa-icon>
-      <span>View</span>
-    </button>
+    <div class="tm-actions-grid">
+      <button
+        class="btn btn-outline-info btn-sm tm-action-btn tm-action-fixed"
+        (click)="view(g)"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Expand to view gamespace details and VM state.'"
+        aria-label="Expand to view gamespace details and VM state."
+      >
+        <fa-icon [icon]="faList"></fa-icon>
+        <span>View</span>
+      </button>
 
-    <app-confirm-button
-      *ngIf="fullAdminView"
-      class="tm-action-host tm-action-fixed"
-      btnClass="btn btn-outline-danger btn-sm tm-action-btn tm-action-fixed"
-      (confirm)="delete(g)">
-      <fa-icon [icon]="faTrash"></fa-icon>
-      <span>Delete</span>
-    </app-confirm-button>
+      <app-confirm-button
+        *ngIf="fullAdminView"
+        class="tm-action-host tm-action-fixed"
+        btnClass="btn btn-outline-danger btn-sm tm-action-btn tm-action-fixed"
+        (confirm)="delete(g)"
+        aria-label="delete gamespace"
+      >
+        <span
+          class="d-inline-flex align-items-center"
+          placement="right"
+          container="body"
+          triggers="hover focus"
+          [tooltip]="'Delete this gamespace and its associated VMs.'"
+          aria-label="Delete this gamespace and its associated VMs."
+        >
+          <fa-icon [icon]="faTrash"></fa-icon>
+          <span>Delete</span>
+        </span>
+      </app-confirm-button>
+    </div>
   </div>
-</div>
 
   <div *ngIf="viewed === g" class="col-12">
     <ng-container *ngIf="view$ | async as view">
@@ -157,15 +293,9 @@
           <app-vm-controller [vm]="vm" [hideDelete]="!fullAdminView" [fullbleed]="false"></app-vm-controller>
         </div>
       </div>
-      <div>
-        <!-- <div class="mb-4" *ngIf="viewmode==='dispatch'">
-          <h5 class="mt-2 mb-0">Dispatcher</h5>
-          <app-gamespace-interact [id]="g.id"></app-gamespace-interact>
-        </div> -->
 
-        <div class="mb-4">
-          <app-gamespace-detail [detail]="view.g" [gamespace]="g"></app-gamespace-detail>
-        </div>
+      <div class="mb-4">
+        <app-gamespace-detail [detail]="view.g" [gamespace]="g"></app-gamespace-detail>
       </div>
     </ng-container>
   </div>

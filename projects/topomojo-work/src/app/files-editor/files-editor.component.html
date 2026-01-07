@@ -1,4 +1,22 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
-<app-iso-manager [guid]="summary.id"></app-iso-manager>
+<div>
+  <div class="font-weight-bold">Files</div>
+  <div class="text-muted">
+    Upload ISO files (or regular files) to include in your lab. Uploaded files can be selected as ISOs and attached to
+    VMs in the Templates tab or attached dynamically per-variant in the Challenge tab. If your upload isn't already an
+    ISO, TopoMojo wraps it into an ISO after upload.
+  </div>
+</div>
+
+<div class="mt-2">
+  <small class="text-muted">
+    Tip: With the Local filter enabled, you'll only see ISOs available to this workspace. Disabling it shows global ISOs
+    shared across all workspaces.
+  </small>
+</div>
+
+<div class="mt-2">
+  <app-iso-manager [guid]="summary.id"></app-iso-manager>
+</div>

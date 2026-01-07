@@ -4,41 +4,109 @@
 <div [formGroup]="form">
   <div class="form-row my-4" [hidden]="!more || this.index === 0">
     <div class="form-group col-6 py-0">
-      <label for="prereq-input-{{vindex}}.{{this.index}}" class="mb-0">Prerequisite Total Weight</label>
-      <input id="prereq-input-{{vindex}}.{{this.index}}" type="number" class="form-control"
-        formControlName="preReqTotal" placeholder="prereq">
+      <label for="prereq-input-{{vindex}}.{{this.index}}" class="mb-0 d-flex align-items-center">
+        Prerequisite Total Weight
+        <span
+          class="ml-2 text-muted"
+          role="button"
+          tabindex="0"
+          placement="right"
+          container="body"
+          triggers="hover focus"
+          [tooltip]="'Minimum total scored weight required across all challenge questions before this question set is shown.'"
+          aria-label="Minimum total scored weight required across all challenge questions before this question set is shown."
+        >
+          <fa-icon [icon]="faInfoCircle"></fa-icon>
+        </span>
+      </label>
+
+      <input
+        id="prereq-input-{{vindex}}.{{this.index}}"
+        type="number"
+        class="form-control"
+        formControlName="preReqTotal"
+        placeholder="prereq"
+      >
 
       <small class="text-muted">
-        Required scored weight across all challenge questions
+        Required scored weight across all challenge questions.
       </small>
     </div>
+
     <div class="form-group col-6 py-0">
-      <label for="prereq-input-{{vindex}}.{{this.index}}" class="mb-0">Prerequisite Prev. Section Weight</label>
-      <input id="prereq-input-{{vindex}}.{{this.index}}" type="number" class="form-control"
-        formControlName="preReqPrevSection" placeholder="prereq">
+      <label for="prereq-prev-input-{{vindex}}.{{this.index}}" class="mb-0 d-flex align-items-center">
+        Prerequisite Prev. Section Weight
+        <span
+          class="ml-2 text-muted"
+          role="button"
+          tabindex="0"
+          placement="right"
+          container="body"
+          triggers="hover focus"
+          [tooltip]="'Minimum scored weight required in the previous question set before this set is shown.'"
+          aria-label="Minimum scored weight required in the previous question set before this set is shown."
+        >
+          <fa-icon [icon]="faInfoCircle"></fa-icon>
+        </span>
+      </label>
+
+      <input
+        id="prereq-prev-input-{{vindex}}.{{this.index}}"
+        type="number"
+        class="form-control"
+        formControlName="preReqPrevSection"
+        placeholder="prereq"
+      >
 
       <small class="text-muted">
-        Required scored weight in the prev. section
+        Required scored weight in the previous section.
       </small>
     </div>
   </div>
 
   <ng-container formArrayName="questions">
-    <div *ngFor="let q of questions.controls; let i = index" [formGroupName]="i"
-      class="question-div shadow-sm pop-warning" (mouseenter)="hoveritem=i">
+    <div
+      *ngFor="let q of questions.controls; let i = index"
+      [formGroupName]="i"
+      class="question-div shadow-sm pop-warning"
+      (mouseenter)="hoveritem=i"
+    >
 
       <div class="d-flex align-items-center">
-        <label for="">Q.{{i+1}}</label>
+        <label class="mb-0">Q.{{i+1}}</label>
         <div class="spacer"></div>
-        <button class="btn btn-sm btn-outline-dark" (click)="moveQuestion(i, -1)">
+
+        <button
+          class="btn btn-sm btn-outline-dark"
+          (click)="moveQuestion(i, -1)"
+          placement="right"
+          container="body"
+          triggers="hover focus"
+          [tooltip]="'Move this question up within the set.'"
+          aria-label="Move this question up within the set."
+        >
           <fa-icon [icon]="faUpArrow"></fa-icon>
           <span>Move Up</span>
         </button>
-        <button class="btn btn-sm btn-outline-dark" (click)="moveQuestion(i, 1)">
+
+        <button
+          class="btn btn-sm btn-outline-dark"
+          (click)="moveQuestion(i, 1)"
+          placement="right"
+          container="body"
+          triggers="hover focus"
+          [tooltip]="'Move this question down within the set.'"
+          aria-label="Move this question down within the set."
+        >
           <fa-icon [icon]="faDownArrow"></fa-icon>
           <span>Move Down</span>
         </button>
-        <app-confirm-button btnClass="btn btn-sm btn-outline-dark" (confirm)="removeQuestion(i)">
+
+        <app-confirm-button
+          btnClass="btn btn-sm btn-outline-dark"
+          (confirm)="removeQuestion(i)"
+          aria-label="remove question"
+        >
           <fa-icon [icon]="faTrash"></fa-icon>
           <span>Remove</span>
         </app-confirm-button>
@@ -46,78 +114,191 @@
 
       <div class="form-row">
         <div class="form-group col-8 py-0">
-          <label for="text-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Question</label>
-          <textarea id="text-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="text"
-            placeholder="question" rows="2"></textarea>
+          <label for="text-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
+            Question
+            <span
+              class="ml-2 text-muted"
+              role="button"
+              tabindex="0"
+              placement="right"
+              container="body"
+              triggers="hover focus"
+              [tooltip]="'Enter the question you expect the participant to answer. Make it specific so there is only one correct answer.'"
+              aria-label="Enter the question you expect the participant to answer. Make it specific so there is only one correct answer."
+            >
+              <fa-icon [icon]="faInfoCircle"></fa-icon>
+            </span>
+          </label>
+
+          <textarea
+            id="text-input{{vindex}}.{{this.index}}.{{i}}"
+            class="form-control"
+            formControlName="text"
+            placeholder="question"
+            rows="2"
+          ></textarea>
         </div>
+
         <div class="form-group col-4 py-0">
-          <label for="answer-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Answer</label>
-          <input id="answer-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="answer"
-            placeholder="answer">
+          <label for="answer-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
+            Answer
+            <span
+              class="ml-2 text-muted"
+              role="button"
+              tabindex="0"
+              placement="right"
+              container="body"
+              triggers="hover focus"
+              [tooltip]="'Enter the correct answer the participant must submit to earn a score. Graders are case-insensitive.'"
+              aria-label="Enter the correct answer the participant must submit to earn a score. Graders are case-insensitive."
+            >
+              <fa-icon [icon]="faInfoCircle"></fa-icon>
+            </span>
+          </label>
+
+          <input
+            id="answer-input{{vindex}}.{{this.index}}.{{i}}"
+            class="form-control"
+            formControlName="answer"
+            placeholder="answer"
+          >
         </div>
       </div>
 
-      <!-- not using hints at this time -->
-      <!-- <div class="form-row" [hidden]="!more">
-        <div class="form-group col-8 py-0">
-          <label for="hint-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Hint</label>
-          <textarea id="hint-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="hint" placeholder="hint" rows="2"></textarea>
-        </div>
-        <div class="form-group col-4 py-0">
-          <label for="penalty-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Penalty</label>
-          <input id="penalty-input{{vindex}}.{{this.index}}.{{i}}" type="number" class="form-control" formControlName="penalty" placeholder="">
-        </div>
-      </div> -->
-
       <div class="form-row" [hidden]="!more">
         <div class="form-group col-12 py-0">
-          <label for="hidden-input{{vindex}}.{{this.index}}.{{i}}" class="mr-2">Hidden</label>
-          <input id="hidden-input{{vindex}}.{{this.index}}.{{i}}" type="checkbox" class="form-control-checkbox"
-            formControlName="hidden">
+          <label for="hidden-input{{vindex}}.{{this.index}}.{{i}}" class="mr-2 d-flex align-items-center">
+            Hidden
+            <span
+              class="ml-2 text-muted"
+              role="button"
+              tabindex="0"
+              placement="right"
+              container="body"
+              triggers="hover focus"
+              [tooltip]="'Hide this question from participants. Hidden questions do not appear when playing the challenge.'"
+              aria-label="Hide this question from participants. Hidden questions do not appear when playing the challenge."
+            >
+              <fa-icon [icon]="faInfoCircle"></fa-icon>
+            </span>
+          </label>
+
+          <input
+            id="hidden-input{{vindex}}.{{this.index}}.{{i}}"
+            type="checkbox"
+            class="form-control-checkbox"
+            formControlName="hidden"
+          >
         </div>
+
         <div class="form-group col-6 py-0">
-          <label for="grader-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Grader</label>
-          <div id="grader-input{{vindex}}.{{this.index}}.{{i}}" class="btn-group" btnRadioGroup formControlName="grader"
-            (mouseleave)="infotip=0">
+          <label for="grader-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
+            Grader
+            <span
+              class="ml-2 text-muted"
+              role="button"
+              tabindex="0"
+              placement="right"
+              container="body"
+              triggers="hover focus"
+              [tooltip]="'Choose how submissions are checked against the expected answer: Match, MatchAny, MatchAll, or MatchAlpha.'"
+              aria-label="Choose how submissions are checked against the expected answer: Match, MatchAny, MatchAll, or MatchAlpha."
+            >
+              <fa-icon [icon]="faInfoCircle"></fa-icon>
+            </span>
+          </label>
+
+          <div
+            id="grader-input{{vindex}}.{{this.index}}.{{i}}"
+            class="btn-group"
+            btnRadioGroup
+            formControlName="grader"
+            (mouseleave)="infotip=0"
+          >
             <label class="btn btn-sm btn-outline-secondary" btnRadio="match" (mouseenter)="infotip=1">Match</label>
-            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAny"
-              (mouseenter)="infotip=2">MatchAny</label>
-            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAll"
-              (mouseenter)="infotip=3">MatchAll</label>
-            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAlpha"
-              (mouseenter)="infotip=4">MatchAlpha</label>
+            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAny" (mouseenter)="infotip=2">MatchAny</label>
+            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAll" (mouseenter)="infotip=3">MatchAll</label>
+            <label class="btn btn-sm btn-outline-secondary" btnRadio="matchAlpha" (mouseenter)="infotip=4">MatchAlpha</label>
           </div>
         </div>
+
         <div class="form-group col-2 py-0">
-          <label for="weight-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Weight
-            <small>
-              <fa-icon [icon]="faHelp" (mouseenter)="infotip=5" (mouseleave)="infotip=0"></fa-icon>
-            </small>
+          <label for="weight-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
+            Weight
+            <span
+              class="ml-2 text-muted"
+              role="button"
+              tabindex="0"
+              placement="right"
+              container="body"
+              triggers="hover focus"
+              [tooltip]="'Percentage of total for this question. Use 0–1 or 0–100. Zero values are calculated evenly.'"
+              aria-label="Percentage of total for this question. Use 0–1 or 0–100. Zero values are calculated evenly."
+            >
+              <fa-icon [icon]="faInfoCircle"></fa-icon>
+            </span>
           </label>
-          <input id="weight-input{{vindex}}.{{this.index}}.{{i}}" type="number" class="form-control"
-            formControlName="weight" placeholder="">
+
+          <input
+            id="weight-input{{vindex}}.{{this.index}}.{{i}}"
+            type="number"
+            class="form-control"
+            formControlName="weight"
+            placeholder=""
+          >
         </div>
+
         <div class="form-group col-4 py-0">
-          <label for="example-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0">Example</label>
-          <input id="example-input{{vindex}}.{{this.index}}.{{i}}" class="form-control" formControlName="example"
-            placeholder="example">
+          <label for="example-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
+            Example
+            <span
+              class="ml-2 text-muted"
+              role="button"
+              tabindex="0"
+              placement="right"
+              container="body"
+              triggers="hover focus"
+              [tooltip]="'Optional: provide an example answer to show the expected format (e.g., include extension if required).'"
+              aria-label="Optional: provide an example answer to show the expected format (e.g., include extension if required)."
+            >
+              <fa-icon [icon]="faInfoCircle"></fa-icon>
+            </span>
+          </label>
+
+          <input
+            id="example-input{{vindex}}.{{this.index}}.{{i}}"
+            class="form-control"
+            formControlName="example"
+            placeholder="example"
+          >
         </div>
+
         <div class="form-group col py-0" *ngIf="hoveritem===i">
           <small *ngIf="infotip===1">Match &mdash; match answer exactly</small>
           <small *ngIf="infotip===2">MatchAny &mdash; match one of the pipe-delimited answers</small>
-          <small *ngIf="infotip===3">MatchAll &mdash; match all of the pipe-delimited answers, regardless of
-            order</small>
+          <small *ngIf="infotip===3">MatchAll &mdash; match all of the pipe-delimited answers, regardless of order</small>
           <small *ngIf="infotip===4">MatchAlpha &mdash; match answer exactly after stripping any symbols</small>
-          <small *ngIf="infotip===5">Percentage of total for this question. Value should be between
-            <code>0 and 1</code>, or <code>0 and 100</code>, inclusive. 0 values are calculated evenly.</small>
+          <small *ngIf="infotip===5">
+            Percentage of total for this question. Value should be between <code>0 and 1</code>, or <code>0 and 100</code>, inclusive.
+            0 values are calculated evenly.
+          </small>
         </div>
       </div>
     </div>
   </ng-container>
 
-  <button class="btn btn-sm btn-outline-secondary mt-2" (click)="addQuestion()">
+  <button
+    class="btn btn-sm btn-outline-secondary mt-2"
+    (click)="addQuestion()"
+    placement="right"
+    container="body"
+    triggers="hover focus"
+    [tooltip]="'Add a new question to this question set.'"
+    aria-label="Add a new question to this question set."
+  >
     <fa-icon [icon]="faPlus"></fa-icon>
     <span>Add Question</span>
   </button>
+
   <hr />
 </div>

@@ -30,6 +30,8 @@ export class AppLayoutComponent {
 
   @ViewChild('sidebarContainer') sidebarRef!: ElementRef<HTMLElement>;
 
+  disableExternalLinks = false;
+
   constructor(
     config: ConfigService,
     userSvc: UserService,
@@ -39,6 +41,8 @@ export class AppLayoutComponent {
   ) {
     this.appname = config.settings.appname;
     this.websocket = hubSvc.state$.pipe(debounceTime(500));
+
+    this.disableExternalLinks = !!(config.settings as any).disableExternalLinks;
 
     config.sidebar$.subscribe(
       state => this.open = state

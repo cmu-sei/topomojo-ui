@@ -26,6 +26,7 @@ export class QuestionFormComponent implements OnInit {
   faHelp = faInfoCircle;
   faUpArrow = faArrowUp;
   faDownArrow = faArrowDown;
+  faInfoCircle = faInfoCircle;
 
   constructor(
     private svc: ChallengeFormService

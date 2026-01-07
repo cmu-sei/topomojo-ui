@@ -1,19 +1,78 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
-
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { take } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+
+type UiSettings = {
+  appname?: string;
+  apphost?: string;
+  docsUrl?: string;
+  disableExternalLinks?: boolean;
+};
 
 @Component({
-    selector: 'app-about',
-    templateUrl: './about.component.html',
-    styleUrls: ['./about.component.scss'],
-    standalone: false
+  selector: 'app-about',
+  templateUrl: './about.component.html',
+  styleUrls: ['./about.component.scss'],
+  standalone: false
 })
+
 export class AboutComponent implements OnInit {
+  uiVersion = environment.VERSION;
+  apiVersion = '—';
+  versionError = '';
 
-  constructor() { }
+  disableExternalLinks = false;
 
-  ngOnInit(): void {
+  private readonly defaultLinks = {
+    repo: 'https://github.com/cmu-sei/TopoMojo',
+    docs: 'https://cmu-sei.github.io/crucible/topomojo',
+    license: 'https://github.com/cmu-sei/TopoMojo/blob/master/LICENSE.md',
+  };
+
+  links = { ...this.defaultLinks };
+
+  constructor(private http: HttpClient) {}
+
+  get showResources(): boolean {
+    if (this.disableExternalLinks) return !!this.links.docs;
+    return !!this.links.repo || !!this.links.docs || !!this.links.license;
   }
 
+  ngOnInit(): void {
+    this.http.get<UiSettings>('assets/settings.json')
+      .pipe(take(1))
+      .subscribe({
+        next: (s) => {
+          this.disableExternalLinks = !!s.disableExternalLinks;
+
+          const docs = (s.docsUrl ?? '').trim();
+
+          if (this.disableExternalLinks) {
+            this.links = {
+              repo: '',
+              license: '',
+              docs: docs || ''
+            };
+          } else {
+            this.links = { ...this.defaultLinks, docs: docs || this.defaultLinks.docs };
+          }
+
+          const base = (s.apphost ?? '').replace(/\/+$/, '');
+          const url = base ? `${base}/health/version` : `/health/version`;
+
+          this.http.get(url, { responseType: 'text' })
+            .pipe(take(1))
+            .subscribe({
+              next: (v) => this.apiVersion = (v || '').split('+')[0] || 'unknown',
+              error: () => {
+                this.apiVersion = 'API ERROR!';
+                this.versionError = 'Unable to load API version.';
+              }
+            });
+        },
+      });
+  }
 }

@@ -52,11 +52,23 @@
   <div *ngIf="open"
        class="sidebar-footer-inner d-flex align-items-center w-100">
 
+    <a *ngIf="!disableExternalLinks"
+    href="https://cmu-sei.github.io/crucible/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Open Crucible Framework site">
     <img
-      class="crucible-logo"
-      src="assets/img/crucible-logo-light.png"
-      alt="Part of the Crucible Framework"
+        class="crucible-logo"
+        src="assets/img/crucible-logo-light.png"
+        alt="Part of the Crucible Framework"
     />
+    </a>
+
+    <img *ngIf="disableExternalLinks"
+        class="crucible-logo"
+        src="assets/img/crucible-logo-light.png"
+        alt="Part of the Crucible Framework" />
+
 
     <div class="ml-auto d-flex align-items-center">
       <button class="btn btn-link p-0 mr-3 text-secondary"
