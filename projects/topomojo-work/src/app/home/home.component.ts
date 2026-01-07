@@ -45,7 +45,8 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  openSidebar(): void {
+  openSidebar(ev?: MouseEvent): void {
+    ev?.stopPropagation();
     this.config.sidebar$.next(true);
   }
 
