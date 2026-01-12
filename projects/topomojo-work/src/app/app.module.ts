@@ -17,7 +17,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { MarkdownModule, MARKED_OPTIONS } from 'ngx-markdown';
 
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { TooltipModule, TooltipConfig } from 'ngx-bootstrap/tooltip';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 
@@ -137,6 +137,10 @@ import { ModalModule } from 'ngx-bootstrap/modal';
       useClass: AuthInterceptor,
       multi: true,
     },
+    {
+      provide: TooltipConfig,
+      useFactory: tooltipConfigFactory,
+    },
     provideAppInitializer(() => {
       const initializerFn = (loadSettings)(inject(ConfigService));
       return initializerFn();
@@ -164,4 +168,11 @@ export function register(
   user: UserService,
 ): (() => Promise<void>) {
   return (): Promise<void> => user.register();
+}
+
+export function tooltipConfigFactory(): TooltipConfig {
+  const config = new TooltipConfig();
+  config.delay = 500;
+  config.container = 'body';
+  return config;
 }
