@@ -150,7 +150,7 @@
           </ul>
         </section>
         <section *ngIf="versionError" class="mb-4">
-          <div class="text-danger small">{{ versionError }}</div>
+          <app-error-div *ngIf="versionError">{{ versionError }}</app-error-div>
         </section>
       </div>
     </aside>

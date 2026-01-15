@@ -132,11 +132,6 @@
   <div class="col-4 d-flex justify-content-end align-items-center">
     <span
       class="header-label text-primary"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      [tooltip]="'View details, clone, or delete a template.'"
-      aria-label="View details, clone, or delete a template."
     >
       Actions
     </span>
@@ -239,11 +234,6 @@
           *ngIf="g.workspaceId"
           [routerLink]="['/topo', g.workspaceId, 'templates']"
           class="text-secondary"
-          placement="right"
-          [tooltip]="'Open the workspace that owns this template.'"
-          container="body"
-          triggers="hover focus"
-          aria-label="Open the workspace that owns this template."
         >
           {{ g.workspaceName }}
         </a>
@@ -291,11 +281,6 @@
     <button
       class="btn btn-outline-info btn-sm mx-1"
       (click)="view(g)"
-      container="body"
-      triggers="hover focus"
-      placement="right"
-      [tooltip]="'View and edit template properties.'"
-      aria-label="View and edit template properties."
     >
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
@@ -304,11 +289,6 @@
     <button
       class="btn btn-outline-info btn-sm mx-1"
       (click)="clone(g)"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      [tooltip]="'Clone this template to create a new copy.'"
-      aria-label="Clone this template to create a new copy."
     >
       <fa-icon [icon]="faCopy"></fa-icon>
       <span>Clone</span>
@@ -321,11 +301,6 @@
     >
       <span
         class="d-inline-flex align-items-center"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Delete this template.'"
-        aria-label="Delete this template."
       >
         <fa-icon [icon]="faTrash"></fa-icon>
         <span>Delete</span>

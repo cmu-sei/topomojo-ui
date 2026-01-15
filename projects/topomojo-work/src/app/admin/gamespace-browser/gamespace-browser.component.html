@@ -69,11 +69,6 @@
   <button
     class="btn btn-outline-info btn-sm mx-1"
     (click)="refresh()"
-    [tooltip]="'Refresh the current search results.'"
-    placement="right"
-    container="body"
-    triggers="hover focus"
-    aria-label="Refresh the current search results."
   >
     <fa-icon [icon]="faSync"></fa-icon>
     <span>Refresh</span>
@@ -87,11 +82,6 @@
   >
     <span
       class="d-inline-flex align-items-center"
-      [tooltip]="'Delete all selected gamespaces and their associated VMs.'"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      aria-label="Delete all selected gamespaces and their associated VMs."
     >
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Delete Selected</span>
@@ -171,11 +161,6 @@
   <div class="col-3 d-flex justify-content-end">
     <span
       class="header-label text-primary"
-      [tooltip]="'View details or delete gamespaces.'"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      aria-label="View details or delete gamespaces."
     >
       Actions
     </span>

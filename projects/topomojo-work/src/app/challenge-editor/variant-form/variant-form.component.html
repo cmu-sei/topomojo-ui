@@ -4,7 +4,6 @@
 <div [formGroup]="form">
 
   <div class="mb-2">
-    <div class="font-weight-bold">Variant Settings</div>
     <div class="text-muted">
       A variant is a different version of the challenge. You can provide variant-specific Markdown, attach an ISO to
       selected templates, and define one or more question sets. One variant is chosen randomly at deploy time.
@@ -14,18 +13,6 @@
   <div class="indent" [hidden]="!detail">
     <label class="col-form-label-sm d-flex align-items-center mb-0">
       Markdown
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Variant-specific instructions appended to the main challenge text.'"
-        aria-label="Variant-specific instructions appended to the main challenge text."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <ngx-monaco-editor
@@ -43,18 +30,6 @@
   <div formGroupName="iso" class="indent mb-2 pb-2" [hidden]="!detail">
     <label class="label pop-info d-flex align-items-center mb-0">
       ISO
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Attach a variant-specific ISO to one or more templates by listing target template names.'"
-        aria-label="Attach a variant-specific ISO to one or more templates by listing target template names."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <div>
@@ -67,18 +42,6 @@
     <div class="form-group py-0">
       <label class="col-form-label-sm d-flex align-items-center mb-0">
         File
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Select the ISO file to attach for this variant. Use Remove to detach the current ISO.'"
-          aria-label="Select the ISO file to attach for this variant. Use Remove to detach the current ISO."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
 
       <div class="input-group input-group-sm mb-1">
@@ -111,18 +74,6 @@
     <div class="form-group py-0">
       <label class="col-form-label-sm d-flex align-items-center mb-0">
         Targets
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Space-delimited list of template names that should attach this ISO (e.g., `web01 kali`).'"
-          aria-label="Space-delimited list of template names that should attach this ISO (e.g., 'web01 kali')."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
 
       <input class="form-control" formControlName="targets" placeholder="vm targets" aria-label="vm target list">
@@ -135,18 +86,6 @@
     <div class="form-group py-0">
       <label class="mb-0 d-flex align-items-center" for="downloadable-toggle-{{index}}">
         Downloadable
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'If Downloadable is enabled, players can download the ISO. Use Restricted to keep it inaccessible.'"
-          aria-label="If Downloadable is enabled, players can download the ISO. Use Restricted to keep it inaccessible."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
 
       <div class="form-control auto-h d-flex align-items-center">
@@ -171,7 +110,6 @@
 
   <ng-container formArrayName="sections">
     <div class="indent mb-2">
-      <div class="font-weight-bold">Question Sets</div>
       <div class="text-muted">
         Use question sets to group questions (and optionally gate progression with prerequisites). Each question includes a
         prompt and an expected answer; in Detail you can also set visibility, grading, weight, and an example.
@@ -247,18 +185,6 @@
       <div [hidden]="!detail && !more[i]">
         <label class="col-form-label-sm d-flex align-items-center mb-0">
           Markdown
-          <span
-            class="ml-2 text-muted"
-            role="button"
-            tabindex="0"
-            placement="right"
-            container="body"
-            triggers="hover focus"
-            [tooltip]="'Instructions specific to this question set. Useful for staged/progressive challenges.'"
-            aria-label="Instructions specific to this question set. Useful for staged/progressive challenges."
-          >
-            <fa-icon [icon]="faInfoCircle"></fa-icon>
-          </span>
         </label>
 
         <ngx-monaco-editor
@@ -283,11 +209,6 @@
   <button
     class="btn btn-sm btn-outline-secondary"
     (click)="addSet()"
-    placement="right"
-    container="body"
-    triggers="hover focus"
-    [tooltip]="'Add a new question set to this variant.'"
-    aria-label="Add a new question set to this variant."
   >
     <fa-icon [icon]="faPlus"></fa-icon>
     <span>Add Question Set</span>

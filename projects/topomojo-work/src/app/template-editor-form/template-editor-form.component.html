@@ -2,7 +2,6 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <div>
-  <div class="font-weight-bold">Template Settings</div>
   <div class="text-muted">
     Use this form to customize a VM template for your workspace: name and description, network connections, deployment
     options (replicas/variant), optional ISO attachments, and whether the console should be visible to players.
@@ -18,18 +17,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="name-input">
       Name
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'A unique name for this VM template within the workspace. Use something descriptive (e.g., `web01`, `kali`, `dc01`).'"
-        aria-label="A unique name for this VM template within the workspace. Use something descriptive (e.g., 'web01', 'kali', 'dc01')."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <input
@@ -58,18 +45,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="description-input">
       Description
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Describe the VM’s purpose and include any login credentials users will need (if appropriate).'"
-        aria-label="Describe the VM’s purpose and include any login credentials users will need (if appropriate)."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <textarea
@@ -90,18 +65,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="network-input">
       Networks
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Space-delimited network names that this VM connects to. Use the same names across VMs that should share a network.'"
-        aria-label="Space-delimited network names that this VM connects to. Use the same names across VMs that should share a network."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <input
@@ -121,18 +84,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="guestinfo-input">
       Guest Settings
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Key/value pairs passed into the VM at deploy time (e.g., via VMware guestinfo variables or QEMU firmware config). Use key=value, one per line. Lines starting with # are ignored.'"
-        aria-label="Key/value pairs passed into the VM at deploy time (e.g., via VMware guestinfo variables or QEMU firmware config). Use key=value, one per line. Lines starting with # are ignored."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <textarea
@@ -154,18 +105,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="replicas-input">
       Replicas
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'How many copies of this VM to deploy in a gamespace. Use -1 to deploy one copy per player.'"
-        aria-label="How many copies of this VM to deploy in a gamespace. Use -1 to deploy one copy per player."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <input
@@ -184,18 +123,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="variant-input">
       Variant
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Deploy this VM only for a specific challenge variant. Use 0 for all variants. If using a variant, consider adding a suffix like _v1 to the template name.'"
-        aria-label="Deploy this VM only for a specific challenge variant. Use 0 for all variants. If using a variant, consider adding a suffix like _v1 to the template name."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <input
@@ -214,18 +141,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="iso-input">
       ISO
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Attach an ISO image to this VM (e.g., installer or tools). Use Remove to detach the current ISO.'"
-        aria-label="Attach an ISO image to this VM (e.g., installer or tools). Use Remove to detach the current ISO."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <div class="input-group input-group-sm mb-1">
@@ -250,18 +165,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="hidden-toggle">
       Console Access
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Hide prevents users from accessing this VM’s console. Useful for infrastructure systems (e.g., DHCP, router) that don’t require user interaction.'"
-        aria-label="Hide prevents users from accessing this VM’s console. Useful for infrastructure systems (e.g., DHCP, router) that don’t require user interaction."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <div class="form-control auto-h d-flex align-items-center" id="hidden-toggle">

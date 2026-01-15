@@ -2,7 +2,6 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <div>
-  <div class="font-weight-bold">Templates</div>
   <div class="text-muted">
     Use this tab to add “starting point” virtual machine templates to your workspace. You can add blank disk templates
     to install your own OS, or select templates with operating systems pre-installed, then edit them to fit your topology.
@@ -15,10 +14,8 @@
   role="button"
   [(ngModel)]="showing"
   aria-label="add templates"
-  placement="right"
   container="body"
   triggers="hover focus"
-  [tooltip]="'Browse and add published template sets or individual VM templates to your workspace.'"
 >
   <fa-icon [icon]="faPlus"></fa-icon>
   <span>Add Templates</span>

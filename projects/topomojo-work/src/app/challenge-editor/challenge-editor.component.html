@@ -2,7 +2,6 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <div class="mb-2">
-  <div class="font-weight-bold">Challenge</div>
   <div class="text-muted">
     Use this tab to define transforms (dynamic variables), add challenge Markdown, and configure variants with
     questions and answers. At deploy time, TopoMojo replaces any <code>##key##</code> tokens with generated values.
@@ -12,18 +11,6 @@
 <div class="d-flex align-items-center mb-2">
   <label class="mb-0 d-flex align-items-center">
     Challenge Editor
-    <span
-      class="ml-2 text-muted"
-      role="button"
-      tabindex="0"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      [tooltip]="'Use transforms and ##key## tokens to inject dynamic values into guest settings, challenge text, questions, and answers at deploy time.'"
-      aria-label="Use transforms and ##key## tokens to inject dynamic values into guest settings, challenge text, questions, and answers at deploy time."
-    >
-      <fa-icon [icon]="faInfoCircle"></fa-icon>
-    </span>
   </label>
 
   <div class="spacer"></div>
@@ -47,18 +34,6 @@
   <div formArrayName="transforms" class="form-group bg-light">
     <label class="d-flex align-items-center mb-0">
       Transforms
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Transforms define dynamic values generated at deploy time. Use ##key## anywhere you want the value inserted.'"
-        aria-label="Transforms define dynamic values generated at deploy time. Use ##key## anywhere you want the value inserted."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <div>
@@ -126,18 +101,6 @@ ipv4:192.168.22.0/24 — example result 192.168.22.137
   <div class="form-group bg-light">
     <label class="col-form-label-sm d-flex align-items-center mb-0">
       Markdown
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'This Markdown is appended to the gamespace document when the challenge launches.'"
-        aria-label="This Markdown is appended to the gamespace document when the challenge launches."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <ngx-monaco-editor
@@ -155,18 +118,6 @@ ipv4:192.168.22.0/24 — example result 192.168.22.137
     <div class="form-group bg-light">
       <label class="d-flex align-items-center mb-0">
         Variants
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'A variant is a different version of the challenge (ISO attachments, VMs, questions/answers). One variant is selected randomly at deploy time.'"
-          aria-label="A variant is a different version of the challenge (ISO attachments, VMs, questions/answers). One variant is selected randomly at deploy time."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
 
       <p class="mb-1">
@@ -183,11 +134,6 @@ ipv4:192.168.22.0/24 — example result 192.168.22.137
           [(ngModel)]="showDetail"
           [ngModelOptions]="{standalone: true}"
           (click)="updateDetail()"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Show or hide detailed question and scoring settings for each variant.'"
-          aria-label="Show or hide detailed question and scoring settings for each variant."
         >
           <fa-icon [icon]="showDetail ? faCheck : faUnchecked"></fa-icon>
           <span>Show Variant Detail</span>
@@ -205,11 +151,6 @@ ipv4:192.168.22.0/24 — example result 192.168.22.137
           btnCheckbox
           [(ngModel)]="detail[i]"
           [ngModelOptions]="{standalone: true}"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Toggle detailed view for this variant.'"
-          aria-label="Toggle detailed view for this variant."
         >
           <fa-icon [icon]="faMore"></fa-icon>
           <span>Detail</span>
@@ -218,11 +159,6 @@ ipv4:192.168.22.0/24 — example result 192.168.22.137
         <button
           class="btn btn-sm btn-outline-dark mr-1"
           (click)="addVariant(v.value)"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Clone this variant.'"
-          aria-label="Clone this variant."
         >
           <fa-icon [icon]="faCopy"></fa-icon>
           <span>Clone</span>

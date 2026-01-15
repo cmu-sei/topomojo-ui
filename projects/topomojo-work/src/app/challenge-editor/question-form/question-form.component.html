@@ -6,18 +6,6 @@
     <div class="form-group col-6 py-0">
       <label for="prereq-input-{{vindex}}.{{this.index}}" class="mb-0 d-flex align-items-center">
         Prerequisite Total Weight
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Minimum total scored weight required across all challenge questions before this question set is shown.'"
-          aria-label="Minimum total scored weight required across all challenge questions before this question set is shown."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
 
       <input
@@ -36,18 +24,6 @@
     <div class="form-group col-6 py-0">
       <label for="prereq-prev-input-{{vindex}}.{{this.index}}" class="mb-0 d-flex align-items-center">
         Prerequisite Prev. Section Weight
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Minimum scored weight required in the previous question set before this set is shown.'"
-          aria-label="Minimum scored weight required in the previous question set before this set is shown."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
 
       <input
@@ -79,11 +55,6 @@
         <button
           class="btn btn-sm btn-outline-dark"
           (click)="moveQuestion(i, -1)"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Move this question up within the set.'"
-          aria-label="Move this question up within the set."
         >
           <fa-icon [icon]="faUpArrow"></fa-icon>
           <span>Move Up</span>
@@ -92,11 +63,6 @@
         <button
           class="btn btn-sm btn-outline-dark"
           (click)="moveQuestion(i, 1)"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Move this question down within the set.'"
-          aria-label="Move this question down within the set."
         >
           <fa-icon [icon]="faDownArrow"></fa-icon>
           <span>Move Down</span>
@@ -116,18 +82,6 @@
         <div class="form-group col-8 py-0">
           <label for="text-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
             Question
-            <span
-              class="ml-2 text-muted"
-              role="button"
-              tabindex="0"
-              placement="right"
-              container="body"
-              triggers="hover focus"
-              [tooltip]="'Enter the question you expect the participant to answer. Make it specific so there is only one correct answer.'"
-              aria-label="Enter the question you expect the participant to answer. Make it specific so there is only one correct answer."
-            >
-              <fa-icon [icon]="faInfoCircle"></fa-icon>
-            </span>
           </label>
 
           <textarea
@@ -142,18 +96,6 @@
         <div class="form-group col-4 py-0">
           <label for="answer-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
             Answer
-            <span
-              class="ml-2 text-muted"
-              role="button"
-              tabindex="0"
-              placement="right"
-              container="body"
-              triggers="hover focus"
-              [tooltip]="'Enter the correct answer the participant must submit to earn a score. Graders are case-insensitive.'"
-              aria-label="Enter the correct answer the participant must submit to earn a score. Graders are case-insensitive."
-            >
-              <fa-icon [icon]="faInfoCircle"></fa-icon>
-            </span>
           </label>
 
           <input
@@ -169,18 +111,6 @@
         <div class="form-group col-12 py-0">
           <label for="hidden-input{{vindex}}.{{this.index}}.{{i}}" class="mr-2 d-flex align-items-center">
             Hidden
-            <span
-              class="ml-2 text-muted"
-              role="button"
-              tabindex="0"
-              placement="right"
-              container="body"
-              triggers="hover focus"
-              [tooltip]="'Hide this question from participants. Hidden questions do not appear when playing the challenge.'"
-              aria-label="Hide this question from participants. Hidden questions do not appear when playing the challenge."
-            >
-              <fa-icon [icon]="faInfoCircle"></fa-icon>
-            </span>
           </label>
 
           <input
@@ -194,18 +124,6 @@
         <div class="form-group col-6 py-0">
           <label for="grader-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
             Grader
-            <span
-              class="ml-2 text-muted"
-              role="button"
-              tabindex="0"
-              placement="right"
-              container="body"
-              triggers="hover focus"
-              [tooltip]="'Choose how submissions are checked against the expected answer: Match, MatchAny, MatchAll, or MatchAlpha.'"
-              aria-label="Choose how submissions are checked against the expected answer: Match, MatchAny, MatchAll, or MatchAlpha."
-            >
-              <fa-icon [icon]="faInfoCircle"></fa-icon>
-            </span>
           </label>
 
           <div
@@ -225,18 +143,6 @@
         <div class="form-group col-2 py-0">
           <label for="weight-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
             Weight
-            <span
-              class="ml-2 text-muted"
-              role="button"
-              tabindex="0"
-              placement="right"
-              container="body"
-              triggers="hover focus"
-              [tooltip]="'Percentage of total for this question. Use 0–1 or 0–100. Zero values are calculated evenly.'"
-              aria-label="Percentage of total for this question. Use 0–1 or 0–100. Zero values are calculated evenly."
-            >
-              <fa-icon [icon]="faInfoCircle"></fa-icon>
-            </span>
           </label>
 
           <input
@@ -251,18 +157,6 @@
         <div class="form-group col-4 py-0">
           <label for="example-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
             Example
-            <span
-              class="ml-2 text-muted"
-              role="button"
-              tabindex="0"
-              placement="right"
-              container="body"
-              triggers="hover focus"
-              [tooltip]="'Optional: provide an example answer to show the expected format (e.g., include extension if required).'"
-              aria-label="Optional: provide an example answer to show the expected format (e.g., include extension if required)."
-            >
-              <fa-icon [icon]="faInfoCircle"></fa-icon>
-            </span>
           </label>
 
           <input
@@ -290,11 +184,6 @@
   <button
     class="btn btn-sm btn-outline-secondary mt-2"
     (click)="addQuestion()"
-    placement="right"
-    container="body"
-    triggers="hover focus"
-    [tooltip]="'Add a new question to this question set.'"
-    aria-label="Add a new question to this question set."
   >
     <fa-icon [icon]="faPlus"></fa-icon>
     <span>Add Question</span>

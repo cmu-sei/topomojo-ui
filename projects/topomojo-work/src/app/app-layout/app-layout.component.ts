@@ -43,10 +43,12 @@ export class AppLayoutComponent {
     this.websocket = hubSvc.state$.pipe(debounceTime(500));
 
     this.disableExternalLinks = !!(config.settings as any).disableExternalLinks;
+    this.loadSidebarState();
 
-    config.sidebar$.subscribe(
-      state => this.open = state
-    );
+    config.sidebar$.subscribe(state => {
+      this.open = state;
+      this.saveSidebarState();
+    });
 
     userSvc.user$.pipe(
     ).subscribe(u => this.user = u);
@@ -56,26 +58,50 @@ export class AppLayoutComponent {
     this.auth.logout();
   }
 
-  pin(): void {
-    this.pinned = !this.pinned;
-  }
-
   keyclick(ev: KeyboardEvent): boolean {
     if (ev.code === 'Enter' || ev.code === 'Space') {
       this.pinned = !this.pinned;
       this.open = !this.open;
+      this.saveSidebarState();
       return false;
     }
     return true;
   }
 
+  pin(): void {
+    this.pinned = !this.pinned;
+    this.saveSidebarState();
+  }
+
   toggleSidebar(): void {
     this.open = !this.open;
+    this.saveSidebarState();
   }
 
   closeSidebar(): void {
     this.open = false;
     this.pinned = false;
+    this.saveSidebarState();
+  }
+
+  private readonly SIDEBAR_OPEN_KEY = 'topomojo.sidebar.open';
+  private readonly SIDEBAR_PINNED_KEY = 'topomojo.sidebar.pinned';
+
+  private loadSidebarState(): void {
+    const openSaved = localStorage.getItem(this.SIDEBAR_OPEN_KEY);
+    if (openSaved !== null) {
+      this.open = openSaved === 'true';
+    }
+
+    const pinnedSaved = localStorage.getItem(this.SIDEBAR_PINNED_KEY);
+    if (pinnedSaved !== null) {
+      this.pinned = pinnedSaved === 'true';
+    }
+  }
+
+  private saveSidebarState(): void {
+    localStorage.setItem(this.SIDEBAR_OPEN_KEY, String(this.open));
+    localStorage.setItem(this.SIDEBAR_PINNED_KEY, String(this.pinned));
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -84,6 +110,7 @@ export class AppLayoutComponent {
       switch (ev.code) {
         case 'KeyO':
           this.open = true;
+          this.saveSidebarState();
           break;
 
         case 'KeyH':
@@ -92,6 +119,7 @@ export class AppLayoutComponent {
 
         case 'KeyL':
           this.open = !this.open;
+          this.saveSidebarState();
           break;
       }
     }

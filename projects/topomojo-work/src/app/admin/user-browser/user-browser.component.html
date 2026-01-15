@@ -193,11 +193,6 @@
     <button
       class="btn btn-outline-info btn-sm tm-action-btn"
       (click)="view(user)"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      [tooltip]="'View and edit this user’s settings.'"
-      aria-label="View and edit this user’s settings."
     >
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
@@ -230,18 +225,6 @@
     <div class="form-group bg-light">
       <label class="d-block mb-0 d-flex align-items-center" for="role-input">
         Role
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Roles are additive: Creator includes Builder, and Admin includes everything. Disabled removes permissions.'"
-          aria-label="Roles are additive: Creator includes Builder, and Admin includes everything. Disabled removes permissions."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
 
       <div
@@ -269,18 +252,6 @@
     <div class="form-group bg-light">
       <label class="mb-0 d-flex align-items-center" for="name-input">
         Name
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Display name for this user. For client `user`, the name may be overwritten by the auth token.'"
-          aria-label="Display name for this user. For client 'user', the name may be overwritten by the auth token."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
       <input id="name-input" class="form-control" type="text" [(ngModel)]="user.name" (change)="update(user)">
       <small class="text-muted">For regular users, names may update from the authentication token.</small>
@@ -289,18 +260,6 @@
     <div class="form-group bg-light">
       <label class="mb-0 d-flex align-items-center" for="scope-input">
         Scope
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Space-delimited audience groups this user belongs to. Users can only deploy/play workspaces whose Audience matches one of these scope tags.'"
-          aria-label="Space-delimited audience groups this user belongs to. Users can only deploy/play workspaces whose Audience matches one of these scope tags."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
       <input id="scope-input" class="form-control" type="text" [(ngModel)]="user.scope" (change)="update(user)">
       <small class="text-muted">
@@ -311,18 +270,6 @@
     <div class="form-group bg-light">
       <label class="mb-0 d-flex align-items-center" for="input-wslimit">
         Workspace Limit
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Maximum number of workspaces this user can manage.'"
-          aria-label="Maximum number of workspaces this user can manage."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
       <input id="input-wslimit" class="form-control" type="number" [(ngModel)]="user.workspaceLimit" (change)="update(user)">
       <small class="text-muted">Max workspaces this user can manage.</small>
@@ -331,18 +278,6 @@
     <div class="form-group bg-light">
       <label class="mb-0 d-flex align-items-center" for="input-gslimit">
         Gamespace Limit
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Maximum number of concurrent gamespaces this user can run at the same time.'"
-          aria-label="Maximum number of concurrent gamespaces this user can run at the same time."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
       <input id="input-gslimit" class="form-control" type="number" [(ngModel)]="user.gamespaceLimit" (change)="update(user)">
       <small class="text-muted">Max concurrent gamespaces allowed.</small>
@@ -351,18 +286,6 @@
     <div class="form-group bg-light">
       <label class="mb-0 d-flex align-items-center" for="input-gsduration">
         Gamespace Max Duration
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Maximum allowed duration (in minutes) for a gamespace launched by this user.'"
-          aria-label="Maximum allowed duration (in minutes) for a gamespace launched by this user."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
       <input id="input-gsduration" class="form-control" type="number" [(ngModel)]="user.gamespaceMaxMinutes" (change)="update(user)">
       <small class="text-muted">Max minutes allowed for a gamespace.</small>
@@ -371,18 +294,6 @@
     <div class="form-group bg-light">
       <label class="mb-0 d-flex align-items-center" for="input-gscleanup">
         Gamespace Cleanup Grace time
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Grace period (minutes) between gamespace expiration and teardown.'"
-          aria-label="Grace period (minutes) between gamespace expiration and teardown."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
       <input
         id="input-gscleanup"
@@ -397,18 +308,6 @@
     <div class="form-group bg-light">
       <label class="mb-0 d-flex align-items-center" for="input-serviceAccountClientId">
         Service Account Client Id
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Marks this user as a service account for client credentials authorization. Recommended role: Observer or lower.'"
-          aria-label="Marks this user as a service account for client credentials authorization. Recommended role: Observer or lower."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
       <input
         id="input-serviceAccountClientId"
@@ -426,18 +325,6 @@
     <div class="form-group bg-light">
       <label class="mb-0 d-flex align-items-center">
         ApiKeys
-        <span
-          class="ml-2 text-muted"
-          role="button"
-          tabindex="0"
-          placement="right"
-          container="body"
-          triggers="hover focus"
-          [tooltip]="'Generate and manage API keys so this user can interact with the TopoMojo API programmatically.'"
-          aria-label="Generate and manage API keys so this user can interact with the TopoMojo API programmatically."
-        >
-          <fa-icon [icon]="faInfoCircle"></fa-icon>
-        </span>
       </label>
       <app-apikeys [id]="user.id"></app-apikeys>
     </div>

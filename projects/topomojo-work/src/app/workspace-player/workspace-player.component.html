@@ -3,10 +3,8 @@
 
 <div *ngIf="gamespace$ | async as game" class="mb-4">
   <div class="mb-2">
-    <div class="font-weight-bold">Play</div>
     <div class="text-muted">
-      Use this page to launch and interact with your lab the same way players will. Play deploys a read-only copy of the
-      workspace VMs so you can verify your configuration, document, and challenge flow.
+      Launch and interact with your lab as a gamespace, the same way players will.
     </div>
   </div>
 
@@ -27,8 +25,8 @@
             placement="right"
             container="body"
             triggers="hover focus"
-            [tooltip]="'Choose which challenge variant to play (use 0 for any/default when applicable).'"
-            aria-label="Choose which challenge variant to play (use 0 for any/default when applicable)."
+            [tooltip]="'Choose which challenge variant to play (use 0 for any/default).'"
+            aria-label="Choose which challenge variant to play (use 0 for any/default)."
           >
             <fa-icon [icon]="faInfoCircle"></fa-icon>
           </span>
@@ -46,8 +44,8 @@
             placement="right"
             container="body"
             triggers="hover focus"
-            [tooltip]="'Maximum number of submission attempts allowed when answering questions.'"
-            aria-label="Maximum number of submission attempts allowed when answering questions."
+            [tooltip]="'Maximum number of submission attempts allowed.'"
+            aria-label="Maximum number of submission attempts allowed."
           >
             <fa-icon [icon]="faInfoCircle"></fa-icon>
           </span>
@@ -65,8 +63,8 @@
             placement="right"
             container="body"
             triggers="hover focus"
-            [tooltip]="'Maximum number of minutes permitted to play before the gamespace expires.'"
-            aria-label="Maximum number of minutes permitted to play before the gamespace expires."
+            [tooltip]="'Maximum number of minutes before the gamespace expires.'"
+            aria-label="Maximum number of minutes before the gamespace expires."
           >
             <fa-icon [icon]="faInfoCircle"></fa-icon>
           </span>
@@ -76,7 +74,7 @@
 
       <div class="col-3">
         <label class="mb-0 form-label-sm d-flex align-items-center" for="points-input">
-          Point Value
+          Points
           <span
             class="ml-2 text-muted"
             role="button"
@@ -84,8 +82,8 @@
             placement="right"
             container="body"
             triggers="hover focus"
-            [tooltip]="'Point value assigned for this challenge when used with Gameboard in a competition scenario.'"
-            aria-label="Point value assigned for this challenge when used with Gameboard in a competition scenario."
+            [tooltip]="'Number of points awarded for solving this challenge'"
+            aria-label="Number of points awarded for solving this challenge"
           >
             <fa-icon [icon]="faInfoCircle"></fa-icon>
           </span>
@@ -97,11 +95,6 @@
     <app-confirm-button
       btnClass="btn btn-sm btn-secondary"
       (confirm)="launch()"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      [tooltip]="'Start the gamespace: deploy VMs, start the timer, and load the document and challenge.'"
-      aria-label="Start the gamespace: deploy VMs, start the timer, and load the document and challenge."
     >
       <fa-icon [icon]="faBolt"></fa-icon>
       <span>Start</span>

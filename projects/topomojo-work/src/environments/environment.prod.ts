@@ -1,8 +1,7 @@
-import pkg from '../../../../package.json';
-
+declare var require: any;
 export const environment = {
   production: true,
-  VERSION: pkg.version,
+  VERSION: require('../../../../package.json').version,
   settings: {
     appname: 'TopoMojo',
     apphost: '',

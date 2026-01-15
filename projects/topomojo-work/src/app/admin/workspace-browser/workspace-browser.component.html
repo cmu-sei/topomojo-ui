@@ -63,11 +63,11 @@
     <button
       class="btn btn-sm btn-link text-primary"
       (click)="zipInput.click()"
-      placement="right"
-      [tooltip]="'Upload a workspace export (.zip) or JSON to import a workspace.'"
+      placement="top"
+      [tooltip]="'Upload a workspace export (.zip) to import a workspace.'"
       container="body"
       triggers="hover focus"
-      aria-label="Upload a workspace export (.zip) or JSON to import a workspace."
+      aria-label="Upload a workspace export (.zip) to import a workspace."
     >
       <fa-icon [icon]="faFile"></fa-icon>
       <span>UploadZip</span>
@@ -178,8 +178,11 @@
       triggers="hover focus"
       aria-label="Sort by created date."
     >
-      Created Date
-      <fa-icon *ngIf="sortField === 'created'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+      <span class="d-inline-flex align-items-center text-nowrap">
+        Created Date
+        <fa-icon *ngIf="sortField === 'created'" class="ml-1"
+                [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+      </span>
     </button>
   </div>
 
@@ -202,11 +205,6 @@
   <div class="col-3 d-flex justify-content-end flex-wrap tm-actions">
     <span
       class="header-label text-primary"
-      placement="right"
-      [tooltip]="'View details or delete the workspace.'"
-      container="body"
-      triggers="hover focus"
-      aria-label="View details or delete the workspace."
     >
       Actions
     </span>

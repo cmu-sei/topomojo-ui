@@ -3,7 +3,6 @@
 
 <form #form="ngForm" [ngFormOptions]="{updateOn: 'change'}" (ngSubmit)="update()">
   <div class="mb-2">
-    <div class="font-weight-bold">Template Settings</div>
     <div class="text-muted">
       Edit template metadata and deployment settings. Linked templates reference a parent and can’t save disk changes when
       deployed; unlink a template when you need to customize it. Published templates appear in “Add Templates” on Workspace creation settings.
@@ -15,11 +14,6 @@
       class="btn btn-secondary btn-sm"
       type="submit"
       [disabled]="!form.dirty || !form.valid"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      [tooltip]="'Save changes to this template’s settings.'"
-      aria-label="Save changes to this template’s settings."
     >
       Save Settings
     </button>
@@ -30,18 +24,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="name-input">
       Name
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Template name (no spaces). TopoMojo replaces spaces with `-` and the name should be unique.'"
-        aria-label="Template name (no spaces). TopoMojo replaces spaces with '-' and the name should be unique."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <input
@@ -66,18 +48,6 @@
   <div *ngIf="!linked" class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="published-toggle">
       Published
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Published templates appear in the “Add Templates” list on Workspace creation settings. Hide to keep it out of the selector.'"
-        aria-label="Published templates appear in the “Add Templates” list on Workspace creation settings. Hide to keep it out of the selector."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <div class="form-control auto-h d-flex align-items-center">
@@ -109,18 +79,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="description-input">
       Description
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Internal notes only (not shown to players). Commonly used for VM purpose and credentials.'"
-        aria-label="Internal notes only (not shown to players). Commonly used for VM purpose and credentials."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <textarea
@@ -145,18 +103,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="audience-input">
       Audience
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Space-delimited audience scopes that can view/link this template. Leave blank for default behavior.'"
-        aria-label="Space-delimited audience scopes that can view/link this template. Leave blank for default behavior."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <input
@@ -181,18 +127,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="networks-input">
       Networks
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Space-delimited network names. The VM gets one NIC per network. Names should match across VMs that must communicate.'"
-        aria-label="Space-delimited network names. The VM gets one NIC per network. Names should match across VMs that must communicate."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <input
@@ -217,18 +151,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="guestinfo-input">
       Guest Settings
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Key/value pairs (key=value) injected into the VM via guestinfo variables. Lines starting with # are ignored.'"
-        aria-label="Key/value pairs (key=value) injected into the VM via guestinfo variables. Lines starting with # are ignored."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <textarea
@@ -255,18 +177,6 @@
   <div *ngIf="!template.isLinked" class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="detail-input">
       Detail
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Advanced template detail (JSON). This is typically used for low-level configuration and troubleshooting.'"
-        aria-label="Advanced template detail (JSON). This is typically used for low-level configuration and troubleshooting."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <textarea
@@ -287,18 +197,6 @@
   <div *ngIf="template.isLinked" class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center">
       Parent Detail
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'This template is linked. Parent detail is read-only here.'"
-        aria-label="This template is linked. Parent detail is read-only here."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <pre>{{template.parent!.detail! | jsonParse | json}}</pre>
@@ -313,11 +211,6 @@
       class="btn btn-secondary btn-sm"
       type="submit"
       [disabled]="!form.dirty || !form.valid"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      [tooltip]="'Save changes to this template’s settings.'"
-      aria-label="Save changes to this template’s settings."
     >
       Save Settings
     </button>

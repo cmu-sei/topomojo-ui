@@ -27,7 +27,6 @@ import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 @Component({
     selector: 'app-workspace-browser',
     templateUrl: './workspace-browser.component.html',
-    styleUrls: ['./workspace-browser.component.scss'],
     standalone: false
 })
 export class WorkspaceBrowserComponent implements OnInit {

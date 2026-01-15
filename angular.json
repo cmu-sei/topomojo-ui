@@ -40,7 +40,7 @@
             ],
             "styles": [
               "projects/topomojo-work/src/styles.scss",
-              "node_modules/vmware-wmks/css/css/wmks-all.css"
+              "node_modules/vmware-wmks/wmks-all.css"
             ],
             "scripts": [
               "node_modules/marked/marked.min.js",

@@ -2,7 +2,8 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { take } from 'rxjs/operators';
+import { take, switchMap, tap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 type UiSettings = {
@@ -18,7 +19,6 @@ type UiSettings = {
   styleUrls: ['./about.component.scss'],
   standalone: false
 })
-
 export class AboutComponent implements OnInit {
   uiVersion = environment.VERSION;
   apiVersion = '—';
@@ -42,37 +42,35 @@ export class AboutComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.http.get<UiSettings>('assets/settings.json')
-      .pipe(take(1))
-      .subscribe({
-        next: (s) => {
-          this.disableExternalLinks = !!s.disableExternalLinks;
+    this.http.get<UiSettings>('assets/settings.json').pipe(
+      take(1),
 
-          const docs = (s.docsUrl ?? '').trim();
+      tap((s) => {
+        this.disableExternalLinks = !!s.disableExternalLinks;
 
-          if (this.disableExternalLinks) {
-            this.links = {
-              repo: '',
-              license: '',
-              docs: docs || ''
-            };
-          } else {
-            this.links = { ...this.defaultLinks, docs: docs || this.defaultLinks.docs };
-          }
+        const docs = (s.docsUrl ?? '').trim();
+        if (this.disableExternalLinks) {
+          this.links = { repo: '', license: '', docs: docs || '' };
+        } else {
+          this.links = { ...this.defaultLinks, docs: docs || this.defaultLinks.docs };
+        }
+      }),
 
-          const base = (s.apphost ?? '').replace(/\/+$/, '');
-          const url = base ? `${base}/health/version` : `/health/version`;
+      switchMap((s) => {
+        const base = (s.apphost ?? '').replace(/\/+$/, '');
+        const url = base ? `${base}/health/version` : `/health/version`;
+        return this.http.get(url, { responseType: 'text' }).pipe(take(1));
+      }),
 
-          this.http.get(url, { responseType: 'text' })
-            .pipe(take(1))
-            .subscribe({
-              next: (v) => this.apiVersion = (v || '').split('+')[0] || 'unknown',
-              error: () => {
-                this.apiVersion = 'API ERROR!';
-                this.versionError = 'Unable to load API version.';
-              }
-            });
-        },
-      });
+      catchError(() => {
+        this.apiVersion = 'API ERROR!';
+        this.versionError = 'Unable to load API version.';
+        return of('');
+      })
+    )
+    .subscribe((v) => {
+      if (!v) return;
+      this.apiVersion = (v || '').split('+')[0] || 'unknown';
+    });
   }
 }

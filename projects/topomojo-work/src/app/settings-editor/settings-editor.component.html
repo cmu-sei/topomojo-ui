@@ -8,20 +8,19 @@
 
 <div class="workspace-stats border rounded p-2 mb-3">
   <div class="d-flex flex-wrap align-items-center">
-    <span class="mr-3">
-      <span class="text-muted">Launch Count:</span>
-      <strong class="ml-1">{{ workspace.stats.launchCount }}</strong>
+    <span class="mr-3 text-muted">
+      <span>Launch Count:</span>
+     {{ workspace.stats.launchCount }}
     </span>
 
-    <span>
-      <span class="text-muted">Last Activity:</span>
-      <strong class="ml-1">{{ workspace.stats.lastActivity }}</strong>
+    <span class="mr-3 text-muted">
+      <span>Last Activity:</span>
+      {{ workspace.stats.lastActivity }}
     </span>
   </div>
 </div>
 
 <div>
-  <div class="font-weight-bold">Workspace Settings</div>
   <div class="text-muted">
     Use this tab to manage the workspace metadata: how it's labeled, described, who it's attributed to, who can
     launch it, and how long it's expected to take.
@@ -33,18 +32,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="name-input">
       Title
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        [tooltip]="'The title of your workspace; remember that the title should be unique.'"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        aria-label="The title of your workspace; remember that the title should be unique."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
     <input id="name-input" type="text" class="form-control" formControlName="name">
     <small>
@@ -55,18 +42,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="description-input">
       Description
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        [tooltip]="'A brief description of your workspace to display when browsing titles. The Description is viewable to everyone, and when used with Gameboard, visible there too.'"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        aria-label="A brief description of your workspace to display when browsing titles. The Description is viewable to everyone, and when used with Gameboard, visible there too."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
     <textarea id="description-input" type="text" rows="3" class="form-control" formControlName="description"></textarea>
     <small>
@@ -77,18 +52,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="tags-input">
       Tags
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        [tooltip]="'Internal metadata to add data about the lab (e.g., for a competition: cyber-cup c01). You can search by tags later.'"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        aria-label="Internal metadata to add data about the lab (e.g., for a competition: cyber-cup c01). You can search by tags later."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
     <input id="tags-input" type="text" class="form-control" formControlName="tags">
     <small>
@@ -99,18 +62,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="author-input">
       Authorship
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        [tooltip]="'Your name and the names of others who may have assisted you.'"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        aria-label="Your name and the names of others who may have assisted you."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
     <input id="author-input" type="text" class="form-control" formControlName="author">
     <small>
@@ -121,18 +72,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="audience-input">
       Audience
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        [tooltip]="'A space-delimited list of administrator-defined groups that can launch a gamespace from this workspace. Users can launch only if their scope matches one of these audiences. `everyone` is the global audience.'"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        aria-label="A space-delimited list of administrator-defined groups that can launch a gamespace from this workspace. Users can launch only if their scope matches one of these audiences. 'everyone' is the global audience."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
     <input id="audience-input" type="text" class="form-control" formControlName="audience">
     <small>
@@ -144,18 +83,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center" for="durationMinutes-input">
       Duration
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        [tooltip]="'Recommended length of time (in minutes) it takes to play through a gamespace launched from this workspace.'"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        aria-label="Recommended length of time (in minutes) it takes to play through a gamespace launched from this workspace."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
     <input id="durationMinutes-input" type="number" class="form-control" formControlName="durationMinutes">
     <small>
@@ -166,18 +93,6 @@
   <div class="form-group bg-light">
     <label class="mb-0 d-flex align-items-center">
       Collaboration
-      <span
-        class="ml-2 text-muted"
-        role="button"
-        tabindex="0"
-        [tooltip]="'Invite collaborators by sharing an invitation URL. Collaborators can help edit the workspace. Generating a new invitation invalidates the existing one.'"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        aria-label="Invite collaborators by sharing an invitation URL. Collaborators can help edit the workspace. Generating a new invitation invalidates the existing one."
-      >
-        <fa-icon [icon]="faInfoCircle"></fa-icon>
-      </span>
     </label>
 
     <div *ngIf="!workspace.workers?.length">&mdash; none</div>

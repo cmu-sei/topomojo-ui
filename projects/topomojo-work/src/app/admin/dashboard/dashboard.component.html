@@ -21,18 +21,6 @@
 <div class="form-group bg-light">
   <label class="mb-0 d-flex align-items-center" for="announcement-input">
     Message
-    <span
-      class="ml-2 text-muted"
-      role="button"
-      tabindex="0"
-      [tooltip]="'Enter the content of the announcement. This will be shown to all users in the TopoMojo interface.'"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      aria-label="Enter the content of the announcement. This will be shown to all users in the TopoMojo interface."
-    >
-      <fa-icon [icon]="faInfoCircle"></fa-icon>
-    </span>
   </label>
 
   <textarea
@@ -51,10 +39,6 @@
     class="btn btn-secondary btn-sm"
     (click)="announce()"
     placement="right"
-    [tooltip]="'Send this announcement to all users.'"
-    container="body"
-    triggers="hover focus"
-    aria-label="Send this announcement to all users."
   >
     <fa-icon [icon]="faSend"></fa-icon>
     <span>Send</span>
@@ -70,11 +54,6 @@
   <button
     class="btn btn-secondary"
     (click)="cleanup()"
-    placement="right"
-    [tooltip]="'Generate a report of recent Janitor cleanup activity.'"
-    container="body"
-    triggers="hover focus"
-    aria-label="Generate a report of recent Janitor cleanup activity."
   >
     Cleanup Report
   </button>

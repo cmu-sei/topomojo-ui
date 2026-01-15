@@ -7,10 +7,20 @@
   </div>
   <input type="search" class="form-control" [(ngModel)]="term" (input)="refresh()" placeholder="search">
   <div class="input-group-append">
-    <button class="btn btn-sm btn-outline-info" btnCheckbox [(ngModel)]="filterLocal" (click)="refresh()">
+    <button
+      class="btn btn-sm btn-outline-info"
+      btnCheckbox
+      [(ngModel)]="filterLocal"
+      (click)="refresh()"
+      [tooltip]="'With the Local filter enabled, you`ll only see ISOs available to this workspace. Disabling it shows global ISOs shared across all workspaces.'"
+      placement="bottom"
+      container="body"
+      triggers="hover focus"
+    >
       <fa-icon [icon]="faFilter"></fa-icon>
       <span>Local</span>
     </button>
+
     <button class="btn btn-sm btn-outline-info" (click)="refresh(true)">
       <fa-icon [icon]="faSync"></fa-icon>
       <span>Refresh</span>

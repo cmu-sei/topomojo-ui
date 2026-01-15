@@ -84,4 +84,14 @@ footer {
   box-shadow: none;
   padding: 0;
 }
-
+.sidebar-toggle {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid currentColor;
+  border-radius: 0.375rem;
+  margin-left: 0;
+  cursor: pointer;
+}
