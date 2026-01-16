@@ -5,7 +5,7 @@ import { Component, Input } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { SectionSpec, IsoFile } from 'projects/topomojo-work/src/app/api/gen/models';
 import { ChallengeFormService } from '../challenge-form.service';
-import { faArrowUp, faArrowDown, faTrash, faPlus, faCopy, faEllipsisV, faTimes, faToggleOn, faToggleOff, faClone } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faTrash, faPlus, faCopy, faEllipsisV, faTimes, faToggleOn, faToggleOff, faClone, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { ConfigService } from 'projects/topomojo-work/src/app/config.service';
 
 @Component({
@@ -32,6 +32,7 @@ export class VariantFormComponent {
   faTimes = faTimes;
   faToggleOn = faToggleOn;
   faToggleOff = faToggleOff;
+  faInfoCircle = faInfoCircle;
 
   constructor(
     private svc: ChallengeFormService,

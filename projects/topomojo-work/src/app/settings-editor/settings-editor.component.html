@@ -6,50 +6,94 @@
   <small>Inactive: "unpublished and idle" or "published and unused"</small>
 </alert>
 
-<pre>
-  Launch Count: {{workspace.stats.launchCount}}
-  Last Activity: {{workspace.stats.lastActivity}}
-</pre>
+<div class="workspace-stats border rounded p-2 mb-3">
+  <div class="d-flex flex-wrap align-items-center">
+    <span class="mr-3 text-muted">
+      <span>Launch Count:</span>
+     {{ workspace.stats.launchCount }}
+    </span>
+
+    <span class="mr-3 text-muted">
+      <span>Last Activity:</span>
+      {{ workspace.stats.lastActivity }}
+    </span>
+  </div>
+</div>
+
+<div>
+  <div class="text-muted">
+    Manage the workspace metadata: how it's labeled, described, who it's attributed to, who can
+    launch it, and how long it's expected to take.
+  </div>
+</div>
 
 <form [formGroup]="form">
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="name-input">Title</label>
+    <label class="mb-0 d-flex align-items-center" for="name-input">
+      Title
+    </label>
     <input id="name-input" type="text" class="form-control" formControlName="name">
+    <small>
+      The name shown when browsing workspaces. Keep it unique and descriptive (e.g., “Web Exploits Lab 1”).
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="description-input">Description</label>
+    <label class="mb-0 d-flex align-items-center" for="description-input">
+      Description
+    </label>
     <textarea id="description-input" type="text" rows="3" class="form-control" formControlName="description"></textarea>
-    <small>Short description to display when browsing titles</small>
+    <small>
+      What this lab is about. This text appears in workspace browsing and may be visible broadly.
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="tags-input">Tags</label>
+    <label class="mb-0 d-flex align-items-center" for="tags-input">
+      Tags
+    </label>
     <input id="tags-input" type="text" class="form-control" formControlName="tags">
-    <small>internal tags</small>
+    <small>
+      Internal labels to help organize and search (e.g., “competition”, “web”, “c01”). Space-delimited.
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="author-input">Authorship</label>
+    <label class="mb-0 d-flex align-items-center" for="author-input">
+      Authorship
+    </label>
     <input id="author-input" type="text" class="form-control" formControlName="author">
-    <small>text to indicate authorship of this resource</small>
+    <small>
+      Credit the lab creators and contributors (shown as the workspace author text).
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="audience-input">Audience</label>
+    <label class="mb-0 d-flex align-items-center" for="audience-input">
+      Audience
+    </label>
     <input id="audience-input" type="text" class="form-control" formControlName="audience">
-    <small>space-delimited list of clients that can launch this as a gamespace; '<code>everyone</code>' is the global audience</small>
+    <small>
+      Who can launch/play this as a gamespace. Enter one or more groups (space-delimited). Use
+      '<code>everyone</code>' to allow all users.
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0" for="audience-input">Duration</label>
+    <label class="mb-0 d-flex align-items-center" for="durationMinutes-input">
+      Duration
+    </label>
     <input id="durationMinutes-input" type="number" class="form-control" formControlName="durationMinutes">
-    <small>recommended duration in minutes</small>
+    <small>
+      Estimated time (minutes) to complete the lab. This helps set expectations for players.
+    </small>
   </div>
 
   <div class="form-group bg-light">
-    <label class="mb-0">Collaboration</label>
+    <label class="mb-0 d-flex align-items-center">
+      Collaboration
+    </label>
 
     <div *ngIf="!workspace.workers?.length">&mdash; none</div>
 
@@ -67,7 +111,9 @@
         <span>Generate invitation</span>
       </button>
     </div>
-    <small>Invite collaborators by sharing an invitation url. (Invalidates existing invitation)</small>
+    <small>
+      Share an invitation link to add collaborators. Generating a new link invalidates the previous one.
+    </small>
 
   </div>
 

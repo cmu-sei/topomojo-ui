@@ -1,4 +1,15 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
-<app-iso-manager [guid]="summary.id"></app-iso-manager>
+<div>
+  <div class="text-muted">
+    Upload files to include in your lab. If an uploaded file is not in ISO format,
+    TopoMojo will wrap the file in an ISO after uploading. ISOs can be attached to
+    VM templates via the template settings or dynamically per-variant via the variant
+    settings on the Challenge tab.
+  </div>
+</div>
+
+<div class="mt-2">
+  <app-iso-manager [guid]="summary.id"></app-iso-manager>
+</div>

@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, OnInit } from '@angular/core';
-import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faCaretRight, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { AdminService } from '../../api/admin.service';
@@ -20,6 +20,7 @@ export class LogViewerComponent implements OnInit {
   log$: Observable<any>;
   faCaretDown = faCaretDown;
   faCaretRight = faCaretRight;
+  faInfoCircle = faInfoCircle;
 
   constructor(
     api: AdminService

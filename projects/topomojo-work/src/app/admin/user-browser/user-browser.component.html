@@ -1,43 +1,121 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
 <h4>Users</h4>
+
+<div class="text-muted mb-2">
+  Manage TopoMojo users and permissions. Search by name, filter by role or audience (scope), and view/edit limits and
+  access settings for each user.
+</div>
 
 <div>
   <div class="input-group input-group-sm">
     <div class="input-group-prepend">
-      <span class="input-group-text">
+      <span class="input-group-text" id="user-search-label">
         <fa-icon [icon]="faSearch"></fa-icon>
         <span>Search</span>
       </span>
     </div>
-    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="termed()">
+    <input
+      type="search"
+      [(ngModel)]="search.term"
+      placeholder="term"
+      class="form-control"
+      (input)="termed()"
+      aria-label="Search users"
+      aria-describedby="user-search-label"
+    >
   </div>
-  <div>
-    <button class="btn btn-link text-primary btn-sm" (click)="create()">create</button>
+
+  <small class="text-muted">
+    Search by user name. You can also narrow results using role and scope filters below.
+  </small>
+
+  <div class="mt-1">
+    <button
+      class="btn btn-link text-primary btn-sm"
+      (click)="create()"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Create a new user.'"
+      aria-label="Create a new user."
+    >
+      create
+    </button>
     |
-    <button class="mr-1 btn btn-link text-success btn-sm" (click)="toggleFilter('administrator')">
+    <button
+      class="mr-1 btn btn-link text-success btn-sm"
+      (click)="toggleFilter('administrator')"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Filter to administrators.'"
+      aria-label="Filter to administrators."
+    >
       <fa-icon [hidden]="filter!=='administrator'" [icon]="faFilter"></fa-icon>
       <span>admins</span>
     </button>
-    <button class="mr-1 btn btn-link text-pink btn-sm" (click)="toggleFilter('observer')">
+    <button
+      class="mr-1 btn btn-link text-pink btn-sm"
+      (click)="toggleFilter('observer')"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Filter to observers.'"
+      aria-label="Filter to observers."
+    >
       <fa-icon [hidden]="filter!=='observer'" [icon]="faFilter"></fa-icon>
       <span>observers</span>
     </button>
-    <button class="mr-1 btn btn-link text-secondary btn-sm" (click)="toggleFilter('creator')">
+    <button
+      class="mr-1 btn btn-link text-secondary btn-sm"
+      (click)="toggleFilter('creator')"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Filter to creators.'"
+      aria-label="Filter to creators."
+    >
       <fa-icon [hidden]="filter!=='creator'" [icon]="faFilter"></fa-icon>
       <span>creators</span>
     </button>
-    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('builder')">
+    <button
+      class="mr-1 btn btn-link text-warning btn-sm"
+      (click)="toggleFilter('builder')"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Filter to builders.'"
+      aria-label="Filter to builders."
+    >
       <fa-icon [hidden]="filter!=='builder'" [icon]="faFilter"></fa-icon>
       <span>builders</span>
     </button>
     |
-    <button class="mx-1 btn btn-link text-primary btn-sm" (click)="toggleServiceAccountFilter()">
+    <button
+      class="mx-1 btn btn-link text-primary btn-sm"
+      (click)="toggleServiceAccountFilter()"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Filter to service accounts.'"
+      aria-label="Filter to service accounts."
+    >
       <fa-icon [hidden]="!search.isServiceAccount" [icon]="faFilter"></fa-icon>
       <span>service accounts</span>
     </button>
     |
-    <button *ngFor="let s of scopes" class="mr-1 btn btn-link text-dark btn-sm" (click)="toggleScope(s)">
+    <button
+      *ngFor="let s of scopes"
+      class="mr-1 btn btn-link text-dark btn-sm"
+      (click)="toggleScope(s)"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Filter to users in scope: ' + s"
+      [attr.aria-label]="'Filter to users in scope: ' + s"
+    >
       <fa-icon [hidden]="scope!==s" [icon]="faFilter"></fa-icon>
       <span>{{s}}</span>
     </button>
@@ -47,120 +125,223 @@
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
 <hr class="mt-0 mb-2" />
 
-<div *ngFor="let user of source$ | async; trackBy:trackById" class="row mb-1"
-  [class.pop-success]="user.role==='administrator'" [class.pop-secondary]="user.role==='creator'"
-  [class.pop-warning]="user.role==='builder'" [class.pop-pink]="user.role==='observer'">
-  <div class="col-8">
+<div class="row mb-2 workspace-header align-items-center">
+  <div class="col-6">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary"
+      (click)="sortBy('name')"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Sort by user name.'"
+      aria-label="Sort by user name."
+    >
+      User Name
+      <fa-icon *ngIf="sortField === 'name'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+    </button>
+  </div>
+
+  <div class="col-2">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+      (click)="sortBy('created')"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Sort by account creation date.'"
+      aria-label="Sort by account creation date."
+    >
+      Created Date
+      <fa-icon *ngIf="sortField === 'created'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+    </button>
+  </div>
+
+  <div class="col-4 align-self-center text-right">
+    <span class="header-label text-primary">Actions</span>
+  </div>
+</div>
+
+<div
+  *ngFor="let user of source$ | async; trackBy:trackById"
+  class="row mb-1"
+  [class.pop-success]="user.role==='administrator'"
+  [class.pop-secondary]="user.role==='creator'"
+  [class.pop-warning]="user.role==='builder'"
+  [class.pop-pink]="user.role==='observer'"
+>
+  <div class="col-6">
     <span class="text-secondary">{{user.name}}</span>
     <br />
     <div class="d-flex align-items-center my-1">
       @if (user.serviceAccountClientId)
       {
-      <div class="badge badge-sm badge-secondary mr-2">Service Account</div>
+        <div class="badge badge-sm badge-secondary mr-2">Service Account</div>
       }
       <small class="d-block text-muted">
         <app-clipspan>{{user.id}}</app-clipspan>
       </small>
     </div>
   </div>
-  <div class="col-4 align-self-center text-right">
-    <small class="mr-2">{{user.whenCreated | shortdate}}</small>
-    <button class="btn btn-outline-info btn-sm mx-1" (click)="view(user)">
+
+  <div class="col-2 align-self-center">
+    <small>{{user.whenCreated | shortdate}}</small>
+  </div>
+
+  <div class="col-4 align-self-center text-right tm-actions">
+    <button
+      class="btn btn-outline-info btn-sm tm-action-btn"
+      (click)="view(user)"
+    >
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
 
-    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(user)">
+    <app-confirm-button
+      class="tm-action-host"
+      btnClass="btn btn-outline-danger btn-sm tm-action-btn"
+      (confirm)="delete(user)"
+      aria-label="delete user"
+    >
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Delete</span>
     </app-confirm-button>
-
   </div>
 
   <div *ngIf="viewed === user" class="col-12">
     @if (user.role === 'administrator' && user.serviceAccountClientId)
     {
-    <alert type="danger" [dismissible]="true">
-      <strong>NOTE:</strong>
-      <div>
-        This user is currently configured as an administrator and has a service account client ID. For security reasons,
-        this is generally <strong>not advisable</strong>. We recommend that service account users have the
-        <strong>Observer</strong> role at maximum.
-      </div>
-    </alert>
+      <alert type="danger" [dismissible]="true">
+        <strong>NOTE:</strong>
+        <div>
+          This user is currently configured as an administrator and has a service account client ID. For security reasons,
+          this is generally <strong>not advisable</strong>. We recommend that service account users have the
+          <strong>Observer</strong> role at maximum.
+        </div>
+      </alert>
     }
+
     <div class="form-group bg-light">
-      <label for="role-input" class="d-block">Role</label>
+      <label class="d-block mb-0 d-flex align-items-center" for="role-input">
+        Role
+      </label>
 
-      <div id="role-input" class="my-2 btn-group" btnRadioGroup [(ngModel)]="user.appRole"
-        (click)="updateRole(user, user.appRole)">
-        <label class="btn btn-outline-info btn-sm" btnRadio="user">User</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="builder">Builder</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="creator">Creator</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="observer">Observer</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="administrator">Admin</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="disabled">Disabled</label>
+      <div
+        id="role-input"
+        class="my-2 btn-group"
+        btnRadioGroup
+        [(ngModel)]="user.appRole"
+        (click)="updateRole(user, user.appRole)"
+        (mouseleave)="clearTip()"
+      >
+        <label class="btn btn-outline-info btn-sm" btnRadio="user"
+              (mouseenter)="setTip(1)">User</label>
+
+        <label class="btn btn-outline-info btn-sm" btnRadio="builder"
+              (mouseenter)="setTip(2)">Builder</label>
+
+        <label class="btn btn-outline-info btn-sm" btnRadio="creator"
+              (mouseenter)="setTip(3)">Creator</label>
+
+        <label class="btn btn-outline-info btn-sm" btnRadio="observer"
+              (mouseenter)="setTip(4)">Observer</label>
+
+        <label class="btn btn-outline-info btn-sm" btnRadio="administrator"
+              (mouseenter)="setTip(5)">Admin</label>
+
+        <label class="btn btn-outline-info btn-sm" btnRadio="disabled"
+              (mouseenter)="setTip(6)">Disabled</label>
       </div>
-      <small>
-        <pre>
-          - Builder: bypasses some checks, like blocking bridge-net
-          - Creator: bypasses workspace and template limits
-        </pre>
-      </small>
 
+      <div class="mt-1">
+        <small class="text-muted" *ngIf="hoverTip === 1">User — Standard permissions.</small>
+        <small class="text-muted" *ngIf="hoverTip === 2">Builder — Can connect to bridge-net.</small>
+        <small class="text-muted" *ngIf="hoverTip === 3">Creator — Can have as many workspaces and templates as wanted.</small>
+        <small class="text-muted" *ngIf="hoverTip === 4">Observer — Allows a user to view and use the Gamespaces tab.</small>
+        <small class="text-muted" *ngIf="hoverTip === 5">Admin — Highest level of permission in TopoMojo; can do everything the other roles can do.</small>
+        <small class="text-muted" *ngIf="hoverTip === 6">Disabled — No permissions in TopoMojo.</small>
+      </div>
       <app-user-role-badge class="mx-2 mb-2" [user]="user"></app-user-role-badge>
     </div>
 
     <div class="form-group bg-light">
-      <label class="mb-0" for="name-input">Name</label>
+      <label class="mb-0 d-flex align-items-center" for="name-input">
+        Name
+      </label>
       <input id="name-input" class="form-control" type="text" [(ngModel)]="user.name" (change)="update(user)">
-      <small>for client "user" (regular users names' update from auth token)</small>
+      <small class="text-muted">For regular users, names may update from the authentication token.</small>
     </div>
 
     <div class="form-group bg-light">
-      <label class="mb-0" for="scope-input">Scope</label>
+      <label class="mb-0 d-flex align-items-center" for="scope-input">
+        Scope
+      </label>
       <input id="scope-input" class="form-control" type="text" [(ngModel)]="user.scope" (change)="update(user)">
-      <small>allowed gamespace audience list (space-delimited)</small><br />
-      <small>users can only "play" workspaces with a matching audience tag</small>
+      <small class="text-muted">
+        Audience groups (space-delimited). Controls which workspaces this user can deploy/play.
+      </small>
     </div>
 
     <div class="form-group bg-light">
-      <label class="mb-0" for="input-wslimit">Workspace Limit</label>
-      <input id="input-wslimit" class="form-control" type="number" [(ngModel)]="user.workspaceLimit"
-        (change)="update(user)">
-      <small>max workspaces this user can manage</small>
+      <label class="mb-0 d-flex align-items-center" for="input-wslimit">
+        Workspace Limit
+      </label>
+      <input id="input-wslimit" class="form-control" type="number" [(ngModel)]="user.workspaceLimit" (change)="update(user)">
+      <small class="text-muted">Max workspaces this user can manage.</small>
     </div>
 
     <div class="form-group bg-light">
-      <label class="mb-0" for="input-gslimit">Gamespace Limit</label>
-      <input id="input-gslimit" class="form-control" type="number" [(ngModel)]="user.gamespaceLimit"
-        (change)="update(user)">
-      <small>max concurrent gamespaces allowed</small>
+      <label class="mb-0 d-flex align-items-center" for="input-gslimit">
+        Gamespace Limit
+      </label>
+      <input id="input-gslimit" class="form-control" type="number" [(ngModel)]="user.gamespaceLimit" (change)="update(user)">
+      <small class="text-muted">Max concurrent gamespaces allowed.</small>
     </div>
 
     <div class="form-group bg-light">
-      <label class="mb-0" for="input-gsduration">Gamespace Max Duration</label>
-      <input id="input-gsduration" class="form-control" type="number" [(ngModel)]="user.gamespaceMaxMinutes"
-        (change)="update(user)">
-      <small>max minutes allowed for a gamespace</small>
+      <label class="mb-0 d-flex align-items-center" for="input-gsduration">
+        Gamespace Max Duration
+      </label>
+      <input id="input-gsduration" class="form-control" type="number" [(ngModel)]="user.gamespaceMaxMinutes" (change)="update(user)">
+      <small class="text-muted">Max minutes allowed for a gamespace.</small>
     </div>
 
     <div class="form-group bg-light">
-      <label class="mb-0" for="input-gscleanup">Gamespace Cleanup Grace time</label>
-      <input id="input-gscleanup" class="form-control" type="number" [(ngModel)]="user.gamespaceCleanupGraceMinutes"
-        (change)="update(user)">
-      <small>grace minutes between expiration and teardown</small>
+      <label class="mb-0 d-flex align-items-center" for="input-gscleanup">
+        Gamespace Cleanup Grace time
+      </label>
+      <input
+        id="input-gscleanup"
+        class="form-control"
+        type="number"
+        [(ngModel)]="user.gamespaceCleanupGraceMinutes"
+        (change)="update(user)"
+      >
+      <small class="text-muted">Grace minutes between expiration and teardown.</small>
     </div>
 
     <div class="form-group bg-light">
-      <label class="mb-0" for="input-serviceAccountClientId">Service Account Client Id</label>
-      <input id="input-serviceAccountClientId" class="form-control" [(ngModel)]="user.serviceAccountClientId"
-        (change)="update(user)">
-      <div><small>makes this a service account user; allows client credentials authorization</small></div>
+      <label class="mb-0 d-flex align-items-center" for="input-serviceAccountClientId">
+        Service Account Client Id
+      </label>
+      <input
+        id="input-serviceAccountClientId"
+        class="form-control"
+        [(ngModel)]="user.serviceAccountClientId"
+        (change)="update(user)"
+      >
+      <div>
+        <small class="text-muted">
+          Enables client credentials auth for automation/API use. Avoid combining with Admin where possible.
+        </small>
+      </div>
     </div>
 
     <div class="form-group bg-light">
-      <label class="mb-0" for="">ApiKeys</label>
+      <label class="mb-0 d-flex align-items-center">
+        ApiKeys
+      </label>
       <app-apikeys [id]="user.id"></app-apikeys>
     </div>
   </div>

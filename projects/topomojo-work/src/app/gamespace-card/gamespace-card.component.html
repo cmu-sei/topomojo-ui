@@ -1,15 +1,51 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
-<div class="card shadow-sm mb-2" routerLinkActive="pop-success" #rla="routerLinkActive" tabindex="0" (click)="go()" (keydown)="keydown($event)">
-  <div class="card-body" [class.pop-info]="hovering && !rla.isActive" (mouseenter)="hovering=true" (mouseleave)="hovering=false">
-    <div class="card-title">
-      <span>{{gamespace.name}}</span>
-      <small *ngIf="countdown$ | async as dday"> &mdash; expires in: {{dday | countdown}}</small>
+<div class="card shadow-sm mb-2"
+     routerLinkActive="pop-success"
+     #rla="routerLinkActive"
+     tabindex="0"
+     (click)="go()"
+     (keydown)="keydown($event)">
+
+  <div class="card-body"
+       [class.pop-info]="hovering && !rla.isActive"
+       (mouseenter)="hovering=true"
+       (mouseleave)="hovering=false">
+
+    <div class="d-flex align-items-center card-title mb-0">
+
+      <button
+        *ngIf="canFavorite && (isFavorite || hovering || rla.isActive)"
+        type="button"
+        class="btn btn-link p-0 mr-2 favorite-btn"
+        (click)="onToggleFavorite($event)"
+        [attr.aria-label]="isFavorite ? 'Unfavorite gamespace' : 'Favorite gamespace'"
+        [attr.title]="isFavorite ? 'Unfavorite' : 'Favorite'">
+        <fa-icon
+          [icon]="isFavorite ? faStarSolid : faStarRegular"
+          [ngClass]="isFavorite ? 'favorite-on' : 'favorite-off'">
+        </fa-icon>
+      </button>
+
+      <span>{{ gamespace.name }}</span>
+
+      <small *ngIf="countdown$ | async as dday" class="ml-2">
+        &mdash; expires in: {{ dday | countdown }}
+      </small>
     </div>
+
     <div [hidden]="!(hovering || rla.isActive)">
-      <a *ngIf="!!gamespace.startTime" class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/mojo', gamespace.id, gamespace.slug]">Continue</a>
-      <a *ngIf="!gamespace.startTime" class="mr-2 small" routerLinkActive="text-primary" [routerLink]="['/mojo',  gamespace.id, gamespace.slug]">Preview</a>
+      <a *ngIf="!!gamespace.startTime"
+         class="mr-2 small"
+         routerLinkActive="text-primary"
+         [routerLink]="['/mojo', gamespace.id, gamespace.slug]">Continue</a>
+
+      <a *ngIf="!gamespace.startTime"
+         class="mr-2 small"
+         routerLinkActive="text-primary"
+         [routerLink]="['/mojo', gamespace.id, gamespace.slug]">Preview</a>
     </div>
+
   </div>
 </div>

@@ -3,7 +3,7 @@
 
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons';
+import { faToggleOff, faToggleOn, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { ChangedTemplateDetail, TemplateDetail } from '../../api/gen/models';
 import { TemplateService } from '../../api/template.service';
 
@@ -21,6 +21,7 @@ export class TemplateDetailFormComponent implements OnInit {
 
   faToggleOn = faToggleOn;
   faToggleOff = faToggleOff;
+  faInfoCircle = faInfoCircle;
 
   constructor(
     private api: TemplateService

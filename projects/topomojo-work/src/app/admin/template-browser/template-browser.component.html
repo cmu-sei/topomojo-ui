@@ -1,99 +1,336 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
-
 <h4>Templates</h4>
+<div class="mb-2">
+  <div class="text-muted">
+    Browse all VM templates in TopoMojo. Search across workspaces, filter to published items, and follow links back to a
+    workspace. Linked templates reference a parent; unlink when you need to customize and save changes.
+  </div>
+</div>
 
-<div>
+<div class="mb-2">
   <div class="input-group input-group-sm">
     <div class="input-group-prepend">
-      <span class="input-group-text">
+      <span
+        class="input-group-text"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Search templates by name. Use filters below to narrow results (published, parent, workspace).'"
+        aria-label="Search templates by name. Use filters below to narrow results (published, parent, workspace)."
+      >
         <fa-icon [icon]="faSearch"></fa-icon>
         <span>Search</span>
       </span>
     </div>
-    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="termed()">
+
+    <input
+      type="search"
+      [(ngModel)]="search.term"
+      placeholder="term"
+      class="form-control"
+      (input)="termed()"
+      aria-label="search templates"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Type to search template names.'"
+    >
   </div>
-  <button class="btn btn-link text-primary btn-sm" (click)="create()">create</button> |
-  <button class="btn btn-link btn-sm text-secondary" (click)="togglePublished()">
-    <fa-icon *ngIf="filterPublished" [icon]="faFilter"/>
-    <span>published</span>
-  </button>
-  <button *ngIf="search.pid" class="btn btn-link btn-sm text-secondary" (click)="clearParent()">
-    <fa-icon [icon]="faFilter"/>
-    <span>parent[{{filterTag}}]</span>
-  </button>
-  <!-- <button *ngIf="search.sid" class="btn btn-link btn-sm text-secondary" (click)="clearSource()">
-    <fa-icon [icon]="faFilter"/>
-    <span>source[{{filterTag}}]</span>
-  </button> -->
+
+  <div class="mt-1">
+    <button
+      class="btn btn-link text-primary btn-sm"
+      (click)="create()"
+      placement="right"
+      [tooltip]="'Create a new template.'"
+      container="body"
+      triggers="hover focus"
+      aria-label="Create a new template."
+    >
+      create
+    </button>
+    <span class="text-muted">|</span>
+
+    <button
+      class="btn btn-link btn-sm text-secondary"
+      (click)="togglePublished()"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="filterPublished ? 'Showing published templates. Click to show all.' : 'Filter to published templates only.'"
+      [attr.aria-label]="filterPublished ? 'Showing published templates. Click to show all.' : 'Filter to published templates only.'"
+    >
+      <fa-icon *ngIf="filterPublished" [icon]="faFilter"></fa-icon>
+      <span>published</span>
+    </button>
+
+    <button
+      *ngIf="search.pid"
+      class="btn btn-link btn-sm text-secondary"
+      (click)="clearParent()"
+      placement="right"
+      [tooltip]="'Clear the parent-template filter.'"
+      container="body"
+      triggers="hover focus"
+      aria-label="Clear the parent-template filter."
+    >
+      <fa-icon [icon]="faFilter"></fa-icon>
+      <span>parent[{{filterTag}}]</span>
+    </button>
+
+    <small class="text-muted d-block">
+      Tip: Click a workspace name to jump to that workspace’s Templates tab. Use parent filters to find linked descendants.
+    </small>
+  </div>
 </div>
 
 <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
 <hr class="mt-0 mb-2"/>
 
-<div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1">
-  <div class="col-8">
-    <span class="m-1">{{g.name}}</span>
-    <!-- <button *ngIf="g.sourceId===g.parentId" class="btn btn-sm pop-info px-2 mx-1" (click)="filterSource(g)">
-      <fa-icon [icon]="faLink"></fa-icon>
-      <span>{{g.sourceName}}</span>
-    </button> -->
-    <span *ngIf="g.parentId" class="pop-info px-2 mx-1">
-      <fa-icon [icon]="g.isLinked ? faLink : faUnlink"></fa-icon>
-      <span>{{g.parentName}}</span>
-      <span *ngIf="g.workspaceId" class="btn btn-sm btn-link text-muted ml-1" (click)="filterParent(g)">
-        <fa-icon [icon]="faFilter"/>
-      </span>
+<div class="row mb-2 workspace-header align-items-center">
+  <div class="col-6">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+      (click)="sortBy('name')"
+      placement="right"
+      [tooltip]="'Sort by template name.'"
+      container="body"
+      triggers="hover focus"
+      aria-label="Sort by template name."
+    >
+      <span>Template Name</span>
+      <fa-icon
+        class="ml-1"
+        *ngIf="sortField === 'name'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div class="col-2">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center text-nowrap"
+      (click)="sortBy('created')"
+      placement="right"
+      [tooltip]="'Sort by created date.'"
+      container="body"
+      triggers="hover focus"
+      aria-label="Sort by created date."
+    >
+      <span class="text-nowrap">Created Date</span>
+      <fa-icon
+        class="ml-1"
+        *ngIf="sortField === 'created'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div class="col-4 d-flex justify-content-end align-items-center">
+    <span
+      class="header-label text-primary"
+    >
+      Actions
     </span>
-    <small [hidden]="!g.isPublished" class="pop-success px-2 m-1">
-      <fa-icon [icon]="faEye"></fa-icon>
-    </small>
-    <small [hidden]="!g.audience" class="pop-warning px-2">
-      <fa-icon [icon]="faEye"/>
-      <span>{{g.audience}}</span>
-    </small>
-    <br/>
-    <small class="text-muted ml-4">
-      <a *ngIf="g.workspaceId" [routerLink]="['/topo', g.workspaceId, 'templates']" class="text-secondary">{{g.workspaceName}}</a>
-      <button *ngIf="g.workspaceId" class="btn btn-sm text-muted ml-2" (click)="filterWorkspace(g.workspaceId)">
-        <fa-icon [icon]="faFilter"/>
+  </div>
+</div>
+
+<div *ngFor="let g of source$ | async; trackBy:trackById" class="row mb-1 workspace-row">
+  <div class="col-6">
+    <div class="d-flex align-items-center flex-wrap">
+      <button
+        type="button"
+        class="btn btn-link p-0 mr-2 favorite-btn"
+        (click)="toggleFavorite(g.id); $event.preventDefault(); $event.stopPropagation();"
+        [attr.aria-label]="isFavorite(g.id) ? 'Unfavorite template' : 'Favorite template'"
+        [tooltip]="isFavorite(g.id) ? 'Unfavorite (pin)' : 'Favorite (pin)'"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+      >
+        <fa-icon
+          [icon]="isFavorite(g.id) ? faStarSolid : faStarRegular"
+          [ngClass]="isFavorite(g.id) ? 'favorite-on' : 'favorite-off'"
+        ></fa-icon>
       </button>
-      <span *ngIf="!g.workspaceId">Stock Template</span>
+
+      <span
+        class="template-name mr-2"
+        placement="right"
+        [tooltip]="'Template name (no spaces; TopoMojo replaces spaces with dashes).'"
+        container="body"
+        triggers="hover focus"
+        aria-label="Template name (no spaces; TopoMojo replaces spaces with dashes)."
+      >
+        {{ g.name }}
+      </span>
+
+      <small
+        *ngIf="g.isPublished"
+        class="pop-success px-2 py-1 mr-2 template-badge"
+        placement="right"
+        [tooltip]="'Published template (available for linking).'"
+        container="body"
+        triggers="hover focus"
+        aria-label="Published template (available for linking)."
+      >
+        <fa-icon [icon]="faEye"></fa-icon>
+        <span class="ml-1">Published</span>
+      </small>
+
+      <small
+        *ngIf="g.audience"
+        class="pop-warning px-2 py-1 template-badge"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Audience scope for launching/deploying.'"
+        aria-label="Audience scope for launching/deploying."
+      >
+        <fa-icon [icon]="faEye"></fa-icon>
+        <span class="ml-1">{{ g.audience }}</span>
+      </small>
+    </div>
+
+    <div *ngIf="g.parentId" class="mt-1">
+      <span
+        class="pop-info px-2 py-1 template-parent-pill"
+        [tooltip]="(g.isLinked ? 'Linked to parent template: ' : 'Unlinked copy of: ') + g.parentName"
+        [attr.aria-label]="(g.isLinked ? 'Linked to parent template: ' : 'Unlinked copy of: ') + g.parentName"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+      >
+        <fa-icon
+          [icon]="g.isLinked ? faLink : faUnlink"
+          [attr.title]="g.isLinked ? 'Linked template' : 'Unlinked template'"
+          [attr.aria-label]="g.isLinked ? 'Linked template' : 'Unlinked template'"
+        ></fa-icon>
+
+        <span class="ml-1 template-parent-name">{{ g.parentName }}</span>
+
+        <button
+          *ngIf="g.workspaceId"
+          type="button"
+          class="btn btn-sm btn-link text-muted p-0 ml-2"
+          (click)="filterParent(g)"
+          placement="right"
+          container="body"
+          triggers="hover focus"
+          [tooltip]="'Filter by this parent template.'"
+          aria-label="Filter by this parent template."
+        >
+          <fa-icon [icon]="faFilter"></fa-icon>
+        </button>
+      </span>
+    </div>
+
+    <div class="mt-1">
+      <small class="text-muted">
+        <a
+          *ngIf="g.workspaceId"
+          [routerLink]="['/topo', g.workspaceId, 'templates']"
+          class="text-secondary"
+        >
+          {{ g.workspaceName }}
+        </a>
+
+        <button
+          *ngIf="g.workspaceId"
+          class="btn btn-sm text-muted p-0 ml-2"
+          (click)="filterWorkspace(g.workspaceId)"
+          placement="right"
+          [tooltip]="'Filter to templates from this workspace.'"
+          container="body"
+          triggers="hover focus"
+          aria-label="Filter to templates from this workspace."
+        >
+          <fa-icon [icon]="faFilter"></fa-icon>
+        </button>
+
+        <span
+          *ngIf="!g.workspaceId"
+          placement="right"
+          container="body"
+          triggers="hover focus"
+          [tooltip]="'Stock template (not owned by a specific workspace).'"
+          aria-label="Stock template (not owned by a specific workspace)."
+        >
+          Stock Template
+        </span>
+      </small>
+    </div>
+  </div>
+
+  <div class="col-2 text-left">
+    <small
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Date this template was created.'"
+      aria-label="Date this template was created."
+    >
+      {{ g.whenCreated | shortdate }}
     </small>
   </div>
-  <div class="col-4">
-    <button class="btn btn-outline-info btn-sm mx-1" (click)="view(g)">
+
+  <div class="col-4 text-right tm-actions">
+    <button
+      class="btn btn-outline-info btn-sm mx-1"
+      (click)="view(g)"
+    >
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
     </button>
-    <button class="btn btn-outline-info btn-sm mx-1" (click)="clone(g)">
+
+    <button
+      class="btn btn-outline-info btn-sm mx-1"
+      (click)="clone(g)"
+    >
       <fa-icon [icon]="faCopy"></fa-icon>
       <span>Clone</span>
     </button>
-    <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(g)">
-      <fa-icon [icon]="faTrash"></fa-icon>
-      <span>Delete</span>
+
+    <app-confirm-button
+      btnClass="btn btn-outline-danger btn-sm mx-1"
+      (confirm)="delete(g)"
+      aria-label="delete template"
+    >
+      <span
+        class="d-inline-flex align-items-center"
+      >
+        <fa-icon [icon]="faTrash"></fa-icon>
+        <span>Delete</span>
+      </span>
     </app-confirm-button>
   </div>
+
   <div *ngIf="viewed === g" class="col-12">
     <ng-container *ngIf="detail$ | async as detail">
-      <!-- <div *ngIf="!g.workspaceId" class="pop-warning p-2">
-
-      </div> -->
       <div class="row mb-1 align-items-center">
         <div class="col-6 text-right">
           <span class="pop-info px-1">{{detail.name}}</span>
         </div>
         <div class="col-6">
           <app-vm-controller [template]="g"></app-vm-controller>
-          <small class="text-warning">
+
+          <small
+            class="text-warning"
+            placement="right"
+            container="body"
+            triggers="hover focus"
+            [tooltip]="'Templates edited here are not inside a workspace, so isolation checks may not apply.'"
+            aria-label="Templates edited here are not inside a workspace, so isolation checks may not apply."
+          >
             Note: there is no isolation checking outside of a workspace.
           </small>
         </div>
       </div>
 
       <app-template-detail-form [template]="detail" [linked]="g.isLinked!"></app-template-detail-form>
-
     </ng-container>
   </div>
 </div>

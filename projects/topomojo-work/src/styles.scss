@@ -180,3 +180,37 @@ th[align="center"] {
   height: 0;
   opacity: 0;
 }
+
+:root {
+  --app-bg-image: none;
+}
+
+body {
+  background-image: var(--app-bg-image);
+  margin: 0;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+html.has-bg-image .tm-page-shell {
+  padding: 2rem 1.5rem;
+}
+
+html.has-bg-image .tm-page-card {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  padding: 2rem;
+}
+
+.favorite-on {
+  color: #ffc107;
+}
+
+.favorite-off {
+  color: #6c757d;
+}
+

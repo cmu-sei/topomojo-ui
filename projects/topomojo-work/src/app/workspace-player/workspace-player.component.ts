@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { faBolt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faTrash, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { asyncScheduler, merge, Observable, of, scheduled, Subject, timer } from 'rxjs';
 import { catchError, filter, finalize, map, switchMap, tap, zipAll } from 'rxjs/operators';
 import { GamespaceService } from '../api/gamespace.service';
@@ -39,6 +39,7 @@ export class WorkspacePlayerComponent implements OnInit, OnChanges, AfterViewIni
 
   faBolt = faBolt;
   faTrash = faTrash;
+  faInfoCircle = faInfoCircle;
 
   constructor(
     private api: GamespaceService,

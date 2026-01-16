@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, OnInit } from '@angular/core';
-import { faFilter, faList, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faList, faSearch, faTrash, faSortUp, faSortDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, firstValueFrom, interval, merge, Observable } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { ApiUser, UserSearch } from '../../api/gen/models';
@@ -33,6 +33,14 @@ export class UserBrowserComponent implements OnInit {
   faList = faList;
   faSearch = faSearch;
   faFilter = faFilter;
+  faSortUp = faSortUp;
+  faSortDown = faSortDown;
+  faInfoCircle = faInfoCircle;
+
+  sortAscending = false;
+  sortField: 'name' | 'created' = 'created';
+
+  hoverTip = 0;
 
   constructor(private api: ProfileService) {
     this.source$ = merge(
@@ -44,6 +52,7 @@ export class UserBrowserComponent implements OnInit {
       tap(r => this.source = r),
       tap(r => this.count = r.length),
       tap(() => this.review()),
+      tap(() => this.applySort()),
     );
 
     api.listScopes().subscribe(
@@ -144,5 +153,44 @@ export class UserBrowserComponent implements OnInit {
 
   trackById(index: number, model: ApiUser): string {
     return model.id;
+  }
+
+  sortBy(field: 'name' | 'created'): void {
+    if (this.sortField === field) {
+      this.sortAscending = !this.sortAscending;
+    } else {
+      this.sortField = field;
+      this.sortAscending = field === 'name';
+    }
+    this.applySort();
+  }
+
+  private applySort(): void {
+    const dir = this.sortAscending ? 1 : -1;
+
+    this.source.sort((a, b) => {
+      let av: any;
+      let bv: any;
+
+      if (this.sortField === 'name') {
+        av = (a.name || '').toLowerCase();
+        bv = (b.name || '').toLowerCase();
+      } else {
+        av = new Date(a.whenCreated as any).getTime();
+        bv = new Date(b.whenCreated as any).getTime();
+      }
+
+      if (av < bv) return -1 * dir;
+      if (av > bv) return 1 * dir;
+      return 0;
+    });
+  }
+
+  setTip(id: number) {
+    this.hoverTip = id;
+  }
+
+  clearTip() {
+    this.hoverTip = 0;
   }
 }

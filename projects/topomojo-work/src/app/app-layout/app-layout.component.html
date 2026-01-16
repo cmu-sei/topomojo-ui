@@ -26,27 +26,80 @@
 
 <ng-container *ngIf="!!user">
 
-    <section class="sidebar sidebar-body bg-light" [class.sidebar-out]="open" [class.sidebar-in]="!open"
-        (mouseenter)="mouseenter($event)" (mouseleave)="mouseleave($event)">
-        <div [hidden]="open" class="text-secondary m-3">
-            <fa-icon [icon]="faSearch" size="lg"></fa-icon>
-        </div>
-        <app-workspace-browser [hidden]="!open"></app-workspace-browser>
-    </section>
+    <div #sidebarContainer>
 
-    <div class="sidebar sidebar-footer bg-light text-right align-items-center" tabindex="0" (keyup)="keyclick($event)"
-        (mouseenter)="mouseenter($event)" (mouseleave)="mouseleave($event)" [class.sidebar-out]="open"
-        [class.sidebar-in]="!open" (click)="pin()" aria-label="toggle pin for left panel expand-collapse state">
-        <div class="text-secondary m-3">
-            <fa-icon [icon]="faThumbtack" [class.untack]="!pinned" size="lg"></fa-icon>
-        </div>
+        <section
+                class="sidebar sidebar-body bg-light"
+                [class.sidebar-out]="open"
+                [class.sidebar-in]="!open">
+
+            <div [hidden]="open"
+                class="text-secondary m-2 sidebar-toggle"
+                (click)="toggleSidebar()">
+            <fa-icon [icon]="faBars" size="lg"></fa-icon>
+            </div>
+
+            <app-workspace-browser [hidden]="!open"></app-workspace-browser>
+        </section>
+
+        <div class="sidebar sidebar-footer bg-light align-items-center"
+     tabindex="0"
+     (keyup)="keyclick($event)"
+     [class.sidebar-out]="open"
+     [class.sidebar-in]="!open"
+     aria-label="toggle pin and close for left panel">
+
+  <div *ngIf="open"
+       class="sidebar-footer-inner d-flex align-items-center w-100">
+
+    <a *ngIf="!disableExternalLinks"
+    href="https://cmu-sei.github.io/crucible/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Open Crucible Framework site">
+    <img
+        class="crucible-logo"
+        src="assets/img/crucible-logo-light.png"
+        alt="Part of the Crucible Framework"
+    />
+    </a>
+
+    <img *ngIf="disableExternalLinks"
+        class="crucible-logo"
+        src="assets/img/crucible-logo-light.png"
+        alt="Part of the Crucible Framework" />
+
+
+    <div class="ml-auto d-flex align-items-center">
+      <button class="btn btn-link p-0 mr-3 text-secondary"
+              type="button"
+              (click)="pin()"
+              aria-label="Toggle pin sidebar">
+        <fa-icon [icon]="faThumbtack"
+                 [class.untack]="!pinned"
+                 size="lg"></fa-icon>
+      </button>
+
+      <button class="btn btn-link p-0 text-secondary"
+              type="button"
+              (click)="closeSidebar()"
+              aria-label="Close sidebar">
+        <fa-icon [icon]="faClose" size="lg"></fa-icon>
+      </button>
     </div>
 
+  </div>
+</div>
+    </div>
 </ng-container>
 
-<main [class.sidebar-offset-out]="user && pinned" [class.sidebar-offset-in]="user && !pinned">
-    <div class="container-fluid">
-        <router-outlet></router-outlet>
+<main
+  [class.sidebar-offset-out]="user && pinned && open"
+  [class.sidebar-offset-in]="user && (!pinned || !open)">
+    <div class="tm-page-shell">
+        <div class="container-fluid tm-page-card">
+            <router-outlet></router-outlet>
+        </div>
     </div>
 </main>
 

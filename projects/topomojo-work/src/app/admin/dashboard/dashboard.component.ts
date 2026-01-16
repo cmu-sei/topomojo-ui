@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, OnInit } from '@angular/core';
-import { faMailBulk, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faMailBulk, faPaperPlane, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { AdminService } from '../../api/admin.service';
@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit {
   exportIds = '';
 
   faSend = faPaperPlane;
+  faInfoCircle = faInfoCircle;
 
   constructor(
     private api: AdminService

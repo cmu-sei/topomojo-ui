@@ -13,16 +13,20 @@ import {
   faTimes,
   faFile,
   faFolder,
+  faSortUp,
+  faSortDown,
+  faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable, of, Subject } from 'rxjs';
 import { catchError, debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { Search, Workspace, WorkspaceSummary } from '../../api/gen/models';
 import { WorkspaceService } from '../../api/workspace.service';
+import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
     selector: 'app-workspace-browser',
     templateUrl: './workspace-browser.component.html',
-    styleUrls: ['./workspace-browser.component.scss'],
     standalone: false
 })
 export class WorkspaceBrowserComponent implements OnInit {
@@ -52,9 +56,18 @@ export class WorkspaceBrowserComponent implements OnInit {
   faTimes = faTimes;
   faFile = faFile;
   faFolder = faFolder;
+  faSortUp = faSortUp;
+  faSortDown = faSortDown;
+  faInfoCircle = faInfoCircle;
   isDownloading = false;
   selectDownloads = false;
+  sortAscending = false;
+  sortField: 'name' | 'created' | 'activity' = 'created';
   @ViewChild('zipInput') zipInput!: ElementRef<HTMLInputElement>;
+  faStarSolid = faStarSolid;
+  faStarRegular = faStarRegular;
+
+  favorites = new Set<string>();
 
   constructor(private api: WorkspaceService) {
     this.source$ = merge(this.refresh$, interval(60000)).pipe(
@@ -63,6 +76,7 @@ export class WorkspaceBrowserComponent implements OnInit {
       // tap(r => r.forEach(g => g.checked = !!this.selected.find(s => s.id === g.id))),
       tap((r) => (this.source = r)),
       tap((r) => (this.count = r.length)),
+      tap(() => this.applySort()),
       tap(() => this.review())
     );
 
@@ -79,7 +93,38 @@ export class WorkspaceBrowserComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.api.syncWorkspaceFavorites().subscribe();
+
+    this.api.workspaceFavorites$.subscribe(set => {
+      this.favorites = set;
+      this.applySort();
+      this.refresh$.next(true);
+    });
+  }
+
+  isFavorite(id: string): boolean {
+    return this.favorites.has(id);
+  }
+
+  toggleFavorite(id: string): void {
+    const currentlyFav = this.isFavorite(id);
+
+    currentlyFav ? this.favorites.delete(id) : this.favorites.add(id);
+    this.applySort();
+
+    const req$ = currentlyFav
+      ? this.api.unfavoriteWorkspace(id)
+      : this.api.favoriteWorkspace(id);
+
+    req$.subscribe({
+      error: () => {
+        currentlyFav ? this.favorites.add(id) : this.favorites.delete(id);
+        this.applySort();
+      }
+    });
+  }
+
 
   refresh(): void {
     this.search.skip = this.skip;
@@ -213,4 +258,42 @@ export class WorkspaceBrowserComponent implements OnInit {
     return `${year}${month}${day}${hours}${minutes}${seconds}`;
   }
 
+  sortBy(field: 'name' | 'created' | 'activity'): void {
+    if (this.sortField === field) {
+      this.sortAscending = !this.sortAscending;
+    } else {
+      this.sortField = field;
+      this.sortAscending = field === 'name';
+    }
+    this.applySort();
+  }
+
+  private applySort(): void {
+    const dir = this.sortAscending ? 1 : -1;
+
+    this.source.sort((a, b) => {
+      const af = this.isFavorite(a.id) ? 1 : 0;
+      const bf = this.isFavorite(b.id) ? 1 : 0;
+      if (af !== bf) return bf - af;
+
+      let av: any;
+      let bv: any;
+
+      if (this.sortField === 'name') {
+        av = (a.name || '').toLowerCase();
+        bv = (b.name || '').toLowerCase();
+      } else if (this.sortField === 'activity') {
+        av = new Date((a as any).lastActivity).getTime();
+        bv = new Date((b as any).lastActivity).getTime();
+      } else {
+        av = new Date(a.whenCreated as any).getTime();
+        bv = new Date(b.whenCreated as any).getTime();
+      }
+
+      if (av < bv) return -1 * dir;
+      if (av > bv) return 1 * dir;
+
+      return (a.id < b.id ? -1 : 1);
+    });
+  }
 }

@@ -152,6 +152,7 @@ export interface TemplateSummary {
   parentName?: string;
   isPublished?: boolean;
   isLinked?: boolean;
+  whenCreated?: string;
 }
 
 export interface Template {
@@ -257,6 +258,7 @@ export interface WorkspaceSummary {
   author: string;
   audience: string;
   whenCreated: string;
+  lastActivity: string;
 }
 
 export interface PlayableWorkspace {

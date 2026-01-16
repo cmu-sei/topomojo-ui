@@ -1,7 +1,22 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
-<button class="btn btn-outline-secondary btn-sm my-2" btnCheckbox role="button" [(ngModel)]="showing">
+<div>
+  <div class="text-muted">
+    Add “starting point” virtual machine templates to your workspace. You can add blank disk templates
+    to install your own OS, or select templates with operating systems pre-installed, then edit them to fit your topology.
+  </div>
+</div>
+
+<button
+  class="btn btn-outline-secondary btn-sm my-2"
+  btnCheckbox
+  role="button"
+  [(ngModel)]="showing"
+  aria-label="add templates"
+  container="body"
+  triggers="hover focus"
+>
   <fa-icon [icon]="faPlus"></fa-icon>
   <span>Add Templates</span>
 </button>
@@ -10,13 +25,32 @@
 
   <app-error-div [errors]="errors"></app-error-div>
 
+  <div class="text-muted mb-2">
+    Search for templates or published template sets, then click <strong>Add</strong>. You can edit templates after adding them.
+  </div>
+
   <!-- search templates -->
   <div class="input-group my-2">
     <div class="input-group-prepend">
-      <span id="search-label" class="input-group-text">Search</span>
+      <span id="search-label" class="input-group-text d-flex align-items-center">
+        Search
+      </span>
     </div>
-    <input placeholder="term" class="form-control" [(ngModel)]="search.term" (input)="refresh$.next(true)" aria-label="search term" aria-describedby="search-label">
+
+    <input
+      id="template-search-input"
+      placeholder="term"
+      class="form-control"
+      [(ngModel)]="search.term"
+      (input)="refresh$.next(true)"
+      aria-label="search term"
+      aria-describedby="search-label search-help"
+    >
   </div>
+
+  <small id="search-help" class="text-muted d-block mb-2">
+    Tip: Start broad, then narrow down. Add template sets when you want multiple related VMs at once.
+  </small>
 
   <!-- display results -->
   <ul class="list-unstyled">
@@ -29,10 +63,14 @@
         <fa-icon [icon]="faCheck"></fa-icon>
         <span><small>Added</small></span>
       </label>
+
       <span>{{s.name}}</span>
+
       <div class="spacer"></div>
+
       <small class="thin">published template set</small>
     </li>
+
     <li class="d-flex align-items-center mb-1" *ngFor="let t of templates$ | async">
       <button *ngIf="active !== t" class="btn btn-sm btn-light mr-2" (click)="target.next(t)">
         <fa-icon [icon]="faPlus"></fa-icon>
@@ -42,8 +80,11 @@
         <fa-icon [icon]="faCheck"></fa-icon>
         <span><small>Added</small></span>
       </label>
+
       <span>{{t.name}}</span>
+
       <div class="spacer"></div>
+
       <small class="thin">{{t.description}}</small>
     </li>
   </ul>

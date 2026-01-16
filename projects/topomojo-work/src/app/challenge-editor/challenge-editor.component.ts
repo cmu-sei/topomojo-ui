@@ -35,6 +35,7 @@ export class ChallengeEditorComponent implements OnInit, OnChanges, OnDestroy {
   faHelp = faInfoCircle;
   faCheck = faCheckSquare;
   faUnchecked = faSquare;
+  faInfoCircle = faInfoCircle;
 
   constructor(
     private api: WorkspaceService,

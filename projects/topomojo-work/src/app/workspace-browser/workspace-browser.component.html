@@ -15,17 +15,51 @@
 
   <!-- filters -->
   <div class="mb-2">
-    <button class="mr-1 btn btn-link text-secondary btn-sm" (click)="setMode('workspace')">
+    <button
+      class="mr-1 btn btn-link text-secondary btn-sm d-inline-flex align-items-center"
+      (click)="setMode('workspace')"
+    >
       <fa-icon [hidden]="mode!=='workspace'" [icon]="faFilter"></fa-icon>
-      <span>workspace</span>
+      <span class="ml-1">workspace</span>
+
+      <!-- info icon (hover for tooltip) -->
+      <fa-icon
+        class="ml-2 info-icon"
+        [icon]="faInfoCircle"
+        [tooltip]="'Workspaces you can access (active, invited to, or permitted). Build and manage lab content here.'"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        aria-label="Info: Workspaces you can access (active, invited to, or permitted). Build and manage lab content here."
+        (click)="$event.stopPropagation()"
+      ></fa-icon>
     </button>
-    <button class="mr-1 btn btn-link text-secondary btn-sm" (click)="setMode('gamespace')">
+
+    <button
+      class="mr-1 btn btn-link text-secondary btn-sm d-inline-flex align-items-center"
+      (click)="setMode('gamespace')"
+    >
       <fa-icon [hidden]="mode!=='gamespace'" [icon]="faFilter"></fa-icon>
-      <span>gamespace</span>
+      <span class="ml-1">gamespace</span>
+
+      <fa-icon
+        class="ml-2 info-icon"
+        [icon]="faInfoCircle"
+        [tooltip]="'Gamespaces you can play. Read-only copies of workspaces you can launch or join to complete labs.'"
+        container="body"
+        triggers="hover focus"
+        placement="left"
+        aria-label="Info: Gamespaces you can play. Read-only copies of workspaces you can launch or join to complete labs."
+        (click)="$event.stopPropagation()"
+      ></fa-icon>
     </button>
-    <button class="mr-1 btn btn-link text-secondary btn-sm" (click)="refresh()">
+
+    <button
+      class="mr-1 btn btn-link text-secondary btn-sm d-inline-flex align-items-center"
+      (click)="refresh()"
+    >
       <fa-icon [icon]="faSync"></fa-icon>
-      <span>refresh</span>
+      <span class="ml-1">refresh</span>
     </button>
   </div>
 
@@ -35,16 +69,26 @@
   <!-- display workspace cards -->
   <ng-container *ngIf="mode === 'workspace'">
     <ng-container *ngFor="let ws of workspaces | async">
-      <app-workspace-card [workspace]="ws"></app-workspace-card>
+      <app-workspace-card
+        [workspace]="ws"
+        [isFavorite]="isFavorite(ws.id)"
+        (favoriteToggle)="toggleFavorite(ws.id)">
+      </app-workspace-card>
     </ng-container>
   </ng-container>
 
   <!-- display gamespace cards -->
   <ng-container *ngIf="mode === 'gamespace'">
     <ng-container *ngFor="let g of gamespaces | async">
-      <app-gamespace-card [gamespace]="g"></app-gamespace-card>
+      <app-gamespace-card
+        [gamespace]="g"
+        [canFavorite]="isPlayableGamespace(g)"
+        [isFavorite]="isPlayableGamespace(g) && isFavorite(g.id)"
+        (favoriteToggle)="toggleGamespaceFavorite(g)">
+      </app-gamespace-card>
     </ng-container>
   </ng-container>
+
 
   <hr class="my-0"/>
   <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>

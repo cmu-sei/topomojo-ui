@@ -24,7 +24,7 @@ export class AdminComponent implements OnInit {
   ) {
     route.params.pipe(
       debounceTime(500),
-      tap(p => this.section = p.section)
+      tap(p => this.section = p.section ?? 'dashboard')
     ).subscribe();
 
     api.loadVersion().subscribe(

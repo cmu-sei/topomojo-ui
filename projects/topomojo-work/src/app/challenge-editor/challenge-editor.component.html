@@ -1,27 +1,49 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
-<div class="text-right">
-  <button class="btn btn-sm btn-outline-success" (click)="save()">
+<div class="mb-2">
+  <div class="text-muted">
+    Define transforms (dynamic variables), add challenge Markdown, and configure variants with
+    questions and answers. At deploy time, TopoMojo replaces any <code>##key##</code> tokens with generated values.
+  </div>
+</div>
+
+<div class="d-flex align-items-center mb-2">
+  <label class="mb-0 d-flex align-items-center">
+    Challenge Editor
+  </label>
+
+  <div class="spacer"></div>
+
+  <button
+    class="btn btn-sm btn-outline-success"
+    (click)="save()"
+    placement="right"
+    container="body"
+    triggers="hover focus"
+    [tooltip]="'Save your challenge configuration.'"
+    aria-label="Save your challenge configuration."
+  >
     <fa-icon [icon]="faSave"></fa-icon>
     <span>Save</span>
   </button>
 </div>
+
 <form *ngIf="form$ | async as f" [formGroup]="f">
 
   <div formArrayName="transforms" class="form-group bg-light">
-    <label>Transforms</label>
+    <label class="d-flex align-items-center mb-0">
+      Transforms
+    </label>
 
     <div>
-      <small>
-        Add randomization key/values. At deploy-time, the values will replace
-        the keys in template guest settings, challenge text, questions, and answers.
-        Enter the plain key here, but use a <i>double-pounder-key</i> (<code>##key##</code>) anywhere it should be
-        replaced.
+      <small class="text-muted">
+        Add randomization key/values. At deploy-time, values replace keys in template guest settings, challenge text,
+        questions, and answers. Enter the plain key here, but use <code>##key##</code> anywhere it should be replaced.
       </small>
     </div>
 
-    <div *ngFor="let t of transforms.controls; let i = index" [formGroupName]=i class="mt-2">
+    <div *ngFor="let t of transforms.controls; let i = index" [formGroupName]="i" class="mt-2">
       <input class="form-control w100" formControlName="key" placeholder="key" aria-label="transform key">
       <input class="form-control w100" formControlName="value" placeholder="value" aria-label="transform value">
       <app-confirm-button btnClass="btn btn-sm btn-outline-dark" (confirm)="removeTransform(i)">
@@ -29,35 +51,47 @@
         <span>Remove</span>
       </app-confirm-button>
     </div>
+
     <div *ngIf="transforms.controls.length">
-      <small>
+      <small class="text-muted">
         Value format is <code>type:range</code> where type is <em>hex, b64, int, uid, list</em> and range is optional.
-        <button class="btn btn-sm btn-link-warning" [(ngModel)]="showTransformExamples"
-          [ngModelOptions]="{standalone: true}" btnCheckbox>
+        <button
+          class="btn btn-sm btn-link-warning"
+          [(ngModel)]="showTransformExamples"
+          [ngModelOptions]="{standalone: true}"
+          btnCheckbox
+          placement="right"
+          container="body"
+          triggers="hover focus"
+          [tooltip]="'Show transform type examples.'"
+          aria-label="Show transform type examples."
+        >
           <fa-icon [icon]="faHelp"></fa-icon>
           <span></span>
         </button>
+
         <pre *ngIf="showTransformExamples">
-          id &mdash; the gamespace id
-          variant &mdash; the gamespace variant index
-          hex &mdash; yields 8 hex characters
-          b64 &mdash; yields 24 base64 characters
-          int &mdash; yields decimal string
-          uid &mdash; yields a GUID
-          hex:12 &mdash; yields 12 hex characters
-          b64:16 &mdash; yields 16 base64 characters
-          int:99-999 &mdash; yields decimal string between 99 and 999
-          list:one two three four &mdash; yields a single word
-          list:2:one two three four five &mdash; yields two words (and indexed keys `##key_1##`, `##key_2##`)
-          index:3:zero one two three four &mdash; yields "three"
-          app_url, topomojo_url &mdash; this application url (no path)
-          grader_url &mdash; the grading url endpoint
-          api_key, grader_key &mdash; the gamespace apikey (not for participants)
-          ipv4:cidr_address &mdash; yields a random ip in the cidr range
-          ipv4:192.168.22.0/24 &mdash; example result 192.168.22.137
+id — the gamespace id
+variant — the gamespace variant index
+hex — yields 8 hex characters
+b64 — yields 24 base64 characters
+int — yields decimal string
+uid — yields a GUID
+hex:12 — yields 12 hex characters
+b64:16 — yields 16 base64 characters
+int:99-999 — yields decimal string between 99 and 999
+list:one two three four — yields a single word
+list:2:one two three four five — yields two words (and indexed keys `##key_1##`, `##key_2##`)
+index:3:zero one two three four — yields "three"
+app_url, topomojo_url — this application url (no path)
+grader_url — the grading url endpoint
+api_key, grader_key — the gamespace apikey (not for participants)
+ipv4:cidr_address — yields a random ip in the cidr range
+ipv4:192.168.22.0/24 — example result 192.168.22.137
         </pre>
       </small>
     </div>
+
     <button class="btn btn-sm btn-outline-secondary mt-2" (click)="addTransform()">
       <fa-icon [icon]="faPlus"></fa-icon>
       <span>Add Transform</span>
@@ -65,27 +99,42 @@
   </div>
 
   <div class="form-group bg-light">
-    <label class="col-form-label-sm">Markdown</label>
-    <ngx-monaco-editor id="challenge-text-editor" formControlName="text" [options]="editorOptions"
-      aria-label="challenge text"></ngx-monaco-editor>
-    <small>This markdown gets appended to the gamespace document.</small>
+    <label class="col-form-label-sm d-flex align-items-center mb-0">
+      Markdown
+    </label>
+
+    <ngx-monaco-editor
+      id="challenge-text-editor"
+      formControlName="text"
+      [options]="editorOptions"
+      aria-label="challenge text"
+    ></ngx-monaco-editor>
+
+    <small class="text-muted">This markdown gets appended to the gamespace document.</small>
   </div>
 
   <div formArrayName="variants">
 
     <div class="form-group bg-light">
-      <label>Variants</label>
-      <p>
-        <small>
-          At deploy-time, one challenge variant is selected randomly.
-          A variant is comprised of an iso-attachment instruction and one or more question sets.
-          Question sets are for progressive challenges in which a question set is only presented
-          if a prerequisite percentage of the overall challenge weight has been scored correctly.
+      <label class="d-flex align-items-center mb-0">
+        Variants
+      </label>
+
+      <p class="mb-1">
+        <small class="text-muted">
+          At deploy-time, one challenge variant is selected randomly. A variant includes an ISO-attachment instruction
+          and one or more question sets.
         </small>
       </p>
-      <p>
-        <button class="btn btn-sm btn-outline-dark mr-1" btnCheckbox [(ngModel)]="showDetail"
-          [ngModelOptions]="{standalone: true}" (click)="updateDetail()">
+
+      <p class="mb-0">
+        <button
+          class="btn btn-sm btn-outline-dark mr-1"
+          btnCheckbox
+          [(ngModel)]="showDetail"
+          [ngModelOptions]="{standalone: true}"
+          (click)="updateDetail()"
+        >
           <fa-icon [icon]="showDetail ? faCheck : faUnchecked"></fa-icon>
           <span>Show Variant Detail</span>
         </button>
@@ -94,25 +143,43 @@
 
     <div *ngFor="let v of variants.controls; let i = index" [formGroupName]="i" class="form-group bg-light mt-2">
       <div class="d-flex align-items-center">
-        <label class="label pop-info">Variant {{i+1}}</label>
+        <label class="label pop-info mb-0">Variant {{i+1}}</label>
         <div class="spacer"></div>
-        <button class="btn btn-sm btn-outline-dark mr-1" btnCheckbox [(ngModel)]="detail[i]"
-          [ngModelOptions]="{standalone: true}">
+
+        <button
+          class="btn btn-sm btn-outline-dark mr-1"
+          btnCheckbox
+          [(ngModel)]="detail[i]"
+          [ngModelOptions]="{standalone: true}"
+        >
           <fa-icon [icon]="faMore"></fa-icon>
           <span>Detail</span>
         </button>
-        <button class="btn btn-sm btn-outline-dark mr-1" (click)="addVariant(v.value)">
+
+        <button
+          class="btn btn-sm btn-outline-dark mr-1"
+          (click)="addVariant(v.value)"
+        >
           <fa-icon [icon]="faCopy"></fa-icon>
           <span>Clone</span>
         </button>
-        <app-confirm-button btnClass="btn btn-sm btn-outline-dark" (confirm)="removeVariant(i)">
+
+        <app-confirm-button
+          btnClass="btn btn-sm btn-outline-dark"
+          (confirm)="removeVariant(i)"
+          aria-label="remove variant"
+        >
           <fa-icon [icon]="faTrash"></fa-icon>
           <span>Remove</span>
         </app-confirm-button>
       </div>
 
-      <app-variant-form [form]="$any(v)" [index]="i" [detail]="showDetail || detail[i]"
-        [guid]="summary.id"></app-variant-form>
+      <app-variant-form
+        [form]="$any(v)"
+        [index]="i"
+        [detail]="showDetail || detail[i]"
+        [guid]="summary.id"
+      ></app-variant-form>
     </div>
   </div>
 
@@ -129,5 +196,3 @@
     <span>Save</span>
   </button>
 </div>
-
-<!-- <pre class="mt-4">{{form.value | json}}</pre> -->

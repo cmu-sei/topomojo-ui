@@ -3,7 +3,9 @@
 
 <div *ngIf="summary | async as ws; else loading" class="reader">
   <app-presence-bar></app-presence-bar>
-  <app-clipspan class="small text-muted">{{ws.id}}</app-clipspan>
+  <span class="workspace-id-pill">
+    Workspace ID: <app-clipspan>{{ ws.id }}</app-clipspan>
+  </span>
   <h1 class="mb-0 pb-0">{{ws.name}}</h1>
   <div class="mb-4">
     <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['../settings']">Settings</a>

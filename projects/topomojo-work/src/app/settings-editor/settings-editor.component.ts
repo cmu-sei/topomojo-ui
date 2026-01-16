@@ -10,13 +10,13 @@ import { ChangedWorkspace, Workspace, Worker } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 import { ClipboardService } from '../clipboard.service';
 import { ConfigService } from '../config.service';
-import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy } from '@fortawesome/free-solid-svg-icons';
+import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-    selector: 'app-settings-editor',
-    templateUrl: './settings-editor.component.html',
-    styleUrls: ['./settings-editor.component.scss'],
-    standalone: false
+  selector: 'app-settings-editor',
+  templateUrl: './settings-editor.component.html',
+  styleUrls: ['./settings-editor.component.scss'],
+  standalone: false
 })
 export class SettingsEditorComponent implements OnInit, OnChanges {
   @Input() workspace!: Workspace;
@@ -30,6 +30,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   faUserCog = faUserCog;
   faTrash = faTrash;
   faCopy = faCopy;
+  faInfoCircle = faInfoCircle;
 
   constructor(
     private config: ConfigService,
@@ -38,21 +39,38 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
     private formBuilder: UntypedFormBuilder,
     private clipboard: ClipboardService
   ) {
-    this.form = this.formBuilder.group({
-      id: ['', Validators.required],
-      name: ['', Validators.required],
-      description: [''],
-      tags: [''],
-      audience: [''],
-      author: [''],
-      durationMinutes: ['']
-    }, {updateOn: 'blur'});
+    this.form = this.formBuilder.group(
+      {
+        id: ['', Validators.required],
+        name: ['', Validators.required],
+        description: [''],
+        tags: [''],
+        audience: [''],
+        author: [''],
+        durationMinutes: [0, [Validators.min(0)]]
+      },
+      { updateOn: 'blur' }
+    );
 
-    this.form.valueChanges.pipe(
-      filter(f => !this.form.pristine && this.form.valid),
-      switchMap(f => api.update(f as ChangedWorkspace))
-    ).subscribe(() => this.mapToWorkspace(this.form.value));
-
+    this.form.valueChanges
+      .pipe(
+        filter(() => this.form.dirty && this.form.valid),
+        switchMap(raw => {
+          const payload: ChangedWorkspace = {
+            ...(raw as any),
+            durationMinutes: Number(raw.durationMinutes) || 0
+          };
+          return this.api.update(payload);
+        })
+      )
+      .subscribe({
+        next: () =>
+          this.mapToWorkspace({
+            ...(this.form.value as any),
+            durationMinutes: Number(this.form.value.durationMinutes) || 0
+          }),
+        error: err => this.errors.push(err)
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -61,8 +79,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   mapToSettings(ws: Workspace): WorkspaceSettings {
     return {
@@ -87,46 +104,39 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
 
   enlistCode(): void {
     this.inviteUrl = '';
-    this.api.generateInvitation(this.workspace.id).pipe(
-      finalize(() => {})
-    ).subscribe(
-      result => {
+    this.api
+      .generateInvitation(this.workspace.id)
+      .pipe(finalize(() => {}))
+      .subscribe(result => {
         this.inviteUrl = this.config.externalUrl(`/topo/${this.workspace.id}/invite/${result.code}`);
         this.clipboard.copyToClipboard(this.inviteUrl);
         this.copiedInvite = true;
         timer(4000).subscribe(() => {
           this.copiedInvite = false;
         });
-      }
-    );
+      });
   }
 
   delist(worker: Worker): void {
-    this.api.deleteWorker(worker).subscribe(
-      () => {
-
-        const index = (this.workspace.workers || [])
-          .findIndex(w => w.subjectId === worker.subjectId)
-        ;
-
-        if (index >= 0) {
-          this.workspace.workers?.splice(index, 1);
-        }
+    this.api.deleteWorker(worker).subscribe(() => {
+      const index = (this.workspace.workers || []).findIndex(w => w.subjectId === worker.subjectId);
+      if (index >= 0) {
+        this.workspace.workers?.splice(index, 1);
       }
-    );
+    });
   }
 
   clone(): void {
     this.api.clone(this.workspace.id).subscribe(
       w => this.router.navigate(['/topo', w.id, 'settings']),
-      (err) => this.errors.push(err)
+      err => this.errors.push(err)
     );
   }
 
   delete(): void {
     this.api.delete(this.workspace.id).subscribe(
       () => this.router.navigate(['/']),
-      (err) => this.errors.push(err)
+      err => this.errors.push(err)
     );
   }
 }

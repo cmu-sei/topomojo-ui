@@ -2,9 +2,10 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, Input, OnInit } from '@angular/core';
-import { faCheck, faCheckSquare, faFilter, faList, faSearch, faSquare, faSyncAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, combineLatest, interval, merge, Observable } from 'rxjs';
-import { debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
+import { faCheck, faCheckSquare, faFilter, faList, faSearch, faSquare, faSyncAlt, faTrash, faSortUp, faSortDown, faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
+import { BehaviorSubject, combineLatest, interval, merge, Observable, of } from 'rxjs';
+import { debounceTime, filter, map, switchMap, tap, catchError } from 'rxjs/operators';
 import { GamespaceService } from '../../api/gamespace.service';
 import { Gamespace, Search, Vm } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
@@ -40,6 +41,15 @@ export class GamespaceBrowserComponent implements OnInit {
   faList = faList;
   faSearch = faSearch;
   faFilter = faFilter;
+  faSortUp = faSortUp;
+  faSortDown = faSortDown;
+  faStarSolid = faStarSolid;
+  faStarRegular = faStarRegular;
+
+  sortAscending = true;
+  sortField: 'id' | 'session' | 'managerWorkspace' = 'session';
+
+  private gamespaceFavorites = new Set<string>();
 
   constructor(
     private api: GamespaceService,
@@ -54,6 +64,7 @@ export class GamespaceBrowserComponent implements OnInit {
       tap(r => r.forEach(g => g.checked = !!this.selected.find(s => s.id === g.id))),
       tap(r => this.source = r),
       tap(r => this.count = r.length),
+      tap(() => this.applySort()),
       tap(() => this.review()),
     );
 
@@ -71,6 +82,12 @@ export class GamespaceBrowserComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.api.syncGamespaceFavorites().subscribe();
+
+    this.api.gamespaceFavorites$.subscribe(set => {
+      this.gamespaceFavorites = set;
+      this.applySort();
+    });
   }
 
   refresh(): void {
@@ -147,5 +164,88 @@ export class GamespaceBrowserComponent implements OnInit {
 
   trackById(index: number, g: Gamespace): string {
     return g.id;
+  }
+
+  canFavorite(g: Gamespace): boolean {
+    return this.filter === 'active' && !!(g as any).startTime;
+  }
+
+  isGamespaceFavorite(id: string): boolean {
+    return this.gamespaceFavorites.has(id);
+  }
+
+  toggleGamespaceFavorite(g: Gamespace, ev?: MouseEvent): void {
+    ev?.preventDefault();
+    ev?.stopPropagation();
+
+    if (!this.canFavorite(g)) return;
+
+    const id = g.id;
+    const currentlyFav = this.gamespaceFavorites.has(id);
+
+    currentlyFav ? this.gamespaceFavorites.delete(id) : this.gamespaceFavorites.add(id);
+    this.applySort();
+
+    const req$ = currentlyFav
+      ? this.api.unfavoriteGamespace(id)
+      : this.api.favoriteGamespace(id);
+
+    req$.pipe(
+      catchError(err => {
+        currentlyFav ? this.gamespaceFavorites.add(id) : this.gamespaceFavorites.delete(id);
+        this.applySort();
+        throw err;
+      })
+    ).subscribe({
+      next: () => {
+        this.api
+          .listGamespaceFavorites()
+          .pipe(catchError(() => of([] as string[])))
+          .subscribe(ids => {
+            this.gamespaceFavorites = new Set(ids);
+            this.applySort();
+          });
+      }
+    });
+  }
+
+  sortBy(field: 'id' | 'session' | 'managerWorkspace'): void {
+    if (this.sortField === field) {
+      this.sortAscending = !this.sortAscending;
+    } else {
+      this.sortField = field;
+      this.sortAscending = field !== 'id';
+    }
+    this.applySort();
+  }
+
+  private applySort(): void {
+    const dir = this.sortAscending ? 1 : -1;
+
+    this.source.sort((a, b) => {
+      if (this.filter === 'active') {
+        const aFav = this.canFavorite(a) && this.gamespaceFavorites.has(a.id) ? 1 : 0;
+        const bFav = this.canFavorite(b) && this.gamespaceFavorites.has(b.id) ? 1 : 0;
+        if (aFav !== bFav) return bFav - aFav;
+      }
+
+      let av: any;
+      let bv: any;
+
+      if (this.sortField === 'id') {
+        av = (a.id || '').toLowerCase();
+        bv = (b.id || '').toLowerCase();
+      } else if (this.sortField === 'session') {
+        av = Number((a as any)?.session?.countdown ?? 0);
+        bv = Number((b as any)?.session?.countdown ?? 0);
+      } else {
+        av = `${(a.managerName || '').toLowerCase()}|${(a.name || '').toLowerCase()}`;
+        bv = `${(b.managerName || '').toLowerCase()}|${(b.name || '').toLowerCase()}`;
+      }
+
+      if (av < bv) return -1 * dir;
+      if (av > bv) return 1 * dir;
+      return 0;
+    });
   }
 }

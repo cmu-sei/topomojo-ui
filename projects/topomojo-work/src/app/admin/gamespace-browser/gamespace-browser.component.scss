@@ -1,0 +1,46 @@
+.sort-header {
+  white-space: nowrap;
+  gap: 0.25rem;
+}
+
+.tm-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+.tm-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.tm-actions-col {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.tm-actions-grid {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+  justify-items: end;
+}
+
+.tm-view-btn {
+  width: 88px;
+  justify-content: center;
+}
+
+.tm-action-host {
+  justify-self: end;
+  white-space: nowrap;
+}

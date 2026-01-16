@@ -2,38 +2,123 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <div *ngIf="gamespace$ | async as game" class="mb-4">
+  <div class="mb-2">
+    <div class="text-muted">
+      Launch and interact with your lab as a gamespace, the same way players will.
+    </div>
+  </div>
 
   <div *ngIf="(game.gameOver || game.session.isBefore || game.session.isAfter) && !launching">
+
+    <div class="text-muted mb-2">
+      Configure your play session options below, then click <strong>Start</strong>.
+    </div>
+
     <div class="form-row mb-1">
       <div class="col-3">
-        <label class="mb-0 form-label-sm" for="variant-input">Variant</label>
+        <label class="mb-0 form-label-sm d-flex align-items-center" for="variant-input">
+          Variant
+          <span
+            class="ml-2 text-muted"
+            role="button"
+            tabindex="0"
+            placement="right"
+            container="body"
+            triggers="hover focus"
+            [tooltip]="'Choose which challenge variant to play (use 0 for any/default).'"
+            aria-label="Choose which challenge variant to play (use 0 for any/default)."
+          >
+            <fa-icon [icon]="faInfoCircle"></fa-icon>
+          </span>
+        </label>
         <input id="variant-input" class="form-control form-control-sm" type="number" [(ngModel)]="settings.variant">
       </div>
+
       <div class="col-3">
-        <label class="mb-0 form-label-sm" for="maxattempts-input">Max Attempts</label>
+        <label class="mb-0 form-label-sm d-flex align-items-center" for="maxattempts-input">
+          Max Attempts
+          <span
+            class="ml-2 text-muted"
+            role="button"
+            tabindex="0"
+            placement="right"
+            container="body"
+            triggers="hover focus"
+            [tooltip]="'Maximum number of submission attempts allowed.'"
+            aria-label="Maximum number of submission attempts allowed."
+          >
+            <fa-icon [icon]="faInfoCircle"></fa-icon>
+          </span>
+        </label>
         <input id="maxattempts-input" class="form-control form-control-sm" type="number" [(ngModel)]="settings.maxAttempts">
       </div>
+
       <div class="col-3">
-        <label class="mb-0 form-label-sm" for="maxminutes-input">Max Minutes</label>
+        <label class="mb-0 form-label-sm d-flex align-items-center" for="maxminutes-input">
+          Max Minutes
+          <span
+            class="ml-2 text-muted"
+            role="button"
+            tabindex="0"
+            placement="right"
+            container="body"
+            triggers="hover focus"
+            [tooltip]="'Maximum number of minutes before the gamespace expires.'"
+            aria-label="Maximum number of minutes before the gamespace expires."
+          >
+            <fa-icon [icon]="faInfoCircle"></fa-icon>
+          </span>
+        </label>
         <input id="maxminutes-input" class="form-control form-control-sm" type="number" [(ngModel)]="settings.maxMinutes">
       </div>
+
       <div class="col-3">
-        <label class="mb-0 form-label-sm" for="points-input">Point Value</label>
+        <label class="mb-0 form-label-sm d-flex align-items-center" for="points-input">
+          Points
+          <span
+            class="ml-2 text-muted"
+            role="button"
+            tabindex="0"
+            placement="right"
+            container="body"
+            triggers="hover focus"
+            [tooltip]="'Number of points awarded for solving this challenge'"
+            aria-label="Number of points awarded for solving this challenge"
+          >
+            <fa-icon [icon]="faInfoCircle"></fa-icon>
+          </span>
+        </label>
         <input id="points-input" class="form-control form-control-sm" type="number" [(ngModel)]="settings.points">
       </div>
     </div>
-    <app-confirm-button  btnClass="btn btn-sm btn-secondary" (confirm)="launch()">
+
+    <app-confirm-button
+      btnClass="btn btn-sm btn-secondary"
+      (confirm)="launch()"
+    >
       <fa-icon [icon]="faBolt"></fa-icon>
       <span>Start</span>
     </app-confirm-button>
   </div>
+
   <div *ngIf="!game.gameOver && game.session.isDuring && !launching" class="text-center">
-    <app-confirm-button btnClass="btn btn-sm btn-warning my-2" (confirm)="reset(game.id)">
+    <app-confirm-button
+      btnClass="btn btn-sm btn-warning my-2"
+      (confirm)="reset(game.id)"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      [tooltip]="'Reset the gamespace (clears the session and returns it to a fresh state).'"
+      aria-label="Reset the gamespace (clears the session and returns it to a fresh state)."
+    >
       <fa-icon [icon]="faTrash"></fa-icon>
       <span>Reset</span>
     </app-confirm-button>
-    <div><span class="clock">{{game.session.countdown | clock}}</span></div>
+    <div>
+      <span class="clock">{{game.session.countdown | clock}}</span>
+    </div>
   </div>
+
   <div class="text-center">
     <app-spinner *ngIf="launching" class=""></app-spinner>
   </div>
