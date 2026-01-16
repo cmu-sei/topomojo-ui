@@ -40,6 +40,8 @@ export class UserBrowserComponent implements OnInit {
   sortAscending = false;
   sortField: 'name' | 'created' = 'created';
 
+  hoverTip = 0;
+
   constructor(private api: ProfileService) {
     this.source$ = merge(
       this.refresh$,
@@ -182,5 +184,13 @@ export class UserBrowserComponent implements OnInit {
       if (av > bv) return 1 * dir;
       return 0;
     });
+  }
+
+  setTip(id: number) {
+    this.hoverTip = id;
+  }
+
+  clearTip() {
+    this.hoverTip = 0;
   }
 }

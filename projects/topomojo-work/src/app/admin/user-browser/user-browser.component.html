@@ -233,19 +233,35 @@
         btnRadioGroup
         [(ngModel)]="user.appRole"
         (click)="updateRole(user, user.appRole)"
+        (mouseleave)="clearTip()"
       >
-        <label class="btn btn-outline-info btn-sm" btnRadio="user">User</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="builder">Builder</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="creator">Creator</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="observer">Observer</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="administrator">Admin</label>
-        <label class="btn btn-outline-info btn-sm" btnRadio="disabled">Disabled</label>
+        <label class="btn btn-outline-info btn-sm" btnRadio="user"
+              (mouseenter)="setTip(1)">User</label>
+
+        <label class="btn btn-outline-info btn-sm" btnRadio="builder"
+              (mouseenter)="setTip(2)">Builder</label>
+
+        <label class="btn btn-outline-info btn-sm" btnRadio="creator"
+              (mouseenter)="setTip(3)">Creator</label>
+
+        <label class="btn btn-outline-info btn-sm" btnRadio="observer"
+              (mouseenter)="setTip(4)">Observer</label>
+
+        <label class="btn btn-outline-info btn-sm" btnRadio="administrator"
+              (mouseenter)="setTip(5)">Admin</label>
+
+        <label class="btn btn-outline-info btn-sm" btnRadio="disabled"
+              (mouseenter)="setTip(6)">Disabled</label>
       </div>
 
-      <small class="text-muted d-block">
-        Builder: bypasses some checks (e.g., blocking bridge-net). Creator: bypasses workspace/template limits.
-      </small>
-
+      <div class="mt-1">
+        <small class="text-muted" *ngIf="hoverTip === 1">User — Standard permissions.</small>
+        <small class="text-muted" *ngIf="hoverTip === 2">Builder — Can connect to bridge-net.</small>
+        <small class="text-muted" *ngIf="hoverTip === 3">Creator — Can have as many workspaces and templates as wanted.</small>
+        <small class="text-muted" *ngIf="hoverTip === 4">Observer — Allows a user to view and use the Gamespaces tab.</small>
+        <small class="text-muted" *ngIf="hoverTip === 5">Admin — Highest level of permission in TopoMojo; can do everything the other roles can do.</small>
+        <small class="text-muted" *ngIf="hoverTip === 6">Disabled — No permissions in TopoMojo.</small>
+      </div>
       <app-user-role-badge class="mx-2 mb-2" [user]="user"></app-user-role-badge>
     </div>
 
