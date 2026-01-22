@@ -3,7 +3,7 @@
 
 <div *ngIf="summary | async as ws; else loading" class="reader">
   <app-presence-bar></app-presence-bar>
-  <span class="workspace-id-pill">
+  <span class="text-muted">
     Workspace ID: <app-clipspan>{{ ws.id }}</app-clipspan>
   </span>
   <h1 class="mb-0 pb-0">{{ws.name}}</h1>
