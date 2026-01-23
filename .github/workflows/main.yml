@@ -2,14 +2,61 @@ name: CI
 
 on:
   release:
-    types: [ "published" ]
+    types: ["published"]
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Derive version from release tag
+        run: |
+          TAG='${{ github.event.release.tag_name }}'
+          VERSION="${TAG#v}"   # strips leading v if present
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Update package.json version to match tag
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = 'package.json';
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            pkg.version = process.env.VERSION;
+            fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + '\n');
+          "
+          git diff -- package.json
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet; then
+            echo "No version change needed."
+            exit 0
+          fi
+
+          git add package.json
+          git commit -m "chore: set version to $VERSION"
+
+      - name: Force-move tag to include version bump commit
+        run: |
+          git tag -f "$TAG"
+          git push origin -f "refs/tags/$TAG"
+
+      - name: Re-checkout moved tag (so build uses updated package.json)
+        run: |
+          git fetch --tags --force
+          git checkout -f "tags/$TAG"
+          git rev-parse HEAD
 
       - name: Docker meta
         id: docker_meta
