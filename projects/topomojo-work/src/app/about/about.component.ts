@@ -58,7 +58,7 @@ export class AboutComponent implements OnInit {
 
       switchMap((s) => {
         const base = (s.apphost ?? '').replace(/\/+$/, '');
-        const url = base ? `${base}/health/version` : `/health/version`;
+        const url = base ? `${base}/api/health/version` : `/api/health/version`;
         return this.http.get(url, { responseType: 'text' }).pipe(take(1));
       }),
 
