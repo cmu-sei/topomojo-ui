@@ -16,7 +16,7 @@ jobs:
       tagName: ${{ github.event.release.tag_name }}
 
       versionMode: npm
-      versionFiles: |
+      versionFiles: |-
         package.json
 
       buildArgs: |
