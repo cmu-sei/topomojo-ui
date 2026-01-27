@@ -29,18 +29,22 @@
     <div #sidebarContainer>
 
         <section
-                class="sidebar sidebar-body bg-light"
-                [class.sidebar-out]="open"
-                [class.sidebar-in]="!open">
+            class="sidebar sidebar-body bg-light"
+            [class.sidebar-out]="open"
+            [class.sidebar-in]="!open">
 
-            <div [hidden]="open"
-                class="text-secondary m-2 sidebar-toggle"
-                (click)="toggleSidebar()">
-            <fa-icon [icon]="faBars" size="lg"></fa-icon>
+            <div class="d-flex align-items-center p-2">
+                <button class="btn btn-link p-0 text-secondary sidebar-toggle"
+                        type="button"
+                        (click)="toggleSidebar()"
+                        aria-label="Toggle sidebar">
+                <fa-icon [icon]="faBars" size="lg"></fa-icon>
+                </button>
             </div>
 
             <app-workspace-browser [hidden]="!open"></app-workspace-browser>
         </section>
+
 
         <div class="sidebar sidebar-footer bg-light align-items-center"
      tabindex="0"
@@ -78,13 +82,6 @@
         <fa-icon [icon]="faThumbtack"
                  [class.untack]="!pinned"
                  size="lg"></fa-icon>
-      </button>
-
-      <button class="btn btn-link p-0 text-secondary"
-              type="button"
-              (click)="closeSidebar()"
-              aria-label="Close sidebar">
-        <fa-icon [icon]="faClose" size="lg"></fa-icon>
       </button>
     </div>
 
