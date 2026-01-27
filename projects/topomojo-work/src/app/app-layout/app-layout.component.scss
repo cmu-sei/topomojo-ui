@@ -94,4 +94,6 @@ footer {
   border-radius: 0.375rem;
   margin-left: 0;
   cursor: pointer;
+  flex: 0 0 auto !important;
+  align-self: flex-start;
 }
