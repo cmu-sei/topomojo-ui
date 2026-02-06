@@ -91,7 +91,7 @@ export class ConfigService {
 
   openConsole(request: ConsoleRequest) {
     const url = this.router.createUrlTree(["c"], { queryParams: request });
-    this.showTab(url.toString());
+    this.showTab(this.location.prepareExternalUrl(url.toString()));
   }
 
   showTab(url: string): void {
