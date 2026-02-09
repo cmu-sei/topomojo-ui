@@ -152,11 +152,19 @@ export class WorkspaceBrowserComponent implements OnInit {
   }
 
   delete(w: WorkspaceSummary): void {
-    this.api.delete(w.id).subscribe(() => {
-      const found = this.source.find((f) => f.id === w.id);
-      if (found) {
-        this.source.splice(this.source.indexOf(found), 1);
-      }
+    this.api.delete(w.id).subscribe({
+      next: () => {
+        if (this.viewed?.id === w.id) {
+          this.viewed = undefined;
+          this.viewChange$.next(this.viewed);
+        }
+
+        const found = this.source.find((f) => f.id === w.id);
+        if (found) {
+          this.source.splice(this.source.indexOf(found), 1);
+        }
+        this.refresh$.next(true);
+      },
     });
   }
 
