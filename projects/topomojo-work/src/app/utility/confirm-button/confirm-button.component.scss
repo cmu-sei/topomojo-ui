@@ -1,3 +1,7 @@
 // button {
 //   margin-right: 4px;
 // }
+
+.confirm-wrap > button[disabled] {
+  display: none;
+}
