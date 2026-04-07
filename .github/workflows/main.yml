@@ -10,7 +10,7 @@ permissions:
 jobs:
   build-and-publish:
     name: Build & Publish
-    uses: cmu-sei/Crucible-Github-Actions/.github/workflows/docker-build.yaml@docker-v1.1
+    uses: cmu-sei/Crucible-Github-Actions/.github/workflows/docker-build.yaml@docker-v1
     with:
       imageName: cmusei/topomojo-ui
       tagName: ${{ github.event.release.tag_name }}
@@ -22,7 +22,6 @@ jobs:
       buildArgs: |
         commit=${{ github.sha }}
 
-      enableQemu: true
       preBuildCommands: |
         curl https://box.cmusei.dev/wmks-jam-v1.tar -s -o wmks.tar
         test -s wmks.tar
