@@ -87,8 +87,16 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
+              "sourceMap": {
+                "scripts": true,
+                "styles": true,
+                "vendor": true
+              },
+              "namedChunks": true,
+              "preserveSymlinks": true
+            },
+            "localNPM": {
+              "tsConfig": "tsconfig.local-console-forge.json"
             }
           },
           "defaultConfiguration": "production"
@@ -101,6 +109,10 @@
             },
             "development": {
               "buildTarget": "topomojo-work:build:development",
+              "port": 4201
+            },
+            "localNPM": {
+              "buildTarget": "topomojo-work:build:development,localNPM",
               "port": 4201
             }
           },
