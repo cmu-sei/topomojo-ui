@@ -1,6 +1,6 @@
 {
   "name": "topomojo-work",
-  "version": "2.5.8",
+  "version": "2.5.10",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -19,7 +19,7 @@
     "@angular/platform-browser": "^19.2.14",
     "@angular/platform-browser-dynamic": "^19.2.14",
     "@angular/router": "^19.2.14",
-    "@cmusei/console-forge": "^0.20.6",
+    "@cmusei/console-forge": "^0.21.4",
     "@fortawesome/angular-fontawesome": "^1.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
