@@ -26,7 +26,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@microsoft/signalr": "^7.0.2",
-    "@novnc/novnc": "^1.4.0",
+    "@novnc/novnc": "~1.5.0",
     "bootstrap": "^4.6.2",
     "emoji-toolkit": "^7.0.0",
     "jquery": "^3.7.1",
