@@ -3,7 +3,7 @@
 
 <app-dropzone (dropped)="onDrop($event)">
 
-  <small> or drag an iso file here.</small>
+  <small> or drag files here.</small>
 
   <div class="d-flex flex-wrap scroll-x">
     <div *ngFor="let f of pending" class="file pop-info">
@@ -19,4 +19,4 @@
 
 </app-dropzone>
 
-<app-iso-selector #selector [guid]="guid"></app-iso-selector>
+<app-iso-selector #selector [guid]="guid" [canDelete]="canDelete" [showWorkspaceContext]="showWorkspaceContext"></app-iso-selector>

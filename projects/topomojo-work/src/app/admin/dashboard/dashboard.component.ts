@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, OnInit } from '@angular/core';
-import { faMailBulk, faPaperPlane, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faMailBulk, faPaperPlane, faInfoCircle, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { AdminService } from '../../api/admin.service';
@@ -19,11 +19,15 @@ export class DashboardComponent implements OnInit {
   connections!: Observable<CachedConnection[]>;
   importResult!: Observable<string[]>;
   janitorResult!: Observable<JanitorReport[]>;
+  janitorReports: JanitorReport[] = [];
+  janitorSort = { column: 'age', ascending: false };
   announcement = '';
   exportIds = '';
 
   faSend = faPaperPlane;
   faInfoCircle = faInfoCircle;
+  faSortUp = faSortUp;
+  faSortDown = faSortDown;
 
   constructor(
     private api: AdminService
@@ -67,7 +71,51 @@ export class DashboardComponent implements OnInit {
     return item.id;
   }
 
+  trackByReportId(i: number, item: JanitorReport): string {
+    return item.id || '';
+  }
+
   cleanup(): void {
     this.janitorResult = this.api.cleanup();
+    this.janitorResult.subscribe(reports => {
+      this.janitorReports = reports;
+      this.sortJanitorReports();
+    });
+  }
+
+  sortJanitor(column: string): void {
+    if (this.janitorSort.column === column) {
+      this.janitorSort.ascending = !this.janitorSort.ascending;
+    } else {
+      this.janitorSort.column = column;
+      this.janitorSort.ascending = true;
+    }
+    this.sortJanitorReports();
+  }
+
+  private sortJanitorReports(): void {
+    const column = this.janitorSort.column;
+    const ascending = this.janitorSort.ascending;
+
+    this.janitorReports.sort((a, b) => {
+      let comparison = 0;
+
+      switch (column) {
+        case 'id':
+          comparison = (a.id || '').localeCompare(b.id || '');
+          break;
+        case 'reason':
+          comparison = (a.reason || '').localeCompare(b.reason || '');
+          break;
+        case 'name':
+          comparison = (a.name || '').localeCompare(b.name || '');
+          break;
+        case 'age':
+          comparison = new Date(a.age || 0).getTime() - new Date(b.age || 0).getTime();
+          break;
+      }
+
+      return ascending ? comparison : -comparison;
+    });
   }
 }

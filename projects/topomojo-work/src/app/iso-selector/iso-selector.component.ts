@@ -3,14 +3,21 @@
 
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { faArrowDown, faCheck, faCompactDisc, faFile, faPlus, faTrash, faFilter, faSyncAlt, faSync } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
-import { debounceTime, filter, finalize, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { faArrowDown, faCheck, faCompactDisc, faFile, faPlus, faTrash, faFilter, faSyncAlt, faSync, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+import { BehaviorSubject, Observable, Subject, Subscription, forkJoin, of } from 'rxjs';
+import { debounceTime, filter, finalize, map, mergeMap, switchMap, tap, catchError } from 'rxjs/operators';
 import { ApiSettings } from '../api/api-settings';
 import { FileService } from '../api/file.service';
 import { IsoDataFilter, IsoFile } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 import { ClipboardService } from '../clipboard.service';
+
+export interface IsoFileDisplay extends IsoFile {
+  filename: string;
+  workspaceId: string;
+  workspaceName?: string;
+  isGlobal: boolean;
+}
 
 @Component({
     selector: 'app-iso-selector',
@@ -21,25 +28,36 @@ import { ClipboardService } from '../clipboard.service';
 export class IsoSelectorComponent implements OnInit, OnChanges {
   @Input() guid = '';
   @Input() collapsed = false;
+  @Input() canDelete = false;
+  @Input() showWorkspaceContext = false;
   @Output() added = new EventEmitter<IsoFile>();
+  @Output() deleted = new EventEmitter<IsoFile>();
   refresh$ = new BehaviorSubject<IsoDataFilter>({});
-  files$: Observable<IsoFile[]>;
+  files$: Observable<IsoFileDisplay[]>;
   filterLocal = true;
   term = '';
+  sortColumn: 'name' | 'workspace' = 'name';
+  sortAscending = true;
 
   faCompactDisc = faCompactDisc;
   faCheck = faCheck;
   faFile = faFile;
   faFilter = faFilter;
   faSync = faSyncAlt;
+  faTrash = faTrash;
+  faSortUp = faSortUp;
+  faSortDown = faSortDown;
 
   constructor(
-    workspaceSvc: WorkspaceService
+    private workspaceSvc: WorkspaceService
   ) {
 
     this.files$ = this.refresh$.pipe(
       debounceTime(500),
       switchMap(model => workspaceSvc.getIsos(this.guid, model)),
+      map(files => files.map(f => this.parseIsoFile(f))),
+      switchMap(files => this.enrichWithWorkspaceNames(files)),
+      map(files => this.sortFiles(files))
     );
 
   }
@@ -59,6 +77,102 @@ export class IsoSelectorComponent implements OnInit, OnChanges {
 
   select(file: IsoFile): void {
     this.added.emit(file);
+  }
+
+  deleteIso(file: IsoFileDisplay): void {
+    this.workspaceSvc.deleteIso(this.guid, file.path).subscribe({
+      next: () => {
+        this.refresh(true);
+        this.deleted.emit(file);
+      },
+      error: (err) => {
+        console.error('Failed to delete ISO:', err);
+      }
+    });
+  }
+
+  parseIsoFile(file: IsoFile): IsoFileDisplay {
+    const parts = file.path.split('/');
+    const workspaceId = parts.length > 1 ? parts[0] : this.guid;
+    const filename = parts.length > 1 ? parts[1] : parts[0];
+
+    return {
+      ...file,
+      filename: filename,
+      workspaceId: workspaceId,
+      isGlobal: workspaceId === '00000000-0000-0000-0000-000000000000'
+    };
+  }
+
+  sortBy(column: 'name' | 'workspace'): void {
+    if (this.sortColumn === column) {
+      this.sortAscending = !this.sortAscending;
+    } else {
+      this.sortColumn = column;
+      this.sortAscending = true;
+    }
+    this.refresh(true);
+  }
+
+  sortFiles(files: IsoFileDisplay[]): IsoFileDisplay[] {
+    const sorted = [...files].sort((a, b) => {
+      let comparison = 0;
+
+      if (this.sortColumn === 'name') {
+        comparison = a.filename.localeCompare(b.filename);
+      } else {
+        const aWorkspace = a.workspaceName || a.workspaceId;
+        const bWorkspace = b.workspaceName || b.workspaceId;
+        comparison = aWorkspace.localeCompare(bWorkspace);
+      }
+
+      return this.sortAscending ? comparison : -comparison;
+    });
+
+    return sorted;
+  }
+
+  enrichWithWorkspaceNames(files: IsoFileDisplay[]): Observable<IsoFileDisplay[]> {
+    if (!this.showWorkspaceContext) {
+      return of(files);
+    }
+
+    const workspaceIds = [...new Set(
+      files
+        .filter(f => !f.isGlobal)
+        .map(f => f.workspaceId)
+    )];
+
+    if (workspaceIds.length === 0) {
+      return of(files);
+    }
+
+    return forkJoin(
+      workspaceIds.map(id =>
+        this.workspaceSvc.load(id).pipe(
+          map(ws => ({ id, name: ws.name })),
+          catchError((err) => {
+            console.warn(`Failed to load workspace ${id}:`, err);
+            return of({ id, name: '(deleted)' });
+          })
+        )
+      )
+    ).pipe(
+      map(workspaces => {
+        const wsMap = new Map(workspaces.map(ws => [ws.id, ws.name]));
+        return files.map(f => ({
+          ...f,
+          workspaceName: f.isGlobal ? 'Global' : (wsMap.get(f.workspaceId) || '(unknown)')
+        }));
+      }),
+      catchError((err) => {
+        console.error('Failed to enrich workspace names:', err);
+        return of(files.map(f => ({
+          ...f,
+          workspaceName: f.isGlobal ? 'Global' : '(unknown)'
+        })));
+      })
+    );
   }
 
 }

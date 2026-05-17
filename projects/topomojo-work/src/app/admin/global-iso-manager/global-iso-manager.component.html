@@ -1,0 +1,17 @@
+<!-- Copyright 2021 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<h3>Global Files</h3>
+<div class="text-muted">
+  Upload files to the global library to make them available across all workspaces.
+  If an uploaded file is not in ISO format, TopoMojo will wrap the file in an ISO after uploading.
+  ISOs can be attached to VM templates via the template settings or dynamically per-variant via
+  the variant settings on the Challenge tab.
+</div>
+
+<div class="alert alert-info mt-2" role="alert">
+  <strong>Note:</strong> Large files (&gt;1GB) may take additional time to process after upload completes.
+  The list will automatically refresh when uploads finish.
+</div>
+
+<app-iso-manager [guid]="globalGuid" [canDelete]="true" [showWorkspaceContext]="true"></app-iso-manager>

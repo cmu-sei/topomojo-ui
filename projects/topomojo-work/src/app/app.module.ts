@@ -51,9 +51,7 @@ import { GamespaceComponent } from './gamespace/gamespace.component';
 import { GamespacePreviewComponent } from './gamespace-preview/gamespace-preview.component';
 import { WorkspacePlayerComponent } from './workspace-player/workspace-player.component';
 import { GamespaceQuizComponent } from './gamespace-quiz/gamespace-quiz.component';
-import { IsoManagerComponent } from './iso-manager/iso-manager.component';
-import { DropzoneComponent } from './dropzone/dropzone.component';
-import { IsoSelectorComponent } from './iso-selector/iso-selector.component';
+import { IsoModule } from './iso/iso.module';
 import { ApikeysComponent } from './apikeys/apikeys.component';
 import { GamespaceCardComponent } from './gamespace-card/gamespace-card.component';
 import { GamespaceStateComponent } from './gamespace-state/gamespace-state.component';
@@ -93,9 +91,6 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     GamespacePreviewComponent,
     WorkspacePlayerComponent,
     GamespaceQuizComponent,
-    IsoManagerComponent,
-    DropzoneComponent,
-    IsoSelectorComponent,
     ApikeysComponent,
     GamespaceCardComponent,
     GamespaceStateComponent,
@@ -129,6 +124,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     AlertModule.forRoot(),
     ModalModule.forRoot(),
     ProgressbarModule.forRoot(),
+    IsoModule,
     ConsoleComponent,
   ],
   providers: [

@@ -37,4 +37,11 @@ export class WorkspaceService extends GeneratedWorkspaceService {
         tap(set => this.workspaceFavoritesSubject.next(set))
         );
     }
+
+    public deleteIso(workspaceId: string, isoPath: string): Observable<void> {
+        return this.http.delete<void>(
+            `${this.conf.api}/workspace/${workspaceId}/iso`,
+            { params: { path: isoPath } }
+        );
+    }
 }

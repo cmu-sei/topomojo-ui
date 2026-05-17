@@ -30,13 +30,82 @@
 
 <div *ngIf="files$ | async as fileset">
 
-    <div class="d-flex flex-wrap">
-      <div *ngFor="let f of fileset" class="m-1 px-1">
+    <div *ngIf="!showWorkspaceContext" class="d-flex flex-wrap">
+      <div *ngFor="let f of fileset" class="m-1 px-1 d-flex align-items-center">
         <button class="btn btn-outline-secondary btn-sm" (click)="select(f)">
           <fa-icon [icon]="faCompactDisc"></fa-icon>
           <span>{{f.display}}</span>
+          <span *ngIf="f.isGlobal" class="badge badge-primary ml-1">Global</span>
         </button>
+
+        <app-confirm-button
+          *ngIf="canDelete"
+          class="ml-1"
+          btnClass="btn btn-outline-danger btn-sm"
+          (confirm)="deleteIso(f)"
+          [attr.aria-label]="'delete ' + f.display">
+          <fa-icon [icon]="faTrash"></fa-icon>
+        </app-confirm-button>
       </div>
     </div>
+
+    <table *ngIf="showWorkspaceContext" class="table table-sm table-hover">
+      <thead>
+        <tr>
+          <th scope="col">
+            <button
+              type="button"
+              class="btn btn-link p-0 sort-header header-label text-primary"
+              (click)="sortBy('name')">
+              Name
+              <fa-icon *ngIf="sortColumn === 'name'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+            </button>
+          </th>
+          <th scope="col">
+            <button
+              type="button"
+              class="btn btn-link p-0 sort-header header-label text-primary"
+              (click)="sortBy('workspace')">
+              Workspace
+              <fa-icon *ngIf="sortColumn === 'workspace'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+            </button>
+          </th>
+          <th scope="col" class="text-right">
+            <span class="header-label text-danger">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of fileset">
+          <td>
+            <fa-icon [icon]="faCompactDisc" class="mr-2"></fa-icon>
+            {{f.filename}}
+          </td>
+          <td>
+            <span *ngIf="f.isGlobal" class="badge badge-primary">Global</span>
+            <span *ngIf="!f.isGlobal && f.workspaceName !== '(deleted)'">
+              <span class="text-muted">{{f.workspaceId}}</span>
+              <span class="ml-2">{{f.workspaceName}}</span>
+            </span>
+            <span *ngIf="!f.isGlobal && f.workspaceName === '(deleted)'">
+              <span class="text-muted">{{f.workspaceId}}</span>
+              <span class="badge badge-secondary ml-2">(deleted)</span>
+            </span>
+          </td>
+          <td class="text-right">
+            <button class="btn btn-outline-secondary btn-sm mr-1" (click)="select(f)">
+              Select
+            </button>
+            <app-confirm-button
+              *ngIf="canDelete"
+              btnClass="btn btn-outline-danger btn-sm"
+              (confirm)="deleteIso(f)"
+              [attr.aria-label]="'delete ' + f.filename">
+              <fa-icon [icon]="faTrash"></fa-icon>
+            </app-confirm-button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
 </div>
