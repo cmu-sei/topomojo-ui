@@ -1,0 +1,12 @@
+th {
+  font-weight: normal;
+}
+
+.iso-filename {
+  display: inline-block;
+  max-width: 40ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}

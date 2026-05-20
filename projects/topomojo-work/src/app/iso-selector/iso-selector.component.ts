@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { HttpEvent, HttpEventType } from '@angular/common/http';
-import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { faArrowDown, faCheck, faCompactDisc, faFile, faPlus, faTrash, faFilter, faSyncAlt, faSync, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable, Subject, Subscription, forkJoin, of } from 'rxjs';
 import { debounceTime, filter, finalize, map, mergeMap, switchMap, tap, catchError } from 'rxjs/operators';
@@ -25,7 +25,7 @@ export interface IsoFileDisplay extends IsoFile {
     styleUrls: ['./iso-selector.component.scss'],
     standalone: false
 })
-export class IsoSelectorComponent implements OnInit, OnChanges {
+export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   @Input() guid = '';
   @Input() collapsed = false;
   @Input() canDelete = false;
@@ -33,11 +33,12 @@ export class IsoSelectorComponent implements OnInit, OnChanges {
   @Output() added = new EventEmitter<IsoFile>();
   @Output() deleted = new EventEmitter<IsoFile>();
   refresh$ = new BehaviorSubject<IsoDataFilter>({});
-  files$: Observable<IsoFileDisplay[]>;
+  files: IsoFileDisplay[] = [];
   filterLocal = true;
   term = '';
   sortColumn: 'name' | 'workspace' = 'name';
   sortAscending = true;
+  private subscription: Subscription;
 
   faCompactDisc = faCompactDisc;
   faCheck = faCheck;
@@ -52,13 +53,15 @@ export class IsoSelectorComponent implements OnInit, OnChanges {
     private workspaceSvc: WorkspaceService
   ) {
 
-    this.files$ = this.refresh$.pipe(
+    this.subscription = this.refresh$.pipe(
       debounceTime(500),
-      switchMap(model => workspaceSvc.getIsos(this.guid, model)),
+      switchMap(model => this.workspaceSvc.getIsos(this.guid, model)),
       map(files => files.map(f => this.parseIsoFile(f))),
       switchMap(files => this.enrichWithWorkspaceNames(files)),
-      map(files => this.sortFiles(files))
-    );
+    ).subscribe(files => {
+      this.files = files;
+      this.applySort();
+    });
 
   }
 
@@ -111,25 +114,25 @@ export class IsoSelectorComponent implements OnInit, OnChanges {
       this.sortColumn = column;
       this.sortAscending = true;
     }
-    this.refresh(true);
+    this.applySort();
   }
 
-  sortFiles(files: IsoFileDisplay[]): IsoFileDisplay[] {
-    const sorted = [...files].sort((a, b) => {
+  private applySort(): void {
+    this.files.sort((a, b) => {
       let comparison = 0;
-
       if (this.sortColumn === 'name') {
         comparison = a.filename.localeCompare(b.filename);
       } else {
-        const aWorkspace = a.workspaceName || a.workspaceId;
-        const bWorkspace = b.workspaceName || b.workspaceId;
-        comparison = aWorkspace.localeCompare(bWorkspace);
+        const aW = a.workspaceName || a.workspaceId;
+        const bW = b.workspaceName || b.workspaceId;
+        comparison = aW.localeCompare(bW);
       }
-
       return this.sortAscending ? comparison : -comparison;
     });
+  }
 
-    return sorted;
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 
   enrichWithWorkspaceNames(files: IsoFileDisplay[]): Observable<IsoFileDisplay[]> {

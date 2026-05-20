@@ -28,10 +28,10 @@
   </div>
 </div>
 
-<div *ngIf="files$ | async as fileset">
+<div *ngIf="files.length">
 
     <div *ngIf="!showWorkspaceContext" class="d-flex flex-wrap">
-      <div *ngFor="let f of fileset" class="m-1 px-1 d-flex align-items-center">
+      <div *ngFor="let f of files" class="m-1 px-1 d-flex align-items-center">
         <button class="btn btn-outline-secondary btn-sm" (click)="select(f)">
           <fa-icon [icon]="faCompactDisc"></fa-icon>
           <span>{{f.display}}</span>
@@ -71,15 +71,21 @@
             </button>
           </th>
           <th scope="col" class="text-right">
-            <span class="header-label text-danger">Actions</span>
+            <span class="header-label text-primary">Actions</span>
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let f of fileset">
+        <tr *ngFor="let f of files">
           <td>
             <fa-icon [icon]="faCompactDisc" class="mr-2"></fa-icon>
-            {{f.filename}}
+            <span
+              class="iso-filename"
+              [tooltip]="f.filename"
+              placement="top"
+              container="body"
+              triggers="hover focus"
+            >{{f.filename}}</span>
           </td>
           <td>
             <span *ngIf="f.isGlobal" class="badge badge-primary">Global</span>
@@ -93,15 +99,16 @@
             </span>
           </td>
           <td class="text-right">
-            <button class="btn btn-outline-secondary btn-sm mr-1" (click)="select(f)">
-              Select
-            </button>
             <app-confirm-button
               *ngIf="canDelete"
-              btnClass="btn btn-outline-danger btn-sm"
+              class="tm-action-host"
+              btnClass="btn btn-outline-danger btn-sm tm-action-btn"
               (confirm)="deleteIso(f)"
               [attr.aria-label]="'delete ' + f.filename">
-              <fa-icon [icon]="faTrash"></fa-icon>
+              <span class="d-inline-flex align-items-center">
+                <fa-icon [icon]="faTrash"></fa-icon>
+                <span>Delete</span>
+              </span>
             </app-confirm-button>
           </td>
         </tr>
