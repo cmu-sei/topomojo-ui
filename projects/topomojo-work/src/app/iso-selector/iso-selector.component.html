@@ -97,19 +97,76 @@
               Select
             </button>
             <app-confirm-button
-              *ngIf="canDelete && (!f.isGlobal || showWorkspaceContext)"
+              *ngIf="canDelete && (!f.isGlobal || showWorkspaceContext) && deletingFile !== f"
               class="tm-action-host"
               btnClass="btn btn-outline-danger btn-sm tm-action-btn"
-              (confirm)="deleteIso(f)"
+              (confirm)="attemptDelete(f)"
               [attr.aria-label]="'delete ' + f.filename">
               <span class="d-inline-flex align-items-center">
                 <fa-icon [icon]="faTrash"></fa-icon>
                 <span>Delete</span>
               </span>
             </app-confirm-button>
+            <button
+              *ngIf="canDelete && (!f.isGlobal || showWorkspaceContext) && deletingFile === f"
+              class="btn btn-outline-danger btn-sm"
+              disabled>
+              <fa-icon [icon]="faCircleNotch" animation="spin"></fa-icon>
+              <span>Delete</span>
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
 
 </div>
+
+<ng-template #deleteModal>
+  <div class="modal-header">
+    <h5 class="modal-title">Delete ISO</h5>
+    <button type="button" class="close" (click)="cancelDelete()">
+      <span>&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" *ngIf="usageReport">
+    <p><strong>{{pendingDeleteFile?.filename}}</strong> is currently in use:</p>
+
+    <div *ngIf="usageReport.templates.length">
+      <h6>Templates</h6>
+      <ul>
+        <li *ngFor="let t of usageReport.templates">
+          {{t.name}} <small class="text-muted">({{t.workspaceName}})</small>
+        </li>
+      </ul>
+    </div>
+
+    <div *ngIf="usageReport.activeGamespaces.length">
+      <h6>Active Gamespaces</h6>
+      <ul>
+        <li *ngFor="let g of usageReport.activeGamespaces">
+          {{g.name}}
+        </li>
+      </ul>
+      <div class="alert alert-warning mt-2">
+        This ISO cannot be deleted while active gamespaces are using it.
+      </div>
+    </div>
+
+    <div *ngIf="!usageReport.activeGamespaces.length && usageReport.templates.length">
+      <div class="alert alert-warning mt-2">
+        Deleting this ISO will leave the above templates with a broken ISO reference.
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer" *ngIf="usageReport">
+    <button class="btn btn-secondary" (click)="cancelDelete()">
+      {{usageReport.activeGamespaces.length ? 'Close' : 'Cancel'}}
+    </button>
+    <button
+      *ngIf="!usageReport.activeGamespaces.length"
+      class="btn btn-danger"
+      (click)="confirmDelete()">
+      Delete Anyway
+    </button>
+  </div>
+</ng-template>

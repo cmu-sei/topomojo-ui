@@ -10,8 +10,11 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
 import {
+  faCircleNotch,
   faCompactDisc,
   faTrash,
   faFilter,
@@ -21,9 +24,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable, Subject, Subscription, of } from 'rxjs';
 import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
-import { IsoDataFilter, IsoFile } from '../api/gen/models';
+import { IsoDataFilter, IsoFile, IsoUsageReport } from '../api/gen/models';
 import { AdminService } from '../api/admin.service';
 import { WorkspaceService } from '../api/workspace.service';
+import { ModalService } from '../services/modal.service';
 
 export interface IsoFileDisplay extends IsoFile {
   filename: string;
@@ -58,6 +62,12 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   private allFiles: IsoFileDisplay[] = [];
   private subscription: Subscription;
 
+  @ViewChild('deleteModal') deleteModal!: TemplateRef<any>;
+  usageReport: IsoUsageReport | null = null;
+  pendingDeleteFile: IsoFileDisplay | null = null;
+  deletingFile: IsoFileDisplay | null = null;
+
+  faCircleNotch = faCircleNotch;
   faCompactDisc = faCompactDisc;
   faFilter = faFilter;
   faSync = faSyncAlt;
@@ -70,6 +80,7 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private workspaceSvc: WorkspaceService,
     private adminSvc: AdminService,
+    private modalSvc: ModalService,
   ) {
     this.subscription = this.refresh$
       .pipe(
@@ -130,7 +141,32 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
     this.added.emit(file);
   }
 
-  deleteIso(file: IsoFileDisplay): void {
+  attemptDelete(file: IsoFileDisplay): void {
+    this.pendingDeleteFile = file;
+    this.deletingFile = file;
+    this.usageReport = null;
+
+    this.workspaceSvc.checkIsoUsage(this.guid, file.path).subscribe({
+      next: (report) => {
+        this.deletingFile = null;
+        if (!report.templates.length && !report.activeGamespaces.length) {
+          this.confirmDelete();
+        } else {
+          this.usageReport = report;
+          this.modalSvc.openTemplate(this.deleteModal);
+        }
+      },
+      error: () => {
+        this.deletingFile = null;
+        this.confirmDelete();
+      },
+    });
+  }
+
+  confirmDelete(): void {
+    if (!this.pendingDeleteFile) return;
+    const file = this.pendingDeleteFile;
+    this.modalSvc.dismiss();
     this.workspaceSvc.deleteIso(this.guid, file.path).subscribe({
       next: () => {
         this.refresh(true);
@@ -140,6 +176,12 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
         console.error('Failed to delete ISO:', err);
       },
     });
+    this.pendingDeleteFile = null;
+  }
+
+  cancelDelete(): void {
+    this.modalSvc.dismiss();
+    this.pendingDeleteFile = null;
   }
 
   parseIsoFile(file: IsoFile): IsoFileDisplay {

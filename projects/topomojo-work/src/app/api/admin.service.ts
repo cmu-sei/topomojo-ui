@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ApiSettings } from './api-settings';
 import { GeneratedAdminService } from './gen/admin.service';
-import { CachedConnection, IsoFile, VmOptions } from './gen/models';
+import { IsoFile, VmOptions } from './gen/models';
 
 export type ThemeInfo = { backgroundUrl: string | null };
 
@@ -44,4 +44,5 @@ export class AdminService extends GeneratedAdminService {
             ))
         );
     }
+
 }
