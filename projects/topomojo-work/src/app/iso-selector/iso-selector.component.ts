@@ -1,8 +1,24 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { faCompactDisc, faTrash, faFilter, faSyncAlt, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
+import {
+  faCompactDisc,
+  faTrash,
+  faFilter,
+  faSyncAlt,
+  faSortUp,
+  faSortDown,
+} from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable, Subject, Subscription, of } from 'rxjs';
 import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { IsoDataFilter, IsoFile } from '../api/gen/models';
@@ -16,10 +32,10 @@ export interface IsoFileDisplay extends IsoFile {
 }
 
 @Component({
-    selector: 'app-iso-selector',
-    templateUrl: './iso-selector.component.html',
-    styleUrls: ['./iso-selector.component.scss'],
-    standalone: false
+  selector: 'app-iso-selector',
+  templateUrl: './iso-selector.component.html',
+  styleUrls: ['./iso-selector.component.scss'],
+  standalone: false,
 })
 export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   @Input() guid = '';
@@ -34,6 +50,10 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   term = '';
   sortColumn: 'name' | 'workspace' = 'name';
   sortAscending = true;
+  skip = 0;
+  take = 100;
+  count = 0;
+  private allFiles: IsoFileDisplay[] = [];
   private subscription: Subscription;
 
   faCompactDisc = faCompactDisc;
@@ -43,24 +63,21 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   faSortUp = faSortUp;
   faSortDown = faSortDown;
 
-  constructor(
-    private workspaceSvc: WorkspaceService
-  ) {
-
-    this.subscription = this.refresh$.pipe(
-      debounceTime(500),
-      switchMap(model => this.workspaceSvc.getIsos(this.guid, model)),
-      map(files => files.map(f => this.parseIsoFile(f))),
-      switchMap(files => this.enrichWithWorkspaceNames(files)),
-    ).subscribe(files => {
-      this.files = files;
-      this.applySort();
-    });
-
+  constructor(private workspaceSvc: WorkspaceService) {
+    this.subscription = this.refresh$
+      .pipe(
+        debounceTime(500),
+        switchMap((model) => this.workspaceSvc.getIsos(this.guid, model)),
+        map((files) => files.map((f) => this.parseIsoFile(f))),
+        switchMap((files) => this.enrichWithWorkspaceNames(files)),
+      )
+      .subscribe((files) => {
+        this.allFiles = files;
+        this.applySort();
+      });
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!!changes.guid) {
@@ -69,7 +86,12 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   refresh(force: boolean = false): void {
-    this.refresh$.next({ term: this.term, local: this.filterLocal, refresh: force});
+    this.skip = 0;
+    this.refresh$.next({
+      term: this.term,
+      local: this.filterLocal,
+      refresh: force,
+    });
   }
 
   select(file: IsoFile): void {
@@ -84,7 +106,7 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to delete ISO:', err);
-      }
+      },
     });
   }
 
@@ -97,7 +119,7 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
       ...file,
       filename: filename,
       workspaceId: workspaceId,
-      isGlobal: workspaceId === '00000000-0000-0000-0000-000000000000'
+      isGlobal: workspaceId === '00000000-0000-0000-0000-000000000000',
     };
   }
 
@@ -112,7 +134,7 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private applySort(): void {
-    this.files.sort((a, b) => {
+    this.allFiles.sort((a, b) => {
       let comparison = 0;
       if (this.sortColumn === 'name') {
         comparison = a.filename.localeCompare(b.filename);
@@ -123,6 +145,17 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
       }
       return this.sortAscending ? comparison : -comparison;
     });
+    this.applyPaging();
+  }
+
+  private applyPaging(): void {
+    this.files = this.allFiles.slice(this.skip, this.skip + this.take);
+    this.count = this.files.length;
+  }
+
+  paged(skip: number): void {
+    this.skip = skip;
+    this.applyPaging();
   }
 
   ngOnDestroy(): void {
@@ -131,33 +164,39 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
 
   private wsNames = new Map<string, string>();
 
-  enrichWithWorkspaceNames(files: IsoFileDisplay[]): Observable<IsoFileDisplay[]> {
+  enrichWithWorkspaceNames(
+    files: IsoFileDisplay[],
+  ): Observable<IsoFileDisplay[]> {
     if (!this.showWorkspaceContext) {
       return of(files);
     }
 
     const uncachedIds = files
-      .filter(f => !f.isGlobal && !this.wsNames.has(f.workspaceId))
-      .map(f => f.workspaceId);
+      .filter((f) => !f.isGlobal && !this.wsNames.has(f.workspaceId))
+      .map((f) => f.workspaceId);
 
-    const names$ = uncachedIds.length > 0
-      ? this.workspaceSvc.list({ term: '', take: 0, skip: 0 }).pipe(
-          tap(list => {
-            list.forEach(ws => this.wsNames.set(ws.id, ws.name));
-            uncachedIds.forEach(id => {
-              if (!this.wsNames.has(id)) this.wsNames.set(id, '(deleted)');
-            });
-          }),
-          catchError(() => of([]))
-        )
-      : of([]);
+    const names$ =
+      uncachedIds.length > 0
+        ? this.workspaceSvc.list({ term: '', take: 0, skip: 0 }).pipe(
+            tap((list) => {
+              list.forEach((ws) => this.wsNames.set(ws.id, ws.name));
+              uncachedIds.forEach((id) => {
+                if (!this.wsNames.has(id)) this.wsNames.set(id, '(deleted)');
+              });
+            }),
+            catchError(() => of([])),
+          )
+        : of([]);
 
     return names$.pipe(
-      map(() => files.map(f => ({
-        ...f,
-        workspaceName: f.isGlobal ? 'Global' : (this.wsNames.get(f.workspaceId) || '(deleted)')
-      })))
+      map(() =>
+        files.map((f) => ({
+          ...f,
+          workspaceName: f.isGlobal
+            ? 'Global'
+            : this.wsNames.get(f.workspaceId) || '(deleted)',
+        })),
+      ),
     );
   }
-
 }

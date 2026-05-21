@@ -51,6 +51,7 @@
       </div>
     </div>
 
+    <app-pager *ngIf="showWorkspaceContext" [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
     <table *ngIf="showWorkspaceContext" class="table table-sm table-hover">
       <thead>
         <tr>
@@ -79,7 +80,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let f of files">
-          <td>
+          <td class="text-nowrap">
             <fa-icon [icon]="faCompactDisc" class="mr-2"></fa-icon>
             <span
               class="iso-filename"
@@ -92,12 +93,14 @@
           <td>
             <span *ngIf="f.isGlobal" class="badge badge-primary">Global</span>
             <span *ngIf="!f.isGlobal && f.workspaceName !== '(deleted)'">
-              <span class="text-muted">{{f.workspaceId}}</span>
-              <span class="ml-2">{{f.workspaceName}}</span>
+              {{f.workspaceName}}
+              <br/>
+              <small class="text-muted"><app-clipspan>{{f.workspaceId}}</app-clipspan></small>
             </span>
             <span *ngIf="!f.isGlobal && f.workspaceName === '(deleted)'">
-              <span class="text-muted">{{f.workspaceId}}</span>
-              <span class="badge badge-secondary ml-2">(deleted)</span>
+              <span class="badge badge-secondary">(deleted)</span>
+              <br/>
+              <small class="text-muted"><app-clipspan>{{f.workspaceId}}</app-clipspan></small>
             </span>
           </td>
           <td class="text-right">
