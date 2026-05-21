@@ -22,6 +22,7 @@ import {
 import { BehaviorSubject, Observable, Subject, Subscription, of } from 'rxjs';
 import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { IsoDataFilter, IsoFile } from '../api/gen/models';
+import { AdminService } from '../api/admin.service';
 import { WorkspaceService } from '../api/workspace.service';
 
 export interface IsoFileDisplay extends IsoFile {
@@ -63,18 +64,46 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   faSortUp = faSortUp;
   faSortDown = faSortDown;
 
-  constructor(private workspaceSvc: WorkspaceService) {
+  private adminIsoCache: IsoFile[] | null = null;
+
+  constructor(
+    private workspaceSvc: WorkspaceService,
+    private adminSvc: AdminService,
+  ) {
     this.subscription = this.refresh$
       .pipe(
         debounceTime(500),
-        switchMap((model) => this.workspaceSvc.getIsos(this.guid, model)),
+        switchMap((model) =>
+          this.showWorkspaceContext
+            ? this.getAdminIsos(model.refresh)
+            : this.workspaceSvc.getIsos(this.guid, model)
+        ),
         map((files) => files.map((f) => this.parseIsoFile(f))),
+        map((files) =>
+          this.showWorkspaceContext && this.filterLocal
+            ? files.filter((f) => f.isGlobal)
+            : files
+        ),
+        map((files) =>
+          this.term
+            ? files.filter((f) => f.filename.toLowerCase().includes(this.term.toLowerCase()))
+            : files
+        ),
         switchMap((files) => this.enrichWithWorkspaceNames(files)),
       )
       .subscribe((files) => {
         this.allFiles = files;
         this.applySort();
       });
+  }
+
+  private getAdminIsos(refresh?: boolean): Observable<IsoFile[]> {
+    if (this.adminIsoCache && !refresh) {
+      return of(this.adminIsoCache);
+    }
+    return this.adminSvc.getAllIsos().pipe(
+      tap((files) => this.adminIsoCache = files)
+    );
   }
 
   ngOnInit(): void {}
