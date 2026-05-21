@@ -32,27 +32,8 @@
 
 <div *ngIf="files.length">
 
-    <div *ngIf="!showWorkspaceContext" class="d-flex flex-wrap">
-      <div *ngFor="let f of files" class="m-1 px-1 d-flex align-items-center">
-        <button class="btn btn-outline-secondary btn-sm" (click)="select(f)">
-          <fa-icon [icon]="faCompactDisc"></fa-icon>
-          <span>{{f.display}}</span>
-          <span *ngIf="f.isGlobal" class="badge badge-primary ml-1">Global</span>
-        </button>
-
-        <app-confirm-button
-          *ngIf="canDelete"
-          class="ml-1"
-          btnClass="btn btn-outline-danger btn-sm"
-          (confirm)="deleteIso(f)"
-          [attr.aria-label]="'delete ' + f.display">
-          <fa-icon [icon]="faTrash"></fa-icon>
-        </app-confirm-button>
-      </div>
-    </div>
-
-    <app-pager *ngIf="showWorkspaceContext" [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
-    <table *ngIf="showWorkspaceContext" class="table table-sm table-hover">
+    <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
+    <table class="table table-sm table-hover">
       <thead>
         <tr>
           <th scope="col">
@@ -64,7 +45,7 @@
               <fa-icon *ngIf="sortColumn === 'name'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
             </button>
           </th>
-          <th scope="col">
+          <th *ngIf="showWorkspaceContext" scope="col">
             <button
               type="button"
               class="btn btn-link p-0 sort-header header-label text-primary"
@@ -89,8 +70,9 @@
               container="body"
               triggers="hover focus"
             >{{f.filename}}</span>
+            <span *ngIf="!showWorkspaceContext && f.isGlobal" class="badge badge-primary ml-1">Global</span>
           </td>
-          <td>
+          <td *ngIf="showWorkspaceContext">
             <span *ngIf="f.isGlobal" class="badge badge-primary">Global</span>
             <span *ngIf="!f.isGlobal && f.workspaceName !== '(deleted)'">
               {{f.workspaceName}}
@@ -104,8 +86,14 @@
             </span>
           </td>
           <td class="text-right">
+            <button
+              *ngIf="added.observers.length"
+              class="btn btn-outline-secondary btn-sm mr-1"
+              (click)="select(f)">
+              Select
+            </button>
             <app-confirm-button
-              *ngIf="canDelete"
+              *ngIf="canDelete && (!f.isGlobal || showWorkspaceContext)"
               class="tm-action-host"
               btnClass="btn btn-outline-danger btn-sm tm-action-btn"
               (confirm)="deleteIso(f)"
