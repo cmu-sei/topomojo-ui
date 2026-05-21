@@ -23,8 +23,9 @@ import {
   faSortDown,
 } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable, Subject, Subscription, of } from 'rxjs';
-import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { IsoDataFilter, IsoFile, IsoUsageReport } from '../api/gen/models';
+import { GLOBAL_WORKSPACE_ID } from '../constants';
 import { AdminService } from '../api/admin.service';
 import { WorkspaceService } from '../api/workspace.service';
 import { ModalService } from '../services/modal.service';
@@ -61,11 +62,13 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   count = 0;
   private allFiles: IsoFileDisplay[] = [];
   private subscription: Subscription;
+  private destroy$ = new Subject<void>();
 
   @ViewChild('deleteModal') deleteModal!: TemplateRef<any>;
   usageReport: IsoUsageReport | null = null;
   pendingDeleteFile: IsoFileDisplay | null = null;
   deletingFile: IsoFileDisplay | null = null;
+  deleteError = '';
 
   faCircleNotch = faCircleNotch;
   faCompactDisc = faCompactDisc;
@@ -145,8 +148,9 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
     this.pendingDeleteFile = file;
     this.deletingFile = file;
     this.usageReport = null;
+    this.deleteError = '';
 
-    this.workspaceSvc.checkIsoUsage(this.guid, file.path).subscribe({
+    this.workspaceSvc.checkIsoUsage(this.guid, file.path).pipe(takeUntil(this.destroy$)).subscribe({
       next: (report) => {
         this.deletingFile = null;
         if (!report.templates.length && !report.activeGamespaces.length) {
@@ -167,13 +171,13 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
     if (!this.pendingDeleteFile) return;
     const file = this.pendingDeleteFile;
     this.modalSvc.dismiss();
-    this.workspaceSvc.deleteIso(this.guid, file.path).subscribe({
+    this.workspaceSvc.deleteIso(this.guid, file.path).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.refresh(true);
         this.deleted.emit(file);
       },
       error: (err) => {
-        console.error('Failed to delete ISO:', err);
+        this.deleteError = err?.error?.message || err?.message || 'Failed to delete ISO';
       },
     });
     this.pendingDeleteFile = null;
@@ -193,7 +197,7 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
       ...file,
       filename: filename,
       workspaceId: workspaceId,
-      isGlobal: workspaceId === '00000000-0000-0000-0000-000000000000',
+      isGlobal: workspaceId === GLOBAL_WORKSPACE_ID,
     };
   }
 
@@ -234,6 +238,8 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private wsNames = new Map<string, string>();

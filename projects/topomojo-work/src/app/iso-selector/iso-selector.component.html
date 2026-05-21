@@ -34,6 +34,11 @@
   <app-spinner></app-spinner>
 </div>
 
+<div *ngIf="deleteError" class="alert alert-danger alert-dismissible mt-2">
+  {{deleteError}}
+  <button type="button" class="close" (click)="deleteError = ''">&times;</button>
+</div>
+
 <div *ngIf="!loading && files.length">
 
     <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
@@ -91,7 +96,7 @@
           </td>
           <td class="text-right">
             <button
-              *ngIf="added.observers.length"
+              *ngIf="added.observed"
               class="btn btn-outline-secondary btn-sm mr-1"
               (click)="select(f)">
               Select

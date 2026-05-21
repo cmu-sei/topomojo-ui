@@ -2,6 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, OnInit } from '@angular/core';
+import { GLOBAL_WORKSPACE_ID } from '../../constants';
 
 @Component({
     selector: 'app-global-iso-manager',
@@ -10,7 +11,7 @@ import { Component, OnInit } from '@angular/core';
     standalone: false
 })
 export class GlobalIsoManagerComponent implements OnInit {
-  globalGuid = '00000000-0000-0000-0000-000000000000';
+  globalGuid = GLOBAL_WORKSPACE_ID;
 
   constructor() { }
 
