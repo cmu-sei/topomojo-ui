@@ -30,7 +30,11 @@
   </div>
 </div>
 
-<div *ngIf="files.length">
+<div *ngIf="loading" class="text-center my-4">
+  <app-spinner></app-spinner>
+</div>
+
+<div *ngIf="!loading && files.length">
 
     <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
     <table class="table table-sm table-hover">

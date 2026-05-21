@@ -47,6 +47,7 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   @Output() deleted = new EventEmitter<IsoFile>();
   refresh$ = new BehaviorSubject<IsoDataFilter>({});
   files: IsoFileDisplay[] = [];
+  loading = false;
   filterLocal = true;
   term = '';
   sortColumn: 'name' | 'workspace' = 'name';
@@ -73,6 +74,7 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
     this.subscription = this.refresh$
       .pipe(
         debounceTime(500),
+        tap(() => this.loading = true),
         switchMap((model) =>
           this.showWorkspaceContext
             ? this.getAdminIsos(model.refresh)
@@ -93,6 +95,7 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
       )
       .subscribe((files) => {
         this.allFiles = files;
+        this.loading = false;
         this.applySort();
       });
   }
