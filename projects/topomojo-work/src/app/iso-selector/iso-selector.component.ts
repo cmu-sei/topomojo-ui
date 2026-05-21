@@ -1,16 +1,12 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { HttpEvent, HttpEventType } from '@angular/common/http';
-import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { faArrowDown, faCheck, faCompactDisc, faFile, faPlus, faTrash, faFilter, faSyncAlt, faSync, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, Observable, Subject, Subscription, forkJoin, of } from 'rxjs';
-import { debounceTime, filter, finalize, map, mergeMap, switchMap, tap, catchError } from 'rxjs/operators';
-import { ApiSettings } from '../api/api-settings';
-import { FileService } from '../api/file.service';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { faCompactDisc, faTrash, faFilter, faSyncAlt, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+import { BehaviorSubject, Observable, Subject, Subscription, of } from 'rxjs';
+import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { IsoDataFilter, IsoFile } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
-import { ClipboardService } from '../clipboard.service';
 
 export interface IsoFileDisplay extends IsoFile {
   filename: string;
@@ -41,8 +37,6 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   private subscription: Subscription;
 
   faCompactDisc = faCompactDisc;
-  faCheck = faCheck;
-  faFile = faFile;
   faFilter = faFilter;
   faSync = faSyncAlt;
   faTrash = faTrash;
@@ -135,46 +129,34 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
     this.subscription?.unsubscribe();
   }
 
+  private wsNames = new Map<string, string>();
+
   enrichWithWorkspaceNames(files: IsoFileDisplay[]): Observable<IsoFileDisplay[]> {
     if (!this.showWorkspaceContext) {
       return of(files);
     }
 
-    const workspaceIds = [...new Set(
-      files
-        .filter(f => !f.isGlobal)
-        .map(f => f.workspaceId)
-    )];
+    const uncachedIds = files
+      .filter(f => !f.isGlobal && !this.wsNames.has(f.workspaceId))
+      .map(f => f.workspaceId);
 
-    if (workspaceIds.length === 0) {
-      return of(files);
-    }
-
-    return forkJoin(
-      workspaceIds.map(id =>
-        this.workspaceSvc.load(id).pipe(
-          map(ws => ({ id, name: ws.name })),
-          catchError((err) => {
-            console.warn(`Failed to load workspace ${id}:`, err);
-            return of({ id, name: '(deleted)' });
-          })
+    const names$ = uncachedIds.length > 0
+      ? this.workspaceSvc.list({ term: '', take: 0, skip: 0 }).pipe(
+          tap(list => {
+            list.forEach(ws => this.wsNames.set(ws.id, ws.name));
+            uncachedIds.forEach(id => {
+              if (!this.wsNames.has(id)) this.wsNames.set(id, '(deleted)');
+            });
+          }),
+          catchError(() => of([]))
         )
-      )
-    ).pipe(
-      map(workspaces => {
-        const wsMap = new Map(workspaces.map(ws => [ws.id, ws.name]));
-        return files.map(f => ({
-          ...f,
-          workspaceName: f.isGlobal ? 'Global' : (wsMap.get(f.workspaceId) || '(unknown)')
-        }));
-      }),
-      catchError((err) => {
-        console.error('Failed to enrich workspace names:', err);
-        return of(files.map(f => ({
-          ...f,
-          workspaceName: f.isGlobal ? 'Global' : '(unknown)'
-        })));
-      })
+      : of([]);
+
+    return names$.pipe(
+      map(() => files.map(f => ({
+        ...f,
+        workspaceName: f.isGlobal ? 'Global' : (this.wsNames.get(f.workspaceId) || '(deleted)')
+      })))
     );
   }
 

@@ -12,13 +12,15 @@
       btnCheckbox
       [(ngModel)]="filterLocal"
       (click)="refresh()"
-      [tooltip]="'With the Local filter enabled, you`ll only see ISOs available to this workspace. Disabling it shows global ISOs shared across all workspaces.'"
+      [tooltip]="showWorkspaceContext
+        ? 'Show only global ISOs shared across all workspaces. Disable to see all workspace ISOs.'
+        : 'With the Local filter enabled, you`ll only see ISOs available to this workspace. Disabling it shows global ISOs shared across all workspaces.'"
       placement="bottom"
       container="body"
       triggers="hover focus"
     >
       <fa-icon [icon]="faFilter"></fa-icon>
-      <span>Local</span>
+      <span>{{showWorkspaceContext ? 'Global Only' : 'Local'}}</span>
     </button>
 
     <button class="btn btn-sm btn-outline-info" (click)="refresh(true)">
