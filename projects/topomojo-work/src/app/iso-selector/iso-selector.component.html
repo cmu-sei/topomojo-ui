@@ -11,7 +11,7 @@
       class="btn btn-sm btn-outline-info"
       btnCheckbox
       [(ngModel)]="filterLocal"
-      (click)="refresh()"
+      (ngModelChange)="refresh()"
       [tooltip]="showWorkspaceContext
         ? 'Show only global ISOs shared across all workspaces. Disable to see all workspace ISOs.'
         : 'With the Local filter enabled, you`ll only see ISOs available to this workspace. Disabling it shows global ISOs shared across all workspaces.'"

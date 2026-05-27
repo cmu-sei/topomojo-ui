@@ -107,10 +107,17 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
         ),
         switchMap((files) => this.enrichWithWorkspaceNames(files)),
       )
-      .subscribe((files) => {
-        this.allFiles = files;
-        this.loading = false;
-        this.applySort();
+      .subscribe({
+        next: (files) => {
+          this.allFiles = files;
+          this.loading = false;
+          this.applySort();
+        },
+        error: () => {
+          this.loading = false;
+          this.allFiles = [];
+          this.applySort();
+        },
       });
   }
 
@@ -150,19 +157,20 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
     this.usageReport = null;
     this.deleteError = '';
 
-    this.workspaceSvc.checkIsoUsage(this.guid, file.path).pipe(takeUntil(this.destroy$)).subscribe({
+    this.workspaceSvc.checkIsoUsage(file.workspaceId, file.path).pipe(takeUntil(this.destroy$)).subscribe({
       next: (report) => {
-        this.deletingFile = null;
         if (!report.templates.length && !report.activeGamespaces.length) {
           this.confirmDelete();
         } else {
+          this.deletingFile = null;
           this.usageReport = report;
           this.modalSvc.openTemplate(this.deleteModal);
         }
       },
       error: () => {
         this.deletingFile = null;
-        this.confirmDelete();
+        this.pendingDeleteFile = null;
+        this.deleteError = 'Unable to verify ISO usage. Delete aborted.';
       },
     });
   }
@@ -170,17 +178,22 @@ export class IsoSelectorComponent implements OnInit, OnChanges, OnDestroy {
   confirmDelete(): void {
     if (!this.pendingDeleteFile) return;
     const file = this.pendingDeleteFile;
+    this.pendingDeleteFile = null;
+    this.deletingFile = file;
     this.modalSvc.dismiss();
-    this.workspaceSvc.deleteIso(this.guid, file.path).pipe(takeUntil(this.destroy$)).subscribe({
+    this.workspaceSvc.deleteIso(file.workspaceId, file.path).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
+        this.deletingFile = null;
         this.refresh(true);
         this.deleted.emit(file);
       },
       error: (err) => {
-        this.deleteError = err?.error?.message || err?.message || 'Failed to delete ISO';
+        this.deletingFile = null;
+        this.deleteError = typeof err?.error === 'string'
+          ? err.error
+          : err?.error?.message || err?.message || 'Failed to delete ISO';
       },
     });
-    this.pendingDeleteFile = null;
   }
 
   cancelDelete(): void {
