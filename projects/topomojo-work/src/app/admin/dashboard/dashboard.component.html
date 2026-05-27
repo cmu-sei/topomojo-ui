@@ -63,27 +63,7 @@
   <hr/>
 
   <div class="row mb-2 janitor-header align-items-center">
-    <div class="col-2 px-4">
-      <button
-        type="button"
-        class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
-        (click)="sortJanitor('id')"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Sort by workspace/gamespace ID.'"
-        aria-label="Sort by workspace/gamespace ID."
-      >
-        <span>ID</span>
-        <fa-icon
-          class="ml-1"
-          *ngIf="janitorSort.column === 'id'"
-          [icon]="janitorSort.ascending ? faSortUp : faSortDown">
-        </fa-icon>
-      </button>
-    </div>
-
-    <div class="col-2 px-4">
+    <div class="col-3 px-2">
       <button
         type="button"
         class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -103,7 +83,7 @@
       </button>
     </div>
 
-    <div class="col-3 px-4">
+    <div class="col-4 px-2">
       <button
         type="button"
         class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -123,7 +103,7 @@
       </button>
     </div>
 
-    <div class="col-2 px-4">
+    <div class="col-2 px-2">
       <button
         type="button"
         class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -143,7 +123,7 @@
       </button>
     </div>
 
-    <div class="col-1 px-4">
+    <div class="col-1 px-2">
       <button
         type="button"
         class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -163,7 +143,7 @@
       </button>
     </div>
 
-    <div class="col-2 px-4">
+    <div class="col-2 px-2">
       <button
         type="button"
         class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -185,27 +165,27 @@
   </div>
 
   <div *ngFor="let r of janitorReports; trackBy:trackByReportId" class="row mb-1 align-items-center">
-    <div class="col-2 px-4">
-      <small class="text-muted text-break font-monospace">{{ r.id }}</small>
-    </div>
-
-    <div class="col-2 px-4">
+    <div class="col-3 px-2">
       <span class="text-break">{{ r.reason }}</span>
     </div>
 
-    <div class="col-3 px-4">
-      <span class="text-break">{{ r.name }}</span>
+    <div class="col-4 px-2">
+      <a [routerLink]="['/topo', r.id]" class="text-secondary">{{ r.name }}</a>
+      <br/>
+      <small class="text-muted d-block text-break">
+        <app-clipspan>{{ r.id }}</app-clipspan>
+      </small>
     </div>
 
-    <div class="col-2 px-4">
+    <div class="col-2 px-2">
       <span class="text-break">{{ r.ownerName }}</span>
     </div>
 
-    <div class="col-1 px-4">
+    <div class="col-1 px-2">
       <span>{{ r.vmCount }}</span>
     </div>
 
-    <div class="col-2 px-4">
+    <div class="col-2 px-2">
       <small class="text-muted">{{ r.age | date:'short' }}</small>
     </div>
   </div>
