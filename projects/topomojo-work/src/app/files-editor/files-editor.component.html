@@ -8,8 +8,13 @@
     VM templates via the template settings or dynamically per-variant via the variant
     settings on the Challenge tab.
   </div>
+
+  <div class="alert alert-info mt-2" role="alert">
+    <strong>Note:</strong> Large files (&gt;1GB) may take additional time to process after upload completes.
+    The list will automatically refresh when uploads finish.
+  </div>
 </div>
 
 <div class="mt-2">
-  <app-iso-manager [guid]="summary.id"></app-iso-manager>
+  <app-iso-manager [guid]="summary.id" [canDelete]="true"></app-iso-manager>
 </div>

@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { ApiSettings } from './api-settings';
 import { GeneratedWorkspaceService } from './gen/workspace.service';
+import { IsoUsageReport } from './gen/models';
 import { tap, map } from 'rxjs/operators';
 
 @Injectable()
@@ -35,6 +36,20 @@ export class WorkspaceService extends GeneratedWorkspaceService {
         return this.listWorkspaceFavorites().pipe(
         map(ids => new Set(ids)),
         tap(set => this.workspaceFavoritesSubject.next(set))
+        );
+    }
+
+    public deleteIso(workspaceId: string, isoPath: string): Observable<void> {
+        return this.http.delete<void>(
+            `${this.conf.api}/workspace/${workspaceId}/iso`,
+            { params: { path: isoPath } }
+        );
+    }
+
+    public checkIsoUsage(workspaceId: string, path: string): Observable<IsoUsageReport> {
+        return this.http.get<IsoUsageReport>(
+            `${this.conf.api}/workspace/${workspaceId}/iso-usage`,
+            { params: { path } }
         );
     }
 }

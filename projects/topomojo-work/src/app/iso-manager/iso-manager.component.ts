@@ -17,6 +17,8 @@ import { IsoSelectorComponent } from '../iso-selector/iso-selector.component';
 })
 export class IsoManagerComponent implements OnInit, OnChanges {
   @Input() guid = '';
+  @Input() canDelete = false;
+  @Input() showWorkspaceContext = false;
   @ViewChild('selector') selector!: IsoSelectorComponent;
   drops = new Subject<File[]>();
   pending: FileProgress[] = [];

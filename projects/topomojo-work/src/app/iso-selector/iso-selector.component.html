@@ -11,14 +11,16 @@
       class="btn btn-sm btn-outline-info"
       btnCheckbox
       [(ngModel)]="filterLocal"
-      (click)="refresh()"
-      [tooltip]="'With the Local filter enabled, you`ll only see ISOs available to this workspace. Disabling it shows global ISOs shared across all workspaces.'"
+      (ngModelChange)="refresh()"
+      [tooltip]="showWorkspaceContext
+        ? 'Show only global ISOs shared across all workspaces. Disable to see all workspace ISOs.'
+        : 'With the Local filter enabled, you`ll only see ISOs available to this workspace. Disabling it shows global ISOs shared across all workspaces.'"
       placement="bottom"
       container="body"
       triggers="hover focus"
     >
       <fa-icon [icon]="faFilter"></fa-icon>
-      <span>Local</span>
+      <span>{{showWorkspaceContext ? 'Global Only' : 'Local'}}</span>
     </button>
 
     <button class="btn btn-sm btn-outline-info" (click)="refresh(true)">
@@ -28,15 +30,148 @@
   </div>
 </div>
 
-<div *ngIf="files$ | async as fileset">
+<div *ngIf="loading" class="text-center my-4">
+  <app-spinner></app-spinner>
+</div>
 
-    <div class="d-flex flex-wrap">
-      <div *ngFor="let f of fileset" class="m-1 px-1">
-        <button class="btn btn-outline-secondary btn-sm" (click)="select(f)">
-          <fa-icon [icon]="faCompactDisc"></fa-icon>
-          <span>{{f.display}}</span>
-        </button>
+<div *ngIf="deleteError" class="alert alert-danger alert-dismissible mt-2">
+  {{deleteError}}
+  <button type="button" class="close" (click)="deleteError = ''">&times;</button>
+</div>
+
+<div *ngIf="!loading && files.length">
+
+    <app-pager [skip]="skip" [take]="take" [count]="count" (changed)="paged($event)"></app-pager>
+    <table class="table table-sm table-hover">
+      <thead>
+        <tr>
+          <th scope="col">
+            <button
+              type="button"
+              class="btn btn-link p-0 sort-header header-label text-primary"
+              (click)="sortBy('name')">
+              Name
+              <fa-icon *ngIf="sortColumn === 'name'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+            </button>
+          </th>
+          <th *ngIf="showWorkspaceContext" scope="col">
+            <button
+              type="button"
+              class="btn btn-link p-0 sort-header header-label text-primary"
+              (click)="sortBy('workspace')">
+              Workspace
+              <fa-icon *ngIf="sortColumn === 'workspace'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+            </button>
+          </th>
+          <th scope="col" class="text-right">
+            <span class="header-label text-primary">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of files">
+          <td class="text-nowrap">
+            <fa-icon [icon]="faCompactDisc" class="mr-2"></fa-icon>
+            <span
+              class="iso-filename"
+              [tooltip]="f.filename"
+              placement="top"
+              container="body"
+              triggers="hover focus"
+            >{{f.filename}}</span>
+            <span *ngIf="!showWorkspaceContext && f.isGlobal" class="badge badge-primary ml-1">Global</span>
+          </td>
+          <td *ngIf="showWorkspaceContext">
+            <span *ngIf="f.isGlobal" class="badge badge-primary">Global</span>
+            <span *ngIf="!f.isGlobal && f.workspaceName !== '(deleted)'">
+              {{f.workspaceName}}
+              <br/>
+              <small class="text-muted"><app-clipspan>{{f.workspaceId}}</app-clipspan></small>
+            </span>
+            <span *ngIf="!f.isGlobal && f.workspaceName === '(deleted)'">
+              <span class="badge badge-secondary">(deleted)</span>
+              <br/>
+              <small class="text-muted"><app-clipspan>{{f.workspaceId}}</app-clipspan></small>
+            </span>
+          </td>
+          <td class="text-right">
+            <button
+              *ngIf="added.observed"
+              class="btn btn-outline-secondary btn-sm mr-1"
+              (click)="select(f)">
+              Select
+            </button>
+            <app-confirm-button
+              *ngIf="canDelete && (!f.isGlobal || showWorkspaceContext) && deletingFile !== f"
+              class="tm-action-host"
+              btnClass="btn btn-outline-danger btn-sm tm-action-btn"
+              (confirm)="attemptDelete(f)"
+              [attr.aria-label]="'delete ' + f.filename">
+              <span class="d-inline-flex align-items-center">
+                <fa-icon [icon]="faTrash"></fa-icon>
+                <span>Delete</span>
+              </span>
+            </app-confirm-button>
+            <button
+              *ngIf="canDelete && (!f.isGlobal || showWorkspaceContext) && deletingFile === f"
+              class="btn btn-outline-danger btn-sm"
+              disabled>
+              <fa-icon [icon]="faCircleNotch" animation="spin"></fa-icon>
+              <span>Delete</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+</div>
+
+<ng-template #deleteModal>
+  <div class="modal-header">
+    <h5 class="modal-title">Delete ISO</h5>
+    <button type="button" class="close" (click)="cancelDelete()">
+      <span>&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" *ngIf="usageReport">
+    <p><strong>{{pendingDeleteFile?.filename}}</strong> is currently in use:</p>
+
+    <div *ngIf="usageReport.templates.length">
+      <h6>Templates</h6>
+      <ul>
+        <li *ngFor="let t of usageReport.templates">
+          {{t.name}} <small class="text-muted">({{t.workspaceName}})</small>
+        </li>
+      </ul>
+    </div>
+
+    <div *ngIf="usageReport.activeGamespaces.length">
+      <h6>Active Gamespaces</h6>
+      <ul>
+        <li *ngFor="let g of usageReport.activeGamespaces">
+          {{g.name}}
+        </li>
+      </ul>
+      <div class="alert alert-warning mt-2">
+        This ISO cannot be deleted while active gamespaces are using it.
       </div>
     </div>
 
-</div>
+    <div *ngIf="!usageReport.activeGamespaces.length && usageReport.templates.length">
+      <div class="alert alert-warning mt-2">
+        Deleting this ISO will leave the above templates with a broken ISO reference.
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer" *ngIf="usageReport">
+    <button class="btn btn-secondary" (click)="cancelDelete()">
+      {{usageReport.activeGamespaces.length ? 'Close' : 'Cancel'}}
+    </button>
+    <button
+      *ngIf="!usageReport.activeGamespaces.length"
+      class="btn btn-danger"
+      (click)="confirmDelete()">
+      Delete Anyway
+    </button>
+  </div>
+</ng-template>

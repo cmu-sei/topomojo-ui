@@ -555,6 +555,11 @@ export interface IsoDataFilter {
   local?: boolean;
 }
 
+export interface IsoUsageReport {
+  templates: { id: string; name: string; workspaceName: string }[];
+  activeGamespaces: { id: string; name: string }[];
+}
+
 export interface ImageFile {
   filename: string;
   url: string;

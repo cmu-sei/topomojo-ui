@@ -26,6 +26,8 @@ import { WorkspaceCreatorComponent } from './workspace-creator/workspace-creator
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { UserRoleBadgeComponent } from "./user-role-badge/user-role-badge.component";
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { GlobalIsoManagerComponent } from './global-iso-manager/global-iso-manager.component';
+import { IsoModule } from '../iso/iso.module';
 
 @NgModule({
   declarations: [
@@ -44,6 +46,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
     GamespaceDetailComponent,
     GamespaceInteractComponent,
     WorkspaceCreatorComponent,
+    GlobalIsoManagerComponent,
   ],
   imports: [
     CommonModule,
@@ -58,6 +61,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
     FontAwesomeModule,
     ButtonsModule.forRoot(),
     AlertModule.forRoot(),
+    IsoModule,
     UserRoleBadgeComponent,
     TooltipModule.forRoot(),
   ]

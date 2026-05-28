@@ -4,9 +4,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ApiSettings } from './api-settings';
 import { GeneratedAdminService } from './gen/admin.service';
-import { CachedConnection } from './gen/models';
+import { IsoFile, VmOptions } from './gen/models';
 
 export type ThemeInfo = { backgroundUrl: string | null };
 
@@ -35,4 +36,13 @@ export class AdminService extends GeneratedAdminService {
     public clearBackground(): Observable<ThemeInfo> {
         return this.http.delete<ThemeInfo>(this.conf.api + '/admin/background');
     }
+
+    public getAllIsos(): Observable<IsoFile[]> {
+        return this.http.get<VmOptions>(this.conf.api + '/admin/isos').pipe(
+            map((r) => (r.iso || []).map(
+                (path) => ({ path, display: path.split('/').pop() } as IsoFile)
+            ))
+        );
+    }
+
 }
