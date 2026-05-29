@@ -420,6 +420,8 @@ export interface JanitorReport {
   name?: string;
   reason?: string;
   age?: string;
+  ownerName?: string;
+  vmCount?: number;
 }
 
 export interface CachedConnection {

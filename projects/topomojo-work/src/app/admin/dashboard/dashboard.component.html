@@ -59,8 +59,134 @@
   </button>
 </div>
 
-<p *ngFor="let r of janitorResult | async" class="mb-1">
-  <span>{{r.reason}}</span>,
-  <span>{{r.name}}</span>,
-  <span>{{r.age}}</span>
-</p>
+<div *ngIf="janitorReports.length > 0" class="mt-3">
+  <hr/>
+
+  <div class="row mb-2 janitor-header align-items-center">
+    <div class="col-3 px-2">
+      <button
+        type="button"
+        class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+        (click)="sortJanitor('reason')"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Sort by cleanup reason.'"
+        aria-label="Sort by cleanup reason."
+      >
+        <span>Reason</span>
+        <fa-icon
+          class="ml-1"
+          *ngIf="janitorSort.column === 'reason'"
+          [icon]="janitorSort.ascending ? faSortUp : faSortDown">
+        </fa-icon>
+      </button>
+    </div>
+
+    <div class="col-4 px-2">
+      <button
+        type="button"
+        class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+        (click)="sortJanitor('name')"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Sort by workspace name.'"
+        aria-label="Sort by workspace name."
+      >
+        <span>Name</span>
+        <fa-icon
+          class="ml-1"
+          *ngIf="janitorSort.column === 'name'"
+          [icon]="janitorSort.ascending ? faSortUp : faSortDown">
+        </fa-icon>
+      </button>
+    </div>
+
+    <div class="col-2 px-2">
+      <button
+        type="button"
+        class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+        (click)="sortJanitor('owner')"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Sort by workspace owner.'"
+        aria-label="Sort by workspace owner."
+      >
+        <span>Owner</span>
+        <fa-icon
+          class="ml-1"
+          *ngIf="janitorSort.column === 'owner'"
+          [icon]="janitorSort.ascending ? faSortUp : faSortDown">
+        </fa-icon>
+      </button>
+    </div>
+
+    <div class="col-1 px-2">
+      <button
+        type="button"
+        class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+        (click)="sortJanitor('vmCount')"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Sort by VM count.'"
+        aria-label="Sort by VM count."
+      >
+        <span>VMs</span>
+        <fa-icon
+          class="ml-1"
+          *ngIf="janitorSort.column === 'vmCount'"
+          [icon]="janitorSort.ascending ? faSortUp : faSortDown">
+        </fa-icon>
+      </button>
+    </div>
+
+    <div class="col-2 px-2">
+      <button
+        type="button"
+        class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+        (click)="sortJanitor('age')"
+        placement="right"
+        container="body"
+        triggers="hover focus"
+        [tooltip]="'Sort by last activity date.'"
+        aria-label="Sort by last activity date."
+      >
+        <span>Last Activity</span>
+        <fa-icon
+          class="ml-1"
+          *ngIf="janitorSort.column === 'age'"
+          [icon]="janitorSort.ascending ? faSortUp : faSortDown">
+        </fa-icon>
+      </button>
+    </div>
+  </div>
+
+  <div *ngFor="let r of janitorReports; trackBy:trackByReportId" class="row mb-1 align-items-center">
+    <div class="col-3 px-2">
+      <span class="text-break">{{ r.reason }}</span>
+    </div>
+
+    <div class="col-4 px-2">
+      <a [routerLink]="['/topo', r.id]" class="text-secondary">{{ r.name }}</a>
+      <br/>
+      <small class="text-muted d-block text-break">
+        <app-clipspan>{{ r.id }}</app-clipspan>
+      </small>
+    </div>
+
+    <div class="col-2 px-2">
+      <span class="text-break">{{ r.ownerName }}</span>
+    </div>
+
+    <div class="col-1 px-2">
+      <span>{{ r.vmCount }}</span>
+    </div>
+
+    <div class="col-2 px-2">
+      <small class="text-muted">{{ r.age | date:'short' }}</small>
+    </div>
+  </div>
+</div>
