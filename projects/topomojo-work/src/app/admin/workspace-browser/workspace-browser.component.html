@@ -264,11 +264,11 @@
   </div>
 
   <div class="col-2 d-flex align-items-center">
-    <small>{{ g.whenCreated | shortdate }}</small>
+    <small>{{ g.whenCreated | date:'short' }}</small>
   </div>
 
   <div class="col-2 d-flex align-items-center">
-    <small>{{ g.lastActivity | shortdate }}</small>
+    <small>{{ g.lastActivity | date:'short' }}</small>
   </div>
 
   <div class="col-3 d-flex justify-content-end align-items-center tm-actions">
