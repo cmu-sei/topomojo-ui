@@ -142,7 +142,23 @@
     </button>
   </div>
 
-  <div [ngClass]="fullAdminView ? 'col-4' : 'col-5'">
+  <div class="col-2">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+      (click)="sortBy('created')"
+      [tooltip]="'Sort by creation date.'"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      aria-label="Sort by creation date."
+    >
+      Created
+      <fa-icon *ngIf="sortField === 'created'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+    </button>
+  </div>
+
+  <div [ngClass]="fullAdminView ? 'col-2' : 'col-3'">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -226,7 +242,13 @@
     </small>
   </div>
 
-  <div [ngClass]="fullAdminView ? 'col-4' : 'col-5'">
+  <div class="col-2">
+    <small class="text-muted">
+      {{ g.whenCreated | date:'short' }}
+    </small>
+  </div>
+
+  <div [ngClass]="fullAdminView ? 'col-2' : 'col-3'">
     <span>{{ g.managerName }}</span>
     <small> &mdash; {{ g.name }}</small>
   </div>

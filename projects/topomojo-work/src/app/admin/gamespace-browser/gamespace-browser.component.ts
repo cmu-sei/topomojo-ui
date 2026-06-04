@@ -47,7 +47,7 @@ export class GamespaceBrowserComponent implements OnInit {
   faStarRegular = faStarRegular;
 
   sortAscending = true;
-  sortField: 'id' | 'session' | 'managerWorkspace' = 'session';
+  sortField: 'id' | 'session' | 'managerWorkspace' | 'created' = 'session';
 
   private gamespaceFavorites = new Set<string>();
 
@@ -209,7 +209,7 @@ export class GamespaceBrowserComponent implements OnInit {
     });
   }
 
-  sortBy(field: 'id' | 'session' | 'managerWorkspace'): void {
+  sortBy(field: 'id' | 'session' | 'managerWorkspace' | 'created'): void {
     if (this.sortField === field) {
       this.sortAscending = !this.sortAscending;
     } else {
@@ -238,6 +238,9 @@ export class GamespaceBrowserComponent implements OnInit {
       } else if (this.sortField === 'session') {
         av = Number((a as any)?.session?.countdown ?? 0);
         bv = Number((b as any)?.session?.countdown ?? 0);
+      } else if (this.sortField === 'created') {
+        av = new Date(a.whenCreated).getTime();
+        bv = new Date(b.whenCreated).getTime();
       } else {
         av = `${(a.managerName || '').toLowerCase()}|${(a.name || '').toLowerCase()}`;
         bv = `${(b.managerName || '').toLowerCase()}|${(b.name || '').toLowerCase()}`;
