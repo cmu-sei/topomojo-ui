@@ -55,7 +55,7 @@
     </button>
   </div>
 
-  <div class="col-3 px-4">
+  <div class="col-4 px-4">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -75,7 +75,7 @@
     </button>
   </div>
 
-  <div class="col-3 px-4">
+  <div class="col-2 px-4">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -121,7 +121,7 @@
     <span class="text-break">{{ vm.name }}</span>
   </div>
 
-  <div class="col-3 px-4">
+  <div class="col-4 px-4">
     <ng-container *ngIf="vm.parsedGroup.type === 'workspace'">
       <a [routerLink]="['/topo', vm.parsedGroup.id]" class="text-secondary">{{ vm.parsedGroup.name }}</a>
       <br/>
@@ -148,7 +148,7 @@
     </ng-container>
   </div>
 
-  <div class="col-3 px-4">
+  <div class="col-2 px-4">
     <small [ngClass]="{
       'text-success': vm.state === 'running',
       'text-muted': vm.state === 'off',
