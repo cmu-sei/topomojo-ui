@@ -8,6 +8,10 @@ import { debounceTime, switchMap, tap, map } from 'rxjs/operators';
 import { Search, Vm } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
 
+interface VmWithParsedGroup extends Vm {
+  parsedGroup: { type: 'workspace' | 'gamespace' | 'orphaned', name: string, id: string };
+}
+
 @Component({
   selector: 'app-vm-browser',
   templateUrl: './vm-browser.component.html',
@@ -16,8 +20,8 @@ import { VmService } from '../../api/vm.service';
 })
 export class VmBrowserComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);
-  source$: Observable<Vm[]>;
-  source: Vm[] = [];
+  source$: Observable<VmWithParsedGroup[]>;
+  source: VmWithParsedGroup[] = [];
   search: Search = { term: '', take: 100 };
 
   faSearch = faSearch;
@@ -33,6 +37,10 @@ export class VmBrowserComponent implements OnInit {
       debounceTime(300),
       switchMap(() => this.api.list('')),
       map(vms => this.filterVms(vms, this.search.term)),
+      map(vms => vms.map(vm => ({
+        ...vm,
+        parsedGroup: this.parseGroupName(vm.groupName)
+      }))),
       tap(r => {
         this.source = r;
         this.applySort();
@@ -63,7 +71,7 @@ export class VmBrowserComponent implements OnInit {
     });
   }
 
-  trackById(index: number, vm: Vm): string {
+  trackById(index: number, vm: VmWithParsedGroup): string {
     return vm.id || '';
   }
 

@@ -27,7 +27,7 @@
 </ng-container>
 
 <div *ngIf="isAdmin && !game.isActive && orphanedVmCount > 0" class="alert alert-warning my-3">
-  <strong>Admin Notice:</strong> This gamespace has ended, but {{orphanedVmCount}} VM{{orphanedVmCount === 1 ? '' : 's'}} still exist{{orphanedVmCount === 1 ? 's' : ''}} in the hypervisor.
+  <strong>Admin Notice:</strong> This gamespace has ended, but {{ orphanedVmCount | i18nPlural: { '=1': '1 VM still exists', 'other': '# VMs still exist' } }} in the hypervisor.
   View on the <a routerLink="/admin/machines" class="alert-link">Machines</a> page or delete from the <a routerLink="/admin/gamespaces" class="alert-link">Gamespaces</a> page.
 </div>
 

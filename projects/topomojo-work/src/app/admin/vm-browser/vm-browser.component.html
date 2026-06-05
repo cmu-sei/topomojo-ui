@@ -122,31 +122,29 @@
   </div>
 
   <div class="col-3 px-4">
-    <ng-container *ngIf="parseGroupName(vm.groupName) as parsed">
-      <ng-container *ngIf="parsed.type === 'workspace'">
-        <a [routerLink]="['/topo', parsed.id]" class="text-secondary">{{ parsed.name }}</a>
-        <br/>
-        <small class="text-muted d-block text-break">
-          <app-clipspan>{{ parsed.id }}</app-clipspan>
-        </small>
-      </ng-container>
-      <ng-container *ngIf="parsed.type === 'gamespace'">
-        <a [routerLink]="['/mojo', parsed.id]" class="text-secondary">{{ parsed.name }}</a>
-        <br/>
-        <small class="text-muted d-block text-break">
-          <app-clipspan>{{ parsed.id }}</app-clipspan>
-        </small>
-      </ng-container>
-      <ng-container *ngIf="parsed.type === 'orphaned'">
-        <span class="text-warning">
-          <fa-icon [icon]="faInfoCircle" class="mr-1"></fa-icon>
-          Orphaned
-        </span>
-        <br/>
-        <small class="text-muted d-block text-break">
-          <app-clipspan>{{ parsed.id }}</app-clipspan>
-        </small>
-      </ng-container>
+    <ng-container *ngIf="vm.parsedGroup.type === 'workspace'">
+      <a [routerLink]="['/topo', vm.parsedGroup.id]" class="text-secondary">{{ vm.parsedGroup.name }}</a>
+      <br/>
+      <small class="text-muted d-block text-break">
+        <app-clipspan>{{ vm.parsedGroup.id }}</app-clipspan>
+      </small>
+    </ng-container>
+    <ng-container *ngIf="vm.parsedGroup.type === 'gamespace'">
+      <a [routerLink]="['/mojo', vm.parsedGroup.id]" class="text-secondary">{{ vm.parsedGroup.name }}</a>
+      <br/>
+      <small class="text-muted d-block text-break">
+        <app-clipspan>{{ vm.parsedGroup.id }}</app-clipspan>
+      </small>
+    </ng-container>
+    <ng-container *ngIf="vm.parsedGroup.type === 'orphaned'">
+      <span class="text-warning">
+        <fa-icon [icon]="faInfoCircle" class="mr-1"></fa-icon>
+        Orphaned
+      </span>
+      <br/>
+      <small class="text-muted d-block text-break">
+        <app-clipspan>{{ vm.parsedGroup.id }}</app-clipspan>
+      </small>
     </ng-container>
   </div>
 
