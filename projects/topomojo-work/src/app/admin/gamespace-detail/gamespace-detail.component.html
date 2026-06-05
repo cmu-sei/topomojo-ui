@@ -2,15 +2,30 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <div class="text-center">
-  <button class="btn btn-outline-info btn-sm mx-1" (click)="show('default')">
+  <button
+    class="btn btn-outline-info btn-sm mx-1"
+    (click)="show('default')"
+    [tooltip]="'Show gamespace detail view.'"
+    aria-label="Show gamespace detail view."
+  >
     <fa-icon [icon]="faList"></fa-icon>
     <span>Detail</span>
   </button>
-  <button class="btn btn-outline-info btn-sm mx-1" (click)="show('json')">
+  <button
+    class="btn btn-outline-info btn-sm mx-1"
+    (click)="show('json')"
+    [tooltip]="'Show gamespace data in JSON format.'"
+    aria-label="Show gamespace data in JSON format."
+  >
     <fa-icon [icon]="faJson"></fa-icon>
     <span>Json</span>
   </button>
-  <button class="btn btn-outline-info btn-sm mx-1" (click)="show('dispatch')">
+  <button
+    class="btn btn-outline-info btn-sm mx-1"
+    (click)="show('dispatch')"
+    [tooltip]="'Show dispatcher for sending commands to gamespace VMs.'"
+    aria-label="Show dispatcher for sending commands to gamespace VMs."
+  >
     <fa-icon [icon]="faKeyboard"></fa-icon>
     <span>Dispatcher</span>
   </button>

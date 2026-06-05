@@ -164,6 +164,8 @@
     <button
       class="btn btn-outline-info btn-sm tm-action-btn"
       (click)="view(user)"
+      [tooltip]="'Expand to view user details and role settings.'"
+      aria-label="Expand to view user details and role settings."
     >
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
@@ -175,8 +177,13 @@
       (confirm)="delete(user)"
       aria-label="delete user"
     >
-      <fa-icon [icon]="faTrash"></fa-icon>
-      <span>Delete</span>
+      <span
+        [tooltip]="'Delete this user.'"
+        aria-label="Delete this user."
+      >
+        <fa-icon [icon]="faTrash"></fa-icon>
+        <span>Delete</span>
+      </span>
     </app-confirm-button>
   </div>
 
