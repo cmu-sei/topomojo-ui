@@ -125,14 +125,14 @@
     <ng-container *ngIf="vm.parsedGroup.type === 'workspace'">
       <a [routerLink]="['/topo', vm.parsedGroup.id]" class="text-secondary">{{ vm.parsedGroup.name }}</a>
       <br/>
-      <small class="text-muted d-block text-break">
+      <small class="text-muted d-block text-nowrap">
         <app-clipspan>{{ vm.parsedGroup.id }}</app-clipspan>
       </small>
     </ng-container>
     <ng-container *ngIf="vm.parsedGroup.type === 'gamespace'">
       <a [routerLink]="['/mojo', vm.parsedGroup.id]" class="text-secondary">{{ vm.parsedGroup.name }}</a>
       <br/>
-      <small class="text-muted d-block text-break">
+      <small class="text-muted d-block text-nowrap">
         <app-clipspan>{{ vm.parsedGroup.id }}</app-clipspan>
       </small>
     </ng-container>
@@ -142,7 +142,7 @@
         Orphaned
       </span>
       <br/>
-      <small class="text-muted d-block text-break">
+      <small class="text-muted d-block text-nowrap">
         <app-clipspan>{{ vm.parsedGroup.id }}</app-clipspan>
       </small>
     </ng-container>
