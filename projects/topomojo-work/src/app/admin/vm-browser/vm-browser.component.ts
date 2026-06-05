@@ -26,7 +26,7 @@ export class VmBrowserComponent implements OnInit {
   faInfoCircle = faInfoCircle;
 
   sortAscending = true;
-  sortField: 'name' | 'group' | 'host' = 'name';
+  sortField: 'name' | 'group' | 'state' | 'host' = 'name';
 
   constructor(private api: VmService) {
     this.source$ = this.refresh$.pipe(
@@ -67,7 +67,7 @@ export class VmBrowserComponent implements OnInit {
     return vm.id || '';
   }
 
-  sortBy(field: 'name' | 'group' | 'host'): void {
+  sortBy(field: 'name' | 'group' | 'state' | 'host'): void {
     if (this.sortField === field) {
       this.sortAscending = !this.sortAscending;
     } else {
@@ -86,6 +86,8 @@ export class VmBrowserComponent implements OnInit {
       switch (this.sortField) {
         case 'group':
           return (vm.groupName || '').toLowerCase();
+        case 'state':
+          return (vm.state || '').toLowerCase();
         case 'host':
           return (hostShort(vm) || '').toLowerCase();
         default:
