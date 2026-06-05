@@ -20,6 +20,7 @@ export class LogViewerComponent implements OnInit {
   copied = -1;
   hovering = -1;
   log$: Observable<any>;
+  private copyTimer?: ReturnType<typeof setTimeout>;
   faCaretDown = faCaretDown;
   faCaretRight = faCaretRight;
   faInfoCircle = faInfoCircle;
@@ -48,8 +49,19 @@ export class LogViewerComponent implements OnInit {
 
   copy(ex: any, i: number): void {
     const text = `${ex.timestamp}\n${ex.message}\n\n${ex.stackTrace || ''}`;
-    navigator.clipboard.writeText(text);
-    this.copied = i;
-    setTimeout(() => this.copied = -1, 4000);
+
+    // Cancel previous timer if clicking again
+    if (this.copyTimer) {
+      clearTimeout(this.copyTimer);
+    }
+
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        this.copied = i;
+        this.copyTimer = setTimeout(() => this.copied = -1, 4000);
+      })
+      .catch(() => {
+        // Copy failed, don't show success indicator
+      });
   }
 }

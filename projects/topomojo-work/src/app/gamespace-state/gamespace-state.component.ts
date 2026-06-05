@@ -4,7 +4,7 @@
 import { Component, Input, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { faBolt, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
 import { finalize, switchMap, filter, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { Subject, combineLatest } from 'rxjs';
+import { Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { GamespaceService } from '../api/gamespace.service';
 import { GameState, VmState } from '../api/gen/models';
 import { ConfigService } from '../config.service';
@@ -28,7 +28,7 @@ export class GamespaceStateComponent implements OnInit, OnChanges, OnDestroy {
   orphanedVmCount = 0;
 
   private destroy$ = new Subject<void>();
-  private gameChange$ = new Subject<GameState>();
+  private gameChange$ = new BehaviorSubject<GameState | null>(null);
 
   constructor(
     private api: GamespaceService,
@@ -44,13 +44,13 @@ export class GamespaceStateComponent implements OnInit, OnChanges, OnDestroy {
       this.gameChange$
     ]).pipe(
       filter(([user, game]) =>
-        (user?.isAdmin || false) && !game.isActive && !!game.id
+        !!game && (user?.isAdmin || false) && !game.isActive && !!game.id
       ),
       distinctUntilChanged(
         ([prevUser, prevGame], [currUser, currGame]) =>
-          prevGame.id === currUser.id && prevGame.isActive === currGame.isActive
+          prevGame?.id === currGame?.id && prevGame?.isActive === currGame?.isActive
       ),
-      switchMap(([user, game]) => this.vmApi.list(game.id!)),
+      switchMap(([user, game]) => this.vmApi.list(game!.id!)),
       takeUntil(this.destroy$)
     ).subscribe(vms => {
       this.orphanedVmCount = vms.length;

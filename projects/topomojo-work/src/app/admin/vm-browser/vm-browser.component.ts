@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { faSearch, faSortUp, faSortDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { debounceTime, switchMap, tap, map } from 'rxjs/operators';
-import { Search, Vm } from '../../api/gen/models';
+import { Search, Vm, VmStateEnum } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
 
 interface VmWithParsedGroup extends Vm {
@@ -28,6 +28,7 @@ export class VmBrowserComponent implements OnInit {
   faSortUp = faSortUp;
   faSortDown = faSortDown;
   faInfoCircle = faInfoCircle;
+  VmStateEnum = VmStateEnum;
 
   sortAscending = true;
   sortField: 'name' | 'group' | 'state' | 'host' = 'name';

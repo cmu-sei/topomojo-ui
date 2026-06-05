@@ -150,9 +150,9 @@
 
   <div class="col-1 px-4">
     <small [ngClass]="{
-      'text-success': vm.state === 'running',
-      'text-muted': vm.state === 'off',
-      'text-warning': vm.state === 'suspended'
+      'text-success': vm.state === VmStateEnum.running,
+      'text-muted': vm.state === VmStateEnum.off,
+      'text-warning': vm.state === VmStateEnum.suspended
     }">
       {{ vm.state || 'unknown' }}
     </small>
