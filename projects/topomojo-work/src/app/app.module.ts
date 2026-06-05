@@ -168,7 +168,7 @@ export function register(
 
 export function tooltipConfigFactory(): TooltipConfig {
   const config = new TooltipConfig();
-  config.delay = 500;
+  config.delay = 1000;
   config.container = 'body';
   return config;
 }
