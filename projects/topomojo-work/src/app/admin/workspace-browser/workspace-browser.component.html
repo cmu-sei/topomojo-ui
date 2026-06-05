@@ -13,9 +13,6 @@
     <div class="input-group-prepend">
       <span
         class="input-group-text"
-        placement="right"
-        container="body"
-        triggers="hover focus"
         [tooltip]="'Search for a workspace by name or identifier.'"
         aria-label="Search for a workspace by name or identifier."
       >
@@ -40,9 +37,6 @@
     class="select-all"
     *ngIf="selectDownloads"
     [tooltip]="'Select or deselect all workspaces on this page for download.'"
-    placement="right"
-    container="body"
-    triggers="hover focus"
     aria-label="Select or deselect all workspaces on this page for download."
   >
 
@@ -50,11 +44,8 @@
     <button
       class="btn btn-sm btn-link text-primary"
       (click)="showCreatePanel=!showCreatePanel"
-      placement="right"
       [tooltip]="'Create a new workspace.'"
       aria-label="Create a new workspace."
-      container="body"
-      triggers="hover focus"
     >
       <fa-icon [icon]="faPlus"></fa-icon>
       <span>Create</span>
@@ -65,8 +56,6 @@
       (click)="zipInput.click()"
       placement="top"
       [tooltip]="'Upload a workspace export (.zip) to import a workspace.'"
-      container="body"
-      triggers="hover focus"
       aria-label="Upload a workspace export (.zip) to import a workspace."
     >
       <fa-icon [icon]="faFile"></fa-icon>
@@ -78,9 +67,6 @@
       class="btn btn-sm btn-link text-primary"
       (click)="selectDownloads = true"
       *ngIf="!selectDownloads"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Select one or more workspaces to download as an export.'"
       aria-label="Select one or more workspaces to download as an export."
     >
@@ -95,9 +81,6 @@
       (click)="download()"
       *ngIf="selectDownloads"
       [disabled]="selected.length < 1"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="selected.length < 1 ? 'Select at least one workspace to download.' : 'Download the selected workspace exports.'"
       [attr.aria-label]="selected.length < 1 ? 'Select at least one workspace to download.' : 'Download the selected workspace exports.'"
     >
@@ -108,10 +91,7 @@
     <button
       class="btn btn-sm btn-link text-primary"
       (click)="selectDownloads = false;"
-      placement="right"
       [tooltip]="'Cancel download selection mode.'"
-      container="body"
-      triggers="hover focus"
       aria-label="Cancel download selection mode."
     >
       <fa-icon [icon]="faTimes"></fa-icon>
@@ -156,10 +136,6 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary"
       (click)="sortBy('name')"
-      placement="right"
-      [tooltip]="'Sort by workspace name.'"
-      container="body"
-      triggers="hover focus"
       aria-label="Sort by workspace name."
     >
       Workspace Name
@@ -172,10 +148,6 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary"
       (click)="sortBy('created')"
-      placement="right"
-      [tooltip]="'Sort by created date.'"
-      container="body"
-      triggers="hover focus"
       aria-label="Sort by created date."
     >
       <span class="d-inline-flex align-items-center text-nowrap">
@@ -191,10 +163,6 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary"
       (click)="sortBy('activity')"
-      placement="right"
-      [tooltip]="'Sort by last activity date.'"
-      container="body"
-      triggers="hover focus"
       aria-label="Sort by last activity date."
     >
       Last Activity
@@ -220,10 +188,7 @@
       [checked]="isSelected(g.id)"
       (change)="select($event, g)"
       style="margin-left: 30px;"
-      placement="right"
       [tooltip]="'Select this workspace for download.'"
-      container="body"
-      triggers="hover focus"
       aria-label="Select this workspace for download."
     >
   </div>
@@ -235,9 +200,6 @@
       (click)="toggleFavorite(g.id); $event.preventDefault(); $event.stopPropagation();"
       [attr.aria-label]="isFavorite(g.id) ? 'Unfavorite workspace' : 'Favorite workspace'"
       [tooltip]="isFavorite(g.id) ? 'Unfavorite (pin to top)' : 'Favorite (pin to top)'"
-      placement="right"
-      container="body"
-      triggers="hover focus"
     >
       <fa-icon
         [icon]="isFavorite(g.id) ? faStarSolid : faStarRegular"
@@ -248,9 +210,6 @@
     <a
       [routerLink]="['/topo', g.id]"
       class="text-secondary"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Open this workspace (Settings tab).'"
       aria-label="Open this workspace (Settings tab)."
     >
@@ -275,11 +234,8 @@
     <button
       class="btn btn-outline-info btn-sm tm-action-btn mr-2"
       (click)="view(g)"
-      placement="right"
       [tooltip]="'Expand to view workspace details and template VM controls.'"
       aria-label="Expand to view workspace details and template VM controls."
-      container="body"
-      triggers="hover focus"
     >
       <fa-icon [icon]="faList"></fa-icon>
       <span>View</span>
@@ -293,10 +249,7 @@
     >
       <span
         class="d-inline-flex align-items-center"
-        placement="right"
         [tooltip]="'Delete this workspace.'"
-        container="body"
-        triggers="hover focus"
         aria-label="Delete this workspace."
       >
         <fa-icon [icon]="faTrash"></fa-icon>
@@ -315,10 +268,7 @@
             class="ml-2 text-muted"
             role="button"
             tabindex="0"
-            placement="right"
             [tooltip]="'Defines the maximum number of VM templates allowed in this workspace.'"
-            container="body"
-            triggers="hover focus"
             aria-label="Defines the maximum number of VM templates allowed in this workspace."
           >
             <fa-icon [icon]="faInfoCircle"></fa-icon>
@@ -341,9 +291,6 @@
             class="ml-2 text-muted"
             role="button"
             tabindex="0"
-            container="body"
-            triggers="hover focus"
-            placement="right"
             [tooltip]="'Limits which published templates this workspace can link to by scope.'"
             aria-label="Limits which published templates this workspace can link to by scope."
           >
@@ -367,10 +314,7 @@
             class="ml-2 text-muted"
             role="button"
             tabindex="0"
-            placement="right"
             [tooltip]="'Limits which users/groups can deploy this workspace as a gamespace.'"
-            container="body"
-            triggers="hover focus"
             aria-label="Limits which users/groups can deploy this workspace as a gamespace."
           >
             <fa-icon [icon]="faInfoCircle"></fa-icon>

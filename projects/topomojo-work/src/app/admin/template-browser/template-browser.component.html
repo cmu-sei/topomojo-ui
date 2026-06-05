@@ -13,9 +13,6 @@
     <div class="input-group-prepend">
       <span
         class="input-group-text"
-        placement="right"
-        container="body"
-        triggers="hover focus"
         [tooltip]="'Search templates by name. Use filters below to narrow results (published, parent, workspace).'"
         aria-label="Search templates by name. Use filters below to narrow results (published, parent, workspace)."
       >
@@ -31,9 +28,6 @@
       class="form-control"
       (input)="termed()"
       aria-label="search templates"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Type to search template names.'"
     >
   </div>
@@ -42,10 +36,7 @@
     <button
       class="btn btn-link text-primary btn-sm"
       (click)="create()"
-      placement="right"
       [tooltip]="'Create a new template.'"
-      container="body"
-      triggers="hover focus"
       aria-label="Create a new template."
     >
       create
@@ -55,9 +46,6 @@
     <button
       class="btn btn-link btn-sm text-secondary"
       (click)="togglePublished()"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="filterPublished ? 'Showing published templates. Click to show all.' : 'Filter to published templates only.'"
       [attr.aria-label]="filterPublished ? 'Showing published templates. Click to show all.' : 'Filter to published templates only.'"
     >
@@ -69,10 +57,7 @@
       *ngIf="search.pid"
       class="btn btn-link btn-sm text-secondary"
       (click)="clearParent()"
-      placement="right"
       [tooltip]="'Clear the parent-template filter.'"
-      container="body"
-      triggers="hover focus"
       aria-label="Clear the parent-template filter."
     >
       <fa-icon [icon]="faFilter"></fa-icon>
@@ -94,10 +79,6 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('name')"
-      placement="right"
-      [tooltip]="'Sort by template name.'"
-      container="body"
-      triggers="hover focus"
       aria-label="Sort by template name."
     >
       <span>Template Name</span>
@@ -114,10 +95,6 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center text-nowrap"
       (click)="sortBy('created')"
-      placement="right"
-      [tooltip]="'Sort by created date.'"
-      container="body"
-      triggers="hover focus"
       aria-label="Sort by created date."
     >
       <span class="text-nowrap">Created Date</span>
@@ -147,9 +124,6 @@
         (click)="toggleFavorite(g.id); $event.preventDefault(); $event.stopPropagation();"
         [attr.aria-label]="isFavorite(g.id) ? 'Unfavorite template' : 'Favorite template'"
         [tooltip]="isFavorite(g.id) ? 'Unfavorite (pin)' : 'Favorite (pin)'"
-        placement="right"
-        container="body"
-        triggers="hover focus"
       >
         <fa-icon
           [icon]="isFavorite(g.id) ? faStarSolid : faStarRegular"
@@ -159,10 +133,7 @@
 
       <span
         class="template-name mr-2"
-        placement="right"
         [tooltip]="'Template name (no spaces; TopoMojo replaces spaces with dashes).'"
-        container="body"
-        triggers="hover focus"
         aria-label="Template name (no spaces; TopoMojo replaces spaces with dashes)."
       >
         {{ g.name }}
@@ -171,10 +142,7 @@
       <small
         *ngIf="g.isPublished"
         class="pop-success px-2 py-1 mr-2 template-badge"
-        placement="right"
         [tooltip]="'Published template (available for linking).'"
-        container="body"
-        triggers="hover focus"
         aria-label="Published template (available for linking)."
       >
         <fa-icon [icon]="faEye"></fa-icon>
@@ -184,9 +152,6 @@
       <small
         *ngIf="g.audience"
         class="pop-warning px-2 py-1 template-badge"
-        placement="right"
-        container="body"
-        triggers="hover focus"
         [tooltip]="'Audience scope for launching/deploying.'"
         aria-label="Audience scope for launching/deploying."
       >
@@ -200,9 +165,6 @@
         class="pop-info px-2 py-1 template-parent-pill"
         [tooltip]="(g.isLinked ? 'Linked to parent template: ' : 'Unlinked copy of: ') + g.parentName"
         [attr.aria-label]="(g.isLinked ? 'Linked to parent template: ' : 'Unlinked copy of: ') + g.parentName"
-        placement="right"
-        container="body"
-        triggers="hover focus"
       >
         <fa-icon
           [icon]="g.isLinked ? faLink : faUnlink"
@@ -217,9 +179,6 @@
           type="button"
           class="btn btn-sm btn-link text-muted p-0 ml-2"
           (click)="filterParent(g)"
-          placement="right"
-          container="body"
-          triggers="hover focus"
           [tooltip]="'Filter by this parent template.'"
           aria-label="Filter by this parent template."
         >
@@ -242,10 +201,7 @@
           *ngIf="g.workspaceId"
           class="btn btn-sm text-muted p-0 ml-2"
           (click)="filterWorkspace(g.workspaceId)"
-          placement="right"
           [tooltip]="'Filter to templates from this workspace.'"
-          container="body"
-          triggers="hover focus"
           aria-label="Filter to templates from this workspace."
         >
           <fa-icon [icon]="faFilter"></fa-icon>
@@ -253,9 +209,6 @@
 
         <span
           *ngIf="!g.workspaceId"
-          placement="right"
-          container="body"
-          triggers="hover focus"
           [tooltip]="'Stock template (not owned by a specific workspace).'"
           aria-label="Stock template (not owned by a specific workspace)."
         >
@@ -267,9 +220,6 @@
 
   <div class="col-2 text-left">
     <small
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Date this template was created.'"
       aria-label="Date this template was created."
     >
@@ -319,9 +269,6 @@
 
           <small
             class="text-warning"
-            placement="right"
-            container="body"
-            triggers="hover focus"
             [tooltip]="'Templates edited here are not inside a workspace, so isolation checks may not apply.'"
             aria-label="Templates edited here are not inside a workspace, so isolation checks may not apply."
           >

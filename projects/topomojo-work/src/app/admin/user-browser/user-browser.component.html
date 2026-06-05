@@ -35,9 +35,6 @@
     <button
       class="btn btn-link text-primary btn-sm"
       (click)="create()"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Create a new user.'"
       aria-label="Create a new user."
     >
@@ -47,9 +44,6 @@
     <button
       class="mr-1 btn btn-link text-success btn-sm"
       (click)="toggleFilter('administrator')"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Filter to administrators.'"
       aria-label="Filter to administrators."
     >
@@ -59,9 +53,6 @@
     <button
       class="mr-1 btn btn-link text-pink btn-sm"
       (click)="toggleFilter('observer')"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Filter to observers.'"
       aria-label="Filter to observers."
     >
@@ -71,9 +62,6 @@
     <button
       class="mr-1 btn btn-link text-secondary btn-sm"
       (click)="toggleFilter('creator')"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Filter to creators.'"
       aria-label="Filter to creators."
     >
@@ -83,9 +71,6 @@
     <button
       class="mr-1 btn btn-link text-warning btn-sm"
       (click)="toggleFilter('builder')"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Filter to builders.'"
       aria-label="Filter to builders."
     >
@@ -96,9 +81,6 @@
     <button
       class="mx-1 btn btn-link text-primary btn-sm"
       (click)="toggleServiceAccountFilter()"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Filter to service accounts.'"
       aria-label="Filter to service accounts."
     >
@@ -110,9 +92,6 @@
       *ngFor="let s of scopes"
       class="mr-1 btn btn-link text-dark btn-sm"
       (click)="toggleScope(s)"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Filter to users in scope: ' + s"
       [attr.aria-label]="'Filter to users in scope: ' + s"
     >
@@ -131,10 +110,6 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary"
       (click)="sortBy('name')"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      [tooltip]="'Sort by user name.'"
       aria-label="Sort by user name."
     >
       User Name
@@ -147,10 +122,6 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('created')"
-      placement="right"
-      container="body"
-      triggers="hover focus"
-      [tooltip]="'Sort by account creation date.'"
       aria-label="Sort by account creation date."
     >
       Created Date

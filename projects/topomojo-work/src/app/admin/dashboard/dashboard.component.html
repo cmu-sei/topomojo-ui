@@ -38,7 +38,6 @@
   <button
     class="btn btn-secondary btn-sm"
     (click)="announce()"
-    placement="right"
   >
     <fa-icon [icon]="faSend"></fa-icon>
     <span>Send</span>
@@ -68,10 +67,6 @@
         type="button"
         class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
         (click)="sortJanitor('reason')"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Sort by cleanup reason.'"
         aria-label="Sort by cleanup reason."
       >
         <span>Reason</span>
@@ -88,10 +83,6 @@
         type="button"
         class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
         (click)="sortJanitor('name')"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Sort by workspace name.'"
         aria-label="Sort by workspace name."
       >
         <span>Name</span>
@@ -108,10 +99,6 @@
         type="button"
         class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
         (click)="sortJanitor('owner')"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Sort by workspace owner.'"
         aria-label="Sort by workspace owner."
       >
         <span>Owner</span>
@@ -128,10 +115,6 @@
         type="button"
         class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
         (click)="sortJanitor('vmCount')"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Sort by VM count.'"
         aria-label="Sort by VM count."
       >
         <span>VMs</span>
@@ -148,10 +131,6 @@
         type="button"
         class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
         (click)="sortJanitor('age')"
-        placement="right"
-        container="body"
-        triggers="hover focus"
-        [tooltip]="'Sort by last activity date.'"
         aria-label="Sort by last activity date."
       >
         <span>Last Activity</span>
