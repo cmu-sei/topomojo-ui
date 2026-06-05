@@ -67,6 +67,29 @@ export class VmBrowserComponent implements OnInit {
     return vm.id || '';
   }
 
+  parseGroupName(groupName?: string): { type: 'workspace' | 'gamespace' | 'orphaned', name: string, id: string } {
+    if (!groupName) return { type: 'orphaned', name: 'Unknown', id: '' };
+
+    const parts = groupName.split('#');
+    if (parts.length !== 2) return { type: 'orphaned', name: groupName, id: '' };
+
+    const [prefix, id] = parts;
+
+    if (prefix === '__orphaned') {
+      return { type: 'orphaned', name: 'Orphaned', id };
+    }
+
+    if (prefix.startsWith('workspace: ')) {
+      return { type: 'workspace', name: prefix.substring(11), id };
+    }
+
+    if (prefix.startsWith('gamespace: ')) {
+      return { type: 'gamespace', name: prefix.substring(11), id };
+    }
+
+    return { type: 'orphaned', name: prefix, id };
+  }
+
   sortBy(field: 'name' | 'group' | 'host'): void {
     if (this.sortField === field) {
       this.sortAscending = !this.sortAscending;
