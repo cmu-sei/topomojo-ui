@@ -81,7 +81,7 @@
             >{{f.filename}}</span>
             <span *ngIf="!showWorkspaceContext && f.isGlobal" class="badge badge-primary ml-1">Global</span>
           </td>
-          <td *ngIf="showWorkspaceContext">
+          <td *ngIf="showWorkspaceContext" class="workspace-cell">
             <span *ngIf="f.isGlobal" class="badge badge-primary">Global</span>
             <span *ngIf="!f.isGlobal && f.workspaceName !== '(deleted)'">
               {{f.workspaceName}}

@@ -10,3 +10,10 @@ th {
   white-space: nowrap;
   vertical-align: middle;
 }
+
+.workspace-cell {
+  app-clipspan {
+    display: inline-block;
+    min-width: 200px;
+  }
+}
