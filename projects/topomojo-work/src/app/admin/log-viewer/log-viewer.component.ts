@@ -47,10 +47,13 @@ export class LogViewerComponent implements OnInit {
     this.trace = this.trace === i ? -1 : i;
   }
 
-  copy(ex: any, i: number): void {
-    const text = `${ex.timestamp}\n${ex.message}\n\n${ex.stackTrace || ''}`;
+  getLogText(ex: any): string {
+    return `${ex.timestamp}\n${ex.message}\n\n${ex.stackTrace || ''}`;
+  }
 
-    // Cancel previous timer if clicking again
+  copy(ex: any, i: number): void {
+    const text = this.getLogText(ex);
+
     if (this.copyTimer) {
       clearTimeout(this.copyTimer);
     }

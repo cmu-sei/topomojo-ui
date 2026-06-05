@@ -23,26 +23,20 @@
         <fa-icon [icon]="trace===i ? faCaretDown : faCaretRight"></fa-icon>
       </button>
 
-      <button
-        type="button"
-        class="btn btn-sm btn-link text-muted p-0 mr-2"
-        (click)="copy(ex, i)"
-        (mouseenter)="hovering = i"
-        (mouseleave)="hovering = -1"
-        aria-label="Copy log entry to clipboard"
-      >
-        <fa-icon [icon]="copied === i ? faClipboardCheck : faClipboard" [class.text-success]="copied === i"></fa-icon>
-      </button>
-
       <div class="flex-grow-1">
         <div class="d-flex align-items-center flex-wrap">
           <small class="text-muted mr-2">{{ ex.timestamp }}</small>
-
-          <span
-            class="ml-1 text-muted"
-            aria-label="This tab shows error entries only. Expand an entry to see the stack trace."
+          <button
+            *ngIf="trace===i"
+            type="button"
+            class="btn btn-sm btn-link text-muted p-0"
+            (click)="copy(ex, i)"
+            (mouseenter)="hovering = i"
+            (mouseleave)="hovering = -1"
+            aria-label="Copy log entry to clipboard"
           >
-          </span>
+            <fa-icon [icon]="copied === i ? faClipboardCheck : faClipboard" [class.text-success]="copied === i"></fa-icon>
+          </button>
         </div>
 
         <div class="mt-1">
