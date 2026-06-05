@@ -5,8 +5,12 @@ import { Component, OnInit } from '@angular/core';
 import { faSearch, faSortUp, faSortDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { debounceTime, switchMap, tap, map } from 'rxjs/operators';
-import { Search, Vm } from '../../api/gen/models';
+import { Search, Vm, VmStateEnum } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
+
+interface VmWithParsedGroup extends Vm {
+  parsedGroup: { type: 'workspace' | 'gamespace' | 'orphaned', name: string, id: string };
+}
 
 @Component({
   selector: 'app-vm-browser',
@@ -16,23 +20,28 @@ import { VmService } from '../../api/vm.service';
 })
 export class VmBrowserComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);
-  source$: Observable<Vm[]>;
-  source: Vm[] = [];
+  source$: Observable<VmWithParsedGroup[]>;
+  source: VmWithParsedGroup[] = [];
   search: Search = { term: '', take: 100 };
 
   faSearch = faSearch;
   faSortUp = faSortUp;
   faSortDown = faSortDown;
   faInfoCircle = faInfoCircle;
+  VmStateEnum = VmStateEnum;
 
   sortAscending = true;
-  sortField: 'name' | 'group' | 'host' = 'name';
+  sortField: 'name' | 'group' | 'state' | 'host' = 'name';
 
   constructor(private api: VmService) {
     this.source$ = this.refresh$.pipe(
       debounceTime(300),
       switchMap(() => this.api.list('')),
       map(vms => this.filterVms(vms, this.search.term)),
+      map(vms => vms.map(vm => ({
+        ...vm,
+        parsedGroup: this.parseGroupName(vm.groupName)
+      }))),
       tap(r => {
         this.source = r;
         this.applySort();
@@ -63,7 +72,7 @@ export class VmBrowserComponent implements OnInit {
     });
   }
 
-  trackById(index: number, vm: Vm): string {
+  trackById(index: number, vm: VmWithParsedGroup): string {
     return vm.id || '';
   }
 
@@ -90,7 +99,7 @@ export class VmBrowserComponent implements OnInit {
     return { type: 'orphaned', name: prefix, id };
   }
 
-  sortBy(field: 'name' | 'group' | 'host'): void {
+  sortBy(field: 'name' | 'group' | 'state' | 'host'): void {
     if (this.sortField === field) {
       this.sortAscending = !this.sortAscending;
     } else {
@@ -109,6 +118,8 @@ export class VmBrowserComponent implements OnInit {
       switch (this.sortField) {
         case 'group':
           return (vm.groupName || '').toLowerCase();
+        case 'state':
+          return (vm.state || '').toLowerCase();
         case 'host':
           return (hostShort(vm) || '').toLowerCase();
         default:
