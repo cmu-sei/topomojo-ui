@@ -3,7 +3,7 @@
 
 <h4>Machines</h4>
 <div class="text-muted mb-2">
-  View all VMs TopoMojo is tracking and the gamespaces/workspaces they belong to. This is a read-only listing (you can’t control
+  View all VMs TopoMojo is tracking and the gamespaces/workspaces they belong to. This is a read-only listing (you can't control
   VMs from here). Use Search to find VMs by name, group, host, or paste a gamespace GUID.
 </div>
 
@@ -43,8 +43,8 @@
       placement="right"
       container="body"
       triggers="hover focus"
-      [tooltip]="'Sort by the VM’s name.'"
-      aria-label="Sort by the VM’s name."
+      tooltip="Sort by VM name."
+      aria-label="Sort by VM name."
     >
       <span>Machine Name</span>
       <fa-icon
@@ -55,7 +55,7 @@
     </button>
   </div>
 
-  <div class="col-5 px-4">
+  <div class="col-4 px-4">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -63,13 +63,33 @@
       placement="right"
       container="body"
       triggers="hover focus"
-      [tooltip]="'Sort by the gamespace or group this VM belongs to.'"
-      aria-label="Sort by the gamespace or group this VM belongs to."
+      tooltip="Sort by gamespace or group."
+      aria-label="Sort by gamespace or group."
     >
       <span>Gamespace / Group</span>
       <fa-icon
         class="ml-1"
         *ngIf="sortField === 'group'"
+        [icon]="sortAscending ? faSortUp : faSortDown">
+      </fa-icon>
+    </button>
+  </div>
+
+  <div class="col-1 px-4">
+    <button
+      type="button"
+      class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
+      (click)="sortBy('state')"
+      placement="right"
+      container="body"
+      triggers="hover focus"
+      tooltip="Sort by VM power state."
+      aria-label="Sort by VM power state."
+    >
+      <span>State</span>
+      <fa-icon
+        class="ml-1"
+        *ngIf="sortField === 'state'"
         [icon]="sortAscending ? faSortUp : faSortDown">
       </fa-icon>
     </button>
@@ -83,8 +103,8 @@
       placement="right"
       container="body"
       triggers="hover focus"
-      [tooltip]="'Sort by the hypervisor host currently running this VM.'"
-      aria-label="Sort by the hypervisor host currently running this VM."
+      tooltip="Sort by hypervisor host."
+      aria-label="Sort by hypervisor host."
     >
       <span>Host</span>
       <fa-icon
@@ -101,33 +121,41 @@
     <span class="text-break">{{ vm.name }}</span>
   </div>
 
-  <div class="col-5 px-4">
-    <ng-container *ngIf="parseGroupName(vm.groupName) as parsed">
-      <ng-container *ngIf="parsed.type === 'workspace'">
-        <a [routerLink]="['/topo', parsed.id]" class="text-secondary">{{ parsed.name }}</a>
-        <br/>
-        <small class="text-muted d-block text-break">
-          <app-clipspan>{{ parsed.id }}</app-clipspan>
-        </small>
-      </ng-container>
-      <ng-container *ngIf="parsed.type === 'gamespace'">
-        <a [routerLink]="['/mojo', parsed.id]" class="text-secondary">{{ parsed.name }}</a>
-        <br/>
-        <small class="text-muted d-block text-break">
-          <app-clipspan>{{ parsed.id }}</app-clipspan>
-        </small>
-      </ng-container>
-      <ng-container *ngIf="parsed.type === 'orphaned'">
-        <span class="text-warning">
-          <fa-icon [icon]="faInfoCircle" class="mr-1"></fa-icon>
-          Orphaned
-        </span>
-        <br/>
-        <small class="text-muted d-block text-break">
-          <app-clipspan>{{ parsed.id }}</app-clipspan>
-        </small>
-      </ng-container>
+  <div class="col-4 px-4">
+    <ng-container *ngIf="vm.parsedGroup.type === 'workspace'">
+      <a [routerLink]="['/topo', vm.parsedGroup.id]" class="text-secondary">{{ vm.parsedGroup.name }}</a>
+      <br/>
+      <small class="text-muted d-block text-nowrap">
+        <app-clipspan>{{ vm.parsedGroup.id }}</app-clipspan>
+      </small>
     </ng-container>
+    <ng-container *ngIf="vm.parsedGroup.type === 'gamespace'">
+      <a [routerLink]="['/mojo', vm.parsedGroup.id]" class="text-secondary">{{ vm.parsedGroup.name }}</a>
+      <br/>
+      <small class="text-muted d-block text-nowrap">
+        <app-clipspan>{{ vm.parsedGroup.id }}</app-clipspan>
+      </small>
+    </ng-container>
+    <ng-container *ngIf="vm.parsedGroup.type === 'orphaned'">
+      <span class="text-warning">
+        <fa-icon [icon]="faInfoCircle" class="mr-1"></fa-icon>
+        Orphaned
+      </span>
+      <br/>
+      <small class="text-muted d-block text-nowrap">
+        <app-clipspan>{{ vm.parsedGroup.id }}</app-clipspan>
+      </small>
+    </ng-container>
+  </div>
+
+  <div class="col-1 px-4">
+    <small [ngClass]="{
+      'text-success': vm.state === VmStateEnum.running,
+      'text-muted': vm.state === VmStateEnum.off,
+      'text-warning': vm.state === VmStateEnum.suspended
+    }">
+      {{ vm.state || 'unknown' }}
+    </small>
   </div>
 
   <div class="col-2 px-4">

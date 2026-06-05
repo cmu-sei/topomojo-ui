@@ -1,9 +1,10 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, Input, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { faBolt, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
-import { finalize } from 'rxjs/operators';
+import { finalize, switchMap, filter, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { GamespaceService } from '../api/gamespace.service';
 import { GameState, VmState } from '../api/gen/models';
 import { ConfigService } from '../config.service';
@@ -16,7 +17,7 @@ import { VmService } from '../api/vm.service';
   styleUrls: ['./gamespace-state.component.scss'],
   standalone: false
 })
-export class GamespaceStateComponent implements OnInit, OnChanges {
+export class GamespaceStateComponent implements OnInit, OnChanges, OnDestroy {
   @Input() game!: GameState;
   deploying = false;
   faBolt = faBolt;
@@ -26,6 +27,9 @@ export class GamespaceStateComponent implements OnInit, OnChanges {
   isAdmin = false;
   orphanedVmCount = 0;
 
+  private destroy$ = new Subject<void>();
+  private gameChange$ = new BehaviorSubject<GameState | null>(null);
+
   constructor(
     private api: GamespaceService,
     private conf: ConfigService,
@@ -34,23 +38,39 @@ export class GamespaceStateComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit(): void {
-    this.userSvc.user$.subscribe(u => {
+    // Combine user admin status with game changes to fetch orphaned VMs
+    combineLatest([
+      this.userSvc.user$,
+      this.gameChange$
+    ]).pipe(
+      filter(([user, game]) =>
+        !!game && (user?.isAdmin || false) && !game.isActive && !!game.id
+      ),
+      distinctUntilChanged(
+        ([prevUser, prevGame], [currUser, currGame]) =>
+          prevGame?.id === currGame?.id && prevGame?.isActive === currGame?.isActive
+      ),
+      switchMap(([user, game]) => this.vmApi.list(game!.id!)),
+      takeUntil(this.destroy$)
+    ).subscribe(vms => {
+      this.orphanedVmCount = vms.length;
+    });
+
+    // Track admin status separately for template
+    this.userSvc.user$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(u => {
       this.isAdmin = u?.isAdmin || false;
-      this.checkOrphanedVms();
     });
   }
 
   ngOnChanges(): void {
-    this.checkOrphanedVms();
+    this.gameChange$.next(this.game);
   }
 
-  private checkOrphanedVms(): void {
-    if (this.isAdmin && !this.game.isActive && this.game.id) {
-      // Check if VMs exist for this ended gamespace
-      this.vmApi.list(this.game.id).subscribe(vms => {
-        this.orphanedVmCount = vms.length;
-      });
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   start(): void {
