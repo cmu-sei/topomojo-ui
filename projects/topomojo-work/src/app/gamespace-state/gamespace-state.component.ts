@@ -3,7 +3,7 @@
 
 import { Component, Input, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { faBolt, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
-import { finalize, switchMap, filter, distinctUntilChanged } from 'rxjs/operators';
+import { finalize, switchMap, filter, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Subject, combineLatest } from 'rxjs';
 import { GamespaceService } from '../api/gamespace.service';
 import { GameState, VmState } from '../api/gen/models';
@@ -48,15 +48,18 @@ export class GamespaceStateComponent implements OnInit, OnChanges, OnDestroy {
       ),
       distinctUntilChanged(
         ([prevUser, prevGame], [currUser, currGame]) =>
-          prevGame.id === currGame.id && prevGame.isActive === currGame.isActive
+          prevGame.id === currUser.id && prevGame.isActive === currGame.isActive
       ),
-      switchMap(([user, game]) => this.vmApi.list(game.id!))
+      switchMap(([user, game]) => this.vmApi.list(game.id!)),
+      takeUntil(this.destroy$)
     ).subscribe(vms => {
       this.orphanedVmCount = vms.length;
     });
 
     // Track admin status separately for template
-    this.userSvc.user$.subscribe(u => {
+    this.userSvc.user$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(u => {
       this.isAdmin = u?.isAdmin || false;
     });
   }
