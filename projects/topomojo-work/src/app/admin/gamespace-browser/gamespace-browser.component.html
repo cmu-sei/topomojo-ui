@@ -14,9 +14,6 @@
       <span
         class="input-group-text"
         [tooltip]="'Search by gamespace ID, manager name, or workspace title.'"
-        placement="right"
-        container="body"
-        triggers="hover focus"
         aria-label="Search by gamespace ID, manager name, or workspace title."
       >
         <fa-icon [icon]="faSearch"></fa-icon>
@@ -42,9 +39,6 @@
     class="mr-1 btn btn-link text-success btn-sm"
     (click)="toggleFilter('active')"
     [tooltip]="'Show active gamespaces (currently running).'"
-    placement="right"
-    container="body"
-    triggers="hover focus"
     aria-label="Show active gamespaces (currently running)."
   >
     <fa-icon [hidden]="filter!=='active'" [icon]="faFilter"></fa-icon>
@@ -55,9 +49,6 @@
     class="mr-1 btn btn-link text-success btn-sm"
     (click)="toggleFilter('inactive')"
     [tooltip]="'Show inactive gamespaces (completed or expired).'"
-    placement="right"
-    container="body"
-    triggers="hover focus"
     aria-label="Show inactive gamespaces (completed or expired)."
   >
     <fa-icon [hidden]="filter!=='inactive'" [icon]="faFilter"></fa-icon>
@@ -95,9 +86,6 @@
     (click)="toggleAll()"
     aria-label="Select or deselect all gamespaces in the current list."
     [tooltip]="'Select or deselect all gamespaces in the current list.'"
-    placement="right"
-    container="body"
-    triggers="hover focus"
   >
     <fa-icon [icon]="selectAllValue ? faChecked : faUnChecked"></fa-icon>
   </button>
@@ -115,10 +103,6 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('id')"
-      [tooltip]="'Sort by gamespace ID.'"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       aria-label="Sort by gamespace ID."
     >
       ID
@@ -131,10 +115,6 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('session')"
-      [tooltip]="'Sort by remaining time (active gamespaces).'"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       aria-label="Sort by remaining time (active gamespaces)."
     >
       Time Left
@@ -147,10 +127,6 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('created')"
-      [tooltip]="'Sort by creation date.'"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       aria-label="Sort by creation date."
     >
       Created Date
@@ -163,10 +139,6 @@
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
       (click)="sortBy('managerWorkspace')"
-      [tooltip]="'Sort by manager name and workspace title.'"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       aria-label="Sort by manager name and workspace title."
     >
       Manager / Workspace
@@ -189,9 +161,6 @@
       class="btn btn-light btn-sm"
       (click)="toggle(g)"
       [tooltip]="g.checked ? 'Deselect gamespace' : 'Select gamespace'"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [attr.aria-label]="g.checked ? 'Deselect gamespace' : 'Select gamespace'"
     >
       <fa-icon [icon]="g.checked ? faChecked : faUnChecked"></fa-icon>
@@ -204,9 +173,6 @@
       (click)="toggleGamespaceFavorite(g, $event)"
       [attr.aria-label]="isGamespaceFavorite(g.id) ? 'Unfavorite gamespace' : 'Favorite gamespace'"
       [tooltip]="isGamespaceFavorite(g.id) ? 'Unfavorite (pin to top)' : 'Favorite (pin to top)'"
-      placement="right"
-      container="body"
-      triggers="hover focus"
     >
       <fa-icon
         [icon]="isGamespaceFavorite(g.id) ? faStarSolid : faStarRegular"
@@ -220,10 +186,6 @@
       class="px-1"
       [class.pop-success]="!g.gameOver"
       [class.pop-dark]="g.gameOver"
-      [tooltip]="'Gamespace ID (short form).'"
-      placement="right"
-      container="body"
-      triggers="hover focus"
       aria-label="Gamespace ID (short form)."
     >
       {{ g.id | slice:0:8 }}
@@ -232,9 +194,6 @@
 
   <div class="col-2">
     <small
-      placement="right"
-      container="body"
-      triggers="hover focus"
       [tooltip]="'Time remaining (active gamespaces).'"
       aria-label="Time remaining (active gamespaces)."
     >
@@ -258,9 +217,6 @@
       <button
         class="btn btn-outline-info btn-sm tm-action-btn tm-action-fixed"
         (click)="view(g)"
-        placement="right"
-        container="body"
-        triggers="hover focus"
         [tooltip]="'Expand to view gamespace details and VM state.'"
         aria-label="Expand to view gamespace details and VM state."
       >
@@ -277,9 +233,6 @@
       >
         <span
           class="d-inline-flex align-items-center"
-          placement="right"
-          container="body"
-          triggers="hover focus"
           [tooltip]="'Delete this gamespace and its associated VMs.'"
           aria-label="Delete this gamespace and its associated VMs."
         >

@@ -74,10 +74,6 @@
             <fa-icon [icon]="faCompactDisc" class="mr-2"></fa-icon>
             <span
               class="iso-filename"
-              [tooltip]="f.filename"
-              placement="top"
-              container="body"
-              triggers="hover focus"
             >{{f.filename}}</span>
             <span *ngIf="!showWorkspaceContext && f.isGlobal" class="badge badge-primary ml-1">Global</span>
           </td>
@@ -107,7 +103,10 @@
               btnClass="btn btn-outline-danger btn-sm tm-action-btn"
               (confirm)="attemptDelete(f)"
               [attr.aria-label]="'delete ' + f.filename">
-              <span class="d-inline-flex align-items-center">
+              <span
+                class="d-inline-flex align-items-center"
+                [tooltip]="'Delete this ISO file.'"
+                [attr.aria-label]="'Delete ' + f.filename">
                 <fa-icon [icon]="faTrash"></fa-icon>
                 <span>Delete</span>
               </span>
