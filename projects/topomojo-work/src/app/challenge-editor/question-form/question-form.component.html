@@ -151,6 +151,22 @@
             class="form-control"
             formControlName="weight"
             placeholder=""
+            (mouseenter)="infotip=5"
+          >
+        </div>
+
+        <div class="form-group col-2 py-0">
+          <label for="penalty-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
+            Penalty
+          </label>
+
+          <input
+            id="penalty-input{{vindex}}.{{this.index}}.{{i}}"
+            type="number"
+            class="form-control"
+            formControlName="penalty"
+            placeholder="0"
+            (mouseenter)="infotip=6"
           >
         </div>
 
@@ -175,6 +191,10 @@
           <small *ngIf="infotip===5">
             Percentage of total for this question. Value should be between <code>0 and 1</code>, or <code>0 and 100</code>, inclusive.
             0 values are calculated evenly.
+          </small>
+          <small *ngIf="infotip===6">
+            Point deduction per wrong submission. Subtracted from weight when question is finally answered correctly.
+            Value should match weight scale (0-1 or 0-100).
           </small>
         </div>
       </div>
