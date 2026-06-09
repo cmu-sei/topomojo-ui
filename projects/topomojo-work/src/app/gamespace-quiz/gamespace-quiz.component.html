@@ -31,7 +31,7 @@
     <div class="alert alert-info my-3">
       <div class="d-flex align-items-center justify-content-between">
         <div>
-          <strong>Final Score:</strong> {{challengeProgress.score}} of {{challengeProgress.maxPoints}}
+          <strong>Final Score:</strong> {{challengeProgress.score | number:'1.0-2'}} of {{challengeProgress.maxPoints}}
         </div>
         <div>
           <strong>Attempts Used:</strong> {{challengeProgress.attempts}} of {{challengeProgress.maxAttempts}}
@@ -72,7 +72,7 @@
         <strong>
           Score:
         </strong>
-        {{state.challenge.score}} of {{state.challenge.maxPoints}}
+        {{state.challenge.score | number:'1.0-2'}} of {{state.challenge.maxPoints}}
       </div>
     </div>
   </ng-container>
