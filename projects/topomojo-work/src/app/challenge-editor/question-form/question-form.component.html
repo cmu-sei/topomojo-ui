@@ -151,6 +151,7 @@
             class="form-control"
             formControlName="weight"
             placeholder=""
+            min="0"
             (mouseenter)="infotip=5"
           >
         </div>
@@ -166,6 +167,7 @@
             class="form-control"
             formControlName="penalty"
             placeholder="0"
+            min="0"
             (mouseenter)="infotip=6"
           >
         </div>
@@ -195,6 +197,9 @@
           <small *ngIf="infotip===6">
             Percentage deducted per wrong attempt (cumulative). <strong>MUST use same scale as weight</strong> (<code>0-1</code> or <code>0-100</code>).
             Example: weight 0.5, penalty 0.1 → wrong once = 40 pts, wrong twice = 30 pts, correct first try = 50 pts.
+          </small>
+          <small class="text-warning" *ngIf="q.get('penalty')?.value > q.get('weight')?.value && q.get('weight')?.value > 0">
+            ⚠️ Penalty exceeds weight - may result in negative scores after multiple wrong attempts.
           </small>
         </div>
       </div>
