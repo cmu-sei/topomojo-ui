@@ -26,6 +26,20 @@
     </app-confirm-button>
   </div>
 
+  <!-- Final score display after game ends -->
+  <ng-container *ngIf="state.gameOver || !state.session.isDuring">
+    <div class="alert alert-info my-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <strong>Final Score:</strong> {{challengeProgress.score}} of {{challengeProgress.maxPoints}}
+        </div>
+        <div>
+          <strong>Attempts Used:</strong> {{challengeProgress.attempts}} of {{challengeProgress.maxAttempts}}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
   <ng-container *ngIf="!state.gameOver && state.session.isDuring">
     <alert type="info" class="d-block my-3"
       *ngIf="challengeProgress.nextSectionPreReqThisSection || challengeProgress.nextSectionPreReqTotal">
