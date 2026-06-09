@@ -151,6 +151,24 @@
             class="form-control"
             formControlName="weight"
             placeholder=""
+            min="0"
+            (mouseenter)="infotip=5"
+          >
+        </div>
+
+        <div class="form-group col-2 py-0">
+          <label for="penalty-input{{vindex}}.{{this.index}}.{{i}}" class="mb-0 d-flex align-items-center">
+            Penalty
+          </label>
+
+          <input
+            id="penalty-input{{vindex}}.{{this.index}}.{{i}}"
+            type="number"
+            class="form-control"
+            formControlName="penalty"
+            placeholder="0"
+            min="0"
+            (mouseenter)="infotip=6"
           >
         </div>
 
@@ -173,8 +191,15 @@
           <small *ngIf="infotip===3">MatchAll &mdash; match all of the pipe-delimited answers, regardless of order</small>
           <small *ngIf="infotip===4">MatchAlpha &mdash; match answer exactly after stripping any symbols</small>
           <small *ngIf="infotip===5">
-            Percentage of total for this question. Value should be between <code>0 and 1</code>, or <code>0 and 100</code>, inclusive.
-            0 values are calculated evenly.
+            Percentage of challenge total for this question. Use <code>0-1</code> (e.g., 0.5 = 50%) or <code>0-100</code> (e.g., 50 = 50%).
+            Leave at 0 to distribute weight evenly across all questions.
+          </small>
+          <small *ngIf="infotip===6">
+            Percentage deducted per wrong attempt (cumulative). <strong>MUST use same scale as weight</strong> (<code>0-1</code> or <code>0-100</code>).
+            Example: weight 0.5, penalty 0.1 → wrong once = 40 pts, wrong twice = 30 pts, correct first try = 50 pts.
+          </small>
+          <small class="text-warning" *ngIf="q.get('penalty')?.value > q.get('weight')?.value && q.get('weight')?.value > 0">
+            ⚠️ Penalty exceeds weight - may result in negative scores after multiple wrong attempts.
           </small>
         </div>
       </div>

@@ -14,7 +14,7 @@
 
     <div *ngFor="let q of section.questions; let i=index" class="form-group p-2 my-3" [class.pop-info]="!q.isGraded"
       [class.pop-success]="q.isGraded && q.isCorrect" [class.pop-warning]="q.isGraded && !q.isCorrect">
-      <label>{{i+1}}. ({{q.weight}}) {{q.text}}</label>
+      <label>{{i+1}}. ({{(q.weight * challengeProgress.maxPoints) | number:'1.0-0'}}) {{q.text}}</label>
       <input class="form-control" [readonly]="q.isCorrect" [(ngModel)]="q.answer">
       <small [hidden]="!q.example">Example answer: {{q.example}}</small>
     </div>
@@ -25,6 +25,20 @@
       <span>Submit</span>
     </app-confirm-button>
   </div>
+
+  <!-- Final score display after game ends -->
+  <ng-container *ngIf="state.gameOver || !state.session.isDuring">
+    <div class="alert alert-info my-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <strong>Final Score:</strong> {{challengeProgress.score | number:'1.0-2'}} of {{challengeProgress.maxPoints}}
+        </div>
+        <div>
+          <strong>Attempts Used:</strong> {{challengeProgress.attempts}} of {{challengeProgress.maxAttempts}}
+        </div>
+      </div>
+    </div>
+  </ng-container>
 
   <ng-container *ngIf="!state.gameOver && state.session.isDuring">
     <alert type="info" class="d-block my-3"
@@ -58,7 +72,7 @@
         <strong>
           Score:
         </strong>
-        {{state.challenge.score}} of {{state.challenge.maxPoints}}
+        {{state.challenge.score | number:'1.0-2'}} of {{state.challenge.maxPoints}}
       </div>
     </div>
   </ng-container>
