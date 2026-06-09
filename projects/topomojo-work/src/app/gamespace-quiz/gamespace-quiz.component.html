@@ -14,7 +14,7 @@
 
     <div *ngFor="let q of section.questions; let i=index" class="form-group p-2 my-3" [class.pop-info]="!q.isGraded"
       [class.pop-success]="q.isGraded && q.isCorrect" [class.pop-warning]="q.isGraded && !q.isCorrect">
-      <label>{{i+1}}. ({{q.weight}}) {{q.text}}</label>
+      <label>{{i+1}}. ({{(q.weight * challengeProgress.maxPoints) | number:'1.0-0'}}) {{q.text}}</label>
       <input class="form-control" [readonly]="q.isCorrect" [(ngModel)]="q.answer">
       <small [hidden]="!q.example">Example answer: {{q.example}}</small>
     </div>
