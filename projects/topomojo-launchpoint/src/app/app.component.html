@@ -39,7 +39,7 @@
 
     <div *ngIf="state.vms" class="flex-h z10 vms">
 
-      <div class="btn btn-lg" *ngFor="let vm of state.vms" (click)="open(vm)">
+      <div class="btn btn-lg" *ngFor="let vm of state.vms" (click)="open(vm, state.id)">
         <fa-icon [icon]="faTv"></fa-icon>
         <span>{{vm.name}}</span>
       </div>

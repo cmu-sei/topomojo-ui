@@ -7,14 +7,16 @@ import { ConfigService } from '../config.service';
 @Injectable()
 export class ApiSettings {
 
-  api: string;
-  docs: string;
-
   constructor(
-      config: ConfigService
-  ) {
-      this.api = `${config.apphost}api`;
-      this.docs = `${config.apphost}docs`;
+      private config: ConfigService
+  ) {}
+
+  get api(): string {
+      return `${this.config.apphost}api`;
+  }
+
+  get docs(): string {
+      return `${this.config.apphost}docs`;
   }
 
 }
