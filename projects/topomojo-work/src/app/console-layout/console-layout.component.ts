@@ -2,7 +2,7 @@ import { Component, effect, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { first, firstValueFrom, forkJoin, map, Observable } from 'rxjs';
+import { catchError, first, firstValueFrom, forkJoin, map, Observable, of } from 'rxjs';
 import { ConsoleClientType, ConsoleComponent, ConsoleComponentConfig, ConsoleComponentNetworkConfig, ConsoleNetworkConnectionRequest, ConsoleNetworkDisconnectionRequest } from '@cmusei/console-forge';
 import { ConsoleRequest, ConsoleSummary } from '../consoles-api.models';
 import { ConsolesApiService } from '../consoles-api.service';
@@ -106,29 +106,34 @@ export class ConsoleLayoutComponent {
     }
 
     try {
-      // ensure logged in
-      // TODO: does this token even matter? previous implementation was looking for this in the querystring and not finding it, I don't think
-      await firstValueFrom(this.api.redeem(this.consoleRequest()?.token));
+      // A ticket is only present for direct console handoffs. LP already establishes
+      // the cookie session before opening its console URL.
+      if (request.token) {
+        await firstValueFrom(this.api.redeem(request.token));
+      }
 
-      forkJoin([
-        this.api.nets(request.sessionId || ""),
-        this.api.ticket(request)
-      ]).subscribe(results => {
-        // update available networks
-        const vmOptions = results[0];
+      this.api.ticket(request).subscribe({
+        next: consoleSummary => {
+          this.connectConsole(consoleSummary);
+          if (request.name) {
+            this.title.setTitle(`console: ${request.name}`);
+          }
+        },
+        error: err => this.errors.push(err)
+      });
+
+      this.api.nets(request.sessionId || "").pipe(
+        catchError(() => of(undefined))
+      ).subscribe(vmOptions => {
+        if (!vmOptions) {
+          return;
+        }
+
         this.consoleNetworkConfig.update(() => ({
           networks: vmOptions.net.sort(),
           nics: this.availableNics,
           currentConnections: {}
         }));
-
-        // and the console config
-        this.connectConsole(results[1]);
-
-        // then miscellany like the page title
-        if (request.name) {
-          this.title.setTitle(`console: ${request.name}`);
-        }
       });
     }
     catch (err) {

@@ -4,6 +4,7 @@
 export interface ConsoleRequest {
     name?: string;
     sessionId?: string;
+    token?: string;
 }
 
 export interface ConsolePresence {

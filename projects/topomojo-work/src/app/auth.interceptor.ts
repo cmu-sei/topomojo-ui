@@ -17,10 +17,18 @@ export class AuthInterceptor implements HttpInterceptor {
             return next.handle(req);
         }
 
+        const authorization = this.injector.get(AuthService).auth_header();
+        if (authorization === 'no_token') {
+            return next.handle(req.clone({ withCredentials: true }));
+        }
+
         return next.handle(
-            req.clone({setHeaders: {
-                Authorization: this.injector.get(AuthService).auth_header()
-            }})
+            req.clone({
+                setHeaders: {
+                    Authorization: authorization
+                },
+                withCredentials: true
+            })
         );
     }
 }
