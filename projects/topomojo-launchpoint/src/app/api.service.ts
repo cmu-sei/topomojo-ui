@@ -26,7 +26,9 @@ export class ApiService {
     const target = loc.getBaseHrefFromDOM();
     const basehref = target.split('/').slice(0, -2).join('/');
     this.url = environment.apiUrl || `${basehref}/api`;
-    this.consoleUrl = `${basehref}/c`;
+    this.consoleUrl = environment.mksUrl
+      ? `${environment.mksUrl.replace(/\/$/, '')}/c`
+      : `${basehref}/c`;
   }
 
   login(ticket: string): Observable<any> {
