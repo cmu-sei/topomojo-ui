@@ -3,9 +3,12 @@
 @if (consoleConfig())
 {
 <cf-console [autoConnect]="false" [config]="consoleConfig()!" [networkConfig]="consoleNetworkConfig()"
+    [vmPowerState]="vmPowerState()"
     (networkDisconnectRequested)="handleNetworkDisconnectRequest($event)"
     (networkConnectionRequested)="handleNetworkConnectRequest($event)"
-    (reconnectRequest)="handleReconnectRequest()"></cf-console>
+    (reconnectRequest)="handleReconnectRequest()"
+    (connectionStatusChanged)="handleConnectionStatusChanged($event)"
+    (powerOnRequested)="handlePowerOnRequested()"></cf-console>
 }
 @else
 {

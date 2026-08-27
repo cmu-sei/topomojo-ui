@@ -1,10 +1,10 @@
-import { Component, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, effect, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, first, firstValueFrom, forkJoin, map, Observable, of } from 'rxjs';
-import { ConsoleClientType, ConsoleComponent, ConsoleComponentConfig, ConsoleComponentNetworkConfig, ConsoleNetworkConnectionRequest, ConsoleNetworkDisconnectionRequest } from '@cmusei/console-forge';
-import { ConsoleRequest, ConsoleSummary } from '../consoles-api.models';
+import { catchError, first, firstValueFrom, forkJoin, interval, map, Observable, of, Subscription, switchMap } from 'rxjs';
+import { ConsoleClientType, ConsoleComponent, ConsoleComponentConfig, ConsoleComponentNetworkConfig, ConsoleConnectionStatus, ConsoleNetworkConnectionRequest, ConsoleNetworkDisconnectionRequest, ConsoleVmPowerState } from '@cmusei/console-forge';
+import { ConsoleRequest, ConsoleSummary, VmOperationTypeEnum } from '../consoles-api.models';
 import { ConsolesApiService } from '../consoles-api.service';
 
 @Component({
@@ -17,6 +17,7 @@ export class ConsoleLayoutComponent {
   private readonly api = inject(ConsolesApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly title = inject(Title);
+  private readonly destroyRef = inject(DestroyRef);
 
   private consoleRequest = toSignal(this.route.queryParams.pipe(map(p => ({
     name: p.name,
@@ -32,6 +33,9 @@ export class ConsoleLayoutComponent {
   // assume three nics, like topo classic
   private readonly availableNics = ["NIC1", "NIC2", "NIC3"];
   private topoVmId = "";
+  private readonly pollIntervalMs = 5000;
+  protected vmPowerState = signal<ConsoleVmPowerState>("unknown");
+  private pollSub?: Subscription;
 
   constructor() {
     effect(() => {
@@ -45,7 +49,7 @@ export class ConsoleLayoutComponent {
       const consoleConfig = this.consoleConfig();
       const component = this.consoleComponent();
 
-      if (consoleConfig && component) {
+      if (consoleConfig?.url && component) {
         component.connect(consoleConfig);
       }
     });
@@ -98,8 +102,8 @@ export class ConsoleLayoutComponent {
   }
 
   private async loadConsoleData(request?: ConsoleRequest) {
+    this.stopPolling();
     this.errors = [];
-
     if (!request) {
       this.consoleNetworkConfig.update(() => undefined);
       return;
@@ -114,7 +118,7 @@ export class ConsoleLayoutComponent {
 
       this.api.ticket(request).subscribe({
         next: consoleSummary => {
-          this.connectConsole(consoleSummary);
+          this.applyConsoleSummary(consoleSummary);
           if (request.name) {
             this.title.setTitle(`console: ${request.name}`);
           }
@@ -141,17 +145,74 @@ export class ConsoleLayoutComponent {
     }
   }
 
-  private connectConsole(consoleSummary: ConsoleSummary) {
-    // Topo's API returns a non-null ticket value for proxmox/VNC consoles
-    const consoleClientType: ConsoleClientType = consoleSummary.ticket !== null ? "vnc" : "vmware";
+  private applyConsoleSummary(consoleSummary: ConsoleSummary) {
     this.topoVmId = consoleSummary.id;
-    this.consoleConfig.update(() => ({
-      autoFocusOnConnect: true,
-      consoleClientType,
-      credentials: {
-        accessTicket: consoleSummary.ticket
-      },
-      url: consoleSummary.url,
-    }));
+
+    // The API only returns a console URL when the hypervisor granted a ticket, which requires a
+    // powered-on VM. That's a fresher signal than isRunning, which trails the hypervisor cache
+    // (refreshed every 30s server-side).
+    const isConnectable = !!consoleSummary.url;
+    this.vmPowerState.set(isConnectable ? "on" : (consoleSummary.isRunning ? "unknown" : "off"));
+
+    const current = this.consoleConfig();
+    if (!current || current.url !== consoleSummary.url || current.credentials?.accessTicket !== consoleSummary.ticket) {
+      this.consoleConfig.set({
+        autoFocusOnConnect: true,
+        // Topo's API returns a non-null ticket value for proxmox/VNC consoles
+        consoleClientType: (consoleSummary.ticket !== null ? "vnc" : "vmware") as ConsoleClientType,
+        credentials: { accessTicket: consoleSummary.ticket },
+        url: consoleSummary.url,
+      });
+    }
+
+    if (isConnectable) {
+      this.stopPolling();
+    } else {
+      this.startPolling();
+    }
+  }
+
+  private startPolling() {
+    if (this.pollSub) {
+      return;
+    }
+
+    const request = this.consoleRequest();
+    if (!request) {
+      return;
+    }
+
+    this.pollSub = interval(this.pollIntervalMs).pipe(
+      switchMap(() => this.api.ticket(request).pipe(catchError(() => of(undefined)))),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(consoleSummary => {
+      if (consoleSummary) {
+        this.applyConsoleSummary(consoleSummary);
+      }
+    });
+  }
+
+  private stopPolling() {
+    this.pollSub?.unsubscribe();
+    this.pollSub = undefined;
+  }
+
+  protected handleConnectionStatusChanged(status?: ConsoleConnectionStatus) {
+    // covers a VM powered off out from under a live console: poll decides whether this is a
+    // power-off (show the power overlay) or a transient disconnect (Forge's banner stays)
+    if (status === "disconnected") {
+      this.startPolling();
+    }
+  }
+
+  protected handlePowerOnRequested() {
+    if (!this.topoVmId) {
+      return;
+    }
+
+    this.api.power({ id: this.topoVmId, type: VmOperationTypeEnum.start }).pipe(
+      catchError(err => { this.errors.push(err); return of(undefined); }),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => this.startPolling());
   }
 }

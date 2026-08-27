@@ -25,7 +25,7 @@ export interface ConsoleSummary {
 
 export interface VmOperation {
     id: string;
-    op: string;
+    type: VmOperationTypeEnum;
 }
 
 export interface VmOptions {
