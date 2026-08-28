@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
@@ -34,8 +34,30 @@ export class ConsoleLayoutComponent {
   private readonly availableNics = ["NIC1", "NIC2", "NIC3"];
   private topoVmId = "";
   private readonly pollIntervalMs = 5000;
-  protected vmPowerState = signal<ConsoleVmPowerState>("unknown");
+  private readonly consoleSummary = signal<ConsoleSummary | undefined>(undefined);
+  private readonly connectionStatus = signal<ConsoleConnectionStatus | undefined>(undefined);
   private pollSub?: Subscription;
+  private pollRequest?: ConsoleRequest;
+
+  // isRunning is authoritative: Proxmox hands out a vncproxy ticket even for a stopped VM, so a
+  // non-empty console URL does not imply the machine is powered on. A live console connection does,
+  // and it outranks isRunning, which trails the hypervisor cache by up to 30s.
+  protected vmPowerState = computed<ConsoleVmPowerState>(() => {
+    if (this.connectionStatus() === "connected") {
+      return "on";
+    }
+
+    const summary = this.consoleSummary();
+    if (!summary) {
+      return "unknown";
+    }
+
+    if (summary.isRunning === false) {
+      return "off";
+    }
+
+    return summary.url ? "on" : "unknown";
+  });
 
   constructor() {
     effect(() => {
@@ -51,6 +73,19 @@ export class ConsoleLayoutComponent {
 
       if (consoleConfig?.url && component) {
         component.connect(consoleConfig);
+      }
+    });
+
+    // Poll until the console is actually connected. That covers a power-off under a live console
+    // (isRunning refreshes and the overlay appears), an out-of-band power-on, and the reconnect
+    // after our own power-on: each poll republishes a fresh ticket, which the effect above connects.
+    effect(() => {
+      const request = this.consoleRequest();
+
+      if (!request || this.connectionStatus() === "connected") {
+        this.stopPolling();
+      } else {
+        this.startPolling(request);
       }
     });
   }
@@ -102,7 +137,10 @@ export class ConsoleLayoutComponent {
   }
 
   private async loadConsoleData(request?: ConsoleRequest) {
-    this.stopPolling();
+    // the polling effect owns the poll subscription; clear the state it derives from so a new
+    // request re-evaluates power state from scratch
+    this.consoleSummary.set(undefined);
+    this.connectionStatus.set(undefined);
     this.errors = [];
     if (!request) {
       this.consoleNetworkConfig.update(() => undefined);
@@ -147,40 +185,34 @@ export class ConsoleLayoutComponent {
 
   private applyConsoleSummary(consoleSummary: ConsoleSummary) {
     this.topoVmId = consoleSummary.id;
+    this.consoleSummary.set(consoleSummary);
 
-    // The API only returns a console URL when the hypervisor granted a ticket, which requires a
-    // powered-on VM. That's a fresher signal than isRunning, which trails the hypervisor cache
-    // (refreshed every 30s server-side).
-    const isConnectable = !!consoleSummary.url;
-    this.vmPowerState.set(isConnectable ? "on" : (consoleSummary.isRunning ? "unknown" : "off"));
+    // Proxmox mints a fresh vncticket on every poll, even for a stopped machine. Connecting those
+    // just fails, so a powered-off VM publishes an empty URL: cf-console still renders (which is
+    // what hosts the power overlay) and the first poll that reports running triggers the connect.
+    const isOff = consoleSummary.isRunning === false;
+    const url = isOff ? "" : consoleSummary.url;
+    const accessTicket = isOff ? undefined : consoleSummary.ticket;
 
     const current = this.consoleConfig();
-    if (!current || current.url !== consoleSummary.url || current.credentials?.accessTicket !== consoleSummary.ticket) {
+    if (!current || current.url !== url || current.credentials?.accessTicket !== accessTicket) {
       this.consoleConfig.set({
         autoFocusOnConnect: true,
         // Topo's API returns a non-null ticket value for proxmox/VNC consoles
         consoleClientType: (consoleSummary.ticket !== null ? "vnc" : "vmware") as ConsoleClientType,
-        credentials: { accessTicket: consoleSummary.ticket },
-        url: consoleSummary.url,
+        credentials: { accessTicket },
+        url,
       });
-    }
-
-    if (isConnectable) {
-      this.stopPolling();
-    } else {
-      this.startPolling();
     }
   }
 
-  private startPolling() {
-    if (this.pollSub) {
+  private startPolling(request: ConsoleRequest) {
+    if (this.pollSub && this.pollRequest === request) {
       return;
     }
 
-    const request = this.consoleRequest();
-    if (!request) {
-      return;
-    }
+    this.stopPolling();
+    this.pollRequest = request;
 
     this.pollSub = interval(this.pollIntervalMs).pipe(
       switchMap(() => this.api.ticket(request).pipe(catchError(() => of(undefined)))),
@@ -195,14 +227,11 @@ export class ConsoleLayoutComponent {
   private stopPolling() {
     this.pollSub?.unsubscribe();
     this.pollSub = undefined;
+    this.pollRequest = undefined;
   }
 
   protected handleConnectionStatusChanged(status?: ConsoleConnectionStatus) {
-    // covers a VM powered off out from under a live console: poll decides whether this is a
-    // power-off (show the power overlay) or a transient disconnect (Forge's banner stays)
-    if (status === "disconnected") {
-      this.startPolling();
-    }
+    this.connectionStatus.set(status);
   }
 
   protected handlePowerOnRequested() {
@@ -213,6 +242,6 @@ export class ConsoleLayoutComponent {
     this.api.power({ id: this.topoVmId, type: VmOperationTypeEnum.start }).pipe(
       catchError(err => { this.errors.push(err); return of(undefined); }),
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => this.startPolling());
+    ).subscribe();
   }
 }

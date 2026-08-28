@@ -14,6 +14,7 @@ type ConsoleLayoutTestAccess = {
   vmPowerState: () => string;
   consoleConfig: () => { url: string } | undefined;
   handlePowerOnRequested: () => void;
+  handleConnectionStatusChanged: (status?: string) => void;
 };
 
 function testAccess(component: ConsoleLayoutComponent): ConsoleLayoutTestAccess {
@@ -36,6 +37,16 @@ const poweredOnSummary = {
   url: 'wss://host/console',
   ticket: 't1',
   isRunning: true
+};
+
+// Proxmox grants a vncproxy ticket even when the VM is stopped, so a URL alone does not mean "on"
+const stoppedProxmoxSummary = {
+  id: 'vm-1',
+  isolationId: 'iso1',
+  name: 'vm1',
+  url: 'wss://pve1/api2/json/nodes/pve1/qemu/1/vncwebsocket?port=5901&vncticket=abc',
+  ticket: 'abc',
+  isRunning: false
 };
 
 describe('ConsoleLayoutComponent', () => {
@@ -76,12 +87,14 @@ describe('ConsoleLayoutComponent', () => {
     discardPeriodicTasks();
   }));
 
-  it('polls until a console URL is available, then stops polling', fakeAsync(() => {
-    api.ticket.and.returnValues(
-      of(poweredOffSummary as unknown as ConsoleSummary),
-      of(poweredOnSummary as unknown as ConsoleSummary)
-    );
+  it('publishes a URL once the VM reports running, and stops polling only when connected', fakeAsync(() => {
+    let current: unknown = poweredOffSummary;
+    api.ticket.and.callFake(() => of(current as ConsoleSummary));
     createComponent();
+
+    expect(testAccess(component).vmPowerState()).toBe('off');
+
+    current = poweredOnSummary;
 
     tick(5000);
     fixture.detectChanges();
@@ -89,10 +102,48 @@ describe('ConsoleLayoutComponent', () => {
     expect(testAccess(component).vmPowerState()).toBe('on');
     expect(testAccess(component).consoleConfig()!.url).toBe('wss://host/console');
 
+    // running but not connected keeps polling, so a fresh ticket drives the reconnect
+    const callsBeforeRetry = api.ticket.calls.count();
+    tick(5000);
+    fixture.detectChanges();
+    expect(api.ticket.calls.count()).toBeGreaterThan(callsBeforeRetry);
+
+    testAccess(component).handleConnectionStatusChanged('connected');
+    fixture.detectChanges();
+
     const callsAfterConnect = api.ticket.calls.count();
     tick(5000);
     fixture.detectChanges();
     expect(api.ticket.calls.count()).toBe(callsAfterConnect);
+
+    discardPeriodicTasks();
+  }));
+
+  it('suppresses the console URL for a stopped Proxmox VM so it does not auto-connect a dead console', fakeAsync(() => {
+    api.ticket.and.returnValue(of(stoppedProxmoxSummary as unknown as ConsoleSummary));
+    createComponent();
+
+    expect(testAccess(component).consoleConfig()!.url).toBe('');
+
+    discardPeriodicTasks();
+  }));
+
+  it('reports off for a stopped Proxmox VM that still has a console URL and ticket', fakeAsync(() => {
+    api.ticket.and.returnValue(of(stoppedProxmoxSummary as unknown as ConsoleSummary));
+    createComponent();
+
+    expect(testAccess(component).vmPowerState()).toBe('off');
+
+    discardPeriodicTasks();
+  }));
+
+  it('reports on while the console is connected, even if isRunning still trails as false', fakeAsync(() => {
+    api.ticket.and.returnValue(of(stoppedProxmoxSummary as unknown as ConsoleSummary));
+    createComponent();
+
+    testAccess(component).handleConnectionStatusChanged('connected');
+
+    expect(testAccess(component).vmPowerState()).toBe('on');
 
     discardPeriodicTasks();
   }));
