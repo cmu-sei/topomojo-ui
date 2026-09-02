@@ -19,7 +19,7 @@
     "@angular/platform-browser": "^19.2.14",
     "@angular/platform-browser-dynamic": "^19.2.14",
     "@angular/router": "^19.2.14",
-    "@cmusei/console-forge": "^0.21.5",
+    "@cmusei/console-forge": "file:../../libraries/console-forge/dist/console-forge/cmusei-console-forge-0.22.0.tgz",
     "@fortawesome/angular-fontawesome": "^1.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
@@ -39,7 +39,6 @@
     "oidc-client-ts": "^2.2.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.4.1",
-    "vmware-wmks": "^1.0.0",
     "zone.js": "^0.15.1"
   },
   "devDependencies": {

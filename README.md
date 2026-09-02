@@ -5,7 +5,6 @@
 A one time fix-up is necessary for a couple of packages before building.
 
 ```bash
-bash tools/fixup-wmks.sh
 bash tools/fixup-monaco-esm.sh
 ```
 
