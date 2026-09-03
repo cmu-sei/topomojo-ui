@@ -45,7 +45,7 @@
               "node_modules/marked/marked.min.js",
               "node_modules/emoji-toolkit/lib/js/joypixels.min.js",
               "node_modules/jquery/dist/jquery.js",
-              "node_modules/jquery-ui-dist/jquery-ui.js"
+              "node_modules/jquery-ui/dist/jquery-ui.js"
             ],
             "stylePreprocessorOptions": {
               "sass": {
@@ -172,7 +172,7 @@
             },
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
-              "node_modules/jquery-ui-dist/jquery-ui.js",
+              "node_modules/jquery-ui/dist/jquery-ui.js",
               "node_modules/@cmusei/console-forge/assets/vmware-wmks/2.2.0/js/wmks.min.js"
             ],
             "browser": "projects/topomojo-mks/src/main.ts"
