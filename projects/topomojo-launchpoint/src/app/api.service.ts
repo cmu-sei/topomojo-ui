@@ -16,7 +16,7 @@ import { markedSmartypants } from 'marked-smartypants';
 })
 export class ApiService {
   url = '';
-  mks = '';
+  consoleUrl = '';
   tabs: TabRef[] = [];
 
   constructor(
@@ -26,7 +26,9 @@ export class ApiService {
     const target = loc.getBaseHrefFromDOM();
     const basehref = target.split('/').slice(0, -2).join('/');
     this.url = environment.apiUrl || `${basehref}/api`;
-    this.mks = environment.mksUrl || `${basehref}/mks`;
+    this.consoleUrl = environment.mksUrl
+      ? `${environment.mksUrl.replace(/\/$/, '')}/c`
+      : `${basehref}/c`;
   }
 
   login(ticket: string): Observable<any> {
@@ -53,8 +55,9 @@ export class ApiService {
   enlist(model: Enlistee): Observable<Enlistment> {
     return this.http.put<Enlistment>(this.url + `/player/enlist`, model);
   }
-  openConsole(qs: string): void {
-    this.showTab(this.mks + qs);
+  openConsole(name: string, sessionId: string): void {
+    const query = new URLSearchParams({ name, sessionId });
+    this.showTab(`${this.consoleUrl}?${query.toString()}`);
   }
 
   showTab(url: string): void {

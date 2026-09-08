@@ -22,10 +22,6 @@ jobs:
       buildArgs: |
         commit=${{ github.sha }}
 
-      preBuildCommands: |
-        curl https://box.cmusei.dev/wmks-jam-v1.tar -s -o wmks.tar
-        test -s wmks.tar
-
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}

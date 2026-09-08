@@ -5,10 +5,8 @@ FROM node:20-alpine AS dev
 ARG commit
 WORKDIR /app
 COPY package.json package-lock.json tools/ ./
-RUN npm install && \
-    sh fixup-wmks.sh
+RUN npm install
 COPY . .
-RUN if [ -e "wmks.tar" ]; then tar xf wmks.tar -C node_modules/vmware-wmks; fi
 RUN $(npm root)/.bin/ng build topomojo-work -c production --output-path /app/dist && \
     $(npm root)/.bin/ng build topomojo-launchpoint --base-href=/lp/ -c production --output-path /app/dist/lp
 CMD ["npm", "start"]

@@ -61,13 +61,18 @@ export class AppComponent {
       route.queryParams.pipe(
         // debounceTime(100),
         tap(p => this.inviteCode = p.c || ''),
-        switchMap(p => api.login(p.t).pipe(
-          catchError(err => of({})),
-          map(() => p)
-        )),
-        switchMap(p => api.launch(p.g).pipe(
-          catchError(err => of(({error: err.error?.message || err.statusText}) as GameState))
-        ))
+        switchMap(p => {
+          if (!p.t || !p.g) {
+            return of({} as GameState);
+          }
+
+          return api.login(p.t).pipe(
+            catchError(() => of({})),
+            switchMap(() => api.launch(p.g).pipe(
+              catchError(err => of(({error: err.error?.message || err.statusText}) as GameState))
+            ))
+          );
+        })
       )
     ], asyncScheduler).pipe(
       finalize(() => this.acting = false),
@@ -88,10 +93,12 @@ export class AppComponent {
 
   }
 
-  open(vm: VmState): void {
-    this.api.openConsole(
-      `?f=1&s=${vm.isolationId}&v=${vm.name}`
-    );
+  open(vm: VmState, gamespaceId: string | undefined): void {
+    if (!vm.name || !gamespaceId) {
+      return;
+    }
+
+    this.api.openConsole(vm.name, gamespaceId);
   }
   start(s: GameState): void {
     this.acting = true;
