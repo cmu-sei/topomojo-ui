@@ -169,9 +169,39 @@ describe('ConsoleLayoutComponent', () => {
     expect(api.ticket).toHaveBeenCalledTimes(1);
     // Exercise the actual Angular output.
     const consoleElement = fixture.debugElement.children.find(child => child.componentInstance instanceof ConsoleComponent);
+    const initialConsole = consoleElement?.componentInstance;
     consoleElement?.componentInstance.reconnectRequest.emit({});
     tick(0);
+    fixture.detectChanges();
     expect(api.redeem).toHaveBeenCalledTimes(1);
+    expect(fixture.debugElement.children.find(child => child.componentInstance instanceof ConsoleComponent)?.componentInstance)
+      .toBe(initialConsole);
+    discardPeriodicTasks();
+  }));
+
+  it('keeps the console mounted while a reconnect refresh waits for a ticket', fakeAsync(() => {
+    const initialTicket = new Subject<ConsoleSummary>();
+    const refreshedTicket = new Subject<ConsoleSummary>();
+    api.ticket.and.returnValues(initialTicket, refreshedTicket);
+    createComponent();
+
+    initialTicket.next(poweredOnSummary as ConsoleSummary);
+    fixture.detectChanges();
+    const initialConsole = fixture.debugElement.children.find(child => child.componentInstance instanceof ConsoleComponent)
+      ?.componentInstance;
+    expect(initialConsole).toBeTruthy();
+
+    initialConsole?.reconnectRequest.emit({});
+    tick(0);
+    fixture.detectChanges();
+
+    expect(api.ticket).toHaveBeenCalledTimes(2);
+    expect(fixture.debugElement.children.find(child => child.componentInstance instanceof ConsoleComponent)?.componentInstance)
+      .toBe(initialConsole);
+    expect(fixture.nativeElement.querySelector('app-spinner')).toBeNull();
+
+    refreshedTicket.next(poweredOnSummary as ConsoleSummary);
+    fixture.destroy();
     discardPeriodicTasks();
   }));
 

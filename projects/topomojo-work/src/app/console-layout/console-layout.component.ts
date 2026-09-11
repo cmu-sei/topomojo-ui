@@ -146,22 +146,29 @@ export class ConsoleLayoutComponent {
     }
   }
 
-  protected handleReconnectRequest() {
-    this.loadConsoleData(this.consoleRequest);
+  protected async handleReconnectRequest() {
+    const request = this.consoleRequest;
+    const generation = this.generation;
+    await this.consoleComponent()?.disconnect();
+    if (generation !== this.generation) return;
+    this.connectionStatus.set("disconnected");
+    this.loadConsoleData(request, true);
   }
 
-  private loadConsoleData(request?: ConsoleRequest) {
+  private loadConsoleData(request?: ConsoleRequest, preserveConsole = false) {
     this.sessionSub.unsubscribe();
     this.sessionSub = new Subscription();
-    const generation = ++this.generation;
+    const generation = preserveConsole ? this.generation : ++this.generation;
     this.cancelConnectionAttempt();
     this.consoleRequest = request;
-    this.consoleConfig.set(undefined);
-    this.consoleNetworkConfig.set(undefined);
-    this.consoleSessions.set([]);
-    this.consoleSummary.set(undefined);
-    this.connectionStatus.set(undefined);
-    this.startPending.set(false);
+    if (!preserveConsole) {
+      this.consoleConfig.set(undefined);
+      this.consoleNetworkConfig.set(undefined);
+      this.consoleSessions.set([]);
+      this.consoleSummary.set(undefined);
+      this.connectionStatus.set(undefined);
+      this.startPending.set(false);
+    }
     this.stateUnavailable.set(false);
     this.authorizationFailed.set(false);
     this.errors = [];
