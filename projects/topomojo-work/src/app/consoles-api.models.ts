@@ -18,9 +18,17 @@ export interface ConsoleSummary {
     isolationId: string;
     name: string;
     url: string;
-    ticket: string;
+    ticket?: string | null;
     isRunning?: boolean;
+    state?: VmStateEnum | null;
+    activity?: VmActivity | null;
     error?: string;
+}
+
+export interface VmActivity {
+    kind: "starting" | "migrating" | "busy" | "unknown";
+    status: "active" | "failed";
+    message?: string | null;
 }
 
 export interface VmOperation {

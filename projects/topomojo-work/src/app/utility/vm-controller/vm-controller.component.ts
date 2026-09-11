@@ -146,6 +146,13 @@ export class VmControllerComponent implements OnInit, OnDestroy {
   console(): void {
     const p = this.vm.name?.split('#') || ['', ''];
 
+    if (!p[0] || !p[1]) {
+      this.errors = [new Error('The VM identity is still loading. Refreshing its details; try opening the console again.')];
+      this.do('refresh');
+      return;
+    }
+
+    this.errors = [];
     this.conf.openConsole({
       name: p[0],
       sessionId: p[1]
