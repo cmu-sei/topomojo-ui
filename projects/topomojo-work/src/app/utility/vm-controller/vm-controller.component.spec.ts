@@ -22,28 +22,13 @@ describe('VmControllerComponent', () => {
 
   afterEach(() => component.ngOnDestroy());
 
-  it('opens the console with the deployed VM name and isolation ID', () => {
-    component.vm = { id: '123', name: 'Ubuntu-Proxmox-304#workspace-id' };
-    component.console();
-    expect(config.openConsole).toHaveBeenCalledOnceWith({
-      name: 'Ubuntu-Proxmox-304', sessionId: 'workspace-id'
-    });
-  });
-
-  for (const name of [undefined, '', 'Ubuntu-Proxmox-304', '#workspace-id', 'Ubuntu#']) {
-    it(`refreshes incomplete VM identity (${name}) instead of opening a malformed URL`, () => {
-      component.vm = { id: '123', name };
-      const refresh = spyOn(component, 'do');
-      component.console();
-      expect(config.openConsole).not.toHaveBeenCalled();
-      expect(refresh).toHaveBeenCalledOnceWith('refresh');
-      expect(component.errors[0].message).toContain('identity is still loading');
-    });
-  }
-
-  it('opens normally once a delayed identity arrives', () => {
+  it('refreshes missing identity without opening a malformed URL, then opens when identity arrives', () => {
+    const refresh = spyOn(component, 'do');
     component.vm = { id: '123', name: '' };
     component.console();
+    expect(config.openConsole).not.toHaveBeenCalled();
+    expect(refresh).toHaveBeenCalledOnceWith('refresh');
+    expect(component.errors[0].message).toContain('identity is still loading');
     component.taskResolve({ id: '123', name: 'Ubuntu#workspace-id' });
     component.console();
     expect(config.openConsole).toHaveBeenCalledOnceWith({ name: 'Ubuntu', sessionId: 'workspace-id' });

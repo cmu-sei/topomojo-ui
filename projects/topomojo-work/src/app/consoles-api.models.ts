@@ -1,8 +1,9 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import type { VmActivity } from './api/gen/models';
+import type * as Api from './api/gen/models';
 export type { VmActivity } from './api/gen/models';
+export { VmStateEnum, VmOperationTypeEnum } from './api/gen/models';
 
 export interface ConsoleRequest {
     name?: string;
@@ -16,67 +17,16 @@ export interface ConsolePresence {
     username?: string;
 }
 
-export interface ConsoleSummary {
-    id: string;
-    isolationId: string;
-    name: string;
-    url: string;
-    ticket?: string | null;
-    isRunning?: boolean;
-    state?: VmStateEnum | null;
-    activity?: VmActivity | null;
-    error?: string;
-}
+// Preserve the console client's compatibility with responses lacking isRunning.
+export type ConsoleSummary = Omit<Api.VmConsole, 'isRunning'> & Partial<Pick<Api.VmConsole, 'isRunning'>>;
 
-export interface VmOperation {
-    id: string;
-    type: VmOperationTypeEnum;
-}
+// Console operations accept only known operation types, and options require both lists.
+export type VmOperation = Omit<Api.VmOperation, 'type'> & { type: Api.VmOperationTypeEnum };
+export type VmOptions = Required<Api.VmOptions>;
 
-export interface VmOptions {
-    iso: Array<string>;
-    net: Array<string>;
-}
-
-export interface VmQuestion {
-    id?: string;
-    prompt?: string;
-    defaultChoice?: string;
-    choices?: Array<VmQuestionChoice>;
-}
-
-export interface VmTask {
-    id?: string;
-    name?: string;
-    progress?: number;
-    whenCreated?: string;
-}
-
-export interface VmQuestionChoice {
-    key?: string;
-    label?: string;
-}
-
-export interface KeyValuePair {
-    key?: string;
-    value?: string;
-}
-
-export interface VmAnswer {
-    questionId?: string;
-    choiceKey?: string;
-}
-
-export enum VmStateEnum {
-    off = 'off',
-    running = 'running',
-    suspended = 'suspended'
-}
-
-export enum VmOperationTypeEnum {
-    start = 'start',
-    stop = 'stop',
-    save = 'save',
-    revert = 'revert',
-    delete = 'delete'
-}
+// These console models historically allow partial values.
+export type VmQuestion = Omit<Partial<Api.VmQuestion>, 'choices'> & { choices?: VmQuestionChoice[] };
+export type VmQuestionChoice = Partial<Api.VmQuestionChoice>;
+export type VmTask = Partial<Api.VmTask>;
+export type KeyValuePair = Partial<Api.KeyValuePair>;
+export type VmAnswer = Partial<Api.VmAnswer>;

@@ -37,7 +37,6 @@ export class ConsoleLayoutComponent {
   private sessionSub = new Subscription();
   private generation = 0;
   protected readonly consoleSessions = signal<number[]>([]);
-  private connecting = false;
   private connectAttempt = 0;
   private connectTimeout?: ReturnType<typeof setTimeout>;
   private readonly redeemedTokens = new Set<string>();
@@ -91,7 +90,7 @@ export class ConsoleLayoutComponent {
       const component = this.consoleComponent();
 
       untracked(() => {
-        if (consoleConfig?.url && component && !this.connecting &&
+        if (consoleConfig?.url && component && this.connectTimeout === undefined &&
             this.connectionStatus() !== "connected" && !this.authorizationFailed()) {
           this.connectConsole(component, consoleConfig);
         }
@@ -273,7 +272,6 @@ export class ConsoleLayoutComponent {
   private connectConsole(component: ConsoleComponent, config: ConsoleComponentConfig) {
     const generation = this.generation;
     const attempt = ++this.connectAttempt;
-    this.connecting = true;
     this.connectTimeout = setTimeout(() => {
       if (generation !== this.generation || attempt !== this.connectAttempt) return;
       this.handleConnectFailed(new Error("The console connection timed out. Retrying."), generation);
@@ -288,6 +286,5 @@ export class ConsoleLayoutComponent {
     ++this.connectAttempt;
     clearTimeout(this.connectTimeout);
     this.connectTimeout = undefined;
-    this.connecting = false;
   }
 }

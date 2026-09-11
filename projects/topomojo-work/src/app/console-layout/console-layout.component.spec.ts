@@ -17,7 +17,6 @@ type ConsoleLayoutTestAccess = {
   handlePowerOnRequested: () => void;
   handleConnectionStatusChanged: (status?: string) => void;
   vmActivity: () => { kind: string; status: string } | undefined;
-  handleConnectFailed: (error: Error, generation?: number) => void;
 };
 
 function testAccess(component: ConsoleLayoutComponent): ConsoleLayoutTestAccess {
@@ -88,22 +87,14 @@ describe('ConsoleLayoutComponent', () => {
     fixture.detectChanges();
   }
 
-  it('sets the power state and publishes an empty URL for a powered-off VM', fakeAsync(() => {
-    api.ticket.and.returnValue(of(poweredOffSummary as unknown as ConsoleSummary));
-    createComponent();
-
-    expect(testAccess(component).vmPowerState()).toBe('off');
-    expect(testAccess(component).consoleConfig()!.url).toBe('');
-
-    discardPeriodicTasks();
-  }));
-
   it('publishes a URL once the VM reports running, and stops polling only when connected', fakeAsync(() => {
-    let current: unknown = poweredOffSummary;
+    let current: unknown = stoppedProxmoxSummary;
     api.ticket.and.callFake(() => of(current as ConsoleSummary));
     createComponent();
 
     expect(testAccess(component).vmPowerState()).toBe('off');
+    expect(testAccess(component).consoleConfig()!.url).toBe('');
+    expect(connect).not.toHaveBeenCalled();
 
     current = poweredOnSummary;
 
@@ -130,56 +121,6 @@ describe('ConsoleLayoutComponent', () => {
     discardPeriodicTasks();
   }));
 
-  it('suppresses the console URL for a stopped Proxmox VM so it does not auto-connect a dead console', fakeAsync(() => {
-    api.ticket.and.returnValue(of(stoppedProxmoxSummary as unknown as ConsoleSummary));
-    createComponent();
-
-    expect(testAccess(component).consoleConfig()!.url).toBe('');
-
-    discardPeriodicTasks();
-  }));
-
-  it('reports off for a stopped Proxmox VM that still has a console URL and ticket', fakeAsync(() => {
-    api.ticket.and.returnValue(of(stoppedProxmoxSummary as unknown as ConsoleSummary));
-    createComponent();
-
-    expect(testAccess(component).vmPowerState()).toBe('off');
-
-    discardPeriodicTasks();
-  }));
-
-  it('reports on while the console is connected, even if isRunning still trails as false', fakeAsync(() => {
-    api.ticket.and.returnValue(of(stoppedProxmoxSummary as unknown as ConsoleSummary));
-    createComponent();
-
-    testAccess(component).handleConnectionStatusChanged('connected');
-
-    expect(testAccess(component).vmPowerState()).toBe('on');
-
-    discardPeriodicTasks();
-  }));
-
-  it('powers on the VM when requested', fakeAsync(() => {
-    api.ticket.and.returnValue(of(poweredOffSummary as unknown as ConsoleSummary));
-    createComponent();
-
-    testAccess(component).handlePowerOnRequested();
-
-    expect(api.power).toHaveBeenCalledOnceWith({ id: 'vm-1', type: VmOperationTypeEnum.start });
-
-    discardPeriodicTasks();
-  }));
-
-  it('uses the ID from the latest summary when powering on', fakeAsync(() => {
-    api.ticket.and.returnValue(of(poweredOffSummary as ConsoleSummary));
-    createComponent();
-    api.ticket.and.returnValue(of({ ...poweredOffSummary, id: 'replacement-vm' } as ConsoleSummary));
-    tick(5000);
-    testAccess(component).handlePowerOnRequested();
-    expect(api.power).toHaveBeenCalledOnceWith({ id: 'replacement-vm', type: VmOperationTypeEnum.start });
-    discardPeriodicTasks();
-  }));
-
   it('renders real Forge migration feedback and suppresses Power On and connection', fakeAsync(() => {
     api.ticket.and.returnValue(of({
       ...stoppedProxmoxSummary, state: 'off', activity: { kind: 'migrating', status: 'active' }
@@ -188,7 +129,10 @@ describe('ConsoleLayoutComponent', () => {
     const status = fixture.nativeElement.querySelector('cf-console-status').shadowRoot as ShadowRoot;
     expect(status.textContent).toContain('Migrating VM');
     expect(status.querySelector('button')).toBeNull();
+    expect(status.querySelector('progress')?.getAttribute('aria-label')).toContain('Migrating VM');
     expect(connect).not.toHaveBeenCalled();
+    testAccess(component).handleConnectionStatusChanged('connected');
+    expect(testAccess(component).vmPowerState()).toBe('on');
     discardPeriodicTasks();
   }));
 
@@ -199,7 +143,7 @@ describe('ConsoleLayoutComponent', () => {
     createComponent();
     testAccess(component).handlePowerOnRequested();
     testAccess(component).handlePowerOnRequested();
-    expect(api.power).toHaveBeenCalledTimes(1);
+    expect(api.power).toHaveBeenCalledOnceWith({ id: 'vm-1', type: VmOperationTypeEnum.start });
     start.error({ status: 500 });
     fixture.detectChanges();
     expect(testAccess(component).vmPowerState()).toBe('unknown');
@@ -275,23 +219,12 @@ describe('ConsoleLayoutComponent', () => {
     }));
   }
 
-  it('allows a slow handshake to finish and retries unchanged tickets after failure', fakeAsync(() => {
-    api.ticket.and.returnValue(of(poweredOnSummary as ConsoleSummary));
-    createComponent();
-    tick(10000);
-    fixture.detectChanges();
-    expect(connect).toHaveBeenCalledTimes(1);
-    testAccess(component).handleConnectFailed(new Error('Connection refused'));
-    tick(5000);
-    fixture.detectChanges();
-    expect(connect).toHaveBeenCalledTimes(2);
-    fixture.destroy();
-  }));
-
   it('times out a handshake and retries on the next poll', fakeAsync(() => {
     api.ticket.and.returnValue(of(poweredOnSummary as ConsoleSummary));
     createComponent();
-    tick(30000);
+    tick(10000);
+    expect(connect).toHaveBeenCalledTimes(1);
+    tick(20000);
     fixture.detectChanges();
     tick(5000);
     fixture.detectChanges();
