@@ -27,7 +27,7 @@ export class ConsoleLayoutComponent {
 
   // assume three nics, like topo classic
   private readonly availableNics = ["NIC1", "NIC2", "NIC3"];
-  private topoVmId = "";
+  private get topoVmId(): string { return this.consoleSummary()?.id ?? ""; }
   private readonly pollIntervalMs = 5000;
   private readonly consoleSummary = signal<ConsoleSummary | undefined>(undefined);
   private readonly connectionStatus = signal<ConsoleConnectionStatus | undefined>(undefined);
@@ -157,7 +157,6 @@ export class ConsoleLayoutComponent {
     const generation = ++this.generation;
     this.cancelConnectionAttempt();
     this.consoleRequest = request;
-    this.topoVmId = "";
     this.consoleConfig.set(undefined);
     this.consoleNetworkConfig.set(undefined);
     this.consoleSessions.set([]);
@@ -211,7 +210,6 @@ export class ConsoleLayoutComponent {
 
   private applyConsoleSummary(consoleSummary: ConsoleSummary) {
     this.stateUnavailable.set(false);
-    this.topoVmId = consoleSummary.id;
     this.consoleSummary.set(consoleSummary);
     if (consoleSummary.state === VmStateEnum.running || consoleSummary.isRunning ||
         consoleSummary.activity?.status === "failed")

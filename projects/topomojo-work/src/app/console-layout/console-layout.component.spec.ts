@@ -170,6 +170,16 @@ describe('ConsoleLayoutComponent', () => {
     discardPeriodicTasks();
   }));
 
+  it('uses the ID from the latest summary when powering on', fakeAsync(() => {
+    api.ticket.and.returnValue(of(poweredOffSummary as ConsoleSummary));
+    createComponent();
+    api.ticket.and.returnValue(of({ ...poweredOffSummary, id: 'replacement-vm' } as ConsoleSummary));
+    tick(5000);
+    testAccess(component).handlePowerOnRequested();
+    expect(api.power).toHaveBeenCalledOnceWith({ id: 'replacement-vm', type: VmOperationTypeEnum.start });
+    discardPeriodicTasks();
+  }));
+
   it('renders real Forge migration feedback and suppresses Power On and connection', fakeAsync(() => {
     api.ticket.and.returnValue(of({
       ...stoppedProxmoxSummary, state: 'off', activity: { kind: 'migrating', status: 'active' }
