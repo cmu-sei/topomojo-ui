@@ -2,12 +2,19 @@
 
 @if (consoleConfig())
 {
+@for (session of consoleSessions(); track session) {
 <cf-console [autoConnect]="false" [config]="consoleConfig()!" [networkConfig]="consoleNetworkConfig()"
+    [vmPowerState]="vmPowerState()"
+    [vmActivity]="vmActivity()"
     (networkDisconnectRequested)="handleNetworkDisconnectRequest($event)"
     (networkConnectionRequested)="handleNetworkConnectRequest($event)"
-    (reconnectRequest)="handleReconnectRequest()"></cf-console>
+    (reconnectRequest)="handleReconnectRequest()"
+    (connectionStatusChanged)="handleConnectionStatusChanged($event, session)"
+    (connectFailed)="handleConnectFailed($event, session)"
+    (powerOnRequested)="handlePowerOnRequested()"></cf-console>
 }
-@else
+}
+@else if (!invalidRequest)
 {
 <div class="text-center">
     <app-spinner></app-spinner>

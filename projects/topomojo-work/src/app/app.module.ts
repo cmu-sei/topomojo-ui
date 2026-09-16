@@ -147,7 +147,6 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     }),
     provideHttpClient(withInterceptorsFromDi()),
     provideConsoleForge({
-      consoleBackgroundStyle: "rgb(40, 40, 40)",
       disabledFeatures: { networkDisconnection: true }
     })
   ]

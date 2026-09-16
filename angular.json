@@ -118,6 +118,7 @@
             "tsConfig": "projects/topomojo-work/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
+              { "glob": "pico.min.css", "input": "node_modules/@cmusei/console-forge/assets", "output": "assets/" },
               "projects/topomojo-work/src/favicon.ico",
               "projects/topomojo-work/src/assets"
             ],

@@ -1,28 +1,37 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { VmControllerComponent } from './vm-controller.component';
+import { VmService } from '../../api/vm.service';
+import { ConfigService } from '../../config.service';
+import { NotificationService } from '../../notification.service';
+import { Subject } from 'rxjs';
 
 describe('VmControllerComponent', () => {
   let component: VmControllerComponent;
-  let fixture: ComponentFixture<VmControllerComponent>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ VmControllerComponent ]
-    })
-    .compileComponents();
-  });
+  let config: jasmine.SpyObj<ConfigService>;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(VmControllerComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    config = jasmine.createSpyObj<ConfigService>('ConfigService', ['openConsole']);
+    component = new VmControllerComponent(
+      {} as VmService,
+      config,
+      { vmEvents: new Subject() } as unknown as NotificationService
+    );
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  afterEach(() => component.ngOnDestroy());
+
+  it('refreshes missing identity without opening a malformed URL, then opens when identity arrives', () => {
+    const refresh = spyOn(component, 'do');
+    component.vm = { id: '123', name: '' };
+    component.console();
+    expect(config.openConsole).not.toHaveBeenCalled();
+    expect(refresh).toHaveBeenCalledOnceWith('refresh');
+    expect(component.errors[0].message).toContain('identity is still loading');
+    component.taskResolve({ id: '123', name: 'Ubuntu#workspace-id' });
+    component.console();
+    expect(config.openConsole).toHaveBeenCalledOnceWith({ name: 'Ubuntu', sessionId: 'workspace-id' });
+    expect(component.errors).toEqual([]);
   });
 });

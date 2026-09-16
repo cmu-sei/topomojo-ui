@@ -340,6 +340,16 @@ export interface VmConsole {
   name: string;
   isRunning: boolean;
   url: string;
+  ticket?: string | null;
+  state?: VmStateEnum | null;
+  activity?: VmActivity | null;
+  error?: string;
+}
+
+export interface VmActivity {
+  kind: "starting" | "migrating" | "busy" | "unknown";
+  status: "active" | "failed";
+  message?: string | null;
 }
 
 export interface Vm {
