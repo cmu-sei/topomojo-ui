@@ -24,6 +24,7 @@ export class ConsoleLayoutComponent {
   protected consoleConfig = signal<ConsoleComponentConfig | undefined>(undefined);
   protected consoleNetworkConfig = signal<ConsoleComponentNetworkConfig | undefined>(undefined);
   protected errors: any[] = [];
+  protected invalidRequest = false;
 
   // assume three nics, like topo classic
   private readonly availableNics = ["NIC1", "NIC2", "NIC3"];
@@ -32,6 +33,12 @@ export class ConsoleLayoutComponent {
   private readonly consoleSummary = signal<ConsoleSummary | undefined>(undefined);
   private readonly connectionStatus = signal<ConsoleConnectionStatus | undefined>(undefined);
   private readonly startPending = signal(false);
+  private powerRequestPending = false;
+  private startAttempt = 0;
+  private startTimeout?: ReturnType<typeof setTimeout>;
+  private failureBeforeStart?: string;
+  private pollSequence = 0;
+  private startResponsePoll = Infinity;
   private readonly stateUnavailable = signal(false);
   private readonly authorizationFailed = signal(false);
   private sessionSub = new Subscription();
@@ -45,8 +52,8 @@ export class ConsoleLayoutComponent {
     if (this.stateUnavailable() || this.authorizationFailed())
       return { kind: "unknown", status: "active" };
     const activity = this.consoleSummary()?.activity;
-    if (activity) return activity;
-    return this.startPending() ? { kind: "starting", status: "active" } : undefined;
+    if (activity?.status === "active") return activity;
+    return this.startPending() ? { kind: "starting", status: "active" } : activity ?? undefined;
   });
 
   // isRunning is authoritative: Proxmox hands out a vncproxy ticket even for a stopped VM, so a
@@ -100,6 +107,7 @@ export class ConsoleLayoutComponent {
     this.destroyRef.onDestroy(() => {
       ++this.generation;
       this.sessionSub.unsubscribe();
+      this.resetPowerOnTracking();
       this.cancelConnectionAttempt();
     });
   }
@@ -162,16 +170,17 @@ export class ConsoleLayoutComponent {
     this.cancelConnectionAttempt();
     this.consoleRequest = request;
     if (!preserveConsole) {
+      this.resetPowerOnTracking();
       this.consoleConfig.set(undefined);
       this.consoleNetworkConfig.set(undefined);
       this.consoleSessions.set([]);
       this.consoleSummary.set(undefined);
       this.connectionStatus.set(undefined);
-      this.startPending.set(false);
     }
     this.stateUnavailable.set(false);
     this.authorizationFailed.set(false);
     this.errors = [];
+    this.invalidRequest = !request?.name || !request.sessionId;
     if (!request?.name || !request.sessionId) {
       this.errors = [new Error("The console URL must include a VM name and session ID.")];
       return;
@@ -191,19 +200,23 @@ export class ConsoleLayoutComponent {
         }));
         return timer(0, this.pollIntervalMs).pipe(
           filter(() => this.connectionStatus() !== "connected" && !this.authorizationFailed()),
-          exhaustMap(() => this.api.ticket(request).pipe(
-            timeout(15000),
-            catchError(err => {
-              if (generation === this.generation) this.handleRequestError(err);
-              return of(undefined);
-            })
-          ))
+          exhaustMap(() => {
+            const poll = ++this.pollSequence;
+            return this.api.ticket(request).pipe(
+              timeout(15000),
+              map(summary => ({ summary, poll })),
+              catchError(err => {
+                if (generation === this.generation) this.handleRequestError(err);
+                return of(undefined);
+              })
+            );
+          })
         );
       })
     ).subscribe({
-      next: summary => {
-        if (summary && generation === this.generation) {
-          this.applyConsoleSummary(summary);
+      next: result => {
+        if (result && generation === this.generation) {
+          this.applyConsoleSummary(result.summary, result.poll);
           this.title.setTitle(`console: ${request.name}`);
           this.consoleSessions.set([generation]);
         }
@@ -214,12 +227,19 @@ export class ConsoleLayoutComponent {
     }));
   }
 
-  private applyConsoleSummary(consoleSummary: ConsoleSummary) {
+  private applyConsoleSummary(consoleSummary: ConsoleSummary, poll: number) {
     this.stateUnavailable.set(false);
     this.consoleSummary.set(consoleSummary);
-    if (consoleSummary.state === VmStateEnum.running || consoleSummary.isRunning ||
-        consoleSummary.activity?.status === "failed")
-      this.startPending.set(false);
+    if (this.vmPowerState() === "on") {
+      this.clearStartPending();
+    } else if (this.startPending() && !this.powerRequestPending && poll > this.startResponsePoll) {
+      const failure = this.failureKey(consoleSummary.activity);
+      // Repeated pre-start failures cannot identify the outcome of this attempt.
+      if (failure && failure !== this.failureBeforeStart)
+        this.clearStartPending();
+      else if (!failure && consoleSummary.id && !consoleSummary.error && this.vmPowerState() !== "unknown")
+        this.failureBeforeStart = undefined;
+    }
     if (consoleSummary.error) this.errors = [new Error(consoleSummary.error)];
     if (!consoleSummary.id) this.stateUnavailable.set(true);
     const connectable = this.vmPowerState() === "on" && this.vmActivity()?.status !== "active";
@@ -237,7 +257,7 @@ export class ConsoleLayoutComponent {
     if (generation !== this.generation) return;
     this.connectionStatus.set(status);
     if (status === "connected") {
-      this.startPending.set(false);
+      this.clearStartPending();
       this.cancelConnectionAttempt();
       this.errors = [];
     } else if (status === "disconnected") {
@@ -246,21 +266,58 @@ export class ConsoleLayoutComponent {
   }
 
   protected handlePowerOnRequested() {
-    if (!this.topoVmId || this.vmPowerState() !== "off" || this.startPending() ||
+    if (!this.topoVmId || this.vmPowerState() !== "off" || this.startPending() || this.powerRequestPending ||
         this.vmActivity()?.status === "active" || this.authorizationFailed()) return;
 
     const generation = this.generation;
+    const attempt = ++this.startAttempt;
+    const isCurrent = () => generation === this.generation && attempt === this.startAttempt;
+    this.powerRequestPending = true;
+    this.startResponsePoll = Infinity;
+    this.failureBeforeStart = this.failureKey(this.consoleSummary()?.activity);
     this.startPending.set(true);
     this.errors = [];
-    this.sessionSub.add(this.api.power({ id: this.topoVmId, type: VmOperationTypeEnum.start }).pipe(
+    this.startTimeout = setTimeout(() => {
+      if (!isCurrent()) return;
+      this.clearStartPending();
+      this.errors = [new Error("Power on has not been confirmed.")];
+    }, 120000);
+    // Let the mutation finish after navigation; stale callbacks are ignored below.
+    this.api.power({ id: this.topoVmId, type: VmOperationTypeEnum.start }).pipe(
       timeout(30000)
     ).subscribe({
+      complete: () => {
+        if (!isCurrent()) return;
+        this.powerRequestPending = false;
+        // Only polls begun after the response may settle a start with a failure.
+        this.startResponsePoll = this.pollSequence;
+      },
       error: err => {
-        if (generation !== this.generation) return;
-        this.startPending.set(false);
+        if (!isCurrent()) return;
+        this.powerRequestPending = false;
+        this.clearStartPending();
         this.handleRequestError(err);
       }
-    }));
+    });
+  }
+
+  private failureKey(activity: ConsoleSummary["activity"]): string | undefined {
+    return activity?.status === "failed"
+      ? JSON.stringify([activity.kind, activity.status, activity.message ?? ""])
+      : undefined;
+  }
+
+  private clearStartPending() {
+    clearTimeout(this.startTimeout);
+    this.startTimeout = undefined;
+    this.startPending.set(false);
+    this.failureBeforeStart = undefined;
+  }
+
+  private resetPowerOnTracking() {
+    ++this.startAttempt;
+    this.powerRequestPending = false;
+    this.clearStartPending();
   }
 
   protected handleConnectFailed(error: Error, generation = this.generation) {

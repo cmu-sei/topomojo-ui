@@ -15,8 +15,10 @@ type ConsoleLayoutTestAccess = {
   vmPowerState: () => string;
   consoleConfig: () => { url: string } | undefined;
   handlePowerOnRequested: () => void;
+  handleReconnectRequest: () => Promise<void>;
   handleConnectionStatusChanged: (status?: string) => void;
   vmActivity: () => { kind: string; status: string } | undefined;
+  errors: any[];
 };
 
 function testAccess(component: ConsoleLayoutComponent): ConsoleLayoutTestAccess {
@@ -50,6 +52,11 @@ const stoppedProxmoxSummary = {
   ticket: 'abc',
   isRunning: false
 };
+
+const failedStartSummary = {
+  ...poweredOffSummary,
+  activity: { kind: 'starting', status: 'failed', message: 'Previous start failed.' }
+} as ConsoleSummary;
 
 describe('ConsoleLayoutComponent', () => {
   let component: ConsoleLayoutComponent;
@@ -178,6 +185,236 @@ describe('ConsoleLayoutComponent', () => {
       .toBe(initialConsole);
     discardPeriodicTasks();
   }));
+
+  it('preserves an outstanding Power On and its original deadline across reconnects', fakeAsync(() => {
+    const start = new Subject<unknown>();
+    api.power.and.returnValue(start);
+    api.ticket.and.returnValue(of(poweredOffSummary as ConsoleSummary));
+    createComponent();
+    testAccess(component).handlePowerOnRequested();
+    tick(10000);
+    void testAccess(component).handleReconnectRequest();
+    tick(0);
+    expect(start.observed).toBeTrue();
+    testAccess(component).handlePowerOnRequested();
+    expect(api.power).toHaveBeenCalledTimes(1);
+    start.next({});
+    start.complete();
+    tick(109999);
+    expect(testAccess(component).vmActivity()?.kind).toBe('starting');
+    tick(1);
+    expect(testAccess(component).vmActivity()).toBeUndefined();
+    expect(testAccess(component).errors[0].message).toContain('not been confirmed');
+    testAccess(component).handlePowerOnRequested();
+    expect(api.power).toHaveBeenCalledTimes(2);
+    fixture.destroy();
+  }));
+
+  for (const outcome of ['active', 'unknown']) {
+    it(`keeps Power On blocked after the deadline when state is ${outcome}`, fakeAsync(() => {
+      api.ticket.and.returnValue(of(poweredOffSummary as ConsoleSummary));
+      createComponent();
+      testAccess(component).handlePowerOnRequested();
+      api.ticket.and.returnValue(of({
+        ...poweredOffSummary,
+        ...(outcome === 'active'
+          ? { activity: { kind: 'starting', status: 'active' } }
+          : { state: null })
+      } as ConsoleSummary));
+      tick(120000);
+      testAccess(component).handlePowerOnRequested();
+      expect(api.power).toHaveBeenCalledTimes(1);
+      if (outcome === 'active')
+        expect(testAccess(component).vmActivity()).toEqual({ kind: 'starting', status: 'active' });
+      else
+        expect(testAccess(component).vmPowerState()).toBe('unknown');
+      fixture.destroy();
+    }));
+  }
+
+  it('shows starting feedback and rejects repeated old failures while retrying', fakeAsync(() => {
+    const start = new Subject<unknown>();
+    api.power.and.returnValue(start);
+    api.ticket.and.returnValue(of(failedStartSummary));
+    createComponent();
+    testAccess(component).handlePowerOnRequested();
+    fixture.detectChanges();
+    const status = fixture.nativeElement.querySelector('cf-console-status').shadowRoot as ShadowRoot;
+    expect(status.textContent).toContain('Starting VM');
+    expect(status.querySelector('button')).toBeNull();
+    tick(5000);
+    testAccess(component).handlePowerOnRequested();
+    expect(api.power).toHaveBeenCalledTimes(1);
+    start.next({});
+    start.complete();
+    tick(5000);
+    testAccess(component).handlePowerOnRequested();
+    expect(api.power).toHaveBeenCalledTimes(1);
+    expect(testAccess(component).vmActivity()?.status).toBe('active');
+    fixture.destroy();
+  }));
+
+  it('does not let a delayed poll begun before the PUT completed settle the start', fakeAsync(() => {
+    const start = new Subject<unknown>();
+    const stalePoll = new Subject<ConsoleSummary>();
+    api.power.and.returnValue(start);
+    api.ticket.and.returnValues(of(poweredOffSummary as ConsoleSummary), stalePoll);
+    createComponent();
+    testAccess(component).handlePowerOnRequested();
+    tick(5000);
+    start.next({});
+    start.complete();
+    stalePoll.next(failedStartSummary);
+    stalePoll.complete();
+    testAccess(component).handlePowerOnRequested();
+    expect(api.power).toHaveBeenCalledTimes(1);
+    expect(testAccess(component).vmActivity()?.status).toBe('active');
+    api.ticket.and.returnValue(of(failedStartSummary));
+    tick(5000);
+    expect(testAccess(component).vmActivity()?.status).toBe('failed');
+    testAccess(component).handlePowerOnRequested();
+    expect(api.power).toHaveBeenCalledTimes(2);
+    fixture.destroy();
+  }));
+
+  for (const transition of ['different failure', 'non-failed observation']) {
+    it(`accepts a new failure after a ${transition}`, fakeAsync(() => {
+      api.ticket.and.returnValue(of(failedStartSummary));
+      createComponent();
+      testAccess(component).handlePowerOnRequested();
+      if (transition === 'non-failed observation') {
+        api.ticket.and.returnValue(of(poweredOffSummary as ConsoleSummary));
+        tick(5000);
+        api.ticket.and.returnValue(of(failedStartSummary));
+      } else {
+        api.ticket.and.returnValue(of({
+          ...failedStartSummary,
+          activity: { kind: 'starting', status: 'failed', message: 'New start failed.' }
+        } as ConsoleSummary));
+      }
+      tick(5000);
+      expect(testAccess(component).vmActivity()?.status).toBe('failed');
+      testAccess(component).handlePowerOnRequested();
+      expect(api.power).toHaveBeenCalledTimes(2);
+      fixture.destroy();
+    }));
+  }
+
+  it('keeps the request guard after running feedback clears local pending', fakeAsync(() => {
+    const start = new Subject<unknown>();
+    api.power.and.returnValue(start);
+    api.ticket.and.returnValue(of(poweredOffSummary as ConsoleSummary));
+    createComponent();
+    testAccess(component).handlePowerOnRequested();
+    api.ticket.and.returnValue(of(poweredOnSummary as ConsoleSummary));
+    tick(5000);
+    api.ticket.and.returnValue(of(poweredOffSummary as ConsoleSummary));
+    tick(5000);
+    testAccess(component).handlePowerOnRequested();
+    expect(api.power).toHaveBeenCalledTimes(1);
+    start.next({});
+    start.complete();
+    testAccess(component).handlePowerOnRequested();
+    expect(api.power).toHaveBeenCalledTimes(2);
+    fixture.destroy();
+  }));
+
+  for (const outcome of ['success', 'error']) {
+    it(`lets the old route request finish with ${outcome} without affecting a later attempt`, fakeAsync(() => {
+      const firstStart = new Subject<unknown>();
+      const secondStart = new Subject<unknown>();
+      api.power.and.returnValues(firstStart, secondStart);
+      api.ticket.and.returnValue(of(poweredOffSummary as ConsoleSummary));
+      createComponent();
+      testAccess(component).handlePowerOnRequested();
+      tick(10000);
+      params.next({ name: 'vm2', sessionId: 'iso2' });
+      tick(0);
+      expect(firstStart.observed).toBeTrue();
+      testAccess(component).handlePowerOnRequested();
+      if (outcome === 'success') {
+        firstStart.next({});
+        firstStart.complete();
+      } else {
+        firstStart.error({ status: 500 });
+      }
+      expect(firstStart.observed).toBeFalse();
+      expect(testAccess(component).errors).toEqual([]);
+      secondStart.next({});
+      secondStart.complete();
+      tick(110000);
+      expect(testAccess(component).vmActivity()?.kind).toBe('starting');
+      expect(testAccess(component).errors).toEqual([]);
+      tick(10000);
+      expect(testAccess(component).vmActivity()).toBeUndefined();
+      fixture.destroy();
+    }));
+  }
+
+  for (const outcome of ['success', 'error', 'timeout']) {
+    it(`lets Power On finish with ${outcome} after destruction without updating UI state`, fakeAsync(() => {
+      const start = new Subject<unknown>();
+      api.power.and.returnValue(start);
+      api.ticket.and.returnValue(of(poweredOffSummary as ConsoleSummary));
+      createComponent();
+      testAccess(component).handlePowerOnRequested();
+      fixture.destroy();
+      expect(start.observed).toBeTrue();
+      if (outcome === 'success') {
+        start.next({});
+        start.complete();
+      } else if (outcome === 'error') {
+        start.error({ status: 500 });
+      } else {
+        tick(29999);
+        expect(start.observed).toBeTrue();
+        tick(1);
+      }
+      expect(start.observed).toBeFalse();
+      tick(120000);
+      expect(testAccess(component).errors).toEqual([]);
+      expect(testAccess(component).vmActivity()).toBeUndefined();
+    }));
+  }
+
+  it('retains the HTTP timeout and permits retry after a fresh off observation', fakeAsync(() => {
+    api.power.and.returnValue(NEVER);
+    api.ticket.and.returnValue(of(poweredOffSummary as ConsoleSummary));
+    createComponent();
+    testAccess(component).handlePowerOnRequested();
+    tick(35000);
+    expect(testAccess(component).vmActivity()).toBeUndefined();
+    testAccess(component).handlePowerOnRequested();
+    expect(api.power).toHaveBeenCalledTimes(2);
+    fixture.destroy();
+    tick(30000);
+  }));
+
+  for (const missing of ['name', 'sessionId'] as const) {
+    it(`does not show loading for a missing ${missing}, even after error dismissal`, fakeAsync(() => {
+      params.next({ name: 'vm1', sessionId: 'iso1', [missing]: '' });
+      api.ticket.and.returnValue(of(poweredOffSummary as ConsoleSummary));
+      createComponent();
+      expect(testAccess(component).errors[0].message).toContain('VM name and session ID');
+      expect(fixture.nativeElement.querySelector('app-spinner')).toBeNull();
+      expect(api.ticket).not.toHaveBeenCalled();
+      testAccess(component).errors.splice(0);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('app-spinner')).toBeNull();
+      const ticket = new Subject<ConsoleSummary>();
+      api.ticket.and.returnValue(ticket);
+      params.next({ name: 'vm1', sessionId: 'iso1' });
+      tick(0);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('app-spinner')).not.toBeNull();
+      ticket.next(poweredOffSummary as ConsoleSummary);
+      ticket.complete();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('cf-console')).not.toBeNull();
+      expect(fixture.nativeElement.querySelector('app-spinner')).toBeNull();
+      fixture.destroy();
+    }));
+  }
 
   it('keeps the console mounted while a reconnect refresh waits for a ticket', fakeAsync(() => {
     const initialTicket = new Subject<ConsoleSummary>();

@@ -14,7 +14,7 @@
     (powerOnRequested)="handlePowerOnRequested()"></cf-console>
 }
 }
-@else
+@else if (!invalidRequest)
 {
 <div class="text-center">
     <app-spinner></app-spinner>
