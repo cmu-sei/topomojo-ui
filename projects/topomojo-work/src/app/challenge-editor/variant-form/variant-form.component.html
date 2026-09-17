@@ -206,6 +206,10 @@
     </div>
   </ng-container>
 
+  <small class="text-warning d-block my-2" *ngIf="weightCoverageWarning">
+    ⚠️ {{ weightCoverageWarning }}
+  </small>
+
   <button
     class="btn btn-sm btn-outline-secondary"
     (click)="addSet()"
