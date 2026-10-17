@@ -1,0 +1,21 @@
+table.capacity {
+  max-width: 48rem;
+
+  td, th {
+    width: 40%;
+  }
+
+  td:first-child, th:first-child {
+    width: 20%;
+  }
+
+  // Storage has one figure column; let it span both so the first column lines up.
+  &.storage td:last-child, &.storage th:last-child {
+    width: 80%;
+  }
+
+  .progress {
+    height: 0.5rem;
+    margin-top: 0.4rem;
+  }
+}
