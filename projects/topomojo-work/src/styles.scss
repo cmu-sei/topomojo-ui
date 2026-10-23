@@ -273,3 +273,187 @@ html.has-bg-image .tm-page-card {
   color: #6c757d;
 }
 
+
+// Dark theme: ThemeService puts .dark-theme on <html> (toggle, ?theme=dark-theme, or OS preference).
+// Bootstrap 4 has no dark mode, so the light-assuming rules this app uses are restated here.
+$dark-bg: $gray-900;
+$dark-surface: #2b3035;
+$dark-raised: $gray-800;
+$dark-border: $gray-700;
+$dark-text: $gray-300;
+$dark-muted: $gray-500;
+
+html.dark-theme {
+  color-scheme: dark;
+
+  body {
+    background-color: $dark-bg;
+    color: $dark-text;
+  }
+  hr {
+    border-top-color: rgba($white, 0.1);
+  }
+  // Bootstrap sets pre to $pre-color (gray-900) rather than inheriting.
+  pre {
+    color: $dark-text;
+  }
+
+  // Brand color on a dark background needs a lighter shade to stay readable.
+  // Not .btn links (the topbar's btn-outline-light); :where() keeps the plain `a` specificity so
+  // rules like .navbar-dark .navbar-brand still win.
+  a:not(:where(.btn)),
+  .btn-link {
+    color: color-mix(in srgb, var(--brand-color), white 35%);
+  }
+  a:not(:where(.btn)):hover,
+  .btn-link:hover {
+    color: color-mix(in srgb, var(--brand-color), white 55%);
+  }
+  .text-primary {
+    color: color-mix(in srgb, var(--brand-color), white 35%) !important;
+  }
+  a.text-primary:hover,
+  a.text-primary:focus {
+    color: color-mix(in srgb, var(--brand-color), white 55%) !important;
+  }
+
+  .text-dark,
+  .text-body {
+    color: $dark-text !important;
+  }
+  .text-muted {
+    color: $dark-muted !important;
+  }
+  .text-secondary {
+    color: mix(theme-color("secondary"), $white, 40%) !important;
+  }
+  .bg-light {
+    background-color: $dark-surface !important;
+  }
+  .bg-white {
+    background-color: $dark-bg !important;
+  }
+  .border,
+  .border-top,
+  .border-right,
+  .border-bottom,
+  .border-left {
+    border-color: $dark-border !important;
+  }
+
+  .card,
+  .modal-content {
+    background-color: $dark-surface;
+    border-color: rgba($white, 0.125);
+  }
+  .card-header,
+  .card-footer,
+  .modal-header,
+  .modal-footer {
+    border-color: rgba($white, 0.125);
+  }
+  .close {
+    color: $white;
+    text-shadow: none;
+  }
+
+  .form-control,
+  .custom-select {
+    background-color: $dark-surface;
+    border-color: $dark-border;
+    color: $gray-200;
+
+    &::placeholder {
+      color: $gray-600;
+    }
+    &:disabled,
+    &[readonly] {
+      background-color: $dark-raised;
+    }
+  }
+  .form-control:focus {
+    background-color: $dark-surface;
+    color: $gray-200;
+  }
+  .input-group-text {
+    background-color: $dark-raised;
+    border-color: $dark-border;
+    color: $dark-text;
+  }
+
+  .table {
+    color: $dark-text;
+
+    th,
+    td,
+    thead th {
+      border-color: $dark-border;
+    }
+  }
+  .table-bordered,
+  .table-bordered th,
+  .table-bordered td {
+    border-color: $dark-border;
+  }
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba($white, 0.05);
+  }
+  .table-hover tbody tr:hover {
+    background-color: rgba($white, 0.075);
+    color: $dark-text;
+  }
+
+  // Dark-on-light buttons would vanish; flip them to their light counterparts.
+  .btn-outline-dark {
+    color: $dark-text;
+    border-color: $gray-500;
+
+    &:hover,
+    &.active,
+    &:not(:disabled):not(.disabled):active {
+      background-color: $dark-text;
+      border-color: $dark-text;
+      color: $dark-bg;
+    }
+  }
+  .btn-dark {
+    background-color: $gray-700;
+    border-color: $gray-700;
+  }
+  .btn-light {
+    background-color: $dark-raised;
+    border-color: $dark-border;
+    color: $dark-text;
+
+    &:hover {
+      background-color: $gray-700;
+      color: $gray-200;
+    }
+  }
+  .btn-outline-secondary {
+    color: mix(theme-color("secondary"), $white, 40%);
+    border-color: mix(theme-color("secondary"), $white, 60%);
+
+    &:hover,
+    &.active,
+    &:not(:disabled):not(.disabled):active {
+      background-color: mix(theme-color("secondary"), $white, 60%);
+      border-color: mix(theme-color("secondary"), $white, 60%);
+      color: $dark-bg;
+    }
+  }
+
+  @each $color, $value in $theme-colors {
+    .alert-#{$color} {
+      background-color: mix($value, $dark-bg, 20%);
+      border-color: mix($value, $dark-bg, 45%);
+      color: mix($value, $white, 35%);
+    }
+    .alert-#{$color} .alert-link {
+      color: mix($value, $white, 20%);
+    }
+    .pop-#{$color} {
+      background-color: mix($value, $dark-bg, 20%);
+    }
+  }
+}
