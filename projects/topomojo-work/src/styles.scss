@@ -298,6 +298,18 @@ html.dark-theme {
     color: $dark-text;
   }
 
+  // Same treatment as the Moodle dark theme's background image: a dark gradient over the image
+  // on a near-black base, with the page letting it show faintly through.
+  &.has-bg-image body {
+    background-color: #101215;
+    background-image: linear-gradient(rgba(7, 9, 12, 0.52), rgba(7, 9, 12, 0.44)), var(--app-bg-image);
+  }
+  &.has-bg-image .tm-page-card {
+    background-color: $dark-bg;
+    box-shadow: 0 10px 30px rgba($black, 0.5);
+    opacity: 0.95;
+  }
+
   // Brand color on a dark background needs a lighter shade to stay readable.
   // Not .btn links (the topbar's btn-outline-light); :where() keeps the plain `a` specificity so
   // rules like .navbar-dark .navbar-brand still win.
