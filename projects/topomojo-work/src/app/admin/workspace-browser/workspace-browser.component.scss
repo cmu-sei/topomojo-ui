@@ -24,3 +24,7 @@
   font-size: 0.95rem;
   padding-top: 0.25rem;
 }
+
+:host-context(.dark-theme) .workspace-header {
+  border-bottom-color: #495057;
+}

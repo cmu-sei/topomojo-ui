@@ -28,3 +28,11 @@
   color: #6c757d;
 }
 
+:host-context(.dark-theme) {
+  .preview {
+    border-color: #495057;
+  }
+  .file-drop-text {
+    color: #adb5bd;
+  }
+}

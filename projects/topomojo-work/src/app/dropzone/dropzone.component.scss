@@ -12,3 +12,6 @@
   border-radius: .25rem;
   padding: .25rem;
 }
+:host-context(.dark-theme) .dropzone {
+  border-color: #495057;
+}
