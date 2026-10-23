@@ -57,7 +57,7 @@ main {
   right: 0;
   top: $nav-height;
   bottom: $footer-height;
-  overflow: scroll;
+  overflow: auto;
 }
 footer {
   position: absolute;
