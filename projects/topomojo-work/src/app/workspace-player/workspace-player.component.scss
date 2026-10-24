@@ -2,6 +2,6 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information.
 
 .player {
-  height: calc(100vh - 280px);
+  height: calc(100vh - var(--classification-banner-height, 0px) - 280px);
   overflow-y: scroll;
 }
