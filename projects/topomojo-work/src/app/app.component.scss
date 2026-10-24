@@ -1,3 +1,18 @@
 // Copyright 2026 Carnegie Mellon University. All Rights Reserved.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information.
 
+// The classification banner takes its own row and the routed layout gets the rest of the viewport.
+// .app-content is the containing block for the app layout's absolutely positioned regions and the
+// height the console view fills, so nothing renders under the banner.
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-content {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}

@@ -1,0 +1,13 @@
+<!-- Copyright 2026 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+@if (banner(); as b) {
+<div class="message-bar" [style.background-color]="b.backgroundColor">
+  @if (b.classificationText) {
+  <div [style.color]="b.classificationTextColor" [style.font-size]="b.classificationTextFontSize">{{ b.classificationText }}</div>
+  }
+  @if (b.messageText) {
+  <div [style.color]="b.messageTextColor" [style.font-size]="b.messageTextFontSize">{{ b.messageText }}</div>
+  }
+</div>
+}
