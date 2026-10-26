@@ -13,6 +13,7 @@
     <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['/admin/workspaces']">Workspaces</a>
     <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['/admin/templates']">Templates</a>
     <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['/admin/global-isos']">Files</a>
+    <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['/admin/disks']">Disks</a>
     <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['/admin/machines']">Machines</a>
     <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['/admin/users']">Users</a>
     <a class="mr-4 small" routerLinkActive="text-primary" [routerLink]="['/admin/settings']">Settings</a>
@@ -26,6 +27,7 @@
     <app-template-browser *ngSwitchCase="'templates'"></app-template-browser>
     <app-vm-browser *ngSwitchCase="'machines'"></app-vm-browser>
     <app-global-iso-manager *ngSwitchCase="'global-isos'"></app-global-iso-manager>
+    <app-disk-browser *ngSwitchCase="'disks'"></app-disk-browser>
     <app-user-browser *ngSwitchCase="'users'"></app-user-browser>
     <app-setting-browser *ngSwitchCase="'settings'"></app-setting-browser>
     <app-log-viewer *ngSwitchCase="'log'"></app-log-viewer>

@@ -1,0 +1,54 @@
+<!-- Copyright 2026 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<ng-container *ngIf="sources$ | async as sources; else loading">
+  <ng-container *ngIf="sources.field === 'template'; else diskHelp">
+    <h4>Template VMs</h4>
+    <div class="text-muted mb-2">
+      Proxmox template VMs that templates can clone from. Copy a name into the <code>template</code>
+      field of a template's Detail on the Templates tab. Copies tagged for deletion and the per-template
+      copies TopoMojo makes when a template is unlinked are not listed.
+    </div>
+  </ng-container>
+  <ng-template #diskHelp>
+    <h4>Disks</h4>
+    <div class="text-muted mb-2">
+      Disk files in the hypervisor's disk store that templates can use. Copy a path into the
+      <code>disks</code> list of a template's Detail on the Templates tab. Deployed VM disks and
+      extent/snapshot files are not listed.
+    </div>
+  </ng-template>
+
+  <div class="input-group input-group-sm">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="disk-search-label">
+        <fa-icon [icon]="faSearch"></fa-icon>
+        <span>Search</span>
+      </span>
+    </div>
+    <input
+      type="search"
+      class="form-control"
+      placeholder="term"
+      [ngModel]="term$.value"
+      (ngModelChange)="term$.next($event)"
+      aria-label="Search"
+      aria-describedby="disk-search-label"
+    />
+  </div>
+
+  <hr/>
+
+  <div *ngIf="!sources.names.length" class="text-muted">None found.</div>
+
+  <ng-container *ngIf="filtered$ | async as filtered">
+    <small *ngIf="sources.names.length" class="text-muted">{{filtered.length}} of {{sources.names.length}}</small>
+    <div *ngFor="let name of filtered" class="disk-row">
+      <app-clipspan class="text-monospace small">{{name}}</app-clipspan>
+    </div>
+  </ng-container>
+</ng-container>
+
+<ng-template #loading>
+  <app-spinner></app-spinner>
+</ng-template>
