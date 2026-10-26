@@ -1,0 +1,112 @@
+<!-- Copyright 2026 Carnegie Mellon University. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
+
+<ng-container *ngIf="report$ | async as report; else loading">
+  <ng-container *ngIf="report.field === 'template'; else diskHelp">
+    <h4>Template VMs</h4>
+    <div class="text-muted mb-2">
+      Proxmox template VMs that templates can clone from. Copy a name into the <code>Template</code>
+      value of a template's Detail on the Templates tab. Global template VMs are shared bases; workspace
+      template VMs are the copies TopoMojo makes when a template is unlinked. Copies tagged for deletion
+      are not listed.
+    </div>
+  </ng-container>
+  <ng-template #diskHelp>
+    <h4>Disks</h4>
+    <div class="text-muted mb-2">
+      vSphere VMDK disk files in the disk store that templates can use. Copy a path into a
+      <code>Disks[].Path</code> value of a template's Detail on the Templates tab. Deployed VM disks and
+      extent/snapshot files (<code>-flat</code>, <code>-delta</code>, <code>-000001</code>, ...) are not listed.
+    </div>
+  </ng-template>
+
+  <div class="input-group input-group-sm">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="disk-search-label">
+        <fa-icon [icon]="faSearch"></fa-icon>
+        <span>Search</span>
+      </span>
+    </div>
+    <input
+      type="search"
+      class="form-control"
+      placeholder="name, workspace, or template"
+      [(ngModel)]="term"
+      (ngModelChange)="view$.next(true)"
+      aria-label="Search"
+      aria-describedby="disk-search-label"
+    />
+    <div class="input-group-append">
+      <button
+        class="btn btn-sm btn-outline-info"
+        btnCheckbox
+        [(ngModel)]="globalOnly"
+        (ngModelChange)="view$.next(true)"
+        tooltip="Show only global entries shared across all workspaces. Disable to see all workspace entries."
+        placement="bottom"
+        container="body"
+        triggers="hover focus"
+      >
+        <fa-icon [icon]="faFilter"></fa-icon>
+        <span>Global Only</span>
+      </button>
+      <button class="btn btn-sm btn-outline-info" (click)="refresh$.next(true)">
+        <fa-icon [icon]="faSync"></fa-icon>
+        <span>Refresh</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!report.sources.length" class="text-muted mt-3">None found.</div>
+
+  <ng-container *ngIf="report.sources.length && (rows$ | async) as rows">
+    <small class="text-muted">{{rows.length}} of {{report.sources.length}}</small>
+    <table class="table table-sm table-hover">
+      <thead>
+        <tr>
+          <th scope="col">
+            <button type="button" class="btn btn-link p-0 sort-header header-label text-primary" (click)="sortBy('name')">
+              Name
+              <fa-icon *ngIf="sortColumn === 'name'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+            </button>
+          </th>
+          <th scope="col">
+            <button type="button" class="btn btn-link p-0 sort-header header-label text-primary" (click)="sortBy('workspace')">
+              Workspace
+              <fa-icon *ngIf="sortColumn === 'workspace'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+            </button>
+          </th>
+          <th scope="col">
+            <button type="button" class="btn btn-link p-0 sort-header header-label text-primary" (click)="sortBy('date')">
+              {{dateLabel(report)}}
+              <fa-icon *ngIf="sortColumn === 'date'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of rows">
+          <td class="name-cell">
+            <app-clipspan class="text-monospace small">{{s.name}}</app-clipspan>
+          </td>
+          <td class="workspace-cell">
+            <span *ngIf="s.isGlobal" class="badge badge-primary">Global</span>
+            <span *ngIf="!s.isGlobal && s.workspaceName === '(deleted)'" class="badge badge-secondary">(deleted)</span>
+            <span *ngIf="!s.isGlobal && s.workspaceName !== '(deleted)'">{{s.workspaceName}}</span>
+            <ng-container *ngIf="s.templateName">
+              <br/>
+              <small class="text-muted">Template: {{s.templateName}}</small>
+            </ng-container>
+          </td>
+          <td class="text-nowrap">
+            <small>{{formatDate(dateOf(s))}}</small>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+</ng-container>
+
+<ng-template #loading>
+  <app-spinner></app-spinner>
+</ng-template>

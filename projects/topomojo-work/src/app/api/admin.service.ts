@@ -10,6 +10,16 @@ import { GeneratedAdminService } from './gen/admin.service';
 import { IsoFile, VmOptions } from './gen/models';
 
 export type ThemeInfo = { backgroundUrl: string | null };
+export type TemplateSource = {
+    name: string;
+    isGlobal: boolean;
+    workspaceId?: string;
+    workspaceName?: string;
+    templateName?: string;
+    created?: string;
+    modified?: string;
+};
+export type TemplateSourceReport = { field: 'disks' | 'template'; sources: TemplateSource[] };
 
 @Injectable()
 export class AdminService extends GeneratedAdminService {
@@ -35,6 +45,10 @@ export class AdminService extends GeneratedAdminService {
 
     public clearBackground(): Observable<ThemeInfo> {
         return this.http.delete<ThemeInfo>(this.conf.api + '/admin/background');
+    }
+
+    public getTemplateSources(): Observable<TemplateSourceReport> {
+        return this.http.get<TemplateSourceReport>(this.conf.api + '/admin/template-sources');
     }
 
     public getAllIsos(): Observable<IsoFile[]> {
