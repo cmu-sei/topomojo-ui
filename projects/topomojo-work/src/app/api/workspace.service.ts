@@ -46,6 +46,14 @@ export class WorkspaceService extends GeneratedWorkspaceService {
         );
     }
 
+    public downloadManagedWorkspaces(ids: string[]): Observable<Blob> {
+        return this.http.post(
+            `${this.conf.api}/workspace/download`,
+            ids,
+            { responseType: 'blob' }
+        );
+    }
+
     public checkIsoUsage(workspaceId: string, path: string): Observable<IsoUsageReport> {
         return this.http.get<IsoUsageReport>(
             `${this.conf.api}/workspace/${workspaceId}/iso-usage`,
