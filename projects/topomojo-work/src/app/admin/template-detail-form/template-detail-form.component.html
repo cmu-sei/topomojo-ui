@@ -167,11 +167,54 @@
 
     <div class="d-flex">
       <small class="text-muted">
-        One per line: <code>key=value</code>. Lines commented with <code>#</code> are ignored.
+        One per line: <code>key=value</code>. Lines commented with <code>#</code> are ignored. Firmware and nested virtualization aren't set here; unlinked templates have their own Firmware and Nested Virtualization settings.
       </small>
       <div class="spacer"></div>
       <small class="text-right text-muted">{{(''+template.guestinfo).length}} / 1024</small>
     </div>
+  </div>
+
+  <div *ngIf="!template.isLinked" class="form-group bg-light">
+    <label class="mb-0 d-flex align-items-center" for="firmware-input">
+      Firmware
+    </label>
+
+    <select
+      id="firmware-input"
+      class="form-control"
+      name="firmware"
+      [disabled]="!hardware"
+      [ngModel]="hardware?.firmware"
+      (ngModelChange)="setHardware('firmware', $event)"
+    >
+      <option value="bios">BIOS</option>
+      <option value="efi">EFI</option>
+    </select>
+
+    <small class="text-muted">
+      vSphere only. Windows 11 needs EFI. Must match how the disk was installed, or the VM won't boot.
+    </small>
+  </div>
+
+  <div *ngIf="!template.isLinked" class="form-group bg-light">
+    <div class="form-check">
+      <input
+        id="nested-virtualization-input"
+        class="form-check-input"
+        type="checkbox"
+        name="nestedVirtualization"
+        [disabled]="!hardware"
+        [ngModel]="hardware?.nestedVirtualization"
+        (ngModelChange)="setHardware('nestedVirtualization', $event)"
+      >
+      <label class="form-check-label" for="nested-virtualization-input">
+        Nested Virtualization
+      </label>
+    </div>
+
+    <small class="text-muted">
+      vSphere only. Lets the VM run its own hypervisor (for example, Hyper-V or WSL 2).
+    </small>
   </div>
 
   <div *ngIf="!template.isLinked" class="form-group bg-light">
@@ -187,10 +230,11 @@
       rows="20"
       placeholder="Detail"
       [(ngModel)]="template.detail"
+      (ngModelChange)="readHardware()"
     ></textarea>
 
     <small class="text-muted">
-      Advanced configuration. Keep valid JSON to avoid errors.
+      Advanced configuration. Keep valid JSON to avoid errors. Firmware and Nested Virtualization are disabled while it isn't valid JSON.
     </small>
   </div>
 
