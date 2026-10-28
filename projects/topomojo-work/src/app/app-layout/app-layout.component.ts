@@ -3,7 +3,6 @@ import { ConfigService } from '../config.service';
 import { UserService } from '../user.service';
 import { HubState, NotificationService } from '../notification.service';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { AuthService } from '../auth.service';
 import { debounceTime, Observable } from 'rxjs';
 import { ApiUser } from '../api/gen/models';
 import { faChevronLeft, faChevronRight, faExclamationTriangle, faBars, faThumbtack, faTimes, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
@@ -40,7 +39,6 @@ export class AppLayoutComponent {
     userSvc: UserService,
     hubSvc: NotificationService,
     private router: Router,
-    private auth: AuthService,
     private themeSvc: ThemeService
   ) {
     this.appname = config.settings.appname;
@@ -64,10 +62,6 @@ export class AppLayoutComponent {
 
   toggleTheme(): void {
     this.themeSvc.toggle();
-  }
-
-  logout(): void {
-    this.auth.logout();
   }
 
   keyclick(ev: KeyboardEvent): boolean {

@@ -1,8 +1,8 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router, ActivatedRoute } from '@angular/router';
+import { Injectable, inject } from '@angular/core';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router, ActivatedRoute, CanActivateFn } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { AuthService, AuthTokenState } from './auth.service';
@@ -38,3 +38,10 @@ export class AuthGuard  {
     );
   }
 }
+
+// Gives Logout a real URL so it can open in a new tab. Route it under AuthGuard, which runs first,
+// so a new tab has loaded the user before logout() checks for one.
+export const logoutGuard: CanActivateFn = () => {
+  inject(AuthService).logout();
+  return inject(Router).parseUrl('/');
+};
