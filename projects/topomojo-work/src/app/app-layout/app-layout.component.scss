@@ -57,7 +57,7 @@ main {
   right: 0;
   top: $nav-height;
   bottom: $footer-height;
-  overflow: scroll;
+  overflow: auto;
 }
 footer {
   position: absolute;
@@ -73,8 +73,15 @@ footer {
 .sidebar-footer-inner {
   padding: 0.5rem 0.75rem;
 }
+// The card fills the main area, so short pages keep the same gap below the card as above it.
 .tm-page-shell {
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+.tm-page-card {
+  flex: 1 0 auto;
 }
 .tm-page-card {
   max-width: 1200px;

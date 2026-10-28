@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ApiSettings } from './api/api-settings';
 import { HttpClient } from '@angular/common/http';
+import { ConfigService } from './config.service';
 
 type ThemeInfo = { backgroundUrl: string | null };
 
@@ -17,10 +18,17 @@ export class AppComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private conf: ApiSettings,
+    private config: ConfigService,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
+    const brandColor = this.config.settings.brandColor;
+    // An invalid value would blank every brand-colored rule, so keep the built-in default instead.
+    if (brandColor && CSS.supports('color', brandColor)) {
+      this.document.documentElement.style.setProperty('--brand-color', brandColor);
+    }
+
     this.http.get<ThemeInfo>(this.conf.api + '/theme').subscribe({
       next: (r) => {
         const root = this.document.documentElement;
