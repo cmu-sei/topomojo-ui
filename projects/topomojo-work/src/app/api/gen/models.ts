@@ -248,6 +248,7 @@ export interface Workspace {
   workers?: Worker[];
   templates?: Template[];
   stats: WorkspaceStats;
+  canDownload?: boolean;
 }
 
 export interface WorkspaceSummary {

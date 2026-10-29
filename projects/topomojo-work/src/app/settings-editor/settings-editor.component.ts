@@ -11,7 +11,6 @@ import { WorkspaceService } from '../api/workspace.service';
 import { ClipboardService } from '../clipboard.service';
 import { ConfigService } from '../config.service';
 import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy, faInfoCircle, faDownload } from '@fortawesome/free-solid-svg-icons';
-import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-settings-editor',
@@ -40,8 +39,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
     private router: Router,
     private api: WorkspaceService,
     private formBuilder: UntypedFormBuilder,
-    private clipboard: ClipboardService,
-    private userSvc: UserService
+    private clipboard: ClipboardService
   ) {
     this.form = this.formBuilder.group(
       {
@@ -137,14 +135,9 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
     );
   }
 
-  // matches the server rule: admins, or workers with manager permission
+  // the server decides: admins, or managers when the environment allows manager downloads
   get canDownload(): boolean {
-    const user = this.userSvc.user$.value;
-    if (!user) {
-      return false;
-    }
-    return user.isAdmin ||
-      !!this.workspace.workers?.find(w => w.subjectId === user.id)?.canManage;
+    return !!this.workspace?.canDownload;
   }
 
   download(): void {
