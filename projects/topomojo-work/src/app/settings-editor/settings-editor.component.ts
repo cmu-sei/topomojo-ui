@@ -10,7 +10,8 @@ import { ChangedWorkspace, Workspace, Worker } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 import { ClipboardService } from '../clipboard.service';
 import { ConfigService } from '../config.service';
-import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy, faInfoCircle, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-settings-editor',
@@ -24,6 +25,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   inviteUrl = '';
   copiedInvite = false;
   errors: any[] = [];
+  isDownloading = false;
 
   faClipboardCheck = faClipboardCheck;
   faTimes = faTimes;
@@ -31,13 +33,15 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   faTrash = faTrash;
   faCopy = faCopy;
   faInfoCircle = faInfoCircle;
+  faDownload = faDownload;
 
   constructor(
     private config: ConfigService,
     private router: Router,
     private api: WorkspaceService,
     private formBuilder: UntypedFormBuilder,
-    private clipboard: ClipboardService
+    private clipboard: ClipboardService,
+    private userSvc: UserService
   ) {
     this.form = this.formBuilder.group(
       {
@@ -131,6 +135,33 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
       w => this.router.navigate(['/topo', w.id, 'settings']),
       err => this.errors.push(err)
     );
+  }
+
+  // matches the server rule: admins, or workers with manager permission
+  get canDownload(): boolean {
+    const user = this.userSvc.user$.value;
+    if (!user) {
+      return false;
+    }
+    return user.isAdmin ||
+      !!this.workspace.workers?.find(w => w.subjectId === user.id)?.canManage;
+  }
+
+  download(): void {
+    this.isDownloading = true;
+    this.api.downloadManagedWorkspaces([this.workspace.id]).pipe(
+      finalize(() => this.isDownloading = false)
+    ).subscribe({
+      next: data => {
+        const url = window.URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${this.workspace.name || this.workspace.id}-workspace.zip`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: err => this.errors.push(err)
+    });
   }
 
   delete(): void {
