@@ -51,6 +51,66 @@ $theme-colors: (
 @import "../../../node_modules/bootstrap/scss/utilities";
 @import "../../../node_modules/bootstrap/scss/print";
 
+// Brand color: settings.json "brandColor" overrides --brand-color at runtime (see AppComponent).
+// Bootstrap 4 compiles $primary into literal values, so the primary rules are restated here.
+:root {
+  --brand-color: #{theme-color("primary")};
+}
+$brand: var(--brand-color);
+$brand-hover: color-mix(in srgb, var(--brand-color), black 15%);
+$brand-active: color-mix(in srgb, var(--brand-color), black 20%);
+
+a,
+.btn-link {
+  color: $brand;
+}
+a:hover,
+.btn-link:hover {
+  color: $brand-hover;
+}
+.text-primary {
+  color: $brand !important;
+}
+a.text-primary:hover,
+a.text-primary:focus {
+  color: $brand-hover !important;
+}
+.bg-primary,
+.badge-primary {
+  background-color: $brand !important;
+}
+.btn-primary {
+  background-color: $brand;
+  border-color: $brand;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary.focus {
+  background-color: $brand-hover;
+  border-color: $brand-active;
+}
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-primary:not(:disabled):not(.disabled).active {
+  background-color: $brand-active;
+  border-color: $brand-active;
+}
+.btn-primary:focus,
+.btn-primary.focus,
+.btn-primary:not(:disabled):not(.disabled):active:focus,
+.btn-primary:not(:disabled):not(.disabled).active:focus {
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--brand-color) 50%, transparent);
+}
+// After hover/focus so a disabled button keeps its color, as in Bootstrap's own ordering.
+.btn-primary.disabled,
+.btn-primary:disabled {
+  background-color: $brand;
+  border-color: $brand;
+}
+.form-control:focus {
+  border-color: color-mix(in srgb, var(--brand-color), white 50%);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--brand-color) 25%, transparent);
+}
+
 @each $color, $value in $theme-colors {
   .pop-#{$color} {
     background-color: theme-color-level($color, -11);
@@ -114,7 +174,7 @@ h5 {
   transform: rotate(45deg);
 }
 .jambotron {
-  margin: 6rem auto;
+  margin: 2rem auto;
 }
 .alert {
   margin-bottom: 0.25rem !important;
@@ -125,7 +185,7 @@ h5 {
 app-spinner svg {
   rect,
   path {
-    fill: theme-color("primary");
+    fill: $brand;
   }
 }
 
