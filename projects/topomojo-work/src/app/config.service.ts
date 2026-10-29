@@ -149,6 +149,19 @@ export interface Settings {
   enable_upload?: boolean;
   brandColor?: string;
   oidc: AppUserManagerSettings;
+  HeaderBarSettings?: HeaderBarSettings;
+}
+
+// Classification banner, same keys as the HeaderBarSettings used by the other Crucible apps.
+export interface HeaderBarSettings {
+  enabled?: boolean;
+  banner_background_color?: string;
+  classification_text?: string;
+  classification_text_color?: string;
+  classification_text_fontsize?: string;
+  message_text?: string;
+  message_text_color?: string;
+  message_text_fontsize?: string;
 }
 
 export interface AppUserManagerSettings extends UserManagerSettings {

@@ -1,4 +1,4 @@
 .player {
-  height: calc(100vh - 280px);
+  height: calc(100vh - var(--classification-banner-height, 0px) - 280px);
   overflow-y: scroll;
 }
