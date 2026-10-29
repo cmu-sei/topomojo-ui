@@ -1,6 +1,9 @@
 a {
   color: gray;
 }
+:host-context(.dark-theme) a:not(.btn) {
+  color: #adb5bd;
+}
 .workspace-id-pill {
   display: inline-flex;
   align-items: center;
@@ -11,4 +14,9 @@ a {
   border: 1px solid #d8f1de;
   color: #3a7a46;
   font-size: 0.875rem;
+}
+:host-context(.dark-theme) .workspace-id-pill {
+  background: rgba(0, 133, 62, 0.15);
+  border-color: rgba(0, 133, 62, 0.5);
+  color: #7fd19a;
 }

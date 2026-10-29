@@ -10,6 +10,16 @@
     color: #5b0094;
 }
 
+:host-context(.dark-theme) {
+  .pop-pink {
+    background-color: #2d1e3e;
+    border-color: #a46bd0;
+  }
+  .text-pink {
+    color: #c9a0ea;
+  }
+}
+
 .tm-actions {
   display: flex;
   justify-content: flex-end;

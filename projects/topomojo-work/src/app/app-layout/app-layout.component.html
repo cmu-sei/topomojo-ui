@@ -16,11 +16,15 @@
     <div>
         <a class="btn btn-outline-light btn-sm" [routerLink]="['/']">Home</a>
         <a class="btn btn-outline-light btn-sm ml-2" [routerLink]="['/about']">About</a>
-        <button *ngIf="!!user && user.isAdmin" class="btn btn-outline-light btn-sm ml-2"
-            [routerLink]="['/admin']">Admin</button>
-        <button *ngIf="!!user && user.isObserver && !user.isAdmin" class="btn btn-outline-light btn-sm ml-2"
-            [routerLink]="['/observe']">Observe</button>
-        <button *ngIf="!!user" class="btn btn-outline-light btn-sm ml-2" (click)="logout()">Logout</button>
+        <a *ngIf="!!user && user.isAdmin" class="btn btn-outline-light btn-sm ml-2"
+            [routerLink]="['/admin']">Admin</a>
+        <a *ngIf="!!user && user.isObserver && !user.isAdmin" class="btn btn-outline-light btn-sm ml-2"
+            [routerLink]="['/observe']">Observe</a>
+        <a *ngIf="!!user" class="btn btn-outline-light btn-sm ml-2" [routerLink]="['/logout']">Logout</a>
+        <button class="btn btn-outline-light btn-sm ml-2" type="button" (click)="toggleTheme()"
+            [attr.aria-label]="isDark ? 'Switch to light theme' : 'Switch to dark theme'">
+            <fa-icon [icon]="isDark ? faSun : faMoon"></fa-icon>
+        </button>
     </div>
 </nav>
 
@@ -63,14 +67,14 @@
     aria-label="Open Crucible Framework site">
     <img
         class="crucible-logo"
-        src="assets/img/crucible-logo-light.png"
+        [src]="isDark ? 'assets/img/crucible-logo-dark.png' : 'assets/img/crucible-logo-light.png'"
         alt="Part of the Crucible Framework"
     />
     </a>
 
     <img *ngIf="disableExternalLinks"
         class="crucible-logo"
-        src="assets/img/crucible-logo-light.png"
+        [src]="isDark ? 'assets/img/crucible-logo-dark.png' : 'assets/img/crucible-logo-light.png'"
         alt="Part of the Crucible Framework" />
 
 

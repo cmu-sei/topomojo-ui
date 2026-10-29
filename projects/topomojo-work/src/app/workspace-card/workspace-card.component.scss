@@ -4,3 +4,6 @@ a {
 .card-body {
   cursor: pointer;
 }
+:host-context(.dark-theme) a {
+  color: #dee2e6;
+}

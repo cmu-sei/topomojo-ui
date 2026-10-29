@@ -22,3 +22,10 @@ div.command {
 pre.wrap {
   white-space: pre-wrap;
 }
+
+:host-context(.dark-theme) {
+  div.widget,
+  div.command {
+    border-color: #495057;
+  }
+}

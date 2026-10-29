@@ -33,3 +33,9 @@ img {
   border-radius: .25rem;
   background-color: rgba(whitesmoke, .7);
 }
+:host-context(.dark-theme) .dropzone {
+  border-color: #495057;
+}
+:host-context(.dark-theme) .overlay {
+  background-color: rgba(33, 37, 41, .7);
+}

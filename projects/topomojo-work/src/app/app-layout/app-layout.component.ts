@@ -3,10 +3,10 @@ import { ConfigService } from '../config.service';
 import { UserService } from '../user.service';
 import { HubState, NotificationService } from '../notification.service';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { AuthService } from '../auth.service';
 import { debounceTime, Observable } from 'rxjs';
 import { ApiUser } from '../api/gen/models';
-import { faChevronLeft, faChevronRight, faExclamationTriangle, faBars, faThumbtack, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faExclamationTriangle, faBars, faThumbtack, faTimes, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { ThemeService } from '../theme.service';
 
 @Component({
   selector: 'app-app-layout',
@@ -27,6 +27,8 @@ export class AppLayoutComponent {
   faBars = faBars;
   faExclamationTriangle = faExclamationTriangle;
   faClose = faTimes;
+  faMoon = faMoon;
+  faSun = faSun;
 
   @ViewChild('sidebarContainer') sidebarRef!: ElementRef<HTMLElement>;
 
@@ -37,7 +39,7 @@ export class AppLayoutComponent {
     userSvc: UserService,
     hubSvc: NotificationService,
     private router: Router,
-    private auth: AuthService
+    private themeSvc: ThemeService
   ) {
     this.appname = config.settings.appname;
     this.websocket = hubSvc.state$.pipe(debounceTime(500));
@@ -54,8 +56,12 @@ export class AppLayoutComponent {
     ).subscribe(u => this.user = u);
   }
 
-  logout(): void {
-    this.auth.logout();
+  get isDark(): boolean {
+    return this.themeSvc.isDark;
+  }
+
+  toggleTheme(): void {
+    this.themeSvc.toggle();
   }
 
   keyclick(ev: KeyboardEvent): boolean {
