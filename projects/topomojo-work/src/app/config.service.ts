@@ -2,7 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { UserManagerSettings } from 'oidc-client-ts';
 import { catchError, tap } from 'rxjs/operators';
@@ -23,7 +23,9 @@ export class ConfigService {
   settings: Settings = environment.settings as Settings;
   local: LocalAppSettings = {};
   tabs: TabRef[] = [];
-  settings$ = new BehaviorSubject<Settings>(this.settings);
+  // Emits only once load() has merged settings.json, so AuthService never builds a UserManager from the
+  // build-time defaults (a dev build's default authority reported the token invalid before the user loaded).
+  settings$ = new ReplaySubject<Settings>(1);
   sidebar$ = new Subject<boolean>();
   basehref = '';
 
