@@ -4,7 +4,7 @@
 import { Injectable } from '@angular/core';
 import { UserManager, UserManagerSettings, User, WebStorageStateStore, Log } from 'oidc-client-ts';
 import { BehaviorSubject } from 'rxjs';
-import { filter, tap } from 'rxjs/operators';
+import { filter, skip, tap } from 'rxjs/operators';
 import { ConfigService, Settings } from './config.service';
 
 export enum AuthTokenState {
@@ -33,7 +33,10 @@ export class AuthService {
     private config: ConfigService
   ) {
 
+    // Skip the build-time defaults and wait for load(). A dev build's default authority has no stored user,
+    // so it reported the token invalid and let routing start before the profile loaded (/admin went to /).
     config.settings$.pipe(
+      skip(1),
       tap(s => console.log(s.oidc?.authority)),
       filter(s => !!s.oidc.authority)
     ).subscribe((s: Settings) => {
