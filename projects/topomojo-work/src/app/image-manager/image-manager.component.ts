@@ -118,7 +118,7 @@ export class ImageManagerComponent implements OnInit, OnChanges {
   }
   @HostListener('dragleave', ['$event'])
   @HostListener('dragexit', ['$event'])
-  onLeave(event: DragEvent): boolean {
+  onLeave(event: Event): boolean {
     this.dropzone = false;
     return false;
   }
