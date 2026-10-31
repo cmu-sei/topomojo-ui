@@ -59,11 +59,11 @@ import { IsoModule } from '../iso/iso.module';
     ]),
     UtilityModule,
     FontAwesomeModule,
-    ButtonsModule.forRoot(),
-    AlertModule.forRoot(),
+    ButtonsModule,
+    AlertModule,
     IsoModule,
     UserRoleBadgeComponent,
-    TooltipModule.forRoot(),
+    TooltipModule,
   ]
 })
 export class AdminModule { }
