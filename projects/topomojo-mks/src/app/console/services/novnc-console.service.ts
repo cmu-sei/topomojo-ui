@@ -1,8 +1,8 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { ElementRef, Injectable, Inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { ElementRef, Injectable, Inject, DOCUMENT } from '@angular/core';
+
 import { ConsoleService } from './console.service';
 import NoVncClient from '@novnc/novnc/core/rfb';
 import { ConsoleOptions, ConsoleSupportsFeatures } from '../console.models';

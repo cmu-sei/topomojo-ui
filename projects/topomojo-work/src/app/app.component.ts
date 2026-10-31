@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Component, Inject, OnInit, DOCUMENT } from '@angular/core';
+
 import { ApiSettings } from './api/api-settings';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
