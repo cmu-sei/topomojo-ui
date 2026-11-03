@@ -1,3 +1,6 @@
+// Copyright 2026 Carnegie Mellon University. All Rights Reserved.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information.
+
 .select-all {
   margin-left: 30px;
   margin-right: 20px;
@@ -23,4 +26,8 @@
 .workspace-row {
   font-size: 0.95rem;
   padding-top: 0.25rem;
+}
+
+:host-context(.dark-theme) .workspace-header {
+  border-bottom-color: #495057;
 }

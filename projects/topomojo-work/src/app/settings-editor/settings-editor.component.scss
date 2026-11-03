@@ -1,4 +1,11 @@
+// Copyright 2026 Carnegie Mellon University. All Rights Reserved.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information.
+
 .workspace-stats {
   background-color: rgba(21, 53, 111, 0.04);
   border-color: rgba(4, 54, 115, 0.35) !important;
+}
+:host-context(.dark-theme) .workspace-stats {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: rgba(110, 150, 210, 0.35) !important;
 }

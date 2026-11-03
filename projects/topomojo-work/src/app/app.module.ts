@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ConsoleComponent, LogLevel, provideConsoleForge } from '@cmusei/console-forge';
 import { AppRoutingModule } from './app-routing.module';
+import { applyMonacoTheme } from './theme.service';
 import { ApiModule } from './api/gen/api.module';
 import { UtilityModule } from './utility/utility.module';
 
@@ -110,7 +111,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     ReactiveFormsModule,
     UtilityModule,
     ApiModule,
-    MonacoEditorModule.forRoot(),
+    MonacoEditorModule.forRoot({ onMonacoLoad: applyMonacoTheme }),
     MarkdownModule.forRoot({
       loader: HttpClient,
       markedOptions: {

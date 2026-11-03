@@ -1,3 +1,6 @@
+// Copyright 2026 Carnegie Mellon University. All Rights Reserved.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information.
+
 :host {
   margin: .25rem;
 }
@@ -32,4 +35,10 @@ img {
   right: .5rem;
   border-radius: .25rem;
   background-color: rgba(whitesmoke, .7);
+}
+:host-context(.dark-theme) .dropzone {
+  border-color: #495057;
+}
+:host-context(.dark-theme) .overlay {
+  background-color: rgba(33, 37, 41, .7);
 }
