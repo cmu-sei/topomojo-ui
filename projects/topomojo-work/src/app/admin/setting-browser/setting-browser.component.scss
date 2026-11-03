@@ -1,3 +1,6 @@
+// Copyright 2026 Carnegie Mellon University. All Rights Reserved.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information.
+
 .preview {
   height: 180px;
   border-radius: 8px;
@@ -28,3 +31,11 @@
   color: #6c757d;
 }
 
+:host-context(.dark-theme) {
+  .preview {
+    border-color: #495057;
+  }
+  .file-drop-text {
+    color: #adb5bd;
+  }
+}

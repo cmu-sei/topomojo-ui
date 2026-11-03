@@ -5,7 +5,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AboutComponent } from './about/about.component';
 import { AdminGuard } from './admin.guard';
-import { AuthGuard } from './auth.guard';
+import { AuthGuard, logoutGuard } from './auth.guard';
 import { ObserverGuard } from './observer.guard';
 import { EnlistComponent } from './enlist/enlist.component';
 import { HomeComponent } from './home/home.component';
@@ -35,6 +35,7 @@ const routes: Routes = [
       { path: 'oidc-silent', component: OidcComponent },
       {
         path: '', canActivate: [AuthGuard], canActivateChild: [AuthGuard], children: [
+          { path: 'logout', canActivate: [logoutGuard], children: [] },
           { path: 'mojo/:id/:slug/:code', component: GamespaceJoinComponent },
           {
             path: 'mojo/:id', children: [

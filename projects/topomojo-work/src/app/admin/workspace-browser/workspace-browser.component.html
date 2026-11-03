@@ -290,8 +290,8 @@
             class="ml-2 text-muted"
             role="button"
             tabindex="0"
-            [tooltip]="'Limits which published templates this workspace can link to by scope.'"
-            aria-label="Limits which published templates this workspace can link to by scope."
+            [tooltip]="'Lets this workspace add unpublished templates whose Audience matches. Published templates are always available.'"
+            aria-label="Lets this workspace add unpublished templates whose Audience matches. Published templates are always available."
           >
             <fa-icon [icon]="faInfoCircle"></fa-icon>
           </span>
@@ -303,7 +303,7 @@
           [(ngModel)]="detail.templateScope"
           (change)="update(detail)"
         >
-        <small class="text-muted">Template scopes this workspace can link (space-delimited).</small>
+        <small class="text-muted">Space-delimited tokens matched against template Audience.</small>
       </div>
 
       <div class="form-group bg-light">

@@ -147,6 +147,7 @@ export interface Settings {
   appname?: string;
   apphost?: string;
   enable_upload?: boolean;
+  brandColor?: string;
   oidc: AppUserManagerSettings;
 }
 
