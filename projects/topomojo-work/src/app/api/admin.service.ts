@@ -3,8 +3,8 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, shareReplay } from 'rxjs/operators';
 import { ApiSettings } from './api-settings';
 import { GeneratedAdminService } from './gen/admin.service';
 import { IsoFile, VmOptions } from './gen/models';
@@ -19,10 +19,14 @@ export type TemplateSource = {
     created?: string;
     modified?: string;
 };
-export type TemplateSourceReport = { field: 'disks' | 'template'; sources: TemplateSource[] };
+// enabled is false when the API's Core:EnableTemplateSources is off; field is then unset and sources empty.
+export type TemplateSourceReport = { enabled: boolean; field?: 'disks' | 'template'; sources: TemplateSource[] };
+export type AdminFeatures = { templateSources: boolean };
 
 @Injectable()
 export class AdminService extends GeneratedAdminService {
+
+    private features$?: Observable<AdminFeatures>;
 
     constructor(
        protected http: HttpClient,
@@ -45,6 +49,16 @@ export class AdminService extends GeneratedAdminService {
 
     public clearBackground(): Observable<ThemeInfo> {
         return this.http.delete<ThemeInfo>(this.conf.api + '/admin/background');
+    }
+
+    // Optional features the API has turned on. Fetched once and shared; an API without
+    // api/admin/features (or any error) reports every feature off.
+    public getFeatures(): Observable<AdminFeatures> {
+        this.features$ ??= this.http.get<AdminFeatures>(this.conf.api + '/admin/features').pipe(
+            catchError(() => of({ templateSources: false })),
+            shareReplay(1)
+        );
+        return this.features$;
     }
 
     public getTemplateSources(): Observable<TemplateSourceReport> {

@@ -2,6 +2,14 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <ng-container *ngIf="report$ | async as report; else loading">
+  <ng-container *ngIf="!report.enabled">
+    <h4>Disks</h4>
+    <div class="text-muted mb-2">
+      The Disks tab is turned off for this TopoMojo. To turn it on, set
+      <code>Core__EnableTemplateSources</code> to <code>true</code> in the TopoMojo API's settings.
+    </div>
+  </ng-container>
+  <ng-container *ngIf="report.enabled">
   <ng-container *ngIf="report.field === 'template'; else diskHelp">
     <h4>Template VMs</h4>
     <div class="text-muted mb-2">
@@ -104,6 +112,7 @@
         </tr>
       </tbody>
     </table>
+  </ng-container>
   </ng-container>
 </ng-container>
 
