@@ -10,7 +10,7 @@ import { ChangedWorkspace, Workspace, Worker } from '../api/gen/models';
 import { WorkspaceService } from '../api/workspace.service';
 import { ClipboardService } from '../clipboard.service';
 import { ConfigService } from '../config.service';
-import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faClipboardCheck, faTimes, faUserCog, faTrash, faCopy, faInfoCircle, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-settings-editor',
@@ -24,6 +24,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   inviteUrl = '';
   copiedInvite = false;
   errors: any[] = [];
+  isDownloading = false;
 
   faClipboardCheck = faClipboardCheck;
   faTimes = faTimes;
@@ -31,6 +32,7 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
   faTrash = faTrash;
   faCopy = faCopy;
   faInfoCircle = faInfoCircle;
+  faDownload = faDownload;
 
   constructor(
     private config: ConfigService,
@@ -131,6 +133,28 @@ export class SettingsEditorComponent implements OnInit, OnChanges {
       w => this.router.navigate(['/topo', w.id, 'settings']),
       err => this.errors.push(err)
     );
+  }
+
+  // the server decides: admins, or managers when the environment allows manager downloads
+  get canDownload(): boolean {
+    return !!this.workspace?.canDownload;
+  }
+
+  download(): void {
+    this.isDownloading = true;
+    this.api.downloadManagedWorkspaces([this.workspace.id]).pipe(
+      finalize(() => this.isDownloading = false)
+    ).subscribe({
+      next: data => {
+        const url = window.URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${this.workspace.name || this.workspace.id}-workspace.zip`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: err => this.errors.push(err)
+    });
   }
 
   delete(): void {
