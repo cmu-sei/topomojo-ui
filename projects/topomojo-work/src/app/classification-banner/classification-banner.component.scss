@@ -1,0 +1,10 @@
+// Copyright 2026 Carnegie Mellon University.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
+
+// The library banner inherits line height, and TopoMojo's body has Bootstrap's 1.5, which would
+// make it taller than in the other Crucible apps (46px at the usual 14px sizes).
+:host {
+  display: block;
+  flex: 0 0 auto;
+  line-height: normal;
+}

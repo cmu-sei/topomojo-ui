@@ -2,9 +2,9 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information.
 
 .editor {
-    height: calc(100vh - 360px);
+    height: calc(100vh - var(--classification-banner-height, 0px) - 360px);
 }
 .preview {
-  height: calc(100vh - 360px);
+  height: calc(100vh - var(--classification-banner-height, 0px) - 360px);
   overflow-y: scroll;
 }
