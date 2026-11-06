@@ -1,16 +1,10 @@
-// Matches crucible-common's comn-header-bar so the banner is identical across Crucible apps.
-// Font and line height are set here because TopoMojo's body uses Bootstrap's system font and
-// line-height 1.5, which would change the banner's height (46px at the 14px default).
+// Copyright 2026 Carnegie Mellon University.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
+
+// The library banner inherits line height, and TopoMojo's body has Bootstrap's 1.5, which would
+// make it taller than in the other Crucible apps (46px at the usual 14px sizes).
 :host {
   display: block;
   flex: 0 0 auto;
-}
-
-.message-bar {
-  padding: 4px;
-  box-sizing: border-box;
-  font-family: "Open Sans", sans-serif;
-  font-weight: 500;
   line-height: normal;
-  text-align: center;
 }

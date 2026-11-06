@@ -1,17 +1,14 @@
 // Copyright 2026 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
+import { DOCUMENT } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComnHeaderBarComponent, ComnHeaderBarSettings } from '@cmusei/crucible-common/header-bar';
 import { BehaviorSubject } from 'rxjs';
-import { ConfigService, HeaderBarSettings, Settings } from '../config.service';
-import {
-  BANNER_HEIGHT_PROPERTY,
-  ClassificationBannerComponent,
-  EMBEDDED_IN_FRAME,
-  toBanner
-} from './classification-banner.component';
+import { ConfigService, Settings } from '../config.service';
+import { BANNER_HEIGHT_PROPERTY, ClassificationBannerComponent } from './classification-banner.component';
 
-const sharedSettings: HeaderBarSettings = {
+const sharedSettings: ComnHeaderBarSettings = {
   enabled: true,
   banner_background_color: '#007a33ff',
   classification_text: 'UNCLASSIFIED // FOR TRAINING USE ONLY',
@@ -22,70 +19,28 @@ const sharedSettings: HeaderBarSettings = {
   message_text_fontsize: '14'
 };
 
-function settingsWith(headerBar?: HeaderBarSettings): Settings {
+function settingsWith(headerBar?: Partial<ComnHeaderBarSettings>): Settings {
   return { oidc: {} as Settings['oidc'], HeaderBarSettings: headerBar };
 }
 
-describe('toBanner', () => {
-  it('is hidden when the setting is absent or disabled', () => {
-    expect(toBanner(undefined)).toBeNull();
-    expect(toBanner(null)).toBeNull();
-    expect(toBanner({})).toBeNull();
-    expect(toBanner({ ...sharedSettings, enabled: false })).toBeNull();
-  });
-
-  it('is hidden when enabled with no text', () => {
-    expect(toBanner({ enabled: true, classification_text: ' ', message_text: '' })).toBeNull();
-  });
-
-  it('uses the configured values', () => {
-    expect(toBanner(sharedSettings)).toEqual({
-      backgroundColor: '#007a33ff',
-      classificationText: 'UNCLASSIFIED // FOR TRAINING USE ONLY',
-      classificationTextColor: '#ffffff',
-      classificationTextFontSize: '14px',
-      messageText: 'LOCAL DEVELOPMENT',
-      messageTextColor: '#ffff00',
-      messageTextFontSize: '14px'
-    });
-  });
-
-  it('falls back to the crucible-common defaults for blank values', () => {
-    expect(toBanner({ enabled: true, classification_text: 'UNCLASSIFIED', banner_background_color: ' ' })).toEqual({
-      backgroundColor: '#d40000ff',
-      classificationText: 'UNCLASSIFIED',
-      classificationTextColor: '#ffffff',
-      classificationTextFontSize: '22px',
-      messageText: '',
-      messageTextColor: '#ffffff',
-      messageTextFontSize: '18px'
-    });
-  });
-
-  it('treats bare font sizes as pixels and keeps explicit units', () => {
-    const banner = toBanner({
-      enabled: true,
-      classification_text: 'UNCLASSIFIED',
-      classification_text_fontsize: 16 as unknown as string,
-      message_text_fontsize: '1rem'
-    });
-    expect(banner?.classificationTextFontSize).toBe('16px');
-    expect(banner?.messageTextFontSize).toBe('1rem');
-    expect(toBanner({ ...sharedSettings, message_text_fontsize: '12px' })?.messageTextFontSize).toBe('12px');
-  });
-});
-
+// The library covers its own defaults; these cover TopoMojo's wiring.
 describe('ClassificationBannerComponent', () => {
   let settings$: BehaviorSubject<Settings>;
   let fixture: ComponentFixture<ClassificationBannerComponent>;
 
-  function create(embedded = false): HTMLElement {
+  // Karma runs specs in an iframe, where the library hides the banner, so its component gets a
+  // document whose window is (or isn't) framed.
+  function create(framed = false): HTMLElement {
+    const view = { self: {}, top: {} };
+    if (!framed) {
+      view.top = view.self;
+    }
     TestBed.configureTestingModule({
-      declarations: [ClassificationBannerComponent],
-      providers: [
-        { provide: ConfigService, useValue: { settings$ } },
-        { provide: EMBEDDED_IN_FRAME, useValue: embedded }
-      ]
+      imports: [ClassificationBannerComponent],
+      providers: [{ provide: ConfigService, useValue: { settings$ } }]
+    });
+    TestBed.overrideComponent(ComnHeaderBarComponent, {
+      add: { providers: [{ provide: DOCUMENT, useValue: { defaultView: view } }] }
     });
     fixture = TestBed.createComponent(ClassificationBannerComponent);
     fixture.detectChanges();
@@ -104,25 +59,16 @@ describe('ClassificationBannerComponent', () => {
     document.documentElement.style.removeProperty(BANNER_HEIGHT_PROPERTY);
   });
 
-  it('renders the classification and message with their colors and sizes', () => {
-    const lines = create().querySelectorAll<HTMLElement>('.message-bar > div');
+  it('renders the library banner from HeaderBarSettings', () => {
+    const bar = create().querySelector<HTMLElement>('comn-header-bar .message-bar');
+    const lines = bar?.querySelectorAll<HTMLElement>(':scope > div') ?? [];
 
+    expect(bar?.style.backgroundColor).toBe('rgb(0, 122, 51)');
     expect(lines.length).toBe(2);
     expect(lines[0].textContent?.trim()).toBe('UNCLASSIFIED // FOR TRAINING USE ONLY');
-    expect(lines[0].style.color).toBe('rgb(255, 255, 255)');
     expect(lines[0].style.fontSize).toBe('14px');
     expect(lines[1].textContent?.trim()).toBe('LOCAL DEVELOPMENT');
     expect(lines[1].style.color).toBe('rgb(255, 255, 0)');
-  });
-
-  it('applies the banner background color', () => {
-    const bar = create().querySelector<HTMLElement>('.message-bar');
-    expect(bar?.style.backgroundColor).toBe('rgb(0, 122, 51)');
-  });
-
-  it('omits an empty message line', () => {
-    settings$.next(settingsWith({ ...sharedSettings, message_text: '' }));
-    expect(create().querySelectorAll('.message-bar > div').length).toBe(1);
   });
 
   it('renders nothing when the setting is absent', () => {
@@ -143,6 +89,15 @@ describe('ClassificationBannerComponent', () => {
     settings$.next(settingsWith(sharedSettings));
     fixture.detectChanges();
     expect(host.querySelector('.message-bar')).not.toBeNull();
+  });
+
+  it('uses normal line height whatever the page sets', () => {
+    document.body.style.lineHeight = '1.5';
+    try {
+      expect(getComputedStyle(create()).lineHeight).toBe('normal');
+    } finally {
+      document.body.style.removeProperty('line-height');
+    }
   });
 
   it('publishes its height for viewport-sized layouts and clears it when destroyed', async () => {

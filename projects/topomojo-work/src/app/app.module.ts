@@ -67,7 +67,6 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     AppComponent,
     AppLayoutComponent,
     AboutComponent,
-    ClassificationBannerComponent,
     ConsoleLayoutComponent,
     HomeComponent,
     LoginComponent,
@@ -113,6 +112,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     ReactiveFormsModule,
     UtilityModule,
     ApiModule,
+    ClassificationBannerComponent,
     MonacoEditorModule.forRoot({ onMonacoLoad: applyMonacoTheme }),
     MarkdownModule.forRoot({
       loader: HttpClient,
