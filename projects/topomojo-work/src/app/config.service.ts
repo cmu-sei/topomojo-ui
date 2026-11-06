@@ -2,6 +2,7 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { inject, Injectable } from '@angular/core';
+import { ComnHeaderBarSettings } from '@cmusei/crucible-common/header-bar';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { UserManagerSettings } from 'oidc-client-ts';
@@ -149,19 +150,8 @@ export interface Settings {
   enable_upload?: boolean;
   brandColor?: string;
   oidc: AppUserManagerSettings;
-  HeaderBarSettings?: HeaderBarSettings;
-}
-
-// Classification banner, same keys as the HeaderBarSettings used by the other Crucible apps.
-export interface HeaderBarSettings {
-  enabled?: boolean;
-  banner_background_color?: string;
-  classification_text?: string;
-  classification_text_color?: string;
-  classification_text_fontsize?: string;
-  message_text?: string;
-  message_text_color?: string;
-  message_text_fontsize?: string;
+  // Classification banner, the HeaderBarSettings block the other Crucible apps use.
+  HeaderBarSettings?: Partial<ComnHeaderBarSettings>;
 }
 
 export interface AppUserManagerSettings extends UserManagerSettings {
