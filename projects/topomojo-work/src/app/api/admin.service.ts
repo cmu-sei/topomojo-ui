@@ -29,12 +29,24 @@ export interface HypervisorCapacityStorage {
     usedMb: number;
 }
 
+export interface CapacityAlert {
+    name: string;
+    node?: string;
+    resource: 'memory' | 'storage';
+    percent: number;
+    level: 'warning' | 'critical';
+}
+
 export interface HypervisorCapacity {
     provider: string;
     asOf: string;
     nodes: HypervisorCapacityNode[];
     storage: HypervisorCapacityStorage[];
     poolMemoryFreeMb?: number;
+    // Core:CapacityWarnPercent / Core:CapacityCriticalPercent, and what is over them
+    warnPercent?: number;
+    criticalPercent?: number;
+    alerts?: CapacityAlert[];
 }
 
 @Injectable()

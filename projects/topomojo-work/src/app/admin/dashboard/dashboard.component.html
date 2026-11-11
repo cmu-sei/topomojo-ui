@@ -1,6 +1,27 @@
 <!-- Copyright 2021 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
+<ng-container *ngIf="capacity | async as c">
+  <div
+    *ngIf="c.alerts?.length"
+    class="alert"
+    [ngClass]="hasCritical(c.alerts) ? 'alert-danger' : 'alert-warning'"
+    role="alert"
+  >
+    <strong>{{ hasCritical(c.alerts) ? 'Hypervisor is full or nearly full.' : 'Hypervisor is filling up.' }}</strong>
+    These are at or over {{ c.warnPercent ?? warnPercent }}% used ({{ c.criticalPercent ?? criticalPercent }}% is critical):
+    <ul class="mb-0 mt-1">
+      <li *ngFor="let a of c.alerts">
+        <span class="badge mr-1" [ngClass]="a.level === 'critical' ? 'badge-danger' : 'badge-warning'">
+          {{ a.level === 'critical' ? 'Critical' : 'Warning' }}
+        </span>
+        {{ a.resource === 'memory' ? 'Memory on' : 'Storage' }} {{ a.name }}<span *ngIf="a.node"> on {{ a.node }}</span>:
+        {{ a.percent | number:'1.0-0' }}% used
+      </li>
+    </ul>
+  </div>
+</ng-container>
+
 <div class="mb-3">
   <div class="text-muted">
     Admin tools for monitoring active users, broadcasting announcements, and viewing Janitor cleanup activity.

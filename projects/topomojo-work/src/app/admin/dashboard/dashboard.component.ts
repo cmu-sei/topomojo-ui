@@ -4,8 +4,8 @@
 import { Component, OnInit } from '@angular/core';
 import { faMailBulk, faPaperPlane, faInfoCircle, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable, of } from 'rxjs';
-import { catchError, debounceTime, switchMap } from 'rxjs/operators';
-import { AdminService, HypervisorCapacity } from '../../api/admin.service';
+import { catchError, debounceTime, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { AdminService, CapacityAlert, HypervisorCapacity } from '../../api/admin.service';
 import { CachedConnection, JanitorReport } from '../../api/gen/models';
 
 @Component({
@@ -19,6 +19,9 @@ export class DashboardComponent implements OnInit {
   connections!: Observable<CachedConnection[]>;
   capacityRefresh$ = new BehaviorSubject<boolean>(true);
   capacity!: Observable<HypervisorCapacity | null>;
+  // bar colors and the banner follow the API's levels; these are its defaults
+  warnPercent = 75;
+  criticalPercent = 90;
   importResult!: Observable<string[]>;
   janitorResult!: Observable<JanitorReport[]>;
   janitorReports: JanitorReport[] = [];
@@ -50,7 +53,13 @@ export class DashboardComponent implements OnInit {
       debounceTime(500),
       switchMap(() => api.getCapacity().pipe(
         catchError(() => of(null))
-      ))
+      )),
+      tap(c => {
+        this.warnPercent = c?.warnPercent ?? 75;
+        this.criticalPercent = c?.criticalPercent ?? 90;
+      }),
+      // the banner and the tables share one read
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 
@@ -64,7 +73,11 @@ export class DashboardComponent implements OnInit {
 
   // Bootstrap contextual class for a usage bar.
   level(percent: number): string {
-    return percent >= 90 ? 'bg-danger' : percent >= 75 ? 'bg-warning' : 'bg-success';
+    return percent >= this.criticalPercent ? 'bg-danger' : percent >= this.warnPercent ? 'bg-warning' : 'bg-success';
+  }
+
+  hasCritical(alerts: CapacityAlert[] | undefined): boolean {
+    return !!alerts?.some(a => a.level === 'critical');
   }
 
   gb(mb: number): string {
