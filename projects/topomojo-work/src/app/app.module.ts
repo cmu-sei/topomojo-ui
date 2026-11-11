@@ -51,6 +51,7 @@ import { PresenceBarComponent } from './presence-bar/presence-bar.component';
 import { GamespaceComponent } from './gamespace/gamespace.component';
 import { GamespacePreviewComponent } from './gamespace-preview/gamespace-preview.component';
 import { WorkspacePlayerComponent } from './workspace-player/workspace-player.component';
+import { WorkspaceCapacityComponent } from './workspace-capacity/workspace-capacity.component';
 import { GamespaceQuizComponent } from './gamespace-quiz/gamespace-quiz.component';
 import { IsoModule } from './iso/iso.module';
 import { ApikeysComponent } from './apikeys/apikeys.component';
@@ -91,6 +92,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     GamespaceComponent,
     GamespacePreviewComponent,
     WorkspacePlayerComponent,
+    WorkspaceCapacityComponent,
     GamespaceQuizComponent,
     ApikeysComponent,
     GamespaceCardComponent,

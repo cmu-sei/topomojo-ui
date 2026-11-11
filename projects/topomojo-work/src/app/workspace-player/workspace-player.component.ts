@@ -1,13 +1,14 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { faBolt, faTrash, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { asyncScheduler, merge, Observable, of, scheduled, Subject, timer } from 'rxjs';
 import { catchError, filter, finalize, map, switchMap, tap, zipAll } from 'rxjs/operators';
 import { GamespaceService } from '../api/gamespace.service';
 import { GamespaceRegistration, GameState, Workspace } from '../api/gen/models';
 import { ConfigService } from '../config.service';
+import { WorkspaceCapacityComponent } from '../workspace-capacity/workspace-capacity.component';
 
 @Component({
     selector: 'app-workspace-player',
@@ -22,6 +23,8 @@ export class WorkspacePlayerComponent implements OnInit, OnChanges, AfterViewIni
   gamespace$: Observable<GameState>;
   state!: GameState;
   errors: any[] = [];
+  capacityWarning = '';
+  @ViewChild(WorkspaceCapacityComponent) capacity?: WorkspaceCapacityComponent;
 
   launching = false;
   deploying = false;
@@ -84,10 +87,17 @@ export class WorkspacePlayerComponent implements OnInit, OnChanges, AfterViewIni
 
   launch(): void {
     this.launching = true;
+    this.capacityWarning = '';
     this.api.register(this.settings).pipe(
-      finalize(() => this.launching = false)
+      finalize(() => {
+        this.launching = false;
+        this.capacity?.refresh();
+      })
     ).subscribe(
-      gs => this.changed$.next(gs),
+      gs => {
+        this.capacityWarning = gs.capacityWarning || '';
+        this.changed$.next(gs);
+      },
       err => this.errors.push(err)
     );
   }
@@ -95,8 +105,12 @@ export class WorkspacePlayerComponent implements OnInit, OnChanges, AfterViewIni
   reset(id: string | undefined): void {
     if (!id) { return; }
     this.launching = true;
+    this.capacityWarning = '';
     this.api.delete(id).pipe(
-      finalize(() => this.launching = false)
+      finalize(() => {
+        this.launching = false;
+        this.capacity?.refresh();
+      })
     ).subscribe(
       () => this.id$.next(this.summary.id)
     );

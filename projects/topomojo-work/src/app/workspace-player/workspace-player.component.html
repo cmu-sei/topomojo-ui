@@ -8,6 +8,12 @@
     </div>
   </div>
 
+  <app-workspace-capacity [workspace]="summary"></app-workspace-capacity>
+
+  <alert *ngIf="capacityWarning" type="warning" [dismissible]="true" (onClosed)="capacityWarning = ''">
+    <strong>Started, but the hypervisor may not have room.</strong> {{ capacityWarning }}
+  </alert>
+
   <div *ngIf="(game.gameOver || game.session.isBefore || game.session.isAfter) && !launching">
 
     <div class="text-muted mb-2">

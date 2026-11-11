@@ -62,6 +62,8 @@ export interface GameState {
   challenge?: ChallengeView;
   session: TimeWindow;
   gameOver: boolean;
+  // set when a start or register deployed vms the hypervisor may not have room for
+  capacityWarning?: string;
 }
 
 export interface GamespaceRegistration {

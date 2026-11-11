@@ -7,6 +7,30 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { ApiSettings } from './api-settings';
 import { GeneratedWorkspaceService } from './gen/workspace.service';
 import { IsoUsageReport } from './gen/models';
+
+export interface WorkspaceDemand {
+    vmCount: number;
+    memoryMb: number;
+    vcpu: number;
+}
+
+// GET api/workspace/{id}/capacity: how many more gamespaces of a workspace fit
+export interface WorkspaceCapacity {
+    workspaceId: string;
+    provider: string;
+    asOf: string;
+    requested: number;
+    // null when the workspace has no templates, so nothing limits it
+    fits: number | null;
+    sufficient: boolean;
+    limitedBy: 'memory' | 'pool' | null;
+    headroomPercent: number;
+    perInstance: WorkspaceDemand;
+    memoryFreeMb: number;
+    memoryTotalMb: number;
+    cpuCores: number;
+    cpuUsagePercent: number;
+}
 import { tap, map } from 'rxjs/operators';
 
 @Injectable()
@@ -43,6 +67,13 @@ export class WorkspaceService extends GeneratedWorkspaceService {
         return this.http.delete<void>(
             `${this.conf.api}/workspace/${workspaceId}/iso`,
             { params: { path: isoPath } }
+        );
+    }
+
+    public getCapacity(workspaceId: string, players = 1, count = 1): Observable<WorkspaceCapacity> {
+        return this.http.get<WorkspaceCapacity>(
+            `${this.conf.api}/workspace/${workspaceId}/capacity`,
+            { params: { players, count } }
         );
     }
 

@@ -1,0 +1,36 @@
+<!-- Copyright 2026 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information. -->
+
+<div class="workspace-capacity mb-3">
+  <div *ngIf="capacity as c" class="d-flex flex-wrap align-items-baseline">
+    <strong class="mr-2" [class.text-danger]="c.fits === 0">{{ fitsText(c) }}</strong>
+    <small *ngIf="c.fits !== null" class="text-muted mr-2">
+      {{ limitText(c) }}: {{ gb(c.memoryFreeMb) }} GB free after {{ c.headroomPercent }}% headroom,
+      {{ gb(c.perInstance.memoryMb) }} GB each
+      ({{ c.perInstance.vmCount }} VM{{ c.perInstance.vmCount === 1 ? '' : 's' }})
+    </small>
+    <small class="text-muted mr-2">· as of {{ asOf(c.asOf) }}</small>
+  </div>
+
+  <div *ngIf="unavailable" class="text-muted">
+    The hypervisor's free memory can't be read right now, so there's no estimate of how many more gamespaces fit.
+  </div>
+
+  <div class="d-flex align-items-center small">
+    <ng-container *ngIf="followsPlayers">
+      <label class="mb-0 mr-1" for="capacity-players-input">Players per gamespace</label>
+      <input
+        id="capacity-players-input"
+        class="form-control form-control-sm mr-2 players"
+        type="number"
+        min="1"
+        [(ngModel)]="players"
+        (ngModelChange)="refresh()"
+      >
+    </ng-container>
+    <button class="btn btn-link btn-sm p-0" [disabled]="loading" (click)="refresh()">
+      {{ unavailable ? 'Retry' : 'Refresh' }}
+    </button>
+    <small class="text-muted ml-2">An estimate: nothing is reserved, and other launches share the same room.</small>
+  </div>
+</div>
