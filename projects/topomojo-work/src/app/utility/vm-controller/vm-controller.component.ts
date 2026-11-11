@@ -28,6 +28,7 @@ export class VmControllerComponent implements OnInit, OnDestroy {
   errors: Error[] = [];
   hubsub: Subscription;
   confirmation_task = "";
+  capacityWarning = '';
 
   faCircleNotch = faCircleNotch;
   faSyncAlt = faSyncAlt;
@@ -98,7 +99,10 @@ export class VmControllerComponent implements OnInit, OnDestroy {
         break;
 
       case 'deploy':
-        q = this.api.deployTemplate(this.template.id);
+        this.capacityWarning = '';
+        q = this.api.deployTemplate(this.template.id).pipe(
+          tap((vm: Vm) => this.capacityWarning = vm.capacityWarning || '')
+        );
         break;
 
       case 'refresh':

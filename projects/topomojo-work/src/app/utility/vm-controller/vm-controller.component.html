@@ -70,6 +70,10 @@
     </button>
   </div>
 
+  <alert *ngIf="capacityWarning" type="warning" [dismissible]="true" (onClosed)="capacityWarning = ''" class="text-left">
+    Deployed, but the hypervisor may not have room. {{ capacityWarning }}
+  </alert>
+
   <app-error-div [errors]="errors" class="text-left"></app-error-div>
 </div>
 

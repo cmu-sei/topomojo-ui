@@ -366,6 +366,8 @@ export interface Vm {
   question?: VmQuestion;
   task?: VmTask;
   hypervisorType?: HypervisorTypeEnum;
+  // set when a deploy went ahead though the hypervisor may not have room for it
+  capacityWarning?: string;
 }
 
 export interface VmQuestion {
