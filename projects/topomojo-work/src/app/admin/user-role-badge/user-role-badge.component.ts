@@ -1,3 +1,6 @@
+// Copyright 2026 Carnegie Mellon University. All Rights Reserved.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information.
+
 import { Component, inject, input, TemplateRef, viewChild } from '@angular/core';
 import { ApiUser } from '../../api/gen/models';
 import { ModalComponent } from '../../modal/modal.component';
