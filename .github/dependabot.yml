@@ -45,7 +45,7 @@ updates:
         versions: [">= 0.16.0"]
       - dependency-name: typescript
         versions: [">= 5.9.0"]
-      # noVNC 1.6 stopped exporting core/rfb, which topomojo-mks imports.
+      # @cmusei/console-forge 0.22 needs @novnc/novnc >=1.4.0 <1.6.0 (a peer dependency).
       - dependency-name: "@novnc/novnc"
         versions: [">= 1.6.0"]
       # @types/node follows the Node major the app runs on (the Dockerfile's node image); move it by hand with Node.
