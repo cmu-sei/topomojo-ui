@@ -1,3 +1,6 @@
+// Copyright 2026 Carnegie Mellon University. All Rights Reserved.
+// Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information.
+
 import { Component, computed, DestroyRef, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Title } from '@angular/platform-browser';
