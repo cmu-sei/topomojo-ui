@@ -4,7 +4,7 @@
 import { ElementRef, Injectable, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ConsoleService } from './console.service';
-import NoVncClient from '@novnc/novnc/core/rfb';
+import NoVncClient from '@novnc/novnc/lib/rfb';
 import { ConsoleOptions, ConsoleSupportsFeatures } from '../console.models';
 import { BehaviorSubject } from 'rxjs';
 
