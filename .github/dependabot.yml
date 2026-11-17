@@ -40,11 +40,6 @@ updates:
         update-types: [version-update:semver-major]
       - dependency-name: typescript
         update-types: [version-update:semver-major]
-      # Angular 19 needs zone.js ~0.15 and TypeScript < 5.9; drop both holds with the Angular upgrade.
-      - dependency-name: zone.js
-        versions: [">= 0.16.0"]
-      - dependency-name: typescript
-        versions: [">= 5.9.0"]
       # @cmusei/console-forge 0.22 needs @novnc/novnc >=1.4.0 <1.6.0 (a peer dependency).
       - dependency-name: "@novnc/novnc"
         versions: [">= 1.6.0"]
