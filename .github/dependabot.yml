@@ -40,6 +40,14 @@ updates:
         update-types: [version-update:semver-major]
       - dependency-name: typescript
         update-types: [version-update:semver-major]
+      # Angular 21 and ngx-markdown 21 need zone.js ~0.15 or ~0.16; drop with the next Angular upgrade.
+      - dependency-name: zone.js
+        versions: [">= 0.17.0"]
+      # ngx-markdown 21 needs marked 17 or 18 and emoji-toolkit < 11 (marked-smartypants needs marked < 19).
+      - dependency-name: marked
+        versions: [">= 19.0.0"]
+      - dependency-name: emoji-toolkit
+        versions: [">= 11.0.0"]
       # @cmusei/console-forge 0.22 needs @novnc/novnc >=1.4.0 <1.6.0 (a peer dependency).
       - dependency-name: "@novnc/novnc"
         versions: [">= 1.6.0"]

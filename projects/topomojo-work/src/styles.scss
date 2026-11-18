@@ -247,6 +247,12 @@ th[align="center"] {
   --app-bg-image: none;
 }
 
+// Font Awesome 7 draws every icon at a fixed 1.25em width; keep the natural widths the
+// layout was built with (Font Awesome 6). Add the fa-width-fixed class where fixed is wanted.
+:root {
+  --fa-width: auto;
+}
+
 body {
   background-image: var(--app-bg-image);
   margin: 0;
