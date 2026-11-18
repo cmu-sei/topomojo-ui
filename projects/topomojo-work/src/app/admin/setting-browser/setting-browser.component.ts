@@ -2,7 +2,6 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Component, Inject, OnInit, DOCUMENT } from '@angular/core';
-
 import { AdminService, ThemeInfo } from '../../api/admin.service';
 import { faSearch, faSortUp, faSortDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 

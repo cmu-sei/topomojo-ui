@@ -1,7 +1,6 @@
 // Copyright 2026 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-
 import { Inject, Injectable, DOCUMENT } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
