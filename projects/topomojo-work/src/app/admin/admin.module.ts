@@ -61,11 +61,11 @@ import { DiskBrowserComponent } from './disk-browser/disk-browser.component';
     ]),
     UtilityModule,
     FontAwesomeModule,
-    ButtonsModule.forRoot(),
-    AlertModule.forRoot(),
+    ButtonsModule,
+    AlertModule,
     IsoModule,
     UserRoleBadgeComponent,
-    TooltipModule.forRoot(),
+    TooltipModule,
   ]
 })
 export class AdminModule { }

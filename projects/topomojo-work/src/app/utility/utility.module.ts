@@ -40,8 +40,8 @@ import { ModalComponent } from '../modal/modal.component';
   imports: [
     CommonModule,
     FontAwesomeModule,
-    AlertModule.forRoot(),
-    TooltipModule.forRoot(),
+    AlertModule,
+    TooltipModule,
     ModalComponent
   ],
   exports: [
