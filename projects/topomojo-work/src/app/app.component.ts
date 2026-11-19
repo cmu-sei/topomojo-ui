@@ -1,8 +1,7 @@
 // Copyright 2026 Carnegie Mellon University. All Rights Reserved.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root for license information.
 
-import { Component, Inject, OnInit } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Component, Inject, OnInit, DOCUMENT } from '@angular/core';
 import { ApiSettings } from './api/api-settings';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
