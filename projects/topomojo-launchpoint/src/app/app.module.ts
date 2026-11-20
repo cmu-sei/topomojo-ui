@@ -12,6 +12,7 @@ import { ClipboardService } from 'projects/topomojo-work/src/app/clipboard.servi
 import { CountdownPipe } from 'projects/topomojo-work/src/app/utility/countdown.pipe';
 import { SpinnerComponent } from 'projects/topomojo-work/src/app/utility/spinner/spinner.component';
 import { markedOptionsFactory } from './api.service';
+import { ClassificationBannerComponent } from './classification-banner/classification-banner.component';
 
 import { AppComponent } from './app.component';
 import { HttpInterceptorService } from './http-interceptor.service';
@@ -35,7 +36,8 @@ import { ConfirmButtonComponent } from './utility/confirm-button/confirm-button.
                 useFactory: markedOptionsFactory,
             },
         }),
-        FontAwesomeModule], providers: [
+        FontAwesomeModule,
+        ClassificationBannerComponent], providers: [
             {
                 provide: HTTP_INTERCEPTORS,
                 useClass: HttpInterceptorService,
