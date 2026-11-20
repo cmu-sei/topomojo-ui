@@ -36,8 +36,24 @@ function guestSettings(obj: any): KeyValue[] {
 const isLegacyFirmware = (s: KeyValue) => s.key === 'firmware';
 const isLegacyVhv = (s: KeyValue) => s.key.includes('vhv.enable');
 
-/** What the template deploys with on vSphere, mirroring the API's precedence. Null if detail isn't valid JSON. */
-export function readHardware(detail: string | undefined | null): TemplateHardware | null {
+// The Guest Settings box (template.guestinfo) is one "key=value" per line; the API prefixes each key
+// with "guestinfo." and still matches vhv.enable by substring, so "vhv.enable=true" typed there
+// enables nested virtualization. vSphere also splits lines on ";".
+function guestinfoEnablesNestedVirtualization(guestinfo: string | undefined | null): boolean {
+  return ('' + (guestinfo ?? '')).split(/[\n\r;]/).some(line => {
+    const x = line.indexOf('=');
+    return x > 0
+      && !line.trim().startsWith('#')
+      && line.slice(0, x).trim().includes('vhv.enable')
+      && line.slice(x + 1).trim().toLowerCase() === 'true';
+  });
+}
+
+/**
+ * What the template deploys with on vSphere, mirroring the API's precedence. Null if detail isn't valid JSON.
+ * Pass the template's Guest Settings box text as guestinfo so a "vhv.enable=true" line typed there shows as checked.
+ */
+export function readHardware(detail: string | undefined | null, guestinfo?: string | null): TemplateHardware | null {
   let obj: any;
   try {
     obj = JSON.parse(detail || '{}');
@@ -57,7 +73,8 @@ export function readHardware(detail: string | undefined | null): TemplateHardwar
   const nvKey = findKey(obj, 'NestedVirtualization');
   const nestedVirtualization = nvKey && typeof obj[nvKey] === 'boolean'
     ? obj[nvKey] as boolean
-    : settings.some(s => isLegacyVhv(s) && s.value.toLowerCase() === 'true');
+    : settings.some(s => isLegacyVhv(s) && s.value.toLowerCase() === 'true')
+      || guestinfoEnablesNestedVirtualization(guestinfo);
 
   return { firmware, nestedVirtualization };
 }

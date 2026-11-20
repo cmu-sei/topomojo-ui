@@ -38,6 +38,17 @@ describe('template hardware settings', () => {
     expect(readHardware(detail)?.firmware).toBe('bios');
   });
 
+  // The API matches vhv.enable by substring in the Guest Settings box too.
+  it('reads vhv.enable=true typed in the Guest Settings box', () => {
+    expect(readHardware('{}', '# note\nvhv.enable=TRUE')?.nestedVirtualization).toBe(true);
+    expect(readHardware('{}', 'vhv.enable=false')?.nestedVirtualization).toBe(false);
+    expect(readHardware('{}', '#vhv.enable=true')?.nestedVirtualization).toBe(false);
+  });
+
+  it('lets a top-level NestedVirtualization win over the Guest Settings box', () => {
+    expect(readHardware('{ "NestedVirtualization": false }', 'vhv.enable=true')?.nestedVirtualization).toBe(false);
+  });
+
   it('returns null for invalid JSON', () => {
     expect(readHardware('{ not json')).toBeNull();
   });

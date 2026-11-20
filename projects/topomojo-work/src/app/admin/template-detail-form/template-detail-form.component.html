@@ -161,6 +161,7 @@
       autocomplete="false"
       spellcheck="false"
       [(ngModel)]="template.guestinfo"
+      (ngModelChange)="readHardware()"
       maxlength="1024"
       rows="5"
     ></textarea>
@@ -183,7 +184,7 @@
       id="firmware-input"
       class="form-control"
       name="firmware"
-      [disabled]="!hardware"
+      [disabled]="!hardware || !hasDetail"
       [ngModel]="hardware?.firmware"
       (ngModelChange)="setHardware('firmware', $event)"
     >
@@ -193,6 +194,7 @@
 
     <small class="text-muted">
       vSphere only. Windows 11 needs EFI. Must match how the disk was installed, or the VM won't boot.
+      <ng-container *ngIf="!hasDetail"> Disabled because this template has no Detail of its own.</ng-container>
     </small>
   </div>
 
@@ -203,7 +205,7 @@
         class="form-check-input"
         type="checkbox"
         name="nestedVirtualization"
-        [disabled]="!hardware"
+        [disabled]="!hardware || !hasDetail"
         [ngModel]="hardware?.nestedVirtualization"
         (ngModelChange)="setHardware('nestedVirtualization', $event)"
       >
@@ -214,6 +216,7 @@
 
     <small class="text-muted">
       vSphere only. Lets the VM run its own hypervisor (for example, Hyper-V or WSL 2).
+      <ng-container *ngIf="!hasDetail"> Disabled because this template has no Detail of its own.</ng-container>
     </small>
   </div>
 

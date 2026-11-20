@@ -38,7 +38,12 @@ export class TemplateDetailFormComponent implements OnInit, OnChanges {
   }
 
   readHardware(): void {
-    this.hardware = readHardware(this.template?.detail);
+    this.hardware = readHardware(this.template?.detail, this.template?.guestinfo);
+  }
+
+  /** A template with no Detail of its own deploys with its parent's, so writing one here would replace it with a stub. */
+  get hasDetail(): boolean {
+    return !!this.template?.detail?.trim();
   }
 
   setHardware<K extends keyof TemplateHardware>(setting: K, value: TemplateHardware[K]): void {
