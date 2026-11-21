@@ -117,6 +117,24 @@
 
   </div>
 
+  <div class="form-group bg-light" *ngIf="canDownload">
+    <label class="mb-0 d-flex align-items-center">
+      Export
+    </label>
+
+    <div>
+      <button class="btn btn-outline-secondary" (click)="download()" [disabled]="isDownloading">
+        <fa-icon [icon]="faDownload"></fa-icon>
+        <span>Download</span>
+      </button>
+    </div>
+    <small>
+      Download this workspace as a zip file: its settings, templates, challenge, and document.
+      An administrator can upload the zip to another TopoMojo. Disk images aren't included.
+    </small>
+
+  </div>
+
   <hr/>
   <app-error-div [errors]="errors"></app-error-div>
   <div class="text-center mb-4">
