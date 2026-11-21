@@ -3,9 +3,9 @@
 
 import { Component, OnInit } from '@angular/core';
 import { faMailBulk, faPaperPlane, faInfoCircle, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
-import { debounceTime, switchMap } from 'rxjs/operators';
-import { AdminService } from '../../api/admin.service';
+import { BehaviorSubject, interval, merge, Observable, of } from 'rxjs';
+import { catchError, debounceTime, switchMap } from 'rxjs/operators';
+import { AdminService, HypervisorCapacity } from '../../api/admin.service';
 import { CachedConnection, JanitorReport } from '../../api/gen/models';
 
 @Component({
@@ -17,6 +17,8 @@ import { CachedConnection, JanitorReport } from '../../api/gen/models';
 export class DashboardComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);
   connections!: Observable<CachedConnection[]>;
+  capacityRefresh$ = new BehaviorSubject<boolean>(true);
+  capacity!: Observable<HypervisorCapacity | null>;
   importResult!: Observable<string[]>;
   janitorResult!: Observable<JanitorReport[]>;
   janitorReports: JanitorReport[] = [];
@@ -39,6 +41,42 @@ export class DashboardComponent implements OnInit {
       debounceTime(500),
       switchMap(() => api.listConnections())
     );
+
+    // null means the read failed; the template says so rather than showing nothing.
+    this.capacity = merge(
+      this.capacityRefresh$,
+      interval(60000)
+    ).pipe(
+      debounceTime(500),
+      switchMap(() => api.getCapacity().pipe(
+        catchError(() => of(null))
+      ))
+    );
+  }
+
+  refreshCapacity(): void {
+    this.capacityRefresh$.next(true);
+  }
+
+  percent(used: number, total: number): number {
+    return total > 0 ? Math.round(used * 100 / total) : 0;
+  }
+
+  // Bootstrap contextual class for a usage bar.
+  level(percent: number): string {
+    return percent >= 90 ? 'bg-danger' : percent >= 75 ? 'bg-warning' : 'bg-success';
+  }
+
+  gb(mb: number): string {
+    return (mb / 1024).toFixed(mb >= 102400 ? 0 : 1);
+  }
+
+  providerName(provider: string): string {
+    return ({ proxmox: 'Proxmox', vsphere: 'vSphere', mock: 'Mock' } as Record<string, string>)[provider] ?? provider;
+  }
+
+  asOf(value: string): string {
+    return new Date(value).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
   }
 
   ngOnInit(): void {

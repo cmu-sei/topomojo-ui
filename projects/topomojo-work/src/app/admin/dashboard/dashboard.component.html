@@ -13,6 +13,92 @@
 </div>
 <div *ngFor="let c of connections | async; trackBy:trackById" class="mx-4 my-1">{{c.profileName}}</div>
 
+<h4 class="mt-3">Hypervisor Capacity</h4>
+<div class="text-muted mb-2">
+  Memory, CPU, and storage in use on the hypervisor TopoMojo deploys to. Other apps sharing the hypervisor count
+  toward these figures.
+</div>
+<ng-container *ngIf="capacity | async as c; else capacityUnavailable">
+  <table class="table table-sm capacity mb-2">
+    <thead>
+      <tr>
+        <th scope="col">Host</th>
+        <th scope="col">Memory</th>
+        <th scope="col">CPU</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let n of c.nodes" [class.text-muted]="!n.available">
+        <td>
+          {{ n.name }}
+          <span *ngIf="!n.available" class="badge badge-secondary ml-1">Unavailable</span>
+        </td>
+        <td>
+          <ng-container
+            *ngTemplateOutlet="usage; context: { percent: percent(n.memoryUsedMb, n.memoryTotalMb), label: 'Memory on ' + n.name }"
+          ></ng-container>
+          <small>{{ percent(n.memoryUsedMb, n.memoryTotalMb) }}% · {{ gb(n.memoryUsedMb) }} of {{ gb(n.memoryTotalMb) }} GB</small>
+        </td>
+        <td>
+          <ng-container
+            *ngTemplateOutlet="usage; context: { percent: n.cpuUsagePercent, label: 'CPU on ' + n.name }"
+          ></ng-container>
+          <small>{{ n.cpuUsagePercent | number:'1.0-0' }}% · {{ n.cpuCores }} cores</small>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <table *ngIf="c.storage.length" class="table table-sm capacity storage mb-2">
+    <thead>
+      <tr>
+        <th scope="col">Storage</th>
+        <th scope="col">Used</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of c.storage" [class.text-muted]="!s.available">
+        <td>
+          {{ s.name }}
+          <small *ngIf="s.node" class="text-muted">on {{ s.node }}</small>
+          <small *ngIf="s.shared" class="text-muted">shared</small>
+          <span *ngIf="!s.available" class="badge badge-secondary ml-1">Unavailable</span>
+        </td>
+        <td>
+          <ng-container
+            *ngTemplateOutlet="usage; context: { percent: percent(s.usedMb, s.totalMb), label: 'Storage ' + s.name }"
+          ></ng-container>
+          <small>{{ percent(s.usedMb, s.totalMb) }}% · {{ gb(s.usedMb) }} of {{ gb(s.totalMb) }} GB</small>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="c.poolMemoryFreeMb != null" class="mb-1">
+    <small>Resource pool limit: {{ gb(c.poolMemoryFreeMb) }} GB of memory left.</small>
+  </div>
+  <div class="d-flex align-items-center">
+    <small class="text-muted mr-2">{{ providerName(c.provider) }} · as of {{ asOf(c.asOf) }}</small>
+    <button class="btn btn-link btn-sm p-0" (click)="refreshCapacity()">Refresh</button>
+  </div>
+</ng-container>
+<ng-template #capacityUnavailable>
+  <div class="text-muted mx-4">
+    Hypervisor figures are unavailable.
+    <button class="btn btn-link btn-sm p-0 ml-1" (click)="refreshCapacity()">Retry</button>
+  </div>
+</ng-template>
+<ng-template #usage let-percent="percent" let-label="label">
+  <div
+    class="progress"
+    role="progressbar"
+    [attr.aria-label]="label"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    [attr.aria-valuenow]="percent"
+  >
+    <div class="progress-bar" [ngClass]="level(percent)" [style.width.%]="percent"></div>
+  </div>
+</ng-template>
+
 <h4 class="mt-3">Announcement</h4>
 <div class="text-muted mb-2">
   Broadcast an important message to everyone in TopoMojo. Announcements appear in the TopoMojo interface.
