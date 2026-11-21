@@ -3,8 +3,9 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
-import { AdminService } from '../../api/admin.service';
+import { AdminFeatures, AdminService } from '../../api/admin.service';
 import { AppVersionInfo } from '../../api/gen/models';
 
 @Component({
@@ -17,6 +18,7 @@ export class AdminComponent implements OnInit {
 
   section = 'dashboard';
   info: AppVersionInfo = { commit: ''};
+  features$: Observable<AdminFeatures>;
 
   constructor(
     route: ActivatedRoute,
@@ -26,6 +28,8 @@ export class AdminComponent implements OnInit {
       debounceTime(500),
       tap(p => this.section = p.section ?? 'dashboard')
     ).subscribe();
+
+    this.features$ = api.getFeatures();
 
     api.loadVersion().subscribe(
       info => this.info = info
