@@ -81,7 +81,11 @@ export class DiskBrowserComponent {
     if (err.status === 404) {
       return 'This TopoMojo API doesn\'t list disks or template VMs. Upgrade the API to use the Disks tab.';
     }
-    return err.error?.message || err.message || 'The list could not be loaded.';
+    // a 400 carries the API's explanation; anything else gets a bare "Error" from the API
+    const message = err.error?.message;
+    return message && message !== 'Error'
+      ? message
+      : `The list could not be loaded (HTTP ${err.status}).`;
   }
 
   private filtered(sources: TemplateSource[]): TemplateSource[] {

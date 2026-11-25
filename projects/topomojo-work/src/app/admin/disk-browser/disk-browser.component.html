@@ -82,7 +82,9 @@
   <ng-container *ngIf="report.sources.length && (rows$ | async) as rows">
     <small class="text-muted">{{rows.length}} of {{report.sources.length}}</small>
     <div *ngIf="!rows.length" class="text-muted mt-3">
-      No matches. Clear the search<ng-container *ngIf="globalOnly"> or turn off Global Only</ng-container>.
+      No matches.
+      <ng-container *ngIf="term.trim()">Clear the search<ng-container *ngIf="globalOnly"> or turn off Global Only</ng-container>.</ng-container>
+      <ng-container *ngIf="!term.trim() && globalOnly">Turn off Global Only to see workspace entries.</ng-container>
     </div>
     <table *ngIf="rows.length" class="table table-sm table-hover">
       <thead>
