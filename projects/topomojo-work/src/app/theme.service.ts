@@ -1,8 +1,7 @@
 // Copyright 2026 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, DOCUMENT } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 // Same values as the other Crucible apps' ?theme= query param.

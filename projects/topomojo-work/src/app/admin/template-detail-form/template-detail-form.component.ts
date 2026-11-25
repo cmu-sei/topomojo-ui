@@ -4,6 +4,8 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { faToggleOff, faToggleOn, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { Observable } from 'rxjs';
+import { AdminFeatures, AdminService } from '../../api/admin.service';
 import { ChangedTemplateDetail, TemplateDetail } from '../../api/gen/models';
 import { TemplateService } from '../../api/template.service';
 import { readHardware, TemplateHardware, writeHardware } from './template-hardware';
@@ -26,9 +28,14 @@ export class TemplateDetailFormComponent implements OnInit, OnChanges {
   faToggleOff = faToggleOff;
   faInfoCircle = faInfoCircle;
 
+  features$: Observable<AdminFeatures>;
+
   constructor(
-    private api: TemplateService
-  ) { }
+    private api: TemplateService,
+    admin: AdminService
+  ) {
+    this.features$ = admin.getFeatures();
+  }
 
   ngOnInit(): void {
   }
