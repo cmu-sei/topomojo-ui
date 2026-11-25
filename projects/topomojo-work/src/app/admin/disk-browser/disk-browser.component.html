@@ -1,7 +1,19 @@
 <!-- Copyright 2026 Carnegie Mellon University. -->
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
-<ng-container *ngIf="report$ | async as report; else loading">
+<ng-container *ngIf="state$ | async as state">
+<app-spinner *ngIf="state.loading && !state.report"></app-spinner>
+
+<ng-container *ngIf="state.error">
+  <h4>Disks</h4>
+  <div class="alert alert-danger small mb-2">{{state.error}}</div>
+  <button class="btn btn-sm btn-outline-info" (click)="refresh$.next(true)">
+    <fa-icon [icon]="faSync"></fa-icon>
+    <span>Refresh</span>
+  </button>
+</ng-container>
+
+<ng-container *ngIf="state.report as report">
   <ng-container *ngIf="!report.enabled">
     <h4>Disks</h4>
     <div class="text-muted mb-2">
@@ -58,8 +70,8 @@
         <fa-icon [icon]="faFilter"></fa-icon>
         <span>Global Only</span>
       </button>
-      <button class="btn btn-sm btn-outline-info" (click)="refresh$.next(true)">
-        <fa-icon [icon]="faSync"></fa-icon>
+      <button class="btn btn-sm btn-outline-info" [disabled]="state.loading" (click)="refresh$.next(true)">
+        <fa-icon [icon]="faSync" [animation]="state.loading ? 'spin' : undefined"></fa-icon>
         <span>Refresh</span>
       </button>
     </div>
@@ -69,7 +81,10 @@
 
   <ng-container *ngIf="report.sources.length && (rows$ | async) as rows">
     <small class="text-muted">{{rows.length}} of {{report.sources.length}}</small>
-    <table class="table table-sm table-hover">
+    <div *ngIf="!rows.length" class="text-muted mt-3">
+      No matches. Clear the search<ng-container *ngIf="globalOnly"> or turn off Global Only</ng-container>.
+    </div>
+    <table *ngIf="rows.length" class="table table-sm table-hover">
       <thead>
         <tr>
           <th scope="col">
@@ -115,7 +130,4 @@
   </ng-container>
   </ng-container>
 </ng-container>
-
-<ng-template #loading>
-  <app-spinner></app-spinner>
-</ng-template>
+</ng-container>

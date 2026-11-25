@@ -1,13 +1,17 @@
 // Copyright 2026 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { faFilter, faSearch, faSortDown, faSortUp, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
-import { map, shareReplay, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import { catchError, map, scan, shareReplay, startWith, switchMap } from 'rxjs/operators';
 import { AdminService, TemplateSource, TemplateSourceReport } from '../../api/admin.service';
 
 type SortColumn = 'name' | 'workspace' | 'date';
+
+// While a refresh loads, the last report stays on screen. A failed load replaces it with the error.
+type DiskBrowserState = { loading: boolean; report?: TemplateSourceReport; error?: string };
 
 @Component({
   selector: 'app-disk-browser',
@@ -23,7 +27,7 @@ export class DiskBrowserComponent {
   sortAscending = true;
   view$ = new BehaviorSubject<boolean>(true);
 
-  report$: Observable<TemplateSourceReport>;
+  state$: Observable<DiskBrowserState>;
   rows$: Observable<TemplateSource[]>;
 
   faSearch = faSearch;
@@ -33,12 +37,19 @@ export class DiskBrowserComponent {
   faSortDown = faSortDown;
 
   constructor(api: AdminService) {
-    this.report$ = this.refresh$.pipe(
-      switchMap(() => api.getTemplateSources()),
+    this.state$ = this.refresh$.pipe(
+      switchMap(() => api.getTemplateSources().pipe(
+        map((report): DiskBrowserState => ({ loading: false, report })),
+        catchError((err: HttpErrorResponse) => of<DiskBrowserState>({ loading: false, error: this.errorText(err) })),
+        startWith<DiskBrowserState>({ loading: true })
+      )),
+      scan((prev: DiskBrowserState, next: DiskBrowserState) => next.loading
+        ? { loading: true, report: prev.report }
+        : next, { loading: true }),
       shareReplay(1)
     );
-    this.rows$ = combineLatest([this.report$, this.view$]).pipe(
-      map(([report]) => this.sorted(this.filtered(report.sources)))
+    this.rows$ = combineLatest([this.state$, this.view$]).pipe(
+      map(([state]) => state.report ? this.sorted(this.filtered(state.report.sources)) : [])
     );
   }
 
@@ -66,6 +77,13 @@ export class DiskBrowserComponent {
     this.view$.next(true);
   }
 
+  private errorText(err: HttpErrorResponse): string {
+    if (err.status === 404) {
+      return 'This TopoMojo API doesn\'t list disks or template VMs. Upgrade the API to use the Disks tab.';
+    }
+    return err.error?.message || err.message || 'The list could not be loaded.';
+  }
+
   private filtered(sources: TemplateSource[]): TemplateSource[] {
     const t = this.term.trim().toLowerCase();
     return sources
@@ -75,15 +93,30 @@ export class DiskBrowserComponent {
   }
 
   private sorted(sources: TemplateSource[]): TemplateSource[] {
-    const key = (s: TemplateSource): string => {
+    const dir = this.sortAscending ? 1 : -1;
+    const text = (v?: string) => (v || '').toLowerCase();
+    const time = (s: TemplateSource) => {
+      const value = this.dateOf(s);
+      return value ? Date.parse(value) : NaN;
+    };
+    const compare = (a: TemplateSource, b: TemplateSource): number => {
       switch (this.sortColumn) {
-        // global first, like the Files page
-        case 'workspace': return s.isGlobal ? '' : (s.workspaceName || s.workspaceId || '').toLowerCase();
-        case 'date': return this.dateOf(s) || '';
-        default: return s.name.toLowerCase();
+        // global first in either direction, like the Files page
+        case 'workspace':
+          return Number(b.isGlobal) - Number(a.isGlobal)
+            || dir * text(a.workspaceName || a.workspaceId).localeCompare(text(b.workspaceName || b.workspaceId));
+        // undated last in either direction
+        case 'date': {
+          const ta = time(a), tb = time(b);
+          if (isNaN(ta) || isNaN(tb)) {
+            return Number(isNaN(ta)) - Number(isNaN(tb));
+          }
+          return dir * (ta - tb);
+        }
+        default:
+          return dir * text(a.name).localeCompare(text(b.name));
       }
     };
-    const dir = this.sortAscending ? 1 : -1;
-    return [...sources].sort((a, b) => key(a).localeCompare(key(b)) * dir);
+    return [...sources].sort(compare);
   }
 }

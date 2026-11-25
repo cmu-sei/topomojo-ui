@@ -2,9 +2,9 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError, map, shareReplay } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of, throwError, timer } from 'rxjs';
+import { catchError, map, retry, shareReplay } from 'rxjs/operators';
 import { ApiSettings } from './api-settings';
 import { GeneratedAdminService } from './gen/admin.service';
 import { IsoFile, VmOptions } from './gen/models';
@@ -51,11 +51,21 @@ export class AdminService extends GeneratedAdminService {
         return this.http.delete<ThemeInfo>(this.conf.api + '/admin/background');
     }
 
-    // Optional features the API has turned on. Fetched once and shared; an API without
-    // api/admin/features (or any error) reports every feature off.
+    // Optional features the API has turned on, fetched once and shared. An API without
+    // api/admin/features (404) has every feature off. Other errors are retried, then report
+    // every feature off without being kept, so the next caller asks again.
     public getFeatures(): Observable<AdminFeatures> {
         this.features$ ??= this.http.get<AdminFeatures>(this.conf.api + '/admin/features').pipe(
-            catchError(() => of({ templateSources: false })),
+            retry({
+                count: 2,
+                delay: (err: HttpErrorResponse) => err.status === 404 ? throwError(() => err) : timer(1000)
+            }),
+            catchError((err: HttpErrorResponse) => {
+                if (err.status !== 404) {
+                    this.features$ = undefined;
+                }
+                return of({ templateSources: false });
+            }),
             shareReplay(1)
         );
         return this.features$;
