@@ -23,6 +23,32 @@ export type TemplateSource = {
 export type TemplateSourceReport = { enabled: boolean; field?: 'disks' | 'template'; sources: TemplateSource[] };
 export type AdminFeatures = { templateSources: boolean };
 
+export interface HypervisorCapacityNode {
+    name: string;
+    available: boolean;
+    memoryTotalMb: number;
+    memoryUsedMb: number;
+    cpuCores: number;
+    cpuUsagePercent: number;
+}
+
+export interface HypervisorCapacityStorage {
+    name: string;
+    node?: string;
+    shared: boolean;
+    available: boolean;
+    totalMb: number;
+    usedMb: number;
+}
+
+export interface HypervisorCapacity {
+    provider: string;
+    asOf: string;
+    nodes: HypervisorCapacityNode[];
+    storage: HypervisorCapacityStorage[];
+    poolMemoryFreeMb?: number;
+}
+
 @Injectable()
 export class AdminService extends GeneratedAdminService {
 
@@ -49,6 +75,10 @@ export class AdminService extends GeneratedAdminService {
 
     public clearBackground(): Observable<ThemeInfo> {
         return this.http.delete<ThemeInfo>(this.conf.api + '/admin/background');
+    }
+
+    public getCapacity(): Observable<HypervisorCapacity> {
+        return this.http.get<HypervisorCapacity>(this.conf.api + '/admin/capacity');
     }
 
     // Optional features the API has turned on, fetched once and shared. An API without
