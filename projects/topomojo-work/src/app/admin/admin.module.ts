@@ -28,6 +28,7 @@ import { UserRoleBadgeComponent } from "./user-role-badge/user-role-badge.compon
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { GlobalIsoManagerComponent } from './global-iso-manager/global-iso-manager.component';
 import { IsoModule } from '../iso/iso.module';
+import { DiskBrowserComponent } from './disk-browser/disk-browser.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { IsoModule } from '../iso/iso.module';
     GamespaceInteractComponent,
     WorkspaceCreatorComponent,
     GlobalIsoManagerComponent,
+    DiskBrowserComponent,
   ],
   imports: [
     CommonModule,

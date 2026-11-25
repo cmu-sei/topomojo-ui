@@ -3,8 +3,9 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { debounceTime, tap } from 'rxjs/operators';
-import { AdminService } from '../../api/admin.service';
+import { Observable } from 'rxjs';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AdminFeatures, AdminService } from '../../api/admin.service';
 import { AppVersionInfo } from '../../api/gen/models';
 
 @Component({
@@ -17,6 +18,7 @@ export class AdminComponent implements OnInit {
 
   section = 'dashboard';
   info: AppVersionInfo = { commit: ''};
+  features$: Observable<AdminFeatures>;
 
   constructor(
     route: ActivatedRoute,
@@ -26,6 +28,9 @@ export class AdminComponent implements OnInit {
       debounceTime(500),
       tap(p => this.section = p.section ?? 'dashboard')
     ).subscribe();
+
+    // asked again on each section change: the service keeps a good answer, and retries after a failed one
+    this.features$ = route.params.pipe(switchMap(() => api.getFeatures()));
 
     api.loadVersion().subscribe(
       info => this.info = info
