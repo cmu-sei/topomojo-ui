@@ -2,14 +2,26 @@
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of, throwError, timer } from 'rxjs';
+import { catchError, map, retry, shareReplay } from 'rxjs/operators';
 import { ApiSettings } from './api-settings';
 import { GeneratedAdminService } from './gen/admin.service';
 import { IsoFile, VmOptions } from './gen/models';
 
 export type ThemeInfo = { backgroundUrl: string | null };
+export type TemplateSource = {
+    name: string;
+    isGlobal: boolean;
+    workspaceId?: string;
+    workspaceName?: string;
+    templateName?: string;
+    created?: string;
+    modified?: string;
+};
+// enabled is false when the API's Core:EnableTemplateSources is off; field is then unset and sources empty.
+export type TemplateSourceReport = { enabled: boolean; field?: 'disks' | 'template'; sources: TemplateSource[] };
+export type AdminFeatures = { templateSources: boolean };
 
 export interface HypervisorCapacityNode {
     name: string;
@@ -40,6 +52,8 @@ export interface HypervisorCapacity {
 @Injectable()
 export class AdminService extends GeneratedAdminService {
 
+    private features$?: Observable<AdminFeatures>;
+
     constructor(
        protected http: HttpClient,
        protected conf: ApiSettings
@@ -65,6 +79,30 @@ export class AdminService extends GeneratedAdminService {
 
     public getCapacity(): Observable<HypervisorCapacity> {
         return this.http.get<HypervisorCapacity>(this.conf.api + '/admin/capacity');
+    }
+
+    // Optional features the API has turned on, fetched once and shared. An API without
+    // api/admin/features (404) has every feature off. Other errors are retried, then report
+    // every feature off without being kept, so the next caller asks again.
+    public getFeatures(): Observable<AdminFeatures> {
+        this.features$ ??= this.http.get<AdminFeatures>(this.conf.api + '/admin/features').pipe(
+            retry({
+                count: 2,
+                delay: (err: HttpErrorResponse) => err.status === 404 ? throwError(() => err) : timer(1000)
+            }),
+            catchError((err: HttpErrorResponse) => {
+                if (err.status !== 404) {
+                    this.features$ = undefined;
+                }
+                return of({ templateSources: false });
+            }),
+            shareReplay(1)
+        );
+        return this.features$;
+    }
+
+    public getTemplateSources(): Observable<TemplateSourceReport> {
+        return this.http.get<TemplateSourceReport>(this.conf.api + '/admin/template-sources');
     }
 
     public getAllIsos(): Observable<IsoFile[]> {

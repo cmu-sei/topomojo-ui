@@ -30,14 +30,14 @@
     "emoji-toolkit": "^10.0.0",
     "jquery": "^3.7.1",
     "jquery-ui": "^1.14.2",
-    "marked": "^18.1.2",
+    "marked": "^18.2.0",
     "marked-smartypants": "^1.1.9",
     "ngx-bootstrap": "^21.2.2",
     "ngx-markdown": "^21.3.0",
     "ngx-monaco-editor-v2": "^21.1.4",
     "oidc-client-ts": "^2.2.1",
     "rxjs": "~7.8.0",
-    "tslib": "^2.4.1",
+    "tslib": "^2.9.1",
     "zone.js": "~0.16.3"
   },
   "devDependencies": {
@@ -48,10 +48,10 @@
     "concurrently": "^9.1.0",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.1.0",
+    "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.0.0",
+    "karma-jasmine-html-reporter": "~2.3.0",
     "typescript": "^5.9.3"
   }
 }
