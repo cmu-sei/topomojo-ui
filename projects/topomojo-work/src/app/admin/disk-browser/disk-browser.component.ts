@@ -81,6 +81,9 @@ export class DiskBrowserComponent {
     if (err.status === 404) {
       return 'This TopoMojo API doesn\'t list disks or template VMs. Upgrade the API to use the Disks tab.';
     }
+    if (err.status === 0) {
+      return 'TopoMojo\'s API couldn\'t be reached. Check that it\'s running, then Refresh.';
+    }
     // a 400 carries the API's explanation; anything else gets a bare "Error" from the API
     const message = err.error?.message;
     return message && message !== 'Error'
