@@ -29,8 +29,11 @@
       class="form-control"
       (input)="termed()"
       aria-label="search users"
+      aria-describedby="user-search-hint"
     >
   </div>
+
+  <span id="user-search-hint" class="sr-only">Search users by name. Use the filters below to narrow results (role, service accounts, scope).</span>
 
   <div class="mt-1">
     <button

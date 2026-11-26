@@ -5,7 +5,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { Vm } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
 import { PagerComponent } from '../../utility/pager/pager.component';
@@ -135,5 +135,36 @@ describe('VmBrowserComponent', () => {
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).querySelector('.alert-danger')).toBeNull();
     expect(names().length).toBe(8);
+  });
+
+  it('stays loading while the second of two quick refreshes is still running', async () => {
+    await create(makeVms(3));
+    const first = new Subject<Vm[]>();
+    const second = new Subject<Vm[]>();
+    list.and.returnValues(first, second);
+    component.refresh$.next(true);
+    expect(component.loading).toBeTrue();
+    component.refresh$.next(true);
+    expect(component.loading).toBeTrue();
+    second.next(makeVms(4));
+    second.complete();
+    expect(component.loading).toBeFalse();
+    expect(component.vms.length).toBe(4);
+  });
+
+  it('has no live Next button on the last page when the list is an exact multiple of the page size', async () => {
+    await create(makeVms(200));
+    component.paged(100);
+    fixture.detectChanges();
+    const next = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('button')).find(b => b.textContent!.trim() === 'next') as HTMLButtonElement;
+    expect(next.disabled).toBeTrue();
+  });
+
+  it('describes the search box for screen readers', async () => {
+    await create(makeVms(3));
+    const input = (fixture.nativeElement as HTMLElement).querySelector('input[type=search]') as HTMLInputElement;
+    const hint = (fixture.nativeElement as HTMLElement).querySelector('#' + input.getAttribute('aria-describedby'));
+    expect(hint).not.toBeNull();
+    expect(hint!.textContent).toContain('Search machines by name');
   });
 });

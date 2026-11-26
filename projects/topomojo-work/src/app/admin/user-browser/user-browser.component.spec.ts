@@ -56,4 +56,11 @@ describe('UserBrowserComponent layout', () => {
     expect(tip).not.toBeNull();
     expect(tip!.textContent!.trim()).toMatch(/^Tip:/);
   });
+
+  it('describes the search box for screen readers', () => {
+    const input = root().querySelector('input[type=search]') as HTMLInputElement;
+    const hint = root().querySelector('#' + input.getAttribute('aria-describedby'));
+    expect(hint).not.toBeNull();
+    expect(hint!.textContent).toContain('Search users by name');
+  });
 });

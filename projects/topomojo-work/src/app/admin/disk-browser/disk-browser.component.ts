@@ -52,12 +52,7 @@ export class DiskBrowserComponent {
       shareReplay(1)
     );
     this.rows$ = combineLatest([this.state$, this.view$]).pipe(
-      map(([state]) => {
-        const rows = state.report ? this.sorted(this.filtered(state.report.sources)) : [];
-        // a refresh or filter can leave the pager past the end of the shorter list
-        this.skip = clampSkip(this.skip, rows.length, this.take);
-        return rows;
-      }),
+      map(([state]) => state.report ? this.sorted(this.filtered(state.report.sources)) : []),
       // the count, the pager and the rows all read this; filter and sort once per change
       shareReplay({ bufferSize: 1, refCount: true })
     );
@@ -92,9 +87,14 @@ export class DiskBrowserComponent {
     this.view$.next(true);
   }
 
+  // where the current page starts. A refresh or filter can leave skip past the end of a shorter list.
+  pageStart(rows: TemplateSource[]): number {
+    return clampSkip(this.skip, rows.length, this.take);
+  }
+
   // rows on the current page, which is what the pager counts
   pageCount(rows: TemplateSource[]): number {
-    return Math.max(0, Math.min(this.take, rows.length - this.skip));
+    return Math.max(0, Math.min(this.take, rows.length - this.pageStart(rows)));
   }
 
   sortBy(column: SortColumn): void {

@@ -48,16 +48,19 @@ export class VmBrowserComponent implements OnInit, OnDestroy {
 
   constructor(private api: VmService) {
     const loaded$ = this.refresh$.pipe(
-      tap(() => this.loading = true),
-      // a failed load keeps the last list on screen and must not end the stream, or Refresh would do nothing
-      switchMap(() => this.api.list('').pipe(
+      // a failed load keeps the last list on screen and must not end the stream, or Refresh would do nothing.
+      // loading is set inside switchMap: it cancels the previous request first, and that request's finalize clears it
+      switchMap(() => {
+        this.loading = true;
+        return this.api.list('').pipe(
         tap(() => this.error = ''),
         catchError((err: HttpErrorResponse) => {
           this.error = this.errorText(err);
           return of(this.vms);
         }),
         finalize(() => this.loading = false)
-      )),
+        );
+      }),
       tap(vms => this.vms = vms)
     );
 

@@ -59,6 +59,7 @@
       [(ngModel)]="term"
       (ngModelChange)="changed()"
       aria-label="search disks"
+      aria-describedby="disk-search-hint"
     />
     <div class="input-group-append">
       <button
@@ -81,11 +82,12 @@
     </div>
   </div>
 
+  <span id="disk-search-hint" class="sr-only">Search by file name, workspace or template.</span>
   <small *ngIf="report.sources.length && (rows$ | async) as counted" class="text-muted">{{counted.length}} of {{report.sources.length}}</small>
   </div>
 
   <ng-container *ngIf="(rows$ | async) as rows">
-    <app-pager [skip]="skip" [take]="take" [count]="pageCount(rows)" (changed)="paged($event)"></app-pager>
+    <app-pager [skip]="pageStart(rows)" [take]="take" [count]="pageCount(rows)" [total]="rows.length" (changed)="paged($event)"></app-pager>
   </ng-container>
   <hr class="mt-0 mb-2"/>
 
@@ -119,7 +121,7 @@
       </div>
     </div>
 
-    <div *ngFor="let s of rows | slice:skip:skip+take" class="row mb-1 align-items-center">
+    <div *ngFor="let s of rows | slice:pageStart(rows):pageStart(rows)+take" class="row mb-1 align-items-center">
       <div class="col-6 px-4 name-cell">
         <app-clipspan class="text-monospace small">{{s.name}}</app-clipspan>
       </div>

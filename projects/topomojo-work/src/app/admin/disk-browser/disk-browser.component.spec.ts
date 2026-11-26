@@ -133,7 +133,23 @@ describe('DiskBrowserComponent', () => {
     getTemplateSources.and.returnValues(of({ enabled: true, field: 'disks', sources: sources(150, 0) }));
     component.refresh$.next(true);
     fixture.detectChanges();
-    expect(component.skip).toBe(100);
+    expect(text()).toContain('101 - 150');
     expect(names().length).toBe(50);
+  });
+
+  it('has no live Next button on the last page when the list is an exact multiple of the page size', async () => {
+    await create({ enabled: true, field: 'disks', sources: sources(200, 0) });
+    component.paged(100);
+    fixture.detectChanges();
+    const next = Array.from(root().querySelectorAll('button')).find(b => b.textContent!.trim() === 'next') as HTMLButtonElement;
+    expect(next.disabled).toBeTrue();
+  });
+
+  it('describes the search box for screen readers', async () => {
+    await create({ enabled: true, field: 'disks', sources: sources(3, 0) });
+    const input = root().querySelector('input[type=search]') as HTMLInputElement;
+    const hint = root().querySelector('#' + input.getAttribute('aria-describedby'));
+    expect(hint).not.toBeNull();
+    expect(hint!.textContent).toContain('Search by file name, workspace or template');
   });
 });
