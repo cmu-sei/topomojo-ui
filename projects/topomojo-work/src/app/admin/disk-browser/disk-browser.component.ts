@@ -51,7 +51,9 @@ export class DiskBrowserComponent {
       shareReplay(1)
     );
     this.rows$ = combineLatest([this.state$, this.view$]).pipe(
-      map(([state]) => state.report ? this.sorted(this.filtered(state.report.sources)) : [])
+      map(([state]) => state.report ? this.sorted(this.filtered(state.report.sources)) : []),
+      // the count, the pager and the rows all read this; filter and sort once per change
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 
