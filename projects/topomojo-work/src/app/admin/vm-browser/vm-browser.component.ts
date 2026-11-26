@@ -1,12 +1,14 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { faSearch, faSortUp, faSortDown, faInfoCircle, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { switchMap, tap, map, finalize } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
+import { switchMap, tap, map, finalize, catchError } from 'rxjs/operators';
 import { Search, Vm, VmStateEnum } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
+import { clampSkip } from '../../utility/pager/clamp-skip';
 
 interface VmWithParsedGroup extends Vm {
   parsedGroup: { type: 'workspace' | 'gamespace' | 'orphaned', name: string, id: string };
@@ -27,6 +29,7 @@ export class VmBrowserComponent implements OnInit, OnDestroy {
   vms: Vm[] = [];
   private subscription?: Subscription;
   loading = false;
+  error = '';
   search: Search = { term: '' };
   skip = 0;
   take = 100;
@@ -46,7 +49,15 @@ export class VmBrowserComponent implements OnInit, OnDestroy {
   constructor(private api: VmService) {
     const loaded$ = this.refresh$.pipe(
       tap(() => this.loading = true),
-      switchMap(() => this.api.list('').pipe(finalize(() => this.loading = false))),
+      // a failed load keeps the last list on screen and must not end the stream, or Refresh would do nothing
+      switchMap(() => this.api.list('').pipe(
+        tap(() => this.error = ''),
+        catchError((err: HttpErrorResponse) => {
+          this.error = this.errorText(err);
+          return of(this.vms);
+        }),
+        finalize(() => this.loading = false)
+      )),
       tap(vms => this.vms = vms)
     );
 
@@ -76,12 +87,19 @@ export class VmBrowserComponent implements OnInit, OnDestroy {
     this.view$.next(true);
   }
 
+  private errorText(err: HttpErrorResponse): string {
+    return err.status === 0
+      ? 'TopoMojo\'s API couldn\'t be reached. Check that it\'s running, then Refresh.'
+      : `The list could not be loaded (HTTP ${err.status}).`;
+  }
+
   private pageOfMatches(): VmWithParsedGroup[] {
     const matches: VmWithParsedGroup[] = this.filterVms(this.vms, this.search.term).map(vm => ({
       ...vm,
       parsedGroup: this.parseGroupName(vm.groupName)
     }));
     this.matched = matches.length;
+    this.skip = clampSkip(this.skip, matches.length, this.take);
     this.applySort(matches);
     const page = matches.slice(this.skip, this.skip + this.take);
     this.count = page.length;

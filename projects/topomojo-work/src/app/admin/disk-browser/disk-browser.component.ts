@@ -7,6 +7,7 @@ import { faFilter, faSearch, faSortDown, faSortUp, faSyncAlt } from '@fortawesom
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import { catchError, map, scan, shareReplay, startWith, switchMap } from 'rxjs/operators';
 import { AdminService, TemplateSource, TemplateSourceReport } from '../../api/admin.service';
+import { clampSkip } from '../../utility/pager/clamp-skip';
 
 type SortColumn = 'name' | 'workspace' | 'date';
 
@@ -51,7 +52,12 @@ export class DiskBrowserComponent {
       shareReplay(1)
     );
     this.rows$ = combineLatest([this.state$, this.view$]).pipe(
-      map(([state]) => state.report ? this.sorted(this.filtered(state.report.sources)) : []),
+      map(([state]) => {
+        const rows = state.report ? this.sorted(this.filtered(state.report.sources)) : [];
+        // a refresh or filter can leave the pager past the end of the shorter list
+        this.skip = clampSkip(this.skip, rows.length, this.take);
+        return rows;
+      }),
       // the count, the pager and the rows all read this; filter and sort once per change
       shareReplay({ bufferSize: 1, refCount: true })
     );

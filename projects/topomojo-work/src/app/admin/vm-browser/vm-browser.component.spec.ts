@@ -4,7 +4,8 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { of, throwError } from 'rxjs';
 import { Vm } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
 import { PagerComponent } from '../../utility/pager/pager.component';
@@ -108,5 +109,31 @@ describe('VmBrowserComponent', () => {
     button.click();
     fixture.detectChanges();
     expect(list).toHaveBeenCalledTimes(2);
+  });
+
+  it('a refresh into a shorter list while on a later page lands on a page that exists', async () => {
+    await create(makeVms(250));
+    component.paged(200);
+    fixture.detectChanges();
+    list.and.returnValues(of(makeVms(150)));
+    component.refresh$.next(true);
+    fixture.detectChanges();
+    expect(component.skip).toBe(100);
+    expect(names().length).toBe(50);
+  });
+
+  it('keeps the list and shows an error when the API fails, and Refresh works again afterwards', async () => {
+    await create(makeVms(5));
+    list.and.returnValues(throwError(() => new HttpErrorResponse({ status: 0 })), of(makeVms(8)));
+    component.refresh$.next(true);
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.alert-danger')).not.toBeNull();
+    expect(names().length).toBe(5);
+    expect(text()).not.toContain('None found.');
+
+    component.refresh$.next(true);
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.alert-danger')).toBeNull();
+    expect(names().length).toBe(8);
   });
 });

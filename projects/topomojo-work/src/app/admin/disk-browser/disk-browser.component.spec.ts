@@ -125,4 +125,15 @@ describe('DiskBrowserComponent', () => {
     expect(text()).toContain('Template VMs');
     expect(root().querySelector('.disk-header')!.textContent).toContain('Created');
   });
+
+  it('a refresh into a shorter list while on a later page lands on a page that exists', async () => {
+    await create({ enabled: true, field: 'disks', sources: sources(250, 0) });
+    component.paged(200);
+    fixture.detectChanges();
+    getTemplateSources.and.returnValues(of({ enabled: true, field: 'disks', sources: sources(150, 0) }));
+    component.refresh$.next(true);
+    fixture.detectChanges();
+    expect(component.skip).toBe(100);
+    expect(names().length).toBe(50);
+  });
 });
