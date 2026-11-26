@@ -25,6 +25,8 @@ export class DiskBrowserComponent {
   globalOnly = true;
   sortColumn: SortColumn = 'name';
   sortAscending = true;
+  skip = 0;
+  take = 100;
   view$ = new BehaviorSubject<boolean>(true);
 
   state$: Observable<DiskBrowserState>;
@@ -71,10 +73,26 @@ export class DiskBrowserComponent {
       : '';
   }
 
+  // the search, filter or sort changed: start again from the first page
+  changed(): void {
+    this.skip = 0;
+    this.view$.next(true);
+  }
+
+  paged(skip: number): void {
+    this.skip = skip;
+    this.view$.next(true);
+  }
+
+  // rows on the current page, which is what the pager counts
+  pageCount(rows: TemplateSource[]): number {
+    return Math.max(0, Math.min(this.take, rows.length - this.skip));
+  }
+
   sortBy(column: SortColumn): void {
     this.sortAscending = this.sortColumn === column ? !this.sortAscending : true;
     this.sortColumn = column;
-    this.view$.next(true);
+    this.changed();
   }
 
   private errorText(err: HttpErrorResponse): string {
