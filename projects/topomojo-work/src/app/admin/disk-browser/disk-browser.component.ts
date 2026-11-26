@@ -5,8 +5,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { faFilter, faSearch, faSortDown, faSortUp, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
-import { catchError, map, scan, shareReplay, startWith, switchMap } from 'rxjs/operators';
+import { catchError, map, scan, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { AdminService, TemplateSource, TemplateSourceReport } from '../../api/admin.service';
+import { clampSkip } from '../../utility/pager/clamp-skip';
 
 type SortColumn = 'name' | 'workspace' | 'date';
 
@@ -25,6 +26,8 @@ export class DiskBrowserComponent {
   globalOnly = true;
   sortColumn: SortColumn = 'name';
   sortAscending = true;
+  skip = 0;
+  take = 100;
   view$ = new BehaviorSubject<boolean>(true);
 
   state$: Observable<DiskBrowserState>;
@@ -46,10 +49,18 @@ export class DiskBrowserComponent {
       scan((prev: DiskBrowserState, next: DiskBrowserState) => next.loading
         ? { loading: true, report: prev.report }
         : next, { loading: true }),
+      // a finished load can leave the stored page past the end of a shorter list; settle it here, not while the page renders
+      tap(state => {
+        if (state.report) {
+          this.skip = clampSkip(this.skip, this.filtered(state.report.sources).length, this.take);
+        }
+      }),
       shareReplay(1)
     );
     this.rows$ = combineLatest([this.state$, this.view$]).pipe(
-      map(([state]) => state.report ? this.sorted(this.filtered(state.report.sources)) : [])
+      map(([state]) => state.report ? this.sorted(this.filtered(state.report.sources)) : []),
+      // the count, the pager and the rows all read this; filter and sort once per change
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 
@@ -71,10 +82,31 @@ export class DiskBrowserComponent {
       : '';
   }
 
+  // the search, filter or sort changed: start again from the first page
+  changed(): void {
+    this.skip = 0;
+    this.view$.next(true);
+  }
+
+  paged(skip: number): void {
+    this.skip = skip;
+    this.view$.next(true);
+  }
+
+  // where the current page starts. A refresh or filter can leave skip past the end of a shorter list.
+  pageStart(rows: TemplateSource[]): number {
+    return clampSkip(this.skip, rows.length, this.take);
+  }
+
+  // rows on the current page, which is what the pager counts
+  pageCount(rows: TemplateSource[]): number {
+    return Math.max(0, Math.min(this.take, rows.length - this.pageStart(rows)));
+  }
+
   sortBy(column: SortColumn): void {
     this.sortAscending = this.sortColumn === column ? !this.sortAscending : true;
     this.sortColumn = column;
-    this.view$.next(true);
+    this.changed();
   }
 
   private errorText(err: HttpErrorResponse): string {

@@ -3,15 +3,21 @@
 
 <h4>Users</h4>
 
-<div class="text-muted mb-2">
-  Manage TopoMojo users and permissions. Search by name, filter by role or audience (scope), and view/edit limits and
-  access settings for each user.
+<div class="mb-2">
+  <div class="text-muted">
+    Manage TopoMojo users and permissions. Search by name, filter by role or audience (scope), and view/edit limits and
+    access settings for each user.
+  </div>
 </div>
 
-<div>
+<div class="mb-2">
   <div class="input-group input-group-sm">
     <div class="input-group-prepend">
-      <span class="input-group-text" id="user-search-label">
+      <span
+        class="input-group-text"
+        [tooltip]="'Search users by name. Use the filters below to narrow results (role, service accounts, scope).'"
+        aria-label="Search users by name. Use the filters below to narrow results (role, service accounts, scope)."
+      >
         <fa-icon [icon]="faSearch"></fa-icon>
         <span>Search</span>
       </span>
@@ -22,14 +28,12 @@
       placeholder="term"
       class="form-control"
       (input)="termed()"
-      aria-label="Search users"
-      aria-describedby="user-search-label"
+      aria-label="search users"
+      aria-describedby="user-search-hint"
     >
   </div>
 
-  <small class="text-muted">
-    Search by user name. You can also narrow results using role and scope filters below.
-  </small>
+  <span id="user-search-hint" class="sr-only">Search users by name. Use the filters below to narrow results (role, service accounts, scope).</span>
 
   <div class="mt-1">
     <button
@@ -40,7 +44,7 @@
     >
       create
     </button>
-    |
+    <span class="text-muted">|</span>
     <button
       class="mr-1 btn btn-link text-success btn-sm"
       (click)="toggleFilter('administrator')"
@@ -77,7 +81,7 @@
       <fa-icon [hidden]="filter!=='builder'" [icon]="faFilter"></fa-icon>
       <span>builders</span>
     </button>
-    |
+    <span class="text-muted">|</span>
     <button
       class="mx-1 btn btn-link text-primary btn-sm"
       (click)="toggleServiceAccountFilter()"
@@ -87,7 +91,7 @@
       <fa-icon [hidden]="!search.isServiceAccount" [icon]="faFilter"></fa-icon>
       <span>service accounts</span>
     </button>
-    |
+    <span class="text-muted">|</span>
     <button
       *ngFor="let s of scopes"
       class="mr-1 btn btn-link text-dark btn-sm"
@@ -98,6 +102,10 @@
       <fa-icon [hidden]="scope!==s" [icon]="faFilter"></fa-icon>
       <span>{{s}}</span>
     </button>
+
+    <small class="text-muted d-block">
+      Tip: Search by user name. Use the role, service account and scope filters to narrow the list.
+    </small>
   </div>
 </div>
 

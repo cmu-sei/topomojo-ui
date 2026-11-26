@@ -13,11 +13,17 @@ export class PagerComponent implements OnInit {
   @Input() skip = 0;
   @Input() take = 0;
   @Input() count = 0;
+  /** The number of rows across all pages, when the list is paged in the browser and so known. */
+  @Input() total?: number;
   @Output() changed = new EventEmitter<number>();
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  get atEnd(): boolean {
+    return this.count < this.take || (this.total !== undefined && this.skip + this.take >= this.total);
   }
 
   next(): void {

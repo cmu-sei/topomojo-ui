@@ -2,15 +2,21 @@
 <!-- Released under a 3 Clause BSD-style license. See LICENSE.md in the project root. -->
 
 <h4>Machines</h4>
-<div class="text-muted mb-2">
-  View all VMs TopoMojo is tracking and the gamespaces/workspaces they belong to. This is a read-only listing (you can't control
-  VMs from here). Use Search to find VMs by name, group, host, or paste a gamespace GUID.
+<div class="mb-2">
+  <div class="text-muted">
+    View all VMs TopoMojo is tracking and the gamespaces/workspaces they belong to. This is a read-only listing (you can't
+    control VMs from here). Use Search to find VMs by name, group, host, or paste a gamespace GUID.
+  </div>
 </div>
 
-<div>
+<div class="mb-2">
   <div class="input-group input-group-sm">
     <div class="input-group-prepend">
-      <span class="input-group-text" id="vm-search-label">
+      <span
+        class="input-group-text"
+        [tooltip]="'Search machines by name, group, host or gamespace GUID.'"
+        aria-label="Search machines by name, group, host or gamespace GUID."
+      >
         <fa-icon [icon]="faSearch"></fa-icon>
         <span>Search</span>
       </span>
@@ -21,21 +27,35 @@
       [(ngModel)]="search.term"
       placeholder="term"
       class="form-control"
-      (input)="refresh$.next(true)"
-      aria-label="Search machines"
-      aria-describedby="vm-search-label"
+      (input)="changed()"
+      aria-label="search machines"
+      aria-describedby="vm-search-hint"
     />
+
+    <div class="input-group-append">
+      <button class="btn btn-sm btn-outline-info" [disabled]="loading" (click)="refresh$.next(true)">
+        <fa-icon [icon]="faSync" [animation]="loading ? 'spin' : undefined"></fa-icon>
+        <span>Refresh</span>
+      </button>
+    </div>
   </div>
 
-  <small *ngIf="source.length === 100" class="text-warning">
-    Results limited to 100. Refine your search term to narrow the list.
-  </small>
+  <span id="vm-search-hint" class="sr-only">Search machines by name, group, host or gamespace GUID.</span>
+  <small *ngIf="vms.length" class="text-muted">{{ matched }} of {{ vms.length }}</small>
 </div>
 
-<hr/>
+<app-pager [skip]="skip" [take]="take" [count]="count" [total]="matched" (changed)="paged($event)"></app-pager>
+<hr class="mt-0 mb-2"/>
 
-<div class="row mb-2 vm-header align-items-center">
-  <div class="col-5 px-4">
+<div *ngIf="error" class="alert alert-danger small mb-2">{{ error }}</div>
+<div *ngIf="!loading && !error && !vms.length" class="text-muted">None found.</div>
+<div *ngIf="vms.length && !matched" class="text-muted">
+  No matches.<ng-container *ngIf="search.term.trim()"> Clear the search.</ng-container>
+</div>
+
+<div role="table" aria-label="Machines">
+<div role="row" class="row mb-2 vm-header align-items-center">
+  <div role="columnheader" class="col-5 px-4">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -51,7 +71,7 @@
     </button>
   </div>
 
-  <div class="col-4 px-4">
+  <div role="columnheader" class="col-4 px-4">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -67,7 +87,7 @@
     </button>
   </div>
 
-  <div class="col-1 px-4">
+  <div role="columnheader" class="col-1 px-4">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -83,7 +103,7 @@
     </button>
   </div>
 
-  <div class="col-2 px-4">
+  <div role="columnheader" class="col-2 px-4">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -100,12 +120,12 @@
   </div>
 </div>
 
-<div *ngFor="let vm of source$ | async; trackBy:trackById" class="row mb-1 align-items-center">
-  <div class="col-5 px-4">
+<div *ngFor="let vm of rows; trackBy:trackById" role="row" class="row mb-1 align-items-center">
+  <div role="cell" class="col-5 px-4">
     <span class="text-break">{{ vm.name }}</span>
   </div>
 
-  <div class="col-4 px-4">
+  <div role="cell" class="col-4 px-4">
     <ng-container *ngIf="vm.parsedGroup.type === 'workspace'">
       <a [routerLink]="['/topo', vm.parsedGroup.id]" class="text-secondary">{{ vm.parsedGroup.name }}</a>
       <br/>
@@ -132,7 +152,7 @@
     </ng-container>
   </div>
 
-  <div class="col-1 px-4">
+  <div role="cell" class="col-1 px-4">
     <small [ngClass]="{
       'text-success': vm.state === VmStateEnum.running,
       'text-muted': vm.state === VmStateEnum.off,
@@ -142,9 +162,10 @@
     </small>
   </div>
 
-  <div class="col-2 px-4">
+  <div role="cell" class="col-2 px-4">
     <small class="text-muted">
       {{ vm.host ? vm.host.split('.').shift() : 'unknown' }}
     </small>
   </div>
+</div>
 </div>

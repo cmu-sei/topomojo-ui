@@ -1,12 +1,14 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, OnInit } from '@angular/core';
-import { faSearch, faSortUp, faSortDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { debounceTime, switchMap, tap, map } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { faSearch, faSortUp, faSortDown, faInfoCircle, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
+import { switchMap, tap, map, finalize, catchError } from 'rxjs/operators';
 import { Search, Vm, VmStateEnum } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
+import { clampSkip } from '../../utility/pager/clamp-skip';
 
 interface VmWithParsedGroup extends Vm {
   parsedGroup: { type: 'workspace' | 'gamespace' | 'orphaned', name: string, id: string };
@@ -18,40 +20,94 @@ interface VmWithParsedGroup extends Vm {
   styleUrls: ['./vm-browser.component.scss'],
   standalone: false
 })
-export class VmBrowserComponent implements OnInit {
+export class VmBrowserComponent implements OnInit, OnDestroy {
+  // refresh$ asks the API for the list again; view$ re-filters, re-sorts and re-pages what is already loaded.
   refresh$ = new BehaviorSubject<boolean>(true);
+  view$ = new BehaviorSubject<boolean>(true);
   source$: Observable<VmWithParsedGroup[]>;
-  source: VmWithParsedGroup[] = [];
-  search: Search = { term: '', take: 100 };
+  rows: VmWithParsedGroup[] = [];
+  vms: Vm[] = [];
+  private subscription?: Subscription;
+  loading = false;
+  error = '';
+  search: Search = { term: '' };
+  skip = 0;
+  take = 100;
+  count = 0;
+  matched = 0;
 
   faSearch = faSearch;
   faSortUp = faSortUp;
   faSortDown = faSortDown;
   faInfoCircle = faInfoCircle;
+  faSync = faSyncAlt;
   VmStateEnum = VmStateEnum;
 
   sortAscending = true;
   sortField: 'name' | 'group' | 'state' | 'host' = 'name';
 
   constructor(private api: VmService) {
-    this.source$ = this.refresh$.pipe(
-      debounceTime(300),
-      switchMap(() => this.api.list('')),
-      map(vms => this.filterVms(vms, this.search.term)),
-      map(vms => vms.map(vm => ({
-        ...vm,
-        parsedGroup: this.parseGroupName(vm.groupName)
-      }))),
-      tap(r => {
-        this.source = r;
-        this.applySort();
+    const loaded$ = this.refresh$.pipe(
+      // a failed load keeps the last list on screen and must not end the stream, or Refresh would do nothing.
+      // loading is set inside switchMap: it cancels the previous request first, and that request's finalize clears it
+      switchMap(() => {
+        this.loading = true;
+        return this.api.list('').pipe(
+        tap(() => this.error = ''),
+        catchError((err: HttpErrorResponse) => {
+          this.error = this.errorText(err);
+          return of(this.vms);
+        }),
+        finalize(() => this.loading = false)
+        );
       }),
-      map(() => this.source)
+      tap(vms => this.vms = vms)
+    );
+
+    this.source$ = loaded$.pipe(
+      switchMap(() => this.view$),
+      map(() => this.pageOfMatches())
     );
   }
 
+  ngOnInit(): void {
+    // subscribe here, not with the async pipe: the counts above the list are set while the page is built
+    this.subscription = this.source$.subscribe(rows => this.rows = rows);
+  }
 
-  ngOnInit(): void {}
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
+
+  // the search term or sort changed: start again from the first page
+  changed(): void {
+    this.skip = 0;
+    this.view$.next(true);
+  }
+
+  paged(skip: number): void {
+    this.skip = skip;
+    this.view$.next(true);
+  }
+
+  private errorText(err: HttpErrorResponse): string {
+    return err.status === 0
+      ? 'TopoMojo\'s API couldn\'t be reached. Check that it\'s running, then Refresh.'
+      : `The list could not be loaded (HTTP ${err.status}).`;
+  }
+
+  private pageOfMatches(): VmWithParsedGroup[] {
+    const matches: VmWithParsedGroup[] = this.filterVms(this.vms, this.search.term).map(vm => ({
+      ...vm,
+      parsedGroup: this.parseGroupName(vm.groupName)
+    }));
+    this.matched = matches.length;
+    this.skip = clampSkip(this.skip, matches.length, this.take);
+    this.applySort(matches);
+    const page = matches.slice(this.skip, this.skip + this.take);
+    this.count = page.length;
+    return page;
+  }
 
   private filterVms(vms: Vm[], termRaw: string): Vm[] {
     const term = (termRaw || '').trim().toLowerCase();
@@ -106,10 +162,10 @@ export class VmBrowserComponent implements OnInit {
       this.sortField = field;
       this.sortAscending = true;
     }
-    this.applySort();
+    this.changed();
   }
 
-  private applySort(): void {
+  private applySort(list: VmWithParsedGroup[]): void {
     const dir = this.sortAscending ? 1 : -1;
 
     const hostShort = (vm: Vm) => (vm.host ? vm.host.split('.').shift() : '');
@@ -127,7 +183,7 @@ export class VmBrowserComponent implements OnInit {
       }
     };
 
-    this.source.sort((a, b) => {
+    list.sort((a, b) => {
       const av = value(a);
       const bv = value(b);
       if (av < bv) return -1 * dir;
