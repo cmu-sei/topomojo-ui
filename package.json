@@ -31,7 +31,7 @@
     "emoji-toolkit": "^10.0.0",
     "jquery": "^3.7.1",
     "jquery-ui": "^1.14.2",
-    "marked": "^18.2.0",
+    "marked": "^18.2.1",
     "marked-smartypants": "^1.1.9",
     "ngx-bootstrap": "^21.2.2",
     "ngx-markdown": "^21.3.0",
