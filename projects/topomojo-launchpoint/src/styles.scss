@@ -3,6 +3,9 @@
 
 /* You can add global styles to this file, and also import other style files */
 /* You can add global styles to this file, and also import other style files */
+// Open Sans for the classification banner, from crucible-common like the other Crucible apps.
+@use "@cmusei/crucible-common/fonts";
+
 $primary: #434;
 $danger: #b00;
 $success: #0b0;
@@ -25,6 +28,8 @@ body {
   margin: 0;
 }
 main {
+  // The absolutely positioned session controls anchor to this, so they sit below the classification banner.
+  position: relative;
   // display: flex;
   // flex-direction: column;
   // justify-content: center;

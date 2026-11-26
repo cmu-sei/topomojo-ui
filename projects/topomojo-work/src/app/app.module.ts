@@ -59,6 +59,7 @@ import { GamespaceStateComponent } from './gamespace-state/gamespace-state.compo
 import { GamespaceJoinComponent } from './gamespace-join/gamespace-join.component';
 import { AppLayoutComponent } from './app-layout/app-layout.component';
 import { ConsoleLayoutComponent } from './console-layout/console-layout.component';
+import { ClassificationBannerComponent } from './classification-banner/classification-banner.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
@@ -111,6 +112,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     ReactiveFormsModule,
     UtilityModule,
     ApiModule,
+    ClassificationBannerComponent,
     MonacoEditorModule.forRoot({ onMonacoLoad: applyMonacoTheme }),
     MarkdownModule.forRoot({
       loader: HttpClient,

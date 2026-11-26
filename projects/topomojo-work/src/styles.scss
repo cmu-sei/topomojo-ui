@@ -3,6 +3,10 @@
 
 /* You can add global styles to this file, and also import other style files */
 
+// Open Sans for the classification banner, from crucible-common like the other Crucible apps.
+// Without it the banner falls back to a system font and renders shorter.
+@use "@cmusei/crucible-common/fonts";
+
 // @import "../../../node_modules/bootstrap/scss/bootstrap";
 @import "../../../node_modules/bootstrap/scss/functions";
 @import "../../../node_modules/bootstrap/scss/variables";
