@@ -50,7 +50,7 @@
 <div *ngIf="error" class="alert alert-danger small mb-2">{{ error }}</div>
 <div *ngIf="!loading && !error && !vms.length" class="text-muted">None found.</div>
 <div *ngIf="vms.length && !matched" class="text-muted">
-  No matches.<ng-container *ngIf="search.term?.trim()"> Clear the search.</ng-container>
+  No matches.<ng-container *ngIf="search.term.trim()"> Clear the search.</ng-container>
 </div>
 
 <div class="row mb-2 vm-header align-items-center">
