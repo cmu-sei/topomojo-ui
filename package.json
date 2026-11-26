@@ -33,7 +33,7 @@
     "jquery-ui": "^1.14.2",
     "marked": "^18.2.1",
     "marked-smartypants": "^1.1.9",
-    "ngx-bootstrap": "^21.2.2",
+    "ngx-bootstrap": "^22.0.0",
     "ngx-markdown": "^21.3.0",
     "ngx-monaco-editor-v2": "^21.1.4",
     "oidc-client-ts": "^2.2.1",
