@@ -152,4 +152,31 @@ describe('DiskBrowserComponent', () => {
     expect(hint).not.toBeNull();
     expect(hint!.textContent).toContain('Search by file name, workspace or template');
   });
+
+  it('after a shorter refresh the page stays moved back, so growing again does not jump forward', async () => {
+    await create({ enabled: true, field: 'disks', sources: sources(250, 0) });
+    component.paged(200);
+    fixture.detectChanges();
+    getTemplateSources.and.returnValues(
+      of({ enabled: true, field: 'disks', sources: sources(150, 0) }),
+      of({ enabled: true, field: 'disks', sources: sources(250, 0) }));
+    component.refresh$.next(true);
+    fixture.detectChanges();
+    expect(component.skip).toBe(100);
+    component.refresh$.next(true);
+    fixture.detectChanges();
+    expect(text()).toContain('101 - 200');
+    expect(names().length).toBe(100);
+  });
+
+  it('keeps table roles so a screen reader can move by row and column', async () => {
+    await create({ enabled: true, field: 'disks', sources: sources(4, 0) });
+    expect(root().querySelector('[role=table]')!.getAttribute('aria-label')).toBe('Disks');
+    expect(root().querySelectorAll('[role=columnheader]').length).toBe(3);
+    const rows = Array.from(root().querySelectorAll('[role=row]'));
+    expect(rows.length).toBe(5);
+    for (const row of rows.slice(1)) {
+      expect(row.querySelectorAll('[role=cell]').length).toBe(3);
+    }
+  });
 });

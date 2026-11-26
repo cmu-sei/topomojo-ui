@@ -167,4 +167,16 @@ describe('VmBrowserComponent', () => {
     expect(hint).not.toBeNull();
     expect(hint!.textContent).toContain('Search machines by name');
   });
+
+  it('keeps table roles so a screen reader can move by row and column', async () => {
+    await create(makeVms(4));
+    const root = fixture.nativeElement as HTMLElement;
+    expect(root.querySelector('[role=table]')!.getAttribute('aria-label')).toBe('Machines');
+    expect(root.querySelectorAll('[role=columnheader]').length).toBe(4);
+    const rows = Array.from(root.querySelectorAll('[role=row]'));
+    expect(rows.length).toBe(5);
+    for (const row of rows.slice(1)) {
+      expect(row.querySelectorAll('[role=cell]').length).toBe(4);
+    }
+  });
 });

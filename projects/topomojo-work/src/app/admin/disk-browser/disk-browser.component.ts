@@ -5,7 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { faFilter, faSearch, faSortDown, faSortUp, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
-import { catchError, map, scan, shareReplay, startWith, switchMap } from 'rxjs/operators';
+import { catchError, map, scan, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { AdminService, TemplateSource, TemplateSourceReport } from '../../api/admin.service';
 import { clampSkip } from '../../utility/pager/clamp-skip';
 
@@ -49,6 +49,12 @@ export class DiskBrowserComponent {
       scan((prev: DiskBrowserState, next: DiskBrowserState) => next.loading
         ? { loading: true, report: prev.report }
         : next, { loading: true }),
+      // a finished load can leave the stored page past the end of a shorter list; settle it here, not while the page renders
+      tap(state => {
+        if (state.report) {
+          this.skip = clampSkip(this.skip, this.filtered(state.report.sources).length, this.take);
+        }
+      }),
       shareReplay(1)
     );
     this.rows$ = combineLatest([this.state$, this.view$]).pipe(

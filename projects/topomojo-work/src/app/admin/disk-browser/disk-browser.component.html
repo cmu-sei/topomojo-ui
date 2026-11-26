@@ -100,20 +100,21 @@
       <ng-container *ngIf="!term.trim() && globalOnly">Turn off Global Only to see workspace entries.</ng-container>
     </div>
 
-    <div *ngIf="rows.length" class="row mb-2 disk-header align-items-center">
-      <div class="col-6 px-4">
+    <div *ngIf="rows.length" role="table" [attr.aria-label]="report.field === 'template' ? 'Template VMs' : 'Disks'">
+    <div role="row" class="row mb-2 disk-header align-items-center">
+      <div role="columnheader" class="col-6 px-4">
         <button type="button" class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center" (click)="sortBy('name')" aria-label="Sort by file name.">
           <span>Name</span>
           <fa-icon class="ml-1" *ngIf="sortColumn === 'name'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
         </button>
       </div>
-      <div class="col-3 px-4">
+      <div role="columnheader" class="col-3 px-4">
         <button type="button" class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center" (click)="sortBy('workspace')" aria-label="Sort by workspace.">
           <span>Workspace</span>
           <fa-icon class="ml-1" *ngIf="sortColumn === 'workspace'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
         </button>
       </div>
-      <div class="col-3 px-4">
+      <div role="columnheader" class="col-3 px-4">
         <button type="button" class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center" (click)="sortBy('date')" aria-label="Sort by date.">
           <span>{{dateLabel(report)}}</span>
           <fa-icon class="ml-1" *ngIf="sortColumn === 'date'" [icon]="sortAscending ? faSortUp : faSortDown"></fa-icon>
@@ -121,11 +122,11 @@
       </div>
     </div>
 
-    <div *ngFor="let s of rows | slice:pageStart(rows):pageStart(rows)+take" class="row mb-1 align-items-center">
-      <div class="col-6 px-4 name-cell">
+    <div *ngFor="let s of rows | slice:pageStart(rows):pageStart(rows)+take" role="row" class="row mb-1 align-items-center">
+      <div role="cell" class="col-6 px-4 name-cell">
         <app-clipspan class="text-monospace small">{{s.name}}</app-clipspan>
       </div>
-      <div class="col-3 px-4">
+      <div role="cell" class="col-3 px-4">
         <span *ngIf="s.isGlobal" class="badge badge-primary">Global</span>
         <span *ngIf="!s.isGlobal && s.workspaceName === '(deleted)'" class="badge badge-secondary">(deleted)</span>
         <span *ngIf="!s.isGlobal && s.workspaceName !== '(deleted)'">{{s.workspaceName}}</span>
@@ -134,9 +135,10 @@
           <small class="text-muted">Template: {{s.templateName}}</small>
         </ng-container>
       </div>
-      <div class="col-3 px-4 text-nowrap">
+      <div role="cell" class="col-3 px-4 text-nowrap">
         <small>{{formatDate(dateOf(s))}}</small>
       </div>
+    </div>
     </div>
   </ng-container>
 </ng-container>

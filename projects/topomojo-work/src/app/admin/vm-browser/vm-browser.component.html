@@ -53,8 +53,9 @@
   No matches.<ng-container *ngIf="search.term.trim()"> Clear the search.</ng-container>
 </div>
 
-<div class="row mb-2 vm-header align-items-center">
-  <div class="col-5 px-4">
+<div role="table" aria-label="Machines">
+<div role="row" class="row mb-2 vm-header align-items-center">
+  <div role="columnheader" class="col-5 px-4">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -70,7 +71,7 @@
     </button>
   </div>
 
-  <div class="col-4 px-4">
+  <div role="columnheader" class="col-4 px-4">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -86,7 +87,7 @@
     </button>
   </div>
 
-  <div class="col-1 px-4">
+  <div role="columnheader" class="col-1 px-4">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -102,7 +103,7 @@
     </button>
   </div>
 
-  <div class="col-2 px-4">
+  <div role="columnheader" class="col-2 px-4">
     <button
       type="button"
       class="btn btn-link p-0 sort-header header-label text-primary d-inline-flex align-items-center"
@@ -119,12 +120,12 @@
   </div>
 </div>
 
-<div *ngFor="let vm of rows; trackBy:trackById" class="row mb-1 align-items-center">
-  <div class="col-5 px-4">
+<div *ngFor="let vm of rows; trackBy:trackById" role="row" class="row mb-1 align-items-center">
+  <div role="cell" class="col-5 px-4">
     <span class="text-break">{{ vm.name }}</span>
   </div>
 
-  <div class="col-4 px-4">
+  <div role="cell" class="col-4 px-4">
     <ng-container *ngIf="vm.parsedGroup.type === 'workspace'">
       <a [routerLink]="['/topo', vm.parsedGroup.id]" class="text-secondary">{{ vm.parsedGroup.name }}</a>
       <br/>
@@ -151,7 +152,7 @@
     </ng-container>
   </div>
 
-  <div class="col-1 px-4">
+  <div role="cell" class="col-1 px-4">
     <small [ngClass]="{
       'text-success': vm.state === VmStateEnum.running,
       'text-muted': vm.state === VmStateEnum.off,
@@ -161,9 +162,10 @@
     </small>
   </div>
 
-  <div class="col-2 px-4">
+  <div role="cell" class="col-2 px-4">
     <small class="text-muted">
       {{ vm.host ? vm.host.split('.').shift() : 'unknown' }}
     </small>
   </div>
+</div>
 </div>
