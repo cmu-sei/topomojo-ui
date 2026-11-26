@@ -23,7 +23,6 @@ export class VmBrowserComponent implements OnInit, OnDestroy {
   refresh$ = new BehaviorSubject<boolean>(true);
   view$ = new BehaviorSubject<boolean>(true);
   source$: Observable<VmWithParsedGroup[]>;
-  source: VmWithParsedGroup[] = [];
   rows: VmWithParsedGroup[] = [];
   vms: Vm[] = [];
   private subscription?: Subscription;
@@ -83,11 +82,10 @@ export class VmBrowserComponent implements OnInit, OnDestroy {
       parsedGroup: this.parseGroupName(vm.groupName)
     }));
     this.matched = matches.length;
-    this.source = matches;
-    this.applySort();
-    this.source = this.source.slice(this.skip, this.skip + this.take);
-    this.count = this.source.length;
-    return this.source;
+    this.applySort(matches);
+    const page = matches.slice(this.skip, this.skip + this.take);
+    this.count = page.length;
+    return page;
   }
 
   private filterVms(vms: Vm[], termRaw: string): Vm[] {
@@ -146,7 +144,7 @@ export class VmBrowserComponent implements OnInit, OnDestroy {
     this.changed();
   }
 
-  private applySort(): void {
+  private applySort(list: VmWithParsedGroup[]): void {
     const dir = this.sortAscending ? 1 : -1;
 
     const hostShort = (vm: Vm) => (vm.host ? vm.host.split('.').shift() : '');
@@ -164,7 +162,7 @@ export class VmBrowserComponent implements OnInit, OnDestroy {
       }
     };
 
-    this.source.sort((a, b) => {
+    list.sort((a, b) => {
       const av = value(a);
       const bv = value(b);
       if (av < bv) return -1 * dir;
