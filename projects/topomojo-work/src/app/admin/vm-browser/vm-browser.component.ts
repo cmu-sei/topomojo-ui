@@ -1,10 +1,10 @@
 // Copyright 2021 Carnegie Mellon University.
 // Released under a 3 Clause BSD-style license. See LICENSE.md in the project root.
 
-import { Component, OnInit } from '@angular/core';
-import { faSearch, faSortUp, faSortDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { debounceTime, switchMap, tap, map } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { faSearch, faSortUp, faSortDown, faInfoCircle, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { switchMap, tap, map, finalize } from 'rxjs/operators';
 import { Search, Vm, VmStateEnum } from '../../api/gen/models';
 import { VmService } from '../../api/vm.service';
 
@@ -18,40 +18,77 @@ interface VmWithParsedGroup extends Vm {
   styleUrls: ['./vm-browser.component.scss'],
   standalone: false
 })
-export class VmBrowserComponent implements OnInit {
+export class VmBrowserComponent implements OnInit, OnDestroy {
+  // refresh$ asks the API for the list again; view$ re-filters, re-sorts and re-pages what is already loaded.
   refresh$ = new BehaviorSubject<boolean>(true);
+  view$ = new BehaviorSubject<boolean>(true);
   source$: Observable<VmWithParsedGroup[]>;
   source: VmWithParsedGroup[] = [];
-  search: Search = { term: '', take: 100 };
+  rows: VmWithParsedGroup[] = [];
+  vms: Vm[] = [];
+  private subscription?: Subscription;
+  loading = false;
+  search: Search = { term: '' };
+  skip = 0;
+  take = 100;
+  count = 0;
+  matched = 0;
 
   faSearch = faSearch;
   faSortUp = faSortUp;
   faSortDown = faSortDown;
   faInfoCircle = faInfoCircle;
+  faSync = faSyncAlt;
   VmStateEnum = VmStateEnum;
 
   sortAscending = true;
   sortField: 'name' | 'group' | 'state' | 'host' = 'name';
 
   constructor(private api: VmService) {
-    this.source$ = this.refresh$.pipe(
-      debounceTime(300),
-      switchMap(() => this.api.list('')),
-      map(vms => this.filterVms(vms, this.search.term)),
-      map(vms => vms.map(vm => ({
-        ...vm,
-        parsedGroup: this.parseGroupName(vm.groupName)
-      }))),
-      tap(r => {
-        this.source = r;
-        this.applySort();
-      }),
-      map(() => this.source)
+    const loaded$ = this.refresh$.pipe(
+      tap(() => this.loading = true),
+      switchMap(() => this.api.list('').pipe(finalize(() => this.loading = false))),
+      tap(vms => this.vms = vms)
+    );
+
+    this.source$ = loaded$.pipe(
+      switchMap(() => this.view$),
+      map(() => this.pageOfMatches())
     );
   }
 
+  ngOnInit(): void {
+    // subscribe here, not with the async pipe: the counts above the list are set while the page is built
+    this.subscription = this.source$.subscribe(rows => this.rows = rows);
+  }
 
-  ngOnInit(): void {}
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
+
+  // the search term or sort changed: start again from the first page
+  changed(): void {
+    this.skip = 0;
+    this.view$.next(true);
+  }
+
+  paged(skip: number): void {
+    this.skip = skip;
+    this.view$.next(true);
+  }
+
+  private pageOfMatches(): VmWithParsedGroup[] {
+    const matches: VmWithParsedGroup[] = this.filterVms(this.vms, this.search.term).map(vm => ({
+      ...vm,
+      parsedGroup: this.parseGroupName(vm.groupName)
+    }));
+    this.matched = matches.length;
+    this.source = matches;
+    this.applySort();
+    this.source = this.source.slice(this.skip, this.skip + this.take);
+    this.count = this.source.length;
+    return this.source;
+  }
 
   private filterVms(vms: Vm[], termRaw: string): Vm[] {
     const term = (termRaw || '').trim().toLowerCase();
@@ -106,7 +143,7 @@ export class VmBrowserComponent implements OnInit {
       this.sortField = field;
       this.sortAscending = true;
     }
-    this.applySort();
+    this.changed();
   }
 
   private applySort(): void {
